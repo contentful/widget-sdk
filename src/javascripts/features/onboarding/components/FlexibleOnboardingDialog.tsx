@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, IconButton, Flex } from '@contentful/forma-36-react-components';
+import { Modal, IconButton, Flex, ModalLauncher } from '@contentful/forma-36-react-components';
 import { Choices, DeveloperChoiceDialog } from './DeveloperChoiceDialog';
 import { track } from 'analytics/Analytics';
 import { SampleSpaceDialog } from './SampleSpaceDialog';
@@ -13,6 +13,7 @@ import * as TokenStore from 'services/TokenStore';
 import { getCMAClient } from 'core/services/usePlainCMAClient';
 import { captureWarning } from 'core/monitoring';
 import { router } from 'core/react-routing';
+import { ReplaceSpaceDialog } from './ReplaceSpaceDialog';
 
 enum Views {
   DEVELOPER_CHOICE_MODAL = 'developerChoice',
@@ -22,6 +23,7 @@ interface Props {
   isShown: boolean;
   onClose: () => void;
   spaceId: string;
+  replaceSpace?: boolean;
 }
 
 const renameSpace = async (newName, spaceId) => {
@@ -48,11 +50,39 @@ const renameSpace = async (newName, spaceId) => {
   return newSpace;
 };
 
-export const FlexibleOnboardingDialog = ({ isShown, onClose, spaceId }: Props) => {
+const BLANK_SPACE_NAME = 'Blank';
+
+export const FlexibleOnboardingDialog = ({
+  isShown,
+  onClose,
+  spaceId,
+  replaceSpace = false,
+}: Props) => {
   const [modalShown, setModalShown] = useState<Views>(Views.DEVELOPER_CHOICE_MODAL);
 
   const handleBack = () => {
     setModalShown(Views.DEVELOPER_CHOICE_MODAL);
+  };
+
+  const showReplaceSpaceWarning = async (onConfirm) => {
+    await ModalLauncher.open(({ onClose }) => (
+      <ReplaceSpaceDialog isShown onConfirm={onConfirm} onClose={onClose} spaceId={spaceId} />
+    ));
+  };
+
+  const handleEmptyChoice = async (spaceId) => {
+    unmarkSpace();
+    renameSpace(BLANK_SPACE_NAME, spaceId);
+    router.navigate({ path: 'content_types.list', spaceId });
+  };
+
+  const handleGatsbyChoice = async (spaceId) => {
+    markSpace(spaceId);
+    renameSpace(MODERN_STACK_ONBOARDING_SPACE_NAME, spaceId);
+    router.navigate({
+      path: 'spaces.detail.onboarding.getStarted',
+      spaceId,
+    });
   };
 
   const handleChoiceSelection = async (choice) => {
@@ -60,21 +90,22 @@ export const FlexibleOnboardingDialog = ({ isShown, onClose, spaceId }: Props) =
     switch (choice) {
       case Choices.GATSBY_BLOG_OPTION:
         onClose();
-        markSpace(spaceId);
-        renameSpace(MODERN_STACK_ONBOARDING_SPACE_NAME, spaceId);
-        router.navigate({
-          path: 'spaces.detail.onboarding.getStarted',
-          spaceId,
-        });
+        if (replaceSpace) {
+          showReplaceSpaceWarning(handleGatsbyChoice);
+        } else {
+          handleGatsbyChoice(spaceId);
+        }
         return;
       case Choices.SAMPLE_SPACE_OPTION:
         setModalShown(Views.SAMPLE_SPACE_MODAL);
         return;
       case Choices.EMPTY_SPACE_OPTION:
         onClose();
-        unmarkSpace();
-        renameSpace('Blank space', spaceId);
-        router.navigate({ path: 'content_types.list' });
+        if (replaceSpace) {
+          showReplaceSpaceWarning(handleEmptyChoice);
+        } else {
+          handleEmptyChoice(spaceId);
+        }
         return;
       default:
         return;
@@ -82,7 +113,12 @@ export const FlexibleOnboardingDialog = ({ isShown, onClose, spaceId }: Props) =
   };
 
   return (
-    <Modal isShown={isShown} testId="developer-choice-modal" size="1500" onClose={onClose}>
+    <Modal
+      isShown={isShown}
+      testId="developer-choice-modal"
+      size="1500"
+      onClose={onClose}
+      shouldCloseOnOverlayClick>
       <Flex marginTop="spacingS" marginBottom="spacingS" justifyContent="flex-end">
         <IconButton
           buttonType="secondary"
@@ -97,7 +133,12 @@ export const FlexibleOnboardingDialog = ({ isShown, onClose, spaceId }: Props) =
         <DeveloperChoiceDialog onContinue={handleChoiceSelection} />
       )}
       {modalShown === Views.SAMPLE_SPACE_MODAL && (
-        <SampleSpaceDialog onClose={onClose} onBack={handleBack} spaceId={spaceId} />
+        <SampleSpaceDialog
+          onClose={onClose}
+          onBack={handleBack}
+          spaceId={spaceId}
+          replaceSpace={replaceSpace}
+        />
       )}
     </Modal>
   );

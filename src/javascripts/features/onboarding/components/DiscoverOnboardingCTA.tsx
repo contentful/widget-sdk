@@ -10,9 +10,11 @@ import {
 import { FlexibleOnboardingDialog } from './FlexibleOnboardingDialog';
 import { css } from 'emotion';
 import { track } from 'analytics/Analytics';
+import tokens from '@contentful/forma-36-tokens';
 
 const styles = {
   card: css({ width: '100%' }),
+  heading: css({ marginBottom: tokens.spacingS }),
 };
 
 export const DiscoverOnboardingCTA = ({ spaceId }) => {
@@ -20,7 +22,9 @@ export const DiscoverOnboardingCTA = ({ spaceId }) => {
     <Card padding="large" className={styles.card}>
       <Flex justifyContent="space-between" alignItems="center">
         <div>
-          <Heading>Do you want to discover Contentful in a different way?</Heading>
+          <Heading className={styles.heading}>
+            Do you want to discover Contentful in a different way?
+          </Heading>
           <Paragraph>Choose from different ways to get started with Contentful.</Paragraph>
         </div>
         <Button
@@ -29,7 +33,12 @@ export const DiscoverOnboardingCTA = ({ spaceId }) => {
             track('space_home:onboarding_discover');
             ModalLauncher.open(({ isShown, onClose }) => {
               return (
-                <FlexibleOnboardingDialog isShown={isShown} onClose={onClose} spaceId={spaceId} />
+                <FlexibleOnboardingDialog
+                  isShown={isShown}
+                  onClose={onClose}
+                  spaceId={spaceId}
+                  replaceSpace={true}
+                />
               );
             });
           }}>

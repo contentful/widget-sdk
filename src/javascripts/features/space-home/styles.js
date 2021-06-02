@@ -18,6 +18,7 @@ export const styles = {
     fontSize: tokens.fontSize3Xl,
     fontWeight: tokens.fontWeightNormal,
     textAlign: 'center',
+    marginBottom: tokens.spacingS,
   }),
   description: css({
     fontSize: tokens.fontSizeL,

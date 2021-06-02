@@ -1,7 +1,10 @@
 import { EnvironmentParams } from './types';
 import { spaceEnvBase } from './utils';
 
-type ContentTypesListRouteType = { path: 'content_types.list' };
+type ContentTypesListRouteType = {
+  path: 'content_types.list';
+  spaceId?: string;
+};
 type ContentTypesNewRouteType = {
   path: 'content_types.new';
   tab?: string;
@@ -18,10 +21,14 @@ export type ContentTypesRouteType =
   | ContentTypesDetailRouteType;
 
 export const routes = {
-  'content_types.list': (env: EnvironmentParams) => ({
+  'content_types.list': (
+    env: EnvironmentParams,
+    params?: Omit<ContentTypesListRouteType, 'path'>
+  ) => ({
     path: spaceEnvBase(env, 'content_types'),
     params: {
       pathname: '/',
+      ...params,
     },
   }),
   'content_types.new': (

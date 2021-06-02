@@ -5,7 +5,9 @@ import {
   Flex,
   Modal,
   Notification,
+  ModalLauncher,
 } from '@contentful/forma-36-react-components';
+import * as TokenStore from 'services/TokenStore';
 import { css } from 'emotion';
 import { track } from 'analytics/Analytics';
 import TemplatesList from 'app/SpaceWizards/shared/TemplatesList';
@@ -14,12 +16,12 @@ import { useAsync } from 'core/hooks/useAsync';
 import { LoadingCard } from './LoadingCard';
 import { applyTemplateToSpace, SelectedTemplate } from 'features/space-purchase';
 import { getSpace } from 'services/TokenStore';
-import { SpaceData } from 'classes/spaceContextTypes';
 import { router } from 'core/react-routing';
+import { ReplaceSpaceDialog } from './ReplaceSpaceDialog';
 
 const styles = {
   container: css({
-    maxWidth: 990,
+    maxWidth: 736,
   }),
 };
 
@@ -29,12 +31,20 @@ const fetchData = (spaceId) => async () => {
   return { templatesList, spaceData };
 };
 
-export const SampleSpaceDialog = ({ onClose, onBack, spaceId }) => {
+export const SampleSpaceDialog = ({ onClose, onBack, spaceId, replaceSpace = false }) => {
   const [selectedTemplate, setSelectedTemplate] = useState<SelectedTemplate>();
-  const [space, setSpace] = useState<SpaceData>();
   const [loading, setLoading] = useState(false);
 
-  const handleContinue = async () => {
+  const showReplaceSpaceWarning = async () => {
+    onClose();
+    await ModalLauncher.open(({ onClose }) => (
+      <ReplaceSpaceDialog isShown onConfirm={handleContinue} onClose={onClose} spaceId={spaceId} />
+    ));
+  };
+
+  const handleContinue = async (spaceId) => {
+    await TokenStore.refresh();
+    const space = await TokenStore.getSpace(spaceId);
     if (selectedTemplate && space) {
       track('onboarding_sample_space:continue', {
         templateName: `${selectedTemplate?.name}`,
@@ -48,7 +58,7 @@ export const SampleSpaceDialog = ({ onClose, onBack, spaceId }) => {
         Notification.success('You have successfully created a pre-built space.');
         setLoading(false);
         onClose();
-        router.navigate({ path: 'content_types.list' });
+        router.navigate({ path: 'content_types.list', spaceId });
       }
     }
   };
@@ -60,7 +70,6 @@ export const SampleSpaceDialog = ({ onClose, onBack, spaceId }) => {
     if (data?.templatesList && !selectedTemplate) {
       setSelectedTemplate(data?.templatesList[0]);
     }
-    setSpace(data?.spaceData);
   }, [selectedTemplate, data]);
 
   return (
@@ -68,10 +77,10 @@ export const SampleSpaceDialog = ({ onClose, onBack, spaceId }) => {
       {isLoading && <LoadingCard />}
       {!isLoading && data?.templatesList && (
         <>
-          <Flex marginBottom="spacing3Xl" paddingLeft="spacing2Xl">
+          <Flex marginBottom="spacing3Xl">
             <DisplayText>Choose and create a space</DisplayText>
           </Flex>
-          <Flex marginBottom="spacing3Xl" paddingLeft="spacing3Xl" paddingRight="spacing3Xl">
+          <Flex marginBottom="spacingL">
             <TemplatesList
               templates={data?.templatesList}
               selectedTemplate={selectedTemplate}
@@ -79,7 +88,7 @@ export const SampleSpaceDialog = ({ onClose, onBack, spaceId }) => {
               isNewSpacePurchaseFlow={true}
             />
           </Flex>
-          <Flex justifyContent="flex-end" marginBottom="spacingM" paddingRight="spacing2Xl">
+          <Flex justifyContent="flex-end" marginBottom="spacingM">
             <Flex flexDirection="column" marginRight="spacingM">
               <Button
                 buttonType="muted"
@@ -95,8 +104,10 @@ export const SampleSpaceDialog = ({ onClose, onBack, spaceId }) => {
               <Button
                 buttonType="primary"
                 loading={loading}
-                disabled={!selectedTemplate}
-                onClick={handleContinue}
+                disabled={!selectedTemplate || loading}
+                onClick={() => {
+                  replaceSpace ? showReplaceSpaceWarning() : handleContinue(spaceId);
+                }}
                 testId="continue-btn">
                 Continue
               </Button>
