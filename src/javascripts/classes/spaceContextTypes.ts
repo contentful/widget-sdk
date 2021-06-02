@@ -175,7 +175,7 @@ export interface User {
   lastName: string;
   avatarUrl: string;
   email: string;
-  cookieConsentData: unknown;
+  cookieConsentData: string;
   activated: boolean;
   signInCount: number;
   confirmed: boolean;

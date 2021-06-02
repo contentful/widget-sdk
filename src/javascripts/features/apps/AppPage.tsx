@@ -44,14 +44,16 @@ import { isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 import { createAppExtensionSDK as localCreateAppConfigWidgetSDK } from 'app/widgets/ExtensionSDKs';
 import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
+import { usePubSubClient } from 'core/hooks';
+import LocaleStore from 'services/localeStore';
 import { getSpaceContext } from 'classes/spaceContext';
 import { useRouteNavigate } from 'core/react-routing';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import { createAppConfigWidgetSDK, AppInstallationEvents } from '@contentful/experience-sdk';
-import { FreeFormParameters } from 'contentful-management/types';
 import {
   createDialogCallbacks,
   createNavigatorCallbacks,
+  createSpaceCallbacks,
 } from 'app/widgets/ExtensionSDKs/callbacks';
 import { GlobalEventBus, GlobalEvents } from 'core/services/GlobalEventsBus';
 
@@ -97,9 +99,10 @@ export function AppRoute(props: Props) {
   const [installationState, setInstallationState] = React.useState<InstallationState>(
     InstallationState.NotBusy
   );
-  const [widgetLoader, setWidgetLoader] = React.useState<WidgetLoader>(null);
+  const [widgetLoader, setWidgetLoader] = React.useState<WidgetLoader | null>(null);
+  const pubSubClient = usePubSubClient();
   const installationStateRef = React.useRef<InstallationState>(installationState); // TODO: useEffect creates a snapshot of `installationState` where `onAppConfigured` receives a outdated value, we use useRef to bypass this
-  const { customWidgetClient, client: cma } = useCurrentSpaceAPIClient();
+  const { customWidgetClient, customWidgetPlainClient, client: cma } = useCurrentSpaceAPIClient();
 
   const {
     currentOrganization: organization,
@@ -144,19 +147,28 @@ export function AppRoute(props: Props) {
 
     const spaceContext = getSpaceContext();
 
-    if (useExperienceSDK && widgetLoader && currentEnvironment) {
+    if (
+      useExperienceSDK &&
+      widgetLoader &&
+      currentEnvironment &&
+      pubSubClient &&
+      customWidgetPlainClient
+    ) {
       return {
         sdk: createAppConfigWidgetSDK({
           widgetLoader,
-          cma: customWidgetClient,
+          locales: {
+            activeLocaleCode: LocaleStore.getFocusedLocale().code,
+            defaultLocaleCode: LocaleStore.getDefaultLocale().code,
+            list: LocaleStore.getLocales(),
+          },
+          cma: customWidgetPlainClient,
           user: spaceContext.user,
           environment: currentEnvironment,
-          space: spaceContext.space,
+          space: spaceContext.space.data,
           widgetId: app.appDefinition.sys.id,
-          WidgetNamespace: WidgetNamespace.APP,
+          widgetNamespace: WidgetNamespace.APP,
           appHookBus: props.appHookBus,
-          spaceMembership: undefined,
-          roles: undefined,
           callbacks: {
             navigator: createNavigatorCallbacks({
               spaceContext: {
@@ -177,6 +189,11 @@ export function AppRoute(props: Props) {
                 GlobalEventBus.emit(GlobalEvents.RefreshPublishedContentTypes);
               }
             },
+            space: createSpaceCallbacks({
+              pubSubClient,
+              environment: currentEnvironment,
+              cma: customWidgetPlainClient
+            })
           },
         }),
         onAppHook: noop,
