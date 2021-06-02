@@ -180,7 +180,7 @@ describe('states/deeplink/resolver', () => {
 
   describe('#home', () => {
     it('should redirect the user to space home', async function () {
-      await testSpaceScopedPathDeeplinks('home', { path: ['spaces', 'detail', 'home'] });
+      await testSpaceScopedPathDeeplinks('home', { path: 'spaces.detail.home' });
     });
   });
 
@@ -487,9 +487,10 @@ describe('states/deeplink/resolver', () => {
       ]);
 
       expect(await resolveLink(LinkType.InvitationAccepted, { orgId: 'testOrgId' })).toEqual({
-        path: ['spaces', 'detail', 'home'],
+        path: 'spaces.detail.home',
         params: {
           spaceId: 'testSpaceId1',
+          pathname: '/',
         },
       });
     });

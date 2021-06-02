@@ -17,7 +17,6 @@ import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import moment from 'moment';
 import { css } from 'emotion';
 import { keyBy } from 'lodash';
-import { go } from 'states/Navigator';
 import { beginSpaceCreation } from 'services/CreateSpace';
 import { EmptyHome } from 'features/home';
 import { LoadingState } from 'features/loading-state';
@@ -29,6 +28,7 @@ import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import createResourceService from 'services/ResourceService';
 import * as TokenStore from 'services/TokenStore';
 import { SpaceProps } from 'contentful-management/types';
+import { router } from 'core/react-routing';
 
 const styles = {
   content: css({
@@ -118,11 +118,7 @@ const OrganizationSpacesV1Page = ({ orgId }: OrganizationSpacesV1PageProps) => {
     });
 
   const goToSpace = (space) =>
-    go({
-      path: ['spaces', 'detail', 'home'],
-      params: { spaceId: space.sys.id },
-      options: { reload: true },
-    });
+    router.navigate({ path: 'spaces.detail.home', spaceId: space.sys.id }, { reload: true });
 
   return (
     <>

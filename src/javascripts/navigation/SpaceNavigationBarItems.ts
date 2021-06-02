@@ -171,10 +171,10 @@ export function getSpaceNavigationItems({
     !useSpaceEnvironment || isUnscopedRoute
       ? {
           if: canNavigateTo('spaceHome'),
-          sref: 'spaces.detail.home',
           dataViewType: 'space-home',
           navIcon: 'Home',
           title: 'Space home',
+          ...makeReactRouterRef('spaces.detail.home', withEnvironment),
         }
       : {
           if: canNavigateTo('spaceHome'),

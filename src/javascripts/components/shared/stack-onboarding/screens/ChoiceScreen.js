@@ -6,14 +6,13 @@ import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import { updateUserInSegment, tracking } from 'analytics/Analytics';
 import { FLAGS, getVariation } from 'LaunchDarkly';
-import { go } from 'states/Navigator';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { FlexibleOnboardingDialog } from 'features/onboarding';
 import { getOrganizations } from 'services/TokenStore';
+import { router } from 'core/react-routing';
 
 const store = getBrowserStorage();
-
-export default class ChoiceScreen extends React.Component {
+class ChoiceScreen extends React.Component {
   static propTypes = {
     onContentChoice: PropTypes.func.isRequired,
     onDevChoice: PropTypes.func,
@@ -61,7 +60,7 @@ export default class ChoiceScreen extends React.Component {
     }
     if (this.state.isGrowthExperimentEnabled) {
       const newSpace = await this.props.onExperimentChoice();
-      go({ path: 'spaces.detail.home' });
+      router.navigate({ path: 'spaces.detail.home' });
       ModalLauncher.open(({ isShown, onClose }) => {
         return (
           <FlexibleOnboardingDialog isShown={isShown} onClose={onClose} spaceId={newSpace.sys.id} />
@@ -156,3 +155,5 @@ export default class ChoiceScreen extends React.Component {
     );
   }
 }
+
+export default ChoiceScreen;

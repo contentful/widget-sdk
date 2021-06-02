@@ -3,7 +3,7 @@ import { render, screen, within, fireEvent } from '@testing-library/react';
 import { SpacesListForMembers } from './SpacesListForMembers';
 import * as fake from 'test/helpers/fakeFactory';
 import * as FORMA_CONSTANTS from 'test/helpers/Forma36Constants';
-import { go } from 'states/Navigator';
+import { MemoryRouter, router } from 'core/react-routing';
 
 const createdAt = '07/05/2020';
 const DEFAULT_CREATED_AT_STRING = '2020-05-07T10:48:53Z';
@@ -11,12 +11,21 @@ const fakeSpace1 = fake.Space({ sys: fake.sys({ createdAt: DEFAULT_CREATED_AT_ST
 const fakeSpace2 = fake.Space({ sys: fake.sys({ createdAt: DEFAULT_CREATED_AT_STRING }) });
 const mockSpaces = [fakeSpace1, fakeSpace2];
 
-jest.mock('states/Navigator', () => ({
-  go: jest.fn(),
+jest.mock('core/react-routing', () => ({
+  // @ts-expect-error mute in tests
+  ...jest.requireActual('core/react-routing'),
+  useSearchParams: jest.fn().mockReturnValue([new URLSearchParams()]),
+  router: {
+    navigate: jest.fn(),
+  },
 }));
 
 const build = (spaces: any) => {
-  render(<SpacesListForMembers spaces={spaces} />);
+  render(
+    <MemoryRouter>
+      <SpacesListForMembers spaces={spaces} />
+    </MemoryRouter>
+  );
 };
 
 describe('SpacesListForMembers', () => {
@@ -90,10 +99,12 @@ describe('SpacesListForMembers', () => {
       within(goToSpaceContainer).getByTestId(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
     ); // click on the "Go to space" btn
 
-    expect(go).toHaveBeenCalledWith({
-      path: ['spaces', 'detail', 'home'],
-      params: { spaceId: fakeSpace1.sys.id },
-      options: { reload: true },
-    });
+    expect(router.navigate).toHaveBeenCalledWith(
+      {
+        path: 'spaces.detail.home',
+        spaceId: fakeSpace1.sys.id,
+      },
+      { reload: true }
+    );
   });
 });

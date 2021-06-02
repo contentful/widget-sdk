@@ -5,7 +5,6 @@ import {
 } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { updateUserInSegment } from 'analytics/Analytics';
-import { go } from 'states/Navigator';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { router } from 'core/react-routing';
 
@@ -48,11 +47,10 @@ export default function WithLink({ link, trackingElementId, intercomKey, childre
     // set current step after we have successfully transitioned to the new step
     if (path !== 'spaces.detail.home') {
       store.set(`${getStoragePrefix()}:currentStep`, { path, params });
-      router.navigate({ path, ...params });
-    } else {
-      go({ path, params });
     }
+    router.navigate({ path, ...params });
   };
+
   return children(move);
 }
 
