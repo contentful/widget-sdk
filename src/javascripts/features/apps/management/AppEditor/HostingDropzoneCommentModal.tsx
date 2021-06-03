@@ -22,6 +22,10 @@ const styles = {
   }),
   spinner: css({ marginRight: tokens.spacingXs }),
   icon: css({ marginRight: tokens.spacingXs }),
+  validationResult: css({
+    marginTop: tokens.spacingM,
+    marginBottom: tokens.spacingM,
+  }),
 };
 
 interface Cancel {
@@ -38,6 +42,7 @@ interface AppUploadCommentModalProps {
   onClose: (result: ModalResult) => void;
   addProgressListener: (callback: (progress: number) => void) => void;
   uploadRequest: Promise<unknown>;
+  validationResult: { type: string; message: React.ReactNode } | null;
 }
 
 const AppUploadCommentModal: React.FC<AppUploadCommentModalProps> = ({
@@ -45,6 +50,7 @@ const AppUploadCommentModal: React.FC<AppUploadCommentModalProps> = ({
   onClose,
   addProgressListener,
   uploadRequest,
+  validationResult,
 }) => {
   const [uploadFinished, setUploadFinished] = React.useState(false);
 
@@ -90,6 +96,9 @@ const AppUploadCommentModal: React.FC<AppUploadCommentModalProps> = ({
                 </>
               )}
             </span>
+            {validationResult && (
+              <div className={styles.validationResult}>{validationResult.message}</div>
+            )}
             <Typography>
               <Paragraph>
                 Optionally, add a comment that describes this bundle. Tip: Good bundle comments
@@ -130,7 +139,8 @@ const AppUploadCommentModal: React.FC<AppUploadCommentModalProps> = ({
 
 export const openCommentModal = (
   addProgressListener: (callback: (progress: number) => void) => void,
-  uploadRequest: Promise<unknown>
+  uploadRequest: Promise<unknown>,
+  validationResult: { type: string; message: React.ReactNode } | null
 ): Promise<ModalResult> =>
   ModalLauncher.open(({ isShown, onClose }) => {
     return (
@@ -139,6 +149,7 @@ export const openCommentModal = (
         onClose={onClose}
         addProgressListener={addProgressListener}
         uploadRequest={uploadRequest}
+        validationResult={validationResult}
       />
     );
   });

@@ -46,16 +46,20 @@ export function HostingDropzone({
   const { addBundle } = React.useContext(HostingStateContext);
 
   const onDrop = async (acceptedFiles: File[]) => {
-    const errorMessage = await validateBundle(acceptedFiles);
-    if (errorMessage) {
-      Notification.error(errorMessage, { title: 'Invalid bundle' });
+    const validationResult = await validateBundle(acceptedFiles);
+    if (validationResult?.type === 'error') {
+      Notification.error(validationResult.message, { title: 'Invalid bundle' });
     } else {
       const { uploadRequest, addProgressListener, cancelUploadRequest } = createUpload(
         acceptedFiles,
         definition
       );
 
-      const commentModalResult = await openCommentModal(addProgressListener, uploadRequest);
+      const commentModalResult = await openCommentModal(
+        addProgressListener,
+        uploadRequest,
+        validationResult
+      );
 
       if (commentModalResult.kind === 'cancel') {
         cancelUploadRequest();

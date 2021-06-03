@@ -1,5 +1,5 @@
 import { fileContainsAbsolutePath, getEntryFile, validateBundle } from './bundleValidation';
-import { UI_BUNDLE_ERRORS } from './constants';
+import { UI_BUNDLE_ERRORS, UI_BUNDLE_WARNINGS } from './constants';
 
 const fileWithAbsolutePath = new File(['<script src="/absolute/path"></script>'], 'filename', {
   type: 'text/html',
@@ -24,6 +24,13 @@ const fileWithNoLink = new File(['empty'], 'index.html', {
 const entryFile = new File(['<script src="./relative/path"></script>'], 'index.html', {
   type: 'text/html',
 });
+const entryFileWithAbsolutePath = new File(
+  ['<script src="/absolute/path"></script>'],
+  'index.html',
+  {
+    type: 'text/html',
+  }
+);
 
 const zipFile = new File(['this doesnt matter'], 'test.zip', {
   type: 'application/zip',
@@ -63,11 +70,18 @@ describe('bundleValidation', () => {
   describe('validateBundle', () => {
     it('returns empty error when no files included', async () => {
       const errorMessage = await validateBundle([]);
-      expect(errorMessage).toBe(UI_BUNDLE_ERRORS.EMPTY);
+      expect(errorMessage?.type).toBe('error');
+      expect(errorMessage?.message).toBe(UI_BUNDLE_ERRORS.EMPTY);
     });
     it('returns no entry file error when no entry file included', async () => {
       const errorMessage = await validateBundle([fileWithAbsolutePath, fileWithRelativePath]);
-      expect(errorMessage).toBe(UI_BUNDLE_ERRORS.ENTRY_FILE);
+      expect(errorMessage?.type).toBe('error');
+      expect(errorMessage?.message).toBe(UI_BUNDLE_ERRORS.ENTRY_FILE);
+    });
+    it('returns validation warning when there are absolute paths', async () => {
+      const errorMessage = await validateBundle([entryFileWithAbsolutePath]);
+      expect(errorMessage?.type).toBe('warning');
+      expect(errorMessage?.message).toBe(UI_BUNDLE_WARNINGS.ABSOLUTE_PATH);
     });
     it('returns null when one zip file', async () => {
       const errorMessage = await validateBundle([zipFile]);

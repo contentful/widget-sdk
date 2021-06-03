@@ -1,3 +1,5 @@
+import React from 'react';
+import { Note, TextLink } from '@contentful/forma-36-react-components';
 import { WidgetLocation } from '@contentful/widget-renderer';
 
 /**
@@ -49,4 +51,19 @@ export const UI_BUNDLE_ERRORS = {
   EMPTY: 'You tried to upload an empty folder',
   UNKNOWN: 'Something went wrong while uploading your bundle. Please try again.',
   ENTRY_FILE: 'Make sure your bundle includes a valid index.html file in its root folder.',
+};
+
+export const UI_BUNDLE_WARNINGS = {
+  ABSOLUTE_PATH: (
+    <Note noteType="warning">
+      This bundle uses absolute paths. Please use{' '}
+      <TextLink
+        target="_blank"
+        rel="noreferrer"
+        href="https://www.contentful.com/developers/docs/extensibility/app-framework/app-bundle/#limitations">
+        relative paths
+      </TextLink>{' '}
+      instead for correct rendering.
+    </Note>
+  ),
 };
