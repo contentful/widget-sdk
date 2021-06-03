@@ -73,13 +73,16 @@ const fetchData =
       });
     }
 
-    const inviteCardExperimentEnabled = await getVariation(FLAGS.NEW_COWORKER_INVITE_CARD, {
-      organizationId: currentOrganizationId,
-    });
+    const inviteCardExperimentEnabled = await getVariation(
+      FLAGS.EXPERIMENT_NEW_COWORKER_INVITE_CARD,
+      {
+        organizationId: currentOrganizationId,
+      }
+    );
 
     if (inviteCardExperimentEnabled !== null) {
       Analytics.tracking.experimentStart({
-        experiment_id: FLAGS.NEW_COWORKER_INVITE_CARD,
+        experiment_id: FLAGS.EXPERIMENT_NEW_COWORKER_INVITE_CARD,
         experiment_variation: inviteCardExperimentEnabled ? 'treatment' : 'control',
         space_id: currentSpaceId,
         organization_id: currentOrganizationId,

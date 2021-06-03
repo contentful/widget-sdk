@@ -59,7 +59,7 @@ export enum FLAGS {
   NEW_ONBOARDING_FLOW = 'feature-growth-04-2021-new-onboarding-flow',
   RECOVERABLE_ONBOARDING_FLOW = 'feature-growth-04-2021-recoverable-onboarding-flow',
   EXPERIMENT_ONBOARDING_MODAL = 'test-growth-05-2021-onboarding-modal',
-  NEW_COWORKER_INVITE_CARD = 'feature-growth-05-2021-new-coworker-invite-card',
+  EXPERIMENT_NEW_COWORKER_INVITE_CARD = 'test-growth-06-2021-new-coworker-invite-card',
   EXPERIENCE_SDK_PAGE_LOCATION = 'feature-ext-05-2021-experience-sdk-page-location',
   RICH_TEXT_TABLES = 'feature-shelley-05-2021-rich-text-tables',
   CUSTOM_TRACKING_FIELD_FOR_SLUGS = 'dante-2021-05-custom-slug-field',
@@ -93,7 +93,6 @@ const FALLBACK_VALUES = {
   [FLAGS.V1_MIGRATION_2021_WARNING]: false,
   [FLAGS.NEW_ONBOARDING_FLOW]: false,
   [FLAGS.RECOVERABLE_ONBOARDING_FLOW]: false,
-  [FLAGS.NEW_COWORKER_INVITE_CARD]: false,
   [FLAGS.EXPERIENCE_SDK_PAGE_LOCATION]: false,
   [FLAGS.RICH_TEXT_TABLES]: false,
   [FLAGS.EXPERIMENT_ONBOARDING_MODAL]: null,
@@ -108,6 +107,7 @@ const FALLBACK_VALUES = {
 
   [FLAGS.EXPERIMENT_A_A]: null,
   [FLAGS.EXPERIMENT_ONBOARDING_MODAL]: null,
+  [FLAGS.EXPERIMENT_NEW_COWORKER_INVITE_CARD]: null,
 
   // See above
   [FLAGS.__FLAG_FOR_UNIT_TESTS__]: 'fallback-value',
