@@ -48,7 +48,8 @@ import { usePubSubClient } from 'core/hooks';
 import LocaleStore from 'services/localeStore';
 import { getSpaceContext } from 'classes/spaceContext';
 import { useRouteNavigate } from 'core/react-routing';
-import { FLAGS, getVariation } from 'LaunchDarkly';
+import { FLAGS } from 'LaunchDarkly';
+import { useVariation } from 'core/hooks/useVariation';
 import { createAppConfigWidgetSDK, AppInstallationEvents } from '@contentful/experience-sdk';
 import {
   createDialogCallbacks,
@@ -136,9 +137,8 @@ export function AppRoute(props: Props) {
     );
   }, [app]);
 
-  const [useExperienceSDK, setUseExperienceSDK] = React.useState<boolean>(false);
+  const [useExperienceSDK] = useVariation<boolean>(FLAGS.EXPERIENCE_SDK_APP_CONFIG_LOCATION);
   React.useEffect(() => {
-    getVariation(FLAGS.EXPERIENCE_SDK_APP_CONFIG_LOCATION, { organizationId }).then(setUseExperienceSDK);
     getCustomWidgetLoader().then(setWidgetLoader);
   }, []);
 
@@ -184,7 +184,6 @@ export function AppRoute(props: Props) {
             dialog: createDialogCallbacks(),
             appApi:{
               setReady: onAppMarkedAsReady,
-              getInstallation: props.appHookBus.getInstallation,
               refreshPublishedContentTypes() {
                 GlobalEventBus.emit(GlobalEvents.RefreshPublishedContentTypes);
               }
