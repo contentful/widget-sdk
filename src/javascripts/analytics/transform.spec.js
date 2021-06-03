@@ -4,11 +4,11 @@ jest.mock('./transformers/Generic', () => () => ({ foo: 'bar' }));
 
 describe('Events transformation', () => {
   it('#transformEvent()', function () {
-    const transformed = transformEvent('learn:language_selected', {});
+    const transformed = transformEvent('tracking:invalid_event', {});
     expect(transformed).toEqual({ foo: 'bar' });
   });
 
   it('#getSnowplowSchemaForEvent()', function () {
-    expect(getSnowplowSchemaForEvent('learn:language_selected').name).toBe('generic');
+    expect(getSnowplowSchemaForEvent('tracking:invalid_event').name).toBe('generic');
   });
 });

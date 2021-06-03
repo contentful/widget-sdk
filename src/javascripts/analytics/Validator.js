@@ -35,7 +35,7 @@ export const validEvents = {
     'command_copied',
   ],
   notification: ['action_performed'],
-  learn: ['step_clicked', 'language_selected', 'resource_selected'],
+  learn: ['step_clicked', 'resource_selected'],
   space_switcher: ['opened', 'create_clicked', 'space_switched'],
   space: ['template_selected', 'create'],
   space_wizard: [

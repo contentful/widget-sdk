@@ -92,7 +92,6 @@ registerSnowplowEvent(
   AppUninstallationReasonTransformer
 );
 
-registerGenericEvent('learn:language_selected');
 registerGenericEvent('learn:resource_selected');
 registerGenericEvent('learn:step_clicked');
 
