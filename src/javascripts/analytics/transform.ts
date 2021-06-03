@@ -92,9 +92,6 @@ registerSnowplowEvent(
   AppUninstallationReasonTransformer
 );
 
-registerGenericEvent('reference_editor:create_entry');
-registerGenericEvent('reference_editor:edit_entry');
-
 registerGenericEvent('entity_button:click');
 
 registerGenericEvent('incoming_links:dialog_open');
