@@ -167,7 +167,6 @@ export const validEvents = {
   teams_in_space: ['teams_added', 'users_added', 'users_to_teams_page_navigation'],
   entity_list: ['bulk_action_performed'],
   asset_list: ['add_asset_single', 'add_asset_multiple'],
-  app_management: ['created', 'deleted', 'updated'],
   tracking: ['invalid_event'],
   feedback: ['give'],
   cta_clicked: CTA_EVENTS,

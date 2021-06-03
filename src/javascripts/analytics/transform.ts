@@ -389,10 +389,6 @@ registerSnowplowEvent('global:dialog', 'dialog', DialogTransformer);
 registerSnowplowEvent('jobs:create', 'jobs_create', JobsCreateTransformer);
 registerSnowplowEvent('jobs:cancel', 'jobs_cancel', JobsCancelTransformer);
 
-registerGenericEvent('app_management:created');
-registerGenericEvent('app_management:deleted');
-registerGenericEvent('app_management:updated');
-
 registerGenericEvent('widget_renderer:fallback_warning_shown');
 registerGenericEvent('widget_renderer:fallback_rendered');
 
