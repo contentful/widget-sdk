@@ -17,7 +17,6 @@ import BulkEditor from './transformers/BulkEditor';
 import SlideInEditor from './transformers/SlideInEditor';
 import TranslationSidebar from './transformers/TranslationSidebar';
 import Snapshot from './transformers/Snapshot';
-import InviteUserExperiment from './transformers/InviteUserExperiment';
 import SearchAndViews from './transformers/SearchAndViews';
 import ElementClickTransform from './transformers/ElementClick';
 import EntryViewTransform from './transformers/EntryView';
@@ -91,13 +90,6 @@ registerSnowplowEvent(
   'app_uninstallation_reason',
   AppUninstallationReasonTransformer
 );
-
-registerGenericEvent('learn:language_selected');
-registerGenericEvent('learn:resource_selected');
-registerGenericEvent('learn:step_clicked');
-
-registerGenericEvent('reference_editor:create_entry');
-registerGenericEvent('reference_editor:edit_entry');
 
 registerGenericEvent('entity_button:click');
 
@@ -246,14 +238,10 @@ registerGenericEvent('targeted_cta_impression:purchase_app_via_trial');
 registerSnowplowEvent('global:app_loaded', 'app_open', AppOpen);
 registerGenericEvent('global:logout_clicked');
 
-registerSnowplowEvent('invite_user:learn', 'generic', InviteUserExperiment);
-registerSnowplowEvent('invite_user:create_space', 'generic', InviteUserExperiment);
-
 registerGenericEvent('perf:dom_content_loaded');
 registerGenericEvent('perf:first_contentful_paint');
 registerGenericEvent('perf:time_to_interactive');
 
-registerGenericEvent('entity_state:revert');
 registerGenericEvent('entity_list:bulk_action_performed');
 registerGenericEvent('asset_list:add_asset_single');
 registerGenericEvent('asset_list:add_asset_multiple');
@@ -400,12 +388,6 @@ registerSnowplowEvent('text_editor:action', 'feature_text_editor', FeatureTextEd
 registerSnowplowEvent('global:dialog', 'dialog', DialogTransformer);
 registerSnowplowEvent('jobs:create', 'jobs_create', JobsCreateTransformer);
 registerSnowplowEvent('jobs:cancel', 'jobs_cancel', JobsCancelTransformer);
-
-registerGenericEvent('telemetry:measurement');
-
-registerGenericEvent('app_management:created');
-registerGenericEvent('app_management:deleted');
-registerGenericEvent('app_management:updated');
 
 registerGenericEvent('widget_renderer:fallback_warning_shown');
 registerGenericEvent('widget_renderer:fallback_rendered');
