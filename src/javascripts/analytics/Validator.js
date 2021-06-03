@@ -165,7 +165,6 @@ export const validEvents = {
   perf: ['dom_content_loaded', 'first_contentful_paint', 'time_to_interactive'],
   jobs: ['cancel', 'create'],
   teams_in_space: ['teams_added', 'users_added', 'users_to_teams_page_navigation'],
-  entity_state: ['revert'],
   entity_list: ['bulk_action_performed'],
   asset_list: ['add_asset_single', 'add_asset_multiple'],
   telemetry: ['measurement'],

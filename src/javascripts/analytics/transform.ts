@@ -242,7 +242,6 @@ registerGenericEvent('perf:dom_content_loaded');
 registerGenericEvent('perf:first_contentful_paint');
 registerGenericEvent('perf:time_to_interactive');
 
-registerGenericEvent('entity_state:revert');
 registerGenericEvent('entity_list:bulk_action_performed');
 registerGenericEvent('asset_list:add_asset_single');
 registerGenericEvent('asset_list:add_asset_multiple');
