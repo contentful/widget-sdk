@@ -17,7 +17,6 @@ import BulkEditor from './transformers/BulkEditor';
 import SlideInEditor from './transformers/SlideInEditor';
 import TranslationSidebar from './transformers/TranslationSidebar';
 import Snapshot from './transformers/Snapshot';
-import InviteUserExperiment from './transformers/InviteUserExperiment';
 import SearchAndViews from './transformers/SearchAndViews';
 import ElementClickTransform from './transformers/ElementClick';
 import EntryViewTransform from './transformers/EntryView';
@@ -238,9 +237,6 @@ registerGenericEvent('targeted_cta_impression:purchase_app_via_trial');
 
 registerSnowplowEvent('global:app_loaded', 'app_open', AppOpen);
 registerGenericEvent('global:logout_clicked');
-
-registerSnowplowEvent('invite_user:learn', 'generic', InviteUserExperiment);
-registerSnowplowEvent('invite_user:create_space', 'generic', InviteUserExperiment);
 
 registerGenericEvent('perf:dom_content_loaded');
 registerGenericEvent('perf:first_contentful_paint');

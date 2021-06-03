@@ -124,7 +124,6 @@ export const validEvents = {
   editor_workbench: ['tab_open'],
   asset: ['create'],
   api_key: ['create', 'clipboard_copy', 'boilerplate'],
-  invite_user: ['learn', 'create_space'],
   personal_access_token: ['action'],
   element: ['click'],
   account_dropdown: ['pending_tasks_fetched'],
