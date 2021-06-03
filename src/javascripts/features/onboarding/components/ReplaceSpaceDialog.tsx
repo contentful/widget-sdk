@@ -73,10 +73,13 @@ export const ReplaceSpaceDialog = ({ isShown, onConfirm, onClose, spaceId }: Pro
       await TokenStore.refresh();
 
       track(`onboarding_replace:replace`);
-      onConfirm(newSpace.sys.id);
+      try {
+        await onConfirm(newSpace.sys.id);
+      } finally {
+        setDeleting(false);
+        onClose();
+      }
     }
-    setDeleting(false);
-    onClose();
   };
 
   return (
