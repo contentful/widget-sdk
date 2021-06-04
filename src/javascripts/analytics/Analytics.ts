@@ -1,10 +1,14 @@
 import * as Config from 'Config';
-import segment, { Plan } from 'analytics/segment';
+import segment, { Plan, transformSnowplowToSegmentData } from 'analytics/segment';
 import * as snowplow from 'analytics/snowplow';
 import stringifySafe from 'json-stringify-safe';
 import { prepareUserData } from 'analytics/UserData';
 import _ from 'lodash';
-import { eventExists, getSnowplowSchemaForEvent, transformEvent } from 'analytics/transform';
+import {
+  eventExists,
+  getSnowplowSchemaForEvent,
+  transformEventForSnowplow,
+} from 'analytics/transform';
 import { TransformedEventData, EventData } from './types';
 import { captureError, captureWarning } from 'core/monitoring';
 import * as analyticsConsole from 'analytics/analyticsConsoleController';
@@ -104,12 +108,15 @@ export function track(event: string, data?: EventData): void {
     data = _.isObject(data) ? _.cloneDeep(data) : {};
     data = removeCircularRefs(Object.assign({}, getBasicPayload(), data));
 
-    const transformedData = transformEvent(event, data);
+    const transformedSnowplowData = transformEventForSnowplow(event, data);
+    const transformedSegmentData = transformSnowplowToSegmentData(event, transformedSnowplowData);
 
-    segment.track(event, transformedData);
-    snowplow.track(event, transformedData);
-    analyticsConsole.add(event, transformedData, data);
-    logEventPayloadSize(event, transformedData);
+    segment.track(event, transformedSegmentData);
+    snowplow.track(event, transformedSnowplowData);
+
+    analyticsConsole.add(event, { rawData: data, transformedSegmentData, transformedSnowplowData });
+
+    logEventPayloadSize(event, transformedSnowplowData);
   } catch (error) {
     // ensure no errors caused by analytics will break business logic
     captureError(error, {
@@ -157,7 +164,7 @@ export const tracking: Plan = _.mapValues(segment.plan, (planFn, planKey) => (pr
     }
 
     // TODO: Catch errors via `onViolation` Segment TypeWriter option and display in analytics console.
-    analyticsConsole.add(planKey, likeTransformedData, props);
+    analyticsConsole.add(planKey, { rawData: props, transformedSnowplowData: likeTransformedData });
   } catch (error) {
     // ensure no errors caused by analytics will break business logic
     captureError(error, {

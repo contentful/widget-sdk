@@ -1,7 +1,6 @@
 import { snakeCase } from 'lodash';
 import { getSnowplowSchema } from './SchemasSnowplow';
 import * as segmentTypewriterPlans from './events';
-import { getSegmentSchema } from './SchemasSegment';
 import { TransformedEventData, EventData } from './types';
 
 import EntityAction from './transformers/EntityAction';
@@ -162,12 +161,12 @@ registerBulkEditorEvent('bulk_editor:open_slide_in');
 registerBulkEditorEvent('bulk_editor:close');
 registerBulkEditorEvent('bulk_editor:status');
 
-registerSlideInEditorEvent('slide_in_editor:peek_click').enableSegmentExperiment();
-registerSlideInEditorEvent('slide_in_editor:arrow_back').enableSegmentExperiment();
-registerSlideInEditorEvent('slide_in_editor:bulk_editor_close').enableSegmentExperiment();
-registerSlideInEditorEvent('slide_in_editor:open').enableSegmentExperiment();
-registerSlideInEditorEvent('slide_in_editor:open_create').enableSegmentExperiment();
-registerSlideInEditorEvent('slide_in_editor:delete').enableSegmentExperiment();
+registerSlideInEditorEvent('slide_in_editor:peek_click');
+registerSlideInEditorEvent('slide_in_editor:arrow_back');
+registerSlideInEditorEvent('slide_in_editor:bulk_editor_close');
+registerSlideInEditorEvent('slide_in_editor:open');
+registerSlideInEditorEvent('slide_in_editor:open_create');
+registerSlideInEditorEvent('slide_in_editor:delete');
 
 registerTranslationSidebarEvent('translation_sidebar:toggle_widget_mode');
 registerTranslationSidebarEvent('translation_sidebar:deselect_active_locale');
@@ -346,11 +345,7 @@ registerSegmentEvent('search:filter_removed', 'search:filter_removed', SearchAnd
 // TODO: Re-implement tracking or remove:
 registerSegmentEvent('search:query_changed', 'search:query_changed', SearchAndViewsWithSequence);
 
-registerSnowplowEvent(
-  'entry_editor:view',
-  'entry_view',
-  EntryViewTransform
-).enableSegmentExperiment();
+registerSnowplowEvent('entry_editor:view', 'entry_view', EntryViewTransform);
 registerGenericEvent('entry_editor:disabled_fields_visibility_toggled');
 registerGenericEvent('entry_editor:created_with_same_ct');
 
@@ -358,7 +353,7 @@ registerSnowplowEvent(
   'entity_editor:edit_conflict',
   'entity_editor_edit_conflict',
   EntityEditorConflictTransform
-).enableSegmentExperiment('entity_editor_edit_conflict_2');
+);
 
 registerSegmentEvent(
   'reference_editor_action:create',
@@ -433,7 +428,12 @@ registerGenericEvent('space_usage_summary:export');
  * @deprecated We're migrating away from Snowplow to Segment
  */
 function registerSnowplowEvent(event: string, schema: string, transformer: Transformer) {
-  return registerEvent(event, { snowplow: schema, segment: event }, transformer);
+  // Use Snowplow schemas 1:1 in Segment for legacy web app events.
+  // For "generic" events we use the internal web app event ID, e.g. `global:space_changed` instead of `generic`.
+  const segmentSchema = schema === 'generic' ? snakeCase(event) : schema;
+
+  // TODO: Ideally the `event` would be available as context in the `segment_contentful.tracks` table.
+  registerEvent(event, { snowplow: schema, segment: segmentSchema }, transformer);
 }
 
 /**
@@ -554,9 +554,10 @@ export function eventExists(event) {
 }
 
 /**
- * Returns data transformed for Snowplow/Segment
+ * Returns event data transformed, suitable for `snowplow.track()`.
+ * This data can be used with `segment.track()` by passing it to `transformSnowplowToSegmentData()` first.
  */
-export function transformEvent(event: string, data: EventData): TransformedEventData {
+export function transformEventForSnowplow(event: string, data: EventData): TransformedEventData {
   const transformer = _events[event].transformer;
   return transformer(event, data);
 }
@@ -577,20 +578,6 @@ export function getSegmentSchemaForEvent(event: string) {
     // Event is already tracked via `Analytics.tracking.` so it's no longer registered here.
     return null;
   }
-  const schema = getSegmentSchema(schemaName);
-  if (schema) {
-    return schema; // schema defined in SchemasSegment.ts
-  }
-  // Segment schemas that aren't registered explicitly are assumed to exist due to the Segment -> Snowplow migration.
-  // Schemas were auto generated and named after the internal web app event names. Due to a previous tracking bug
-  // their data is required to be wrapped in an additional `{ data }`.
-  return { name: schemaName, version: '1', wrapPayloadInData: true };
-}
-
-export function getSegmentExperimentSchemaForEvent(event: string) {
-  const schemaName = _events[event]?.segmentExperimentSchema;
-  if (!schemaName) {
-    return null;
-  }
-  return { name: schemaName, version: '1', wrapPayloadInData: false };
+  const snowplowSchema = getSnowplowSchemaForEvent(event);
+  return { name: schemaName, isLegacySnowplowGeneric: snowplowSchema?.name === 'generic' };
 }

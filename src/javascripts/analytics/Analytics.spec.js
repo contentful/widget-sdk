@@ -1,6 +1,7 @@
 jest.mock('analytics/segment', () => {
   return {
     __esModule: true,
+    ...jest.requireActual('analytics/segment'),
     default: ['enable', 'disable', 'identify', 'track', 'page'].reduce(
       (acc, key) => ({
         ...acc,
@@ -31,8 +32,11 @@ jest.mock('analytics/analyticsConsoleController', () => {
 });
 
 jest.mock('analytics/transform', () => ({
-  transformEvent: jest.fn().mockImplementation((_, data) => data),
+  transformEventForSnowplow: jest.fn().mockImplementation((_, data) => ({ data })),
   eventExists: jest.fn().mockReturnValue(true),
+  getSegmentSchemaForEvent: jest
+    .fn()
+    .mockReturnValue({ name: 'event', isLegacySnowplowGeneric: false }),
 }));
 
 describe('Analytics', () => {
@@ -138,14 +142,18 @@ describe('Analytics', () => {
     it('calls analytics services if event is valid', function () {
       const { analytics, segment, Snowplow } = getAllDeps();
       analytics.enable(userData);
-      analytics.track('Event', { data: 'foobar' });
+      analytics.track('Event', { foo: 'bar' });
       expect(segment.track).toHaveBeenCalledWith('Event', {
-        data: 'foobar',
-        userId: userData.sys.id,
+        payload: {
+          foo: 'bar',
+          userId: userData.sys.id,
+        },
       });
       expect(Snowplow.track).toHaveBeenCalledWith('Event', {
-        data: 'foobar',
-        userId: userData.sys.id,
+        data: {
+          foo: 'bar',
+          userId: userData.sys.id,
+        },
       });
     });
 
@@ -166,12 +174,16 @@ describe('Analytics', () => {
       analytics.track('Event', { data: 'foobar' });
 
       expect(segment.track).toHaveBeenCalledWith('tracking:invalid_event', {
-        event: 'Event',
-        userId: 'userid',
+        payload: {
+          event: 'Event',
+          userId: 'userid',
+        },
       });
       expect(Snowplow.track).toHaveBeenCalledWith('tracking:invalid_event', {
-        event: 'Event',
-        userId: 'userid',
+        data: {
+          event: 'Event',
+          userId: 'userid',
+        },
       });
 
       expect(segment.track).not.toHaveBeenCalledWith('Event', {
@@ -189,7 +201,7 @@ describe('Analytics', () => {
 
       analytics.enable(userData);
       analytics.track('EventName', { data: 'some data' });
-      expect(transform.transformEvent).toHaveBeenCalledWith('EventName', {
+      expect(transform.transformEventForSnowplow).toHaveBeenCalledWith('EventName', {
         data: 'some data',
         userId: userData.sys.id,
       });

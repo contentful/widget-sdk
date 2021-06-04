@@ -1,10 +1,5 @@
-import { get as getAtPath } from 'lodash';
+import { SnowplowSchema as Schema } from './types';
 
-type Schema = {
-  name: string;
-  version: string;
-  path: string;
-};
 /**
  * Maps analytics event names and schema names to Snowplow schema paths
  */
@@ -310,5 +305,5 @@ function buildPath(schema: Pick<Schema, 'name' | 'version'>) {
  * Returns schema for the provided schema name
  */
 export function getSnowplowSchema(schemaName: string) {
-  return getAtPath(_schemas, schemaName);
+  return _schemas[schemaName];
 }

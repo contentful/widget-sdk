@@ -7,9 +7,12 @@ import { captureError } from 'core/monitoring';
 import * as Config from 'Config';
 import * as Intercom from 'services/intercom';
 import { window } from 'core/services/window';
-import { getSegmentSchemaForEvent, getSegmentExperimentSchemaForEvent } from './transform';
-import { TransformedEventData } from './types';
-import { Schema } from './SchemasSegment';
+import { getSegmentSchemaForEvent } from './transform';
+import {
+  TransformedEventData,
+  TransformedSegmentEventData,
+  SegmentSchema as Schema,
+} from './types';
 import * as plan from './events';
 import { Options, Callback } from './generated/segment';
 
@@ -168,13 +171,10 @@ export default {
    * Sends a single event with data to
    * the selected integrations.
    */
-  track: function track(event: string, data: TransformedEventData): void {
+  track: function track(event: string, data: TransformedSegmentEventData): void {
     const schema = getSegmentSchemaForEvent(event) as Schema;
-    const eventPayload = buildPayload(schema, data);
 
-    bufferedTrack(schema.name, eventPayload, { integrations: TRACK_INTEGRATIONS });
-
-    experimentalTrack(event, data);
+    bufferedTrack(schema.name, data.payload, { integrations: TRACK_INTEGRATIONS });
   },
   /**
    * Sets current page.
@@ -187,32 +187,24 @@ export default {
   getIntegrations,
 };
 
-export function buildPayload(schema: Schema, data: TransformedEventData): object {
-  return schema.wrapPayloadInData
-    ? data // `data` might contain other legacy props `schema` and `contexts` next to `data.data`
-    : data.data;
-}
+export function transformSnowplowToSegmentData(
+  event: string,
+  data: TransformedEventData,
+  environmentId?: string
+): TransformedSegmentEventData {
+  const schema = getSegmentSchemaForEvent(event) as Schema;
 
-/**
- * This is tracking some legacy events a new way to avoid certain issues with the Snowplow -> Segment
- * migration so far.
- * Currently we're only tracking a few events this way (see transform.ts for a list) while also tracking
- * all events the old way until we're certain we don't wan't to iterate further on this approach and
- * switch to it for all events.
- * In the long term, all events should be migrated to Typewriter (Analytics.tracking. functions).
- */
-function experimentalTrack(event: string, data: TransformedEventData) {
-  const schema = getSegmentExperimentSchemaForEvent(event) as Schema;
-  if (schema) {
-    const eventPayload = buildExperimentPayload(data);
-    bufferedTrack(schema.name, eventPayload, {
-      integrations: { All: false }, // Do not track to any integrations for this experiment.
-    });
+  // TODO: Apply below optimizations for `generic` events with the following differences to Snowplow:
+  //  - There's no single `generic` schema. Instead, use the snake cased web app event ID as schema name.
+  //    E.g. `global_space_changed` instead of `generic` for `global:space_changed`.
+  //  - merge all generic event `payload` field props into `data` and delete `data.payload` and `data.scope`.
+  //  - Apply all changes as for non-generic events below.
+  if (schema.isLegacySnowplowGeneric) {
+    // For now we keep tracking Snowplow `generic` schema events the old way and even wrap { data } so that
+    // event fields consistently keep the `data_` prefix.
+    return { payload: { ...data } };
   }
-}
-
-export function buildExperimentPayload(data: TransformedEventData): object {
-  const payload = {
+  const objPayload = {
     // There might be some events with transformers not sticking to returning a `TransformedEventData` object.
     // E.g. `space_purchase:...` events. For these, also include all unexpected props into the event payload.
     ..._.omit(data, ['contexts', 'data', 'schema']),
@@ -220,6 +212,13 @@ export function buildExperimentPayload(data: TransformedEventData): object {
     // https://contentful.atlassian.net/wiki/spaces/ENG/pages/3037626506/2021-04-30+Web+app+Segment+migration+issues#1.-data_-prefixes-on-migrated-schema-fields
     ...data.data,
   } as any;
+  // Segment takes properties that are objects and turns them into separate columsn. E.g. { foo: { bar: 'baz' } }
+  // would result in a `foo_bar` field instead of a `foo` field with stringified JSON as in Snowplow. This is relevant
+  // for e.g. the entity_editor_edit_conflict's `precomputed` or feature_text_editor's `additional_data`.
+  // For arrays, Segment seems to stringify by itself, so no action required.
+  const payload = _.mapValues(objPayload, (value) =>
+    _.isPlainObject(value) ? JSON.stringify(value) : value
+  );
   delete payload.executing_user_id; // We have Segment's `user_id` which is added for us.
 
   if (data.contexts && !payload.contexts) {
@@ -229,15 +228,6 @@ export function buildExperimentPayload(data: TransformedEventData): object {
     // "contexts" data should probably just be added to the main event.
     payload.contexts = JSON.stringify(data.contexts, null, 0);
   }
-  // TODO: There's a HUGE opportunity to improve "generic" events in Segment. Roughly like this:
-  // if (schema.isGenericEvent) { // A.isGenericEvent could be easily added in `transform.ts`'s `registerSnowplowEvent()`.
-  //   // Context: In Snowplow, the "payload" was a JSON blob for arbitrary schemaless tracking data as a means for
-  //   //  product teams to quickly add new events without the overhead of defining a schema first.
-  //   delete payload.payload;
-  //   Object.assign(payload, data.data.payload);
-  // }
-
-  // TODO: Enrich all events with `environment_key` if possible.
 
   const RENAME_PROPS = {
     space_id: 'space_key',
@@ -245,10 +235,14 @@ export function buildExperimentPayload(data: TransformedEventData): object {
     organization_id: 'organization_key',
   };
   _.forEach(RENAME_PROPS, (renamed, original) => {
-    if (payload[original]) {
+    if (original in payload) {
       payload[renamed] = payload[original];
       delete payload[original];
     }
   });
-  return payload;
+  // Add `environment_key` if event has a `space_key`. Events that aren't space scoped won't be env scoped either.
+  if (!payload.environment_key && environmentId && payload.space_key) {
+    payload.environment_key = environmentId;
+  }
+  return { payload };
 }
