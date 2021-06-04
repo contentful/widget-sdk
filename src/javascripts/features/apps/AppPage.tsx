@@ -37,6 +37,7 @@ import {
   buildAppDefinitionWidget,
   WidgetNamespace,
   WidgetLoader,
+  AppStages,
 } from '@contentful/widget-renderer';
 import { MarketplaceApp } from 'features/apps-core';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
@@ -137,7 +138,7 @@ export function AppRoute(props: Props) {
     );
   }, [app]);
 
-  const [useExperienceSDK] = useVariation<boolean>(FLAGS.EXPERIENCE_SDK_APP_CONFIG_LOCATION);
+  const [useExperienceSDK] = useVariation<boolean>(FLAGS.EXPERIENCE_SDK_APP_CONFIG_LOCATION, false);
   React.useEffect(() => {
     getCustomWidgetLoader().then(setWidgetLoader);
   }, []);
@@ -182,7 +183,7 @@ export function AppRoute(props: Props) {
               },
             }),
             dialog: createDialogCallbacks(),
-            appApi:{
+            app:{
               setReady: onAppMarkedAsReady,
               refreshPublishedContentTypes() {
                 GlobalEventBus.emit(GlobalEvents.RefreshPublishedContentTypes);
@@ -195,7 +196,18 @@ export function AppRoute(props: Props) {
             })
           },
         }),
-        onAppHook: noop,
+        onAppHook: (stage: AppStages, result: any) => {
+          if (stage !== AppStages.PreInstall) {
+            // We only handle results of pre install hooks, abort.
+            return;
+          }
+
+          if (result === false) {
+            props.appHookBus.emit(APP_EVENTS_IN.MISCONFIGURED);
+          } else {
+            props.appHookBus.emit(APP_EVENTS_IN.CONFIGURED, { config: result });
+          }
+        },
       };
     } else {
       return localCreateAppConfigWidgetSDK({
