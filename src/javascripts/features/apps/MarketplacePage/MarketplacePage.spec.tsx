@@ -9,8 +9,6 @@ import { MemoryRouter } from 'core/react-routing';
 
 jest.mock('app/common/MarkdownRenderer', () => () => null);
 
-jest.mock('MicroBackendsClient', () => () => ({}));
-
 jest.mock('access_control/AccessChecker', () => ({
   getSectionVisibility: () => ({ apps: true }),
 }));

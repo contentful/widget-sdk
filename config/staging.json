@@ -8,7 +8,7 @@
   "marketingUrl": "https://www.flinkly.com",
   "main_domain": "flinkly.com",
   "toolsServiceUrl": "https://tools.flinkly.com",
-  "microBackendsUrl": "https://q1bbmbmz6d.execute-api.us-east-1.amazonaws.com/backends",
+  "telemetryUrl": "https://q1bbmbmz6d.execute-api.us-east-1.amazonaws.com/backends/telemetry",
   "contentful": {
     "apiUrl": "api.contentful.com",
     "cdaApiUrl": "cdn.contentful.com",

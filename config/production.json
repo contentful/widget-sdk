@@ -8,7 +8,7 @@
   "marketingUrl": "https://www.contentful.com",
   "main_domain": "contentful.com",
   "toolsServiceUrl": "https://tools.contentful.com",
-  "microBackendsUrl": "https://lmppvs0wzi.execute-api.us-east-1.amazonaws.com/backends",
+  "telemetryUrl": "https://lmppvs0wzi.execute-api.us-east-1.amazonaws.com/backends/telemetry",
   "contentful": {
     "spaceTemplateEntryContentTypeId": "17WjnjeALEOeSyuiMI4QOW",
     "cdaApiUrl": "cdn.contentful.com",

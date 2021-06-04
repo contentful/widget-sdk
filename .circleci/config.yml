@@ -180,7 +180,7 @@ orbs:
               path: test/cypress/screenshots
 
 parameters:
-  # Required for microbackends side contract verification
+  # Required for telemetry side contract verification
   contract_url:
     type: string
     default: ''
@@ -312,16 +312,6 @@ jobs:
       - gh-comment:
           file: sniffer-<< pipeline.id >>.md
           reference: sniffer-build-stats
-      - run:
-          name: Deploy micro-backends
-          command: |
-            export MICRO_BACKENDS_VERSION="0.8.0"
-            export AWS_REGION="$MICRO_BACKENDS_AWS_REGION"
-            export AWS_ACCESS_KEY_ID="$MICRO_BACKENDS_AWS_ACCESS_KEY_ID"
-            export AWS_SECRET_ACCESS_KEY="$MICRO_BACKENDS_AWS_SECRET_ACCESS_KEY"
-
-            echo "Using @contentful/micro-backends@$MICRO_BACKENDS_VERSION"
-            npx "@contentful/micro-backends@$MICRO_BACKENDS_VERSION" "micro-backends" "rev-$CIRCLE_SHA1"
       - persist_to_workspace:
           root: .
           paths:
