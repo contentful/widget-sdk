@@ -33,6 +33,7 @@ import { checkComposeIsInstalled } from 'features/assembly-types';
 import { ASSEMBLY_TYPES, getAlphaHeader } from 'alphaHeaders';
 import { router, useRouteNavigate } from 'core/react-routing';
 import { TABS } from './EditorFieldTabs';
+import { useContentTypeTracking } from '../tracking';
 
 export function useCreateActions(props: { isNew?: boolean; contentTypeId?: string }) {
   const navigate = useRouteNavigate();
@@ -50,8 +51,10 @@ export function useCreateActions(props: { isNew?: boolean; contentTypeId?: strin
   // TODO: remove 'spaceContext'
   const spaceContext = getSpaceContext();
 
-  const { currentSpace, currentOrganizationId } = useSpaceEnvContext();
+  const spaceEnvContext = useSpaceEnvContext();
   const { currentSpaceContentTypes } = useSpaceEnvContentTypes();
+  const { fieldsUpdated } = useContentTypeTracking(spaceEnvContext);
+  const { currentSpace, currentOrganizationId } = spaceEnvContext;
 
   const contentTypeIds = currentSpaceContentTypes.map((ct) => ct.sys.id);
 
@@ -455,6 +458,9 @@ export function useCreateActions(props: { isNew?: boolean; contentTypeId?: strin
       });
       getContentPreview().clearCache();
       spaceContext.uiConfig!.addOrEditCt(state.contentType).catch(_.noop);
+
+      fieldsUpdated(published, updatedEditorInterface as any);
+
       notify.saveSuccess();
     } catch (error) {
       setContextDirty(true);

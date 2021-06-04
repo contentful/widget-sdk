@@ -18,6 +18,7 @@ import { getSpaceContext } from 'classes/spaceContext';
 
 export const SpaceEnvContext = createContext<SpaceEnvContextValue>({
   currentEnvironmentId: 'master',
+  currentResolvedEnvironmentId: 'master',
 });
 
 export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
@@ -38,6 +39,7 @@ export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
   const currentSpaceId = getSpaceId(space);
   const currentEnvironmentId = getEnvironmentId(space);
   const currentEnvironmentAliasId = getEnvironmentAliasId(space);
+  const currentResolvedEnvironmentId = currentEnvironmentAliasId || currentEnvironmentId;
 
   // set tags to global scope, will be added to error-tracking automagically
   setTags({
@@ -51,6 +53,7 @@ export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
     currentEnvironment: getEnvironment(space),
     currentEnvironmentId,
     currentEnvironmentAliasId,
+    currentResolvedEnvironmentId,
     currentEnvironmentName: getEnvironmentName(space),
     currentOrganization: getOrganization(space),
     currentOrganizationId,

@@ -4,6 +4,7 @@ import {
   ContentTypeProps,
   ContentFields,
   EditorInterfaceProps,
+  Control,
 } from 'contentful-management/types';
 
 export type Entry = EntryProps;
@@ -12,3 +13,4 @@ export type Entity = Entry | Asset;
 export type ContentType = ContentTypeProps;
 export type ContentTypeField = ContentFields;
 export type EditorInterface = EditorInterfaceProps;
+export type EditorInterfaceControl = Control;

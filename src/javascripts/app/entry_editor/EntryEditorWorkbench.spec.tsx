@@ -160,6 +160,7 @@ describe('When rendering editors page with no editors', () => {
           currentSpaceId: 'spaceid',
           currentEnvironmentId: 'envid',
           currentOrganizationId: 'orgid',
+          currentResolvedEnvironmentId: 'envid',
         }}>
         <EntryEditorWorkbench {...props} />
       </SpaceEnvContext.Provider>
