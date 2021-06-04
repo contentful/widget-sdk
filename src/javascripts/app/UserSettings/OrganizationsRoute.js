@@ -16,7 +16,6 @@ import { css } from 'emotion';
 import { without } from 'lodash';
 
 import DocumentTitle from 'components/shared/DocumentTitle';
-import StateLink from 'app/common/StateLink';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import ErrorState from 'app/common/ErrorState';
 import OrganizationRow from './OrganizationRow';
@@ -26,6 +25,7 @@ import EmptyStateContainer, {
 } from 'components/EmptyStateContainer/EmptyStateContainer';
 import Illustration from 'svg/illustrations/readonly-space-ill.svg';
 import { LoadingState } from 'features/loading-state';
+import { ReactRouterLink } from 'core/react-routing';
 
 const styles = {
   content: css({
@@ -76,11 +76,11 @@ const OrganizationsRoute = () => {
           testId="organizations-list.title"
           title="Organizations"
           actions={
-            <StateLink path="account.new_organization">
+            <ReactRouterLink route={{ path: 'account.new_organization' }}>
               <Button buttonType="primary" testId="organizations-list.new-org-button">
                 New Organization
               </Button>
-            </StateLink>
+            </ReactRouterLink>
           }
         />
         <Workbench.Content className={styles.content}>

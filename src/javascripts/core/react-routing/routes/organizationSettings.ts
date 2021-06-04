@@ -443,6 +443,23 @@ const organizationUserDetailsRoute = {
   }),
 };
 
+/**
+ * New organization
+ */
+
+type NewOrganizationType = {
+  path: 'account.new_organization';
+};
+
+const newOrganizationRoute = {
+  'account.new_organization': () => ({
+    path: 'account.new_organization',
+    params: {
+      pathname: `/`,
+    },
+  }),
+};
+
 const routes = {
   ...organizationsUsageRoute,
   ...organizationsEditRoute,
@@ -458,6 +475,7 @@ const routes = {
   ...organisationInvitationRoute,
   ...organizationsSubscriptionRoutes,
   ...organizationUserDetailsRoute,
+  ...newOrganizationRoute,
 };
 
 type OrganizationSettingsRouteType =
@@ -477,7 +495,8 @@ type OrganizationSettingsRouteType =
   | OrganizationMembershipsListType
   | OrganisationInvitationType
   | OrganizationsSubscriptionRouteType
-  | OrganizationUserDetailsListType;
+  | OrganizationUserDetailsListType
+  | NewOrganizationType;
 
 export type { OrganizationSettingsRouteType };
 
