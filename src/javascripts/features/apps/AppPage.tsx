@@ -15,7 +15,7 @@ import {
   HelpText,
   TextLink,
 } from '@contentful/forma-36-react-components';
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 import { APP_EVENTS_IN, AppHookBus } from 'features/apps-core';
 import trackExtensionRender from 'widgets/TrackExtensionRender';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
@@ -102,6 +102,9 @@ export function AppRoute(props: Props) {
     InstallationState.NotBusy
   );
   const [widgetLoader, setWidgetLoader] = React.useState<WidgetLoader | null>(null);
+  React.useEffect(() => {
+    getCustomWidgetLoader().then(setWidgetLoader);
+  }, []);
   const pubSubClient = usePubSubClient();
   const installationStateRef = React.useRef<InstallationState>(installationState); // TODO: useEffect creates a snapshot of `installationState` where `onAppConfigured` receives a outdated value, we use useRef to bypass this
   const { customWidgetClient, customWidgetPlainClient, client: cma } = useCurrentSpaceAPIClient();
@@ -139,9 +142,6 @@ export function AppRoute(props: Props) {
   }, [app]);
 
   const [useExperienceSDK] = useVariation<boolean>(FLAGS.EXPERIENCE_SDK_APP_CONFIG_LOCATION, false);
-  React.useEffect(() => {
-    getCustomWidgetLoader().then(setWidgetLoader);
-  }, []);
 
   const sdkInstance = React.useMemo(() => {
     if (!widget || !app || !customWidgetClient || !spaceId) return null;
@@ -229,6 +229,9 @@ export function AppRoute(props: Props) {
     customWidgetClient,
     props.appHookBus,
     useExperienceSDK,
+    widgetLoader,
+    customWidgetClient,
+    onAppMarkedAsReady
   ]);
 
   const title: string = get(app, ['title'], get(app, ['appDefinition', 'name']));
