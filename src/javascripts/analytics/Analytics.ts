@@ -109,7 +109,11 @@ export function track(event: string, data?: EventData): void {
     data = removeCircularRefs(Object.assign({}, getBasicPayload(), data));
 
     const transformedSnowplowData = transformEventForSnowplow(event, data);
-    const transformedSegmentData = transformSnowplowToSegmentData(event, transformedSnowplowData);
+    const transformedSegmentData = transformSnowplowToSegmentData(
+      event,
+      transformedSnowplowData,
+      getEnvironmentId()
+    );
 
     segment.track(event, transformedSegmentData);
     snowplow.track(event, transformedSnowplowData);
@@ -270,15 +274,28 @@ function identify(extension?: object): void {
   sendSessionDataToConsole();
 }
 
-/**
- * Sets or replaces session space and organization
- * data. Pass `null` when leaving context.
- *
- * `null` must be explicitly passed to unset the current
- * space/org contexts.
- */
+// TODO: Get rid of `session` data usage and narrow down bare minimum types, ideally pass only IDs.
+interface MaybeSys extends Record<string, any> {
+  id: string;
+}
+interface MaybeEntity extends Record<string, any> {
+  sys: MaybeSys;
+}
+type TrackingContext = Partial<
+  Record<'organization' | 'space' | 'environment', MaybeEntity | null>
+>;
 
-export function trackContextChange(space: null | object, organization: null | object): void {
+/**
+ * Sets or replaces session space and organization data. Pass `null` when leaving context.
+ * `null` must be explicitly passed to unset the current space/organization/environment contexts.
+ */
+export function trackContextChange({ organization, space, environment }: TrackingContext): void {
+  if (environment) {
+    session.environment = removeCircularRefs(environment);
+  } else if (environment === null) {
+    session.environment = null;
+  }
+
   if (space) {
     session.space = removeCircularRefs(space);
   } else if (space === null) {
@@ -292,6 +309,7 @@ export function trackContextChange(space: null | object, organization: null | ob
   }
 
   sendSessionDataToConsole();
+  // TODO: This might cause unnecessary events if space didn't really change!
   track(space ? 'global:space_changed' : 'global:space_left');
 }
 
@@ -355,6 +373,10 @@ function getBasicPayload(): BasicEventData {
     },
     (val) => val !== VALUE_UNKNOWN
   );
+}
+
+function getEnvironmentId() {
+  return getSessionData('environment.sys.id', undefined) as string | undefined;
 }
 
 function sendSessionDataToConsole() {

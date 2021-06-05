@@ -79,40 +79,60 @@ describe('Analytics', () => {
   });
 
   describe('#trackContextChange', function () {
+    it('should set the environment in the session if given', function () {
+      const { analytics } = getAllDeps();
+      const environment = { sys: { id: 'env_1234' } };
+      analytics.trackContextChange({ environment });
+      expect(analytics.getSessionData('environment')).toEqual(environment);
+    });
     it('should set the space in the session if given', function () {
       const { analytics } = getAllDeps();
       const space = { sys: { id: 'space_1234' } };
-      analytics.trackContextChange(space);
+      analytics.trackContextChange({ space });
       expect(analytics.getSessionData('space')).toEqual(space);
     });
     it('should set the organization in the session if given', function () {
       const { analytics } = getAllDeps();
-      const org = { sys: { id: 'org_1234' } };
-      analytics.trackContextChange(null, org);
-      expect(analytics.getSessionData('organization')).toEqual(org);
+      const organization = { sys: { id: 'org_1234' } };
+      analytics.trackContextChange({ organization, space: null, environment: null });
+      expect(analytics.getSessionData('organization')).toEqual(organization);
     });
     it('should set both space and org if given', function () {
       const { analytics } = getAllDeps();
       const space = { sys: { id: 'space_4567' } };
-      const org = { sys: { id: 'org_4567' } };
-      analytics.trackContextChange(space, org);
+      const organization = { sys: { id: 'org_4567' } };
+      analytics.trackContextChange({ organization, space });
       expect(analytics.getSessionData('space')).toEqual(space);
-      expect(analytics.getSessionData('organization')).toEqual(org);
+      expect(analytics.getSessionData('organization')).toEqual(organization);
+      expect(analytics.getSessionData('environment')).toBeUndefined();
+    });
+    it('should set all of org, space and environment if given', function () {
+      const { analytics } = getAllDeps();
+      const organization = { sys: { id: 'org_5' } };
+      const space = { sys: { id: 'space_5' } };
+      const environment = { sys: { id: 'env_5' } };
+      analytics.trackContextChange({ organization, space, environment });
+      expect(analytics.getSessionData('organization')).toEqual(organization);
+      expect(analytics.getSessionData('space')).toEqual(space);
+      expect(analytics.getSessionData('environment')).toEqual(environment);
     });
     it('should unset if explicitly called with null value for given param', function () {
       const { analytics } = getAllDeps();
+      const organization = { sys: { id: 'org_4567' } };
       const space = { sys: { id: 'space_4567' } };
-      const org = { sys: { id: 'org_4567' } };
-      analytics.trackContextChange(space, org);
+      const environment = { sys: { id: 'env_4567' } };
+      analytics.trackContextChange({ organization, space, environment });
       expect(analytics.getSessionData('space')).toEqual(space);
-      expect(analytics.getSessionData('organization')).toEqual(org);
-      analytics.trackContextChange(null);
+      expect(analytics.getSessionData('organization')).toEqual(organization);
+      expect(analytics.getSessionData('environment')).toEqual(environment);
+      analytics.trackContextChange({ space: null, environment: null });
+      expect(analytics.getSessionData('environment')).toBeNull();
       expect(analytics.getSessionData('space')).toBeNull();
-      expect(analytics.getSessionData('organization')).toEqual(org);
-      analytics.trackContextChange(space, null);
+      expect(analytics.getSessionData('organization')).toEqual(organization);
+      analytics.trackContextChange({ organization: null, space });
       expect(analytics.getSessionData('space')).toEqual(space);
       expect(analytics.getSessionData('organization')).toBeNull();
-      analytics.trackContextChange(undefined);
+      analytics.trackContextChange({ space: undefined });
       expect(analytics.getSessionData('space')).toEqual(space);
     });
   });

@@ -45,14 +45,14 @@ function stateChangeSuccessHandler(_event, toState, toStateParams, fromState, fr
   // ui-router's option {reload: true}
   if (toState.name.slice(0, 7) !== 'spaces.') {
     // This will remove the space from the current analytics session, but will
-    // preserve the organziation. This means that the org will remain the same
+    // preserve the organization. This means that the org will remain the same
     // and will be used in analytics calls, but the same will not be.
     //
     // See states/account_organizations.js#organizationBase for the usage of
     // setting organization when on an organization settings page, and
     // states/Spaces.js#spaceDetail for the usage of setting space and org
     // when in a space page.
-    Analytics.trackContextChange(null);
+    Analytics.trackContextChange({ space: null, environment: null });
     spaceContext.purge();
   }
 

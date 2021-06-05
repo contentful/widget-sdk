@@ -100,8 +100,8 @@ const OrganizationRouter = () => {
   const { orgId } = useParams() as { orgId: string };
 
   useEffect(() => {
-    TokenStore.getOrganization(orgId).then((organizationData) => {
-      Analytics.trackContextChange(null, organizationData);
+    TokenStore.getOrganization(orgId).then((organization) => {
+      Analytics.trackContextChange({ organization, space: null, environment: null });
     });
   }, [orgId]);
 
