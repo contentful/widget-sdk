@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
@@ -30,7 +30,7 @@ import { getIconId } from 'services/fieldFactory';
 import { toInternalFieldType } from 'widgets/FieldTypes';
 import { create as createBuiltinWidgetList } from 'widgets/BuiltinWidgets';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import localeStore from 'services/localeStore';
+import { FLAGS, getVariation } from 'LaunchDarkly';
 
 const styles = {
   modalHeader: css({
@@ -90,10 +90,24 @@ const FieldModalDialogForm = ({
   editorInterface,
   customWidgets,
 }) => {
-  const { currentSpaceContentTypes } = useSpaceEnvContext();
+  const { currentOrganizationId, currentSpaceContentTypes, currentSpaceId } = useSpaceEnvContext();
   const [selectedTab, setSelectedTab] = useState(formTabs.SETTINGS);
   const [richTextOptions, setRichTextOptions] = useState(() => getRichTextOptions(ctField));
   const [widgetSettings, setWidgetSettings] = useState(() => getWidgetSettings(widget));
+  const [isInitialFieldValuesEnabled, setIsInitialFieldValuesEnabled] = useState(false);
+
+  useEffect(() => {
+    const getInitialFieldValuesFeatureFlagVariation = async () => {
+      const featureFlagVariation = getVariation(FLAGS.INITIAL_FIELD_VALUES, {
+        organizationId: currentOrganizationId,
+        spaceId: currentSpaceId,
+      });
+
+      setIsInitialFieldValuesEnabled(featureFlagVariation);
+    };
+
+    getInitialFieldValuesFeatureFlagVariation();
+  }, [currentOrganizationId, currentSpaceId]);
 
   const availableWidgets = useMemo(
     () => getAvailableWidgets(customWidgets, ctField),
@@ -105,21 +119,12 @@ const FieldModalDialogForm = ({
     onClose();
   };
 
-  // @todo: REMOVE THIS
-  const defaultLocale = localeStore.getDefaultLocale();
-  const ctFieldWithInitialValue = {
-    ...ctField,
-    initialValue: {
-      [defaultLocale.code]: true,
-    },
-  };
-
   const { onBlur, onChange, onSubmit, fields, form } = useForm({
     fields: {
       ...getSettingsFormFields(ctField, contentType),
       ...getValidationsFormFields(ctField),
       ...getNodeValidationsFormFields(ctField),
-      ...getInitialValueFormFields(ctFieldWithInitialValue),
+      ...getInitialValueFormFields(ctField),
     },
     submitFn: submitForm,
   });
@@ -150,16 +155,18 @@ const FieldModalDialogForm = ({
               onSelect={setSelectedTab}>
               Validation
             </Tab>
-            <Tab
-              testId={formTabs.INITIAL_VALUE}
-              id={formTabs.INITIAL_VALUE}
-              selected={selectedTab === formTabs.INITIAL_VALUE}
-              onSelect={setSelectedTab}>
-              Initial value
-              <Tag className={styles.promotionTag} tagType="primary-filled" size="small">
-                new
-              </Tag>
-            </Tab>
+            {isInitialFieldValuesEnabled && (
+              <Tab
+                testId={formTabs.INITIAL_VALUE}
+                id={formTabs.INITIAL_VALUE}
+                selected={selectedTab === formTabs.INITIAL_VALUE}
+                onSelect={setSelectedTab}>
+                Initial value
+                <Tag className={styles.promotionTag} tagType="primary-filled" size="small">
+                  new
+                </Tag>
+              </Tab>
+            )}
             <Tab
               testId={formTabs.APPEARANCE}
               id={formTabs.APPEARANCE}
@@ -210,7 +217,7 @@ const FieldModalDialogForm = ({
               />
             </TabPanel>
           )}
-          {selectedTab === formTabs.INITIAL_VALUE && (
+          {isInitialFieldValuesEnabled && selectedTab === formTabs.INITIAL_VALUE && (
             <TabPanel id="initial-value-tab-panel">
               <InitialValueTabComponent
                 onBlur={onBlur}

@@ -59,6 +59,7 @@ export enum FLAGS {
   NEW_ONBOARDING_FLOW = 'feature-growth-04-2021-new-onboarding-flow',
   EXPERIMENT_ONBOARDING_MODAL = 'test-growth-05-2021-onboarding-modal',
   NEW_COWORKER_INVITE_CARD = 'feature-growth-05-2021-new-coworker-invite-card',
+  INITIAL_FIELD_VALUES = 'dante-06-2021-initial-field-values',
 
   // So that we can test the fallback mechanism without needing to rely on an actual
   // flag above, we use these special flags.
@@ -89,6 +90,7 @@ const FALLBACK_VALUES = {
   [FLAGS.V1_MIGRATION_2021_WARNING]: false,
   [FLAGS.NEW_ONBOARDING_FLOW]: false,
   [FLAGS.NEW_COWORKER_INVITE_CARD]: false,
+  [FLAGS.INITIAL_FIELD_VALUES]: false,
 
   // TODO: remove or flip this flag to `true` once it's fully rolled out
   [FLAGS.REFERENCE_TREE_BULK_ACTIONS_SUPPORT]: false,

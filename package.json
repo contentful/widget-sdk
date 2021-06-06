@@ -10,7 +10,8 @@
     "npm": "6.4.1"
   },
   "resolutions": {
-    "@contentful/field-editor-rich-text": "^0.18.12"
+    "@contentful/field-editor-rich-text": "^0.18.12",
+    "@contentful/validation": "^13.1.0"
   },
   "dependencies": {
     "@contentful/app-sdk": "^3.34.0",
@@ -23,6 +24,7 @@
     "@contentful/experience-components": "^1.4.4",
     "@contentful/experience-error-tracking": "^1.1.0",
     "@contentful/experience-provisioning": "^0.4.1",
+    "@contentful/experience-sdk": "^1.10.0",
     "@contentful/field-editor-boolean": "0.11.1",
     "@contentful/field-editor-checkbox": "0.13.1",
     "@contentful/field-editor-date": "0.11.1",
@@ -37,6 +39,7 @@
     "@contentful/field-editor-radio": "0.12.1",
     "@contentful/field-editor-rating": "0.11.1",
     "@contentful/field-editor-reference": "2.13.0",
+    "@contentful/field-editor-rich-text": "^0.18.12",
     "@contentful/field-editor-single-line": "0.14.1",
     "@contentful/field-editor-slug": "0.10.1",
     "@contentful/field-editor-tags": "0.13.0",
@@ -56,7 +59,7 @@
     "@contentful/rich-text-react-renderer": "^14.1.2",
     "@contentful/rich-text-types": "^14.1.2",
     "@contentful/types": "^14.29.0",
-    "@contentful/validation": "^12.17.2",
+    "@contentful/validation": "^13.1.0",
     "@contentful/widget-renderer": "^1.1.0",
     "@contentful/worf": "^4.10.0",
     "@types/json-patch": "0.0.30",
