@@ -538,7 +538,8 @@ function registerSpaceWizardEvent(event) {
 }
 
 function registerSpacePurchaseEvent(event) {
-  registerSnowplowEvent(event, 'space_purchase', SpacePurchaseTransformer);
+  // TODO: Define proper schema(s) for these events and don't send entire domain objects!
+  registerSegmentEvent(event, snakeCase(event), SpacePurchaseTransformer);
 }
 
 function registerSSOSelfConfigurationEvent(event) {

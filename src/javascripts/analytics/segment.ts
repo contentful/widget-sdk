@@ -206,7 +206,7 @@ export function transformSnowplowToSegmentData(
   }
   const objPayload = {
     // There might be some events with transformers not sticking to returning a `TransformedEventData` object.
-    // E.g. `space_purchase:...` events. For these, also include all unexpected props into the event payload.
+    // `space_purchase:...` events used to be like this. Include all unexpected props into the event payload.
     ..._.omit(data, ['contexts', 'data', 'schema']),
     // Do NOT wrap as { data }. This would result in `data_` prefixes for all fields, which was a bug/behavior previously:
     // https://contentful.atlassian.net/wiki/spaces/ENG/pages/3037626506/2021-04-30+Web+app+Segment+migration+issues#1.-data_-prefixes-on-migrated-schema-fields

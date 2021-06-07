@@ -63,9 +63,11 @@ export default addUserOrgSpace((eventName, data) => {
   }
 
   return {
-    action,
-    sessionId: data.sessionId,
-    ...transformers[action](data),
+    data: {
+      action,
+      sessionId: data.sessionId,
+      ...transformers[action](data),
+    },
   };
 });
 
@@ -74,6 +76,7 @@ function emptyTransformer() {
 }
 
 function beginTransformer(data) {
+  // TODO: Use snake_case keys!
   return pick(data, [
     'userOrganizationRole',
     'organizationPlatform',
