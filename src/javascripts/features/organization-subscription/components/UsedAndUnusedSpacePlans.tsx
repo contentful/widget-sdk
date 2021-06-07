@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { css, cx } from 'emotion';
 import { Tabs, Tab, TabPanel } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
@@ -32,14 +32,12 @@ interface UsedAndUnusedSpacePlansProps {
   isSpacePlanAssignmentExperimentEnabled: boolean;
   // Function to be called when space plan changes (upgrade or downgrade)
   onChangeSpace: () => void;
-  // Function to be called when space plan is deleted
+  // function to generate the the correct onDelete function for each SpacePlanRow
   onDeleteSpace: (plan: SpacePlan) => () => void;
   // The id of the current organization
   organizationId: string;
   // Array of space plans, it's used by the component to create the space plans’ table
   spacePlans: SpacePlan[];
-  // It tells the component if this user can see the UI with "Used Spaces/Unused Spaces" tabs
-  userCanManageSpaces: boolean;
 }
 
 export function UsedAndUnusedSpacePlans({
@@ -50,27 +48,16 @@ export function UsedAndUnusedSpacePlans({
   onDeleteSpace,
   organizationId,
   spacePlans,
-  userCanManageSpaces,
 }: UsedAndUnusedSpacePlansProps) {
   const [selectedTab, setSelectedTab] = useState<EnterpriseSpacesTabs>(
     EnterpriseSpacesTabs.USED_SPACES
   );
 
   // Enterprise admin or owners can manage used and unused spaces
-  const [usedSpacePlans, setUsedSpacePlans] = useState<SpacePlan[]>([]);
-  const [unusedSpacePlans, setUnusedSpacePlans] = useState<SpacePlan[]>([]);
-
-  useEffect(() => {
-    if (userCanManageSpaces) {
-      const assignedSpacePlans = spacePlans.filter((plan) => plan.gatekeeperKey !== null);
-      const unassignedSpacePlans = spacePlans
-        .filter((plan) => plan.gatekeeperKey === null)
-        .sort((plan1, plan2) => plan1.price - plan2.price);
-
-      setUsedSpacePlans(assignedSpacePlans);
-      setUnusedSpacePlans(unassignedSpacePlans);
-    }
-  }, [userCanManageSpaces, spacePlans]);
+  const usedSpacePlans = spacePlans.filter((plan) => plan.gatekeeperKey !== null);
+  const unusedSpacePlans = spacePlans
+    .filter((plan) => plan.gatekeeperKey === null)
+    .sort((plan1, plan2) => plan1.price - plan2.price);
 
   // If the org has no unused spaces, we do not need the tabs UI
   if (unusedSpacePlans.length === 0) {

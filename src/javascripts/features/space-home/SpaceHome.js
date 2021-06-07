@@ -18,7 +18,7 @@ import { useAsync } from 'core/hooks';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import { captureError } from 'core/monitoring';
 import { getApiKeyRepo } from 'features/api-keys-management';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext, useSpaceEnvContentTypes } from 'core/services/SpaceEnvContext';
 import {
   isAdmin,
   getSpaceRoles,
@@ -73,9 +73,21 @@ const fetchData =
       });
     }
 
-    const inviteCardExperimentEnabled = await getVariation(FLAGS.NEW_COWORKER_INVITE_CARD, {
-      organizationId: currentOrganizationId,
-    });
+    const inviteCardExperimentEnabled = await getVariation(
+      FLAGS.EXPERIMENT_NEW_COWORKER_INVITE_CARD,
+      {
+        organizationId: currentOrganizationId,
+      }
+    );
+
+    if (inviteCardExperimentEnabled !== null) {
+      Analytics.tracking.experimentStart({
+        experiment_id: FLAGS.EXPERIMENT_NEW_COWORKER_INVITE_CARD,
+        experiment_variation: inviteCardExperimentEnabled ? 'treatment' : 'control',
+        space_id: currentSpaceId,
+        organization_id: currentOrganizationId,
+      });
+    }
 
     const hasTeamsEnabled = await getOrgFeature(currentOrganizationId, 'teams', false);
 
@@ -131,13 +143,9 @@ const fetchData =
   };
 
 export const SpaceHome = () => {
-  const {
-    currentSpaceId,
-    currentSpace,
-    currentSpaceName,
-    currentSpaceContentTypes,
-    currentOrganizationId,
-  } = useSpaceEnvContext();
+  const { currentSpaceContentTypes } = useSpaceEnvContentTypes();
+  const { currentSpaceId, currentSpace, currentSpaceName, currentOrganizationId } =
+    useSpaceEnvContext();
   const [
     {
       managementToken,

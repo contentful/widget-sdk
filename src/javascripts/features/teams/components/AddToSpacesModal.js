@@ -64,7 +64,9 @@ export function AddToSpacesModal({
     dispatch({ type: 'FORM_SUBMITTED' });
     dispatch({ type: 'VALIDATION_MESSAGE_CHANGED', payload: isMissingRoles });
 
-    if (isMissingRoles) return;
+    if (isMissingRoles) {
+      return;
+    }
 
     dispatch({ type: 'REQUEST_SENT' });
     try {

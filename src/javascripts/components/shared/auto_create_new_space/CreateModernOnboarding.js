@@ -3,7 +3,7 @@ import { refresh } from 'services/TokenStore';
 import { getCMAClient } from 'core/services/usePlainCMAClient';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import OnboardingModal from './OnboardingModal';
-import { go } from 'states/Navigator';
+import { router } from 'core/react-routing';
 
 import {
   track,
@@ -86,11 +86,8 @@ async function createSpace({ closeModal, org, markOnboarding, markSpace, userId 
   markOnboarding();
 
   await refresh();
-  await go({
-    path: ['spaces', 'detail', 'onboarding', 'getStarted'],
-    params: { spaceId: newSpaceId },
-  });
-  // if we need to close modal, we need to do it after redirect
+  await router.navigate({ path: 'spaces.detail.onboarding.getStarted', spaceId: newSpaceId });
+
   closeModal && closeModal();
 
   return newSpace;
@@ -112,11 +109,7 @@ async function createBlankSpace({ closeModal, orgId, markOnboarding }) {
   markOnboarding();
 
   await refresh();
-  await go({
-    path: ['spaces', 'detail', 'onboarding', 'getStarted'],
-    params: { spaceId: newSpaceId },
-  });
-  // if we need to close modal, we need to do it after redirect
+  await router.navigate({ path: 'spaces.detail.onboarding.getStarted', spaceId: newSpaceId });
   closeModal && closeModal();
 
   return newSpace;

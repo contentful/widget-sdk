@@ -1,4 +1,3 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import {
   track,
@@ -6,62 +5,58 @@ import {
 } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { updateUserInSegment } from 'analytics/Analytics';
-import { getModule } from 'core/NgRegistry';
-import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { router } from 'core/react-routing';
 
 const store = getBrowserStorage();
 
-export default class WithLink extends React.Component {
-  static propTypes = {
-    link: PropTypes.oneOf(['getStarted', 'copy', 'explore', 'deploy', 'spaceHome']),
-    trackingElementId: PropTypes.string.isRequired,
-    intercomKey: PropTypes.string,
-    children: PropTypes.func.isRequired,
+// export default class WithLink extends React.Component {
+export default function WithLink({ link, trackingElementId, intercomKey, children }) {
+  const { currentSpaceId } = useSpaceEnvContext();
+
+  const getStateParams = () => {
+    const params = { spaceId: currentSpaceId };
+    let path;
+
+    if (link === 'spaceHome') {
+      path = 'spaces.detail.home';
+    } else {
+      path = `spaces.detail.onboarding.${link}`;
+    }
+
+    return {
+      path,
+      params,
+    };
   };
 
-  static contextType = SpaceEnvContext;
+  const move = async (_event, newTrackingElementId) => {
+    const { path, params } = getStateParams();
+    const elementId = newTrackingElementId || trackingElementId;
 
-  render() {
-    const { children, trackingElementId, intercomKey } = this.props;
-    const getStateParams = () => {
-      const { link } = this.props;
-      const params = { spaceId: this.context.currentSpaceId };
-      let path;
+    if (elementId) {
+      track(elementId);
+    }
 
-      if (link === 'spaceHome') {
-        path = 'spaces.detail.home';
-      } else {
-        path = `spaces.detail.onboarding.${link}`;
-      }
+    if (intercomKey) {
+      updateUserInSegment({
+        [intercomKey]: true,
+      });
+    }
 
-      return {
-        path,
-        params,
-      };
-    };
+    // set current step after we have successfully transitioned to the new step
+    if (path !== 'spaces.detail.home') {
+      store.set(`${getStoragePrefix()}:currentStep`, { path, params });
+    }
+    router.navigate({ path, ...params });
+  };
 
-    const move = async (_event, newTrackingElementId) => {
-      const $state = getModule('$state');
-
-      const { path, params } = getStateParams();
-      const elementId = newTrackingElementId || trackingElementId;
-
-      if (elementId) {
-        track(elementId);
-      }
-
-      if (intercomKey) {
-        updateUserInSegment({
-          [intercomKey]: true,
-        });
-      }
-
-      await $state.go(path, params);
-      // set current step after we have successfully transitioned to the new step
-      if (path !== 'spaces.detail.home') {
-        store.set(`${getStoragePrefix()}:currentStep`, { path, params });
-      }
-    };
-    return children(move);
-  }
+  return children(move);
 }
+
+WithLink.propTypes = {
+  link: PropTypes.oneOf(['getStarted', 'copy', 'explore', 'deploy', 'spaceHome']),
+  trackingElementId: PropTypes.string.isRequired,
+  intercomKey: PropTypes.string,
+  children: PropTypes.func.isRequired,
+};

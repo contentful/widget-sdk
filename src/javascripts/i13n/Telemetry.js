@@ -1,4 +1,4 @@
-import createMicroBackendsClient from 'MicroBackendsClient';
+import { telemetryUrl } from 'Config';
 
 // How often measurements should be sent using `send`.
 //
@@ -87,7 +87,7 @@ function withState(cb) {
     // `initializedAt` is always available in `state`.
     state.initializedAt = Date.now();
     state.measurements = [];
-    state.client = createMicroBackendsClient({ backendName: 'telemetry' });
+    state.client = makeClient();
   }
   cb(state);
 }
@@ -118,4 +118,12 @@ function callBackend(client, body) {
     headers: { 'Content-Type': 'application/json' },
     body,
   });
+}
+
+function makeClient() {
+  return { call };
+
+  function call(path, opts) {
+    return window.fetch(telemetryUrl(path), opts);
+  }
 }

@@ -12,7 +12,7 @@ import * as SpaceMembershipRepository from 'access_control/SpaceMembershipReposi
 import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { FetcherLoading } from 'app/common/createFetcherComponent';
-import { go } from 'states/Navigator';
+import { router } from 'core/react-routing';
 
 import { SpaceMembershipsList } from './SpaceMembershipsList';
 import type { SpaceData } from 'classes/spaceContextTypes';
@@ -36,12 +36,8 @@ const SpaceMembershipsPage = () => {
     };
   }, []);
 
-  const goToSpace = (space) => {
-    go({
-      path: ['spaces', 'detail', 'home'],
-      params: { spaceId: space.sys.id },
-    });
-  };
+  const goToSpace = (space) =>
+    router.navigate({ path: 'spaces.detail.home', spaceId: space.sys.id });
 
   const onLeave = useCallback(
     async (space) => {

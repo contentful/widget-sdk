@@ -8,7 +8,9 @@ export const Portal = ({ children, containerRef, id }) => {
     setIsMounted(true);
     return () => setIsMounted(false);
   }, []);
-  if (!isMounted || (!containerRef?.current && !id)) return null;
+  if (!isMounted || (!containerRef?.current && !id)) {
+    return null;
+  }
 
   const container = containerRef?.current || document.getElementById(id);
   return createPortal(children, container);

@@ -1,7 +1,7 @@
-import { User } from '@contentful/app-sdk';
+import { UserAPI } from '@contentful/app-sdk';
 import { SpaceMember } from 'classes/spaceContextTypes';
 
-export const createUserApi = (spaceMember: SpaceMember): User => {
+export const createUserApi = (spaceMember: SpaceMember): UserAPI => {
   return {
     sys: {
       type: 'User',

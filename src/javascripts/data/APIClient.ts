@@ -4,14 +4,14 @@ import { SpaceEndpoint } from './CMA/types';
 import {
   Asset,
   BulkAction,
-  Entry,
-  PublishBulkActionPayload,
-  Release,
-  ValidateBulkActionPayload,
-  Link,
-  ReleaseAction,
   Collection,
   Entity,
+  Entry,
+  Link,
+  PublishBulkActionPayload,
+  Release,
+  ReleaseAction,
+  ValidateBulkActionPayload,
 } from '@contentful/types';
 import { AppInstallationProps, EditorInterfaceProps } from 'contentful-management/types';
 import type { EmbargoedAssetApi } from 'features/embargoed-assets';
@@ -85,11 +85,14 @@ export default class APIClient {
     return this.getResource('content_types', id);
   };
 
-  getEditorInterface = async (contentTypeId) => {
+  getEditorInterface = async (contentTypeId): Promise<EditorInterfaceProps> => {
     // Return an empty editor interface if no ID is
     // given (for example a content type is new).
     if (!contentTypeId) {
-      return { sys: { id: 'default', type: 'EditorInterface' }, controls: [] };
+      return {
+        sys: { id: 'default', type: 'EditorInterface' } as EditorInterfaceProps['sys'],
+        controls: [],
+      };
     }
 
     const path = ['content_types', contentTypeId, 'editor_interface'];
@@ -110,8 +113,8 @@ export default class APIClient {
       sys: {
         id: 'default',
         type: 'EditorInterface',
-        contentType: { sys: { id: contentTypeId } },
-      },
+        contentType: { sys: { id: contentTypeId, linkType: 'ContentType', type: 'Link' } },
+      } as EditorInterfaceProps['sys'],
       controls: [],
     };
   };

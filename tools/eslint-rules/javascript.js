@@ -9,7 +9,7 @@ module.exports = {
   rules: {
     'no-console': 'warn',
     'rulesdir/restrict-angular-require': 'error',
-
+    curly: 'error',
     'rulesdir/enforce-getModule-call-inside-fn': 'error',
 
     'no-template-curly-in-string': 'off',

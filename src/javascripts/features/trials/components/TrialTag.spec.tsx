@@ -240,7 +240,7 @@ describe('TrialTag', () => {
       await waitFor(() => fireEvent.click(screen.queryByTestId('trial_space_tag-link')!));
       expect(href).toHaveBeenCalledWith({
         path: 'spaces.detail.home',
-        params: { spaceId: space.sys.id },
+        params: { spaceId: space.sys.id, navigationState: null, pathname: '/' },
       });
 
       expect(track).toHaveBeenCalledWith('trial:trial_tag_clicked', {
@@ -325,7 +325,7 @@ describe('TrialTag', () => {
 
       expect(href).toHaveBeenCalledWith({
         path: 'spaces.detail.home',
-        params: { spaceId: space.sys.id },
+        params: { spaceId: space.sys.id, navigationState: null, pathname: '/' },
       });
 
       expect(track).toHaveBeenCalledWith('trial:trial_tag_clicked', {

@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, wait, fireEvent } from '@testing-library/react';
 import { AppInstallModal } from './AppInstallModal';
-import * as Navigator from 'states/Navigator';
 import mockDefinitions from './__mocks__/mockDefinitions.json';
 import { AppDefinition } from 'contentful-management/types';
 import { noop } from 'lodash';
+import { router } from 'core/react-routing';
 
 jest.mock('./util', () => ({
   getOrgSpacesFor: jest.fn(() =>
@@ -32,8 +32,10 @@ jest.mock('./util', () => ({
   getLastUsedSpace: jest.fn(() => 'my-space-123'),
 }));
 
-jest.mock('states/Navigator', () => ({
-  go: jest.fn(() => Promise.resolve()),
+jest.mock('core/react-routing', () => ({
+  router: {
+    navigate: jest.fn(),
+  },
 }));
 
 describe('AppInstallModal', () => {
@@ -47,16 +49,18 @@ describe('AppInstallModal', () => {
 
     wrapper.getByTestId('continue-button').click();
 
-    expect(Navigator.go).toHaveBeenCalledWith({
-      options: { location: 'replace' },
-      params: {
+    expect(router.navigate).toHaveBeenCalledWith(
+      {
         appId: '3AjEyjWz5tRouW4cVOF9la',
         environmentId: 'my-env-123',
-        referrer: 'app-management',
         spaceId: 'my-space-123',
+        path: 'apps.app-configuration',
+        navigationState: {
+          referrer: 'app-management',
+        },
       },
-      path: 'spaces.environment.apps.detail',
-    });
+      { location: 'replace' }
+    );
   });
 
   it('should be able to pick a different space and env and install', async () => {
@@ -74,15 +78,17 @@ describe('AppInstallModal', () => {
 
     wrapper.getByTestId('continue-button').click();
 
-    expect(Navigator.go).toHaveBeenCalledWith({
-      options: { location: 'replace' },
-      params: {
+    expect(router.navigate).toHaveBeenCalledWith(
+      {
         appId: '3AjEyjWz5tRouW4cVOF9la',
         environmentId: 'my-other-env-123',
-        referrer: 'app-management',
+        navigationState: {
+          referrer: 'app-management',
+        },
         spaceId: 'my-other-space-123',
+        path: 'apps.app-configuration',
       },
-      path: 'spaces.environment.apps.detail',
-    });
+      { location: 'replace' }
+    );
   });
 });

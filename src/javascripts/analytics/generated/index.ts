@@ -252,6 +252,16 @@ export interface ElementClick {
   contexts?: any[];
   data?: Data12;
 }
+export interface EditorInterfaceFieldUpdated {
+  content_type_id?: string;
+  environment_key?: string;
+  field_id?: string;
+  field_settings?: Record<string, any>;
+  field_type?: string;
+  organization_key?: string;
+  space_key?: string;
+  widget_id?: string;
+}
 export interface Data13 {
   autoConflictResolutionVersion?: number;
   entityId?: string;
@@ -409,11 +419,11 @@ export interface ExperimentStart {
   /**
    * The experiment name the current user is part of
    */
-  experiment_id?: string;
+  experiment_id: string;
   /**
    * The experiment variation the current user is assigned to
    */
-  experiment_variation?: string;
+  experiment_variation: string;
   /**
    * Current organization key
    */
@@ -1570,6 +1580,17 @@ function withTypewriterContext(message: Segment.Options = {}): Segment.Options {
  * @property {Data12} [data] -
  */
 /**
+ * @typedef EditorInterfaceFieldUpdated
+ * @property {string} [content_type_id] -
+ * @property {string} [environment_key] -
+ * @property {string} [field_id] -
+ * @property {Record<string, any>} [field_settings] -
+ * @property {string} [field_type] -
+ * @property {string} [organization_key] -
+ * @property {string} [space_key] -
+ * @property {string} [widget_id] -
+ */
+/**
  * @typedef Data13
  * @property {number} [autoConflictResolutionVersion] -
  * @property {string} [entityId] -
@@ -1747,8 +1768,8 @@ function withTypewriterContext(message: Segment.Options = {}): Segment.Options {
  */
 /**
  * @typedef ExperimentStart
- * @property {string} [experiment_id] - The experiment name the current user is part of
- * @property {string} [experiment_variation] - The experiment variation the current user is assigned to
+ * @property {string} experiment_id - The experiment name the current user is part of
+ * @property {string} experiment_variation - The experiment variation the current user is assigned to
  * @property {string} [organization_id] - Current organization key
  * @property {string} [space_id] - Current space key
  * @property {string} [user_id] - Curent user key
@@ -3821,6 +3842,84 @@ export function elementClick(
   const a = analytics();
   if (a) {
     a.track('element:click', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Fires a 'editor_interface_field_updated' track call.
+ *
+ * @param {EditorInterfaceFieldUpdated} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function editorInterfaceFieldUpdated(
+  props?: EditorInterfaceFieldUpdated,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          content_type_id: {
+            description: '',
+            type: 'string',
+          },
+          environment_key: {
+            description: '',
+            type: 'string',
+          },
+          field_id: {
+            description: '',
+            type: 'string',
+          },
+          field_settings: {
+            description: '',
+            type: 'object',
+          },
+          field_type: {
+            description: '',
+            type: 'string',
+          },
+          organization_key: {
+            description: '',
+            type: 'string',
+          },
+          space_key: {
+            description: '',
+            type: 'string',
+          },
+          widget_id: {
+            description: '',
+            type: 'string',
+          },
+        },
+        type: 'object',
+      },
+      traits: {
+        type: 'object',
+      },
+    },
+    title: 'editor_interface_field_updated',
+    type: 'object',
+  };
+  const message = {
+    event: 'editor_interface_field_updated',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track(
+      'editor_interface_field_updated',
+      props || {},
+      withTypewriterContext(options),
+      callback
+    );
   }
 }
 /**
@@ -8755,6 +8854,15 @@ const clientAPI = {
    * 		call is fired.
    */
   elementClick,
+  /**
+   * Fires a 'editor_interface_field_updated' track call.
+   *
+   * @param {EditorInterfaceFieldUpdated} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  editorInterfaceFieldUpdated,
   /**
    * Fires a 'entity_editor:edit_conflict' track call.
    *

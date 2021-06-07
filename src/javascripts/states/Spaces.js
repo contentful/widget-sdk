@@ -6,7 +6,6 @@ import SpaceNavigationBar from 'navigation/SpaceNavigationBar';
 
 import * as TokenStore from 'services/TokenStore';
 
-import contentTypes from './contentTypes';
 import { appRoute as apps } from 'features/apps';
 import { apiKeysState } from './settingsApiKeys';
 import { assetViewState, entryViewState } from 'features/entity-views';
@@ -21,6 +20,7 @@ import { SpaceHibernationRoute, isHibernated } from 'features/space-hibernation'
 import AccessForbidden from 'components/access-forbidden/AccessForbidden';
 import { getSpaceContext } from 'classes/spaceContext';
 import { router } from 'core/react-routing';
+import { contentTypesState } from 'features/content-model-editor';
 
 const store = getBrowserStorage();
 
@@ -86,7 +86,7 @@ const spaceEnvironment = {
     },
   ],
   children: [
-    contentTypes,
+    contentTypesState,
     entryViewState.withoutSnapshots,
     assetViewState,
     apiKeysState,
@@ -146,7 +146,7 @@ const spaceDetail = {
   ],
   children: [
     hibernation,
-    contentTypes,
+    contentTypesState,
     entryViewState.withSnapshots,
     assetViewState,
     apiKeysState,

@@ -1,5 +1,6 @@
 import { get as getAtPath } from 'lodash';
 import * as Config from 'Config';
+import { SilentError } from '../core/monitoring';
 
 // This service can be used to lazily load scripts from CDNs.
 
@@ -129,7 +130,7 @@ function load(url) {
     script.async = true;
     script.src = url;
 
-    script.onerror = () => reject(new Error(`Failed to load ${url}.`));
+    script.onerror = () => reject(new SilentError(`Failed to lazily load ${url}.`));
     script.onload = () => resolve();
 
     document.getElementsByTagName('head')[0].appendChild(script);

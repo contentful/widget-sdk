@@ -69,7 +69,9 @@ function reloadWithLogout() {
 }
 
 const trigger = async (options = {}) => {
-  if (open) return;
+  if (open) {
+    return;
+  }
   open = true;
   await ModalLauncher.open(() => (
     <ReloadNotificationDialog
@@ -85,7 +87,9 @@ const trigger = async (options = {}) => {
 };
 
 const triggerAndLogout = async (options = {}) => {
-  if (open) return;
+  if (open) {
+    return;
+  }
   open = true;
   await ModalLauncher.open(() => (
     <ReloadNotificationDialog

@@ -79,7 +79,7 @@ const mappings: Record<LinkType, (params: any) => Promise<ResolvedLink>> = {
     // orgId will be resolved in makeOrgScopedPathResolver and added as a parameter
     path: routes['organizations.apps.list']({}, { orgId: '' }).path,
   }),
-  [LinkType.Home]: makeSpaceScopedPathResolver({ spaceScopedPath: ['spaces', 'detail', 'home'] }),
+  [LinkType.Home]: makeSpaceScopedPathResolver({ spaceScopedPath: 'spaces.detail.home' }),
   [LinkType.GeneralSettings]: makeSpaceScopedPathResolver({
     spaceScopedPath: ['spaces', 'detail', 'settings', 'space'],
   }),
@@ -106,7 +106,8 @@ const mappings: Record<LinkType, (params: any) => Promise<ResolvedLink>> = {
     spaceScopedPath: ['spaces', 'detail', 'assets', 'list'],
   }),
   [LinkType.ContentModel]: makeSpaceScopedPathResolver({
-    spaceScopedPath: ['spaces', 'detail', 'content_types', 'list'],
+    spaceScopedPath: routes['content_types.list']({ withEnvironment: false }).path,
+    params: routes['content_types.list']({ withEnvironment: false }).params,
   }),
   [LinkType.Extensions]: makeSpaceScopedPathResolver({
     spaceScopedPath: routes['extensions.list']({ withEnvironment: false }).path,
@@ -192,10 +193,7 @@ function createOnboardingScreenResolver(screen) {
         path: `spaces.detail.onboarding.${screen}`,
         params: { spaceId },
       });
-      return {
-        path: ['spaces', 'detail', 'onboarding', screen],
-        params: { spaceId },
-      };
+      return routes[`spaces.detail.onboarding.${screen}`]({}, { spaceId });
     } else {
       throw new OnboardingError();
     }
@@ -335,28 +333,42 @@ async function resolveContentfulApps(params: {
   }
   const environmentId = params.environmentId ? params.environmentId : 'master';
 
-  return {
-    path: ['spaces', 'environment', 'apps', 'list'],
-    params: {
+  const route = routes['apps.list'](
+    { withEnvironment: Boolean(params.environmentId) },
+    {
       spaceId,
       environmentId,
-      referrer: params.referrer ? `deeplink-${params.referrer}` : 'deeplink',
       ...(params.id ? { app: params.id } : {}),
-    },
+      navigationState: {
+        referrer: params.referrer ? `deeplink-${params.referrer}` : 'deeplink',
+      },
+    }
+  );
+
+  return {
+    path: route.path,
+    params: route.params,
   };
 }
 
 async function resolveApps(params: { id?: string; referrer?: string }) {
   const { spaceId } = await getSpaceInfo();
 
-  return {
-    path: ['spaces', 'environment', 'apps', 'list'],
-    params: {
+  const route = routes['apps.list'](
+    { withEnvironment: false },
+    {
       spaceId,
       environmentId: 'master',
-      referrer: params.referrer ? `deeplink-${params.referrer}` : 'deeplink',
       ...(params.id ? { app: params.id } : {}),
-    },
+      navigationState: {
+        referrer: params.referrer ? `deeplink-${params.referrer}` : 'deeplink',
+      },
+    }
+  );
+
+  return {
+    path: route.path,
+    params: route.params,
     deeplinkOptions: {
       selectSpace: true,
       selectEnvironment: true,
@@ -465,11 +477,17 @@ async function resolveSpaceHome({ orgId }) {
     };
   }
   const spaceId = spaces[0].sys.id;
-  return {
-    path: ['spaces', 'detail', 'home'],
-    params: {
+
+  const route = routes['spaces.detail.home'](
+    { withEnvironment: false },
+    {
       spaceId,
-    },
+    }
+  );
+
+  return {
+    path: route.path,
+    params: route.params,
   };
 }
 

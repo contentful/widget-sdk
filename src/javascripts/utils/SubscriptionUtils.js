@@ -61,17 +61,42 @@ export function calcUsersMeta({ basePlan, numMemberships }) {
 
 /**
  * Calculates the total price for all plans and users
- * @param  {Array} allPlans Array with all subscription plan objects
+ * @param {Object} basePlan base plan of the organization
+ * @param {Array} spacePlans Array with all space plan objects
+ * @param  {Array} addOnPlans Array with all add-on plan objects
  * @param  {Number} numMemberships Number of memberships
- * @return {Number} Total cost
+ * @return {Object} Contains total of subscription costs and a list of line items
  */
-export function calculateSubscriptionTotal(allPlans, numMemberships) {
-  const basePlan = getBasePlan(allPlans);
-
-  const plansCost = calculateTotalPrice(allPlans);
+export function calculateSubscriptionCosts(basePlan, spacePlans, addOnPlans, numMemberships) {
+  const spaceCosts = calculateTotalPrice(spacePlans);
+  const addOnCosts = calculateTotalPrice(addOnPlans);
   const usersCost = calculateUsersCost({ basePlan, numMemberships });
 
-  return plansCost + usersCost;
+  const total = spaceCosts + usersCost + addOnCosts;
+
+  // Only return lineItem that the user is paying for (ie. above $0)
+  const lineItems = [
+    createLineItem('Spaces', spaceCosts),
+    ...calculateAppsLineItems(addOnPlans),
+    createLineItem('Additional users', usersCost),
+  ].filter((lineItem) => {
+    return lineItem.price > 0;
+  });
+
+  return {
+    total,
+    lineItems,
+  };
+}
+
+function calculateAppsLineItems(addOnPlans) {
+  return addOnPlans.map((plan) => {
+    return createLineItem(plan.name, plan.price);
+  });
+}
+
+function createLineItem(name, price) {
+  return { name, price };
 }
 
 /**
@@ -92,10 +117,6 @@ export function calculatePlansCost({ plans }) {
   return plans.reduce((total, plan) => {
     return total + (parseInt(plan.price, 10) || 0);
   }, 0);
-}
-
-function getBasePlan(allPlans) {
-  return allPlans.find((plan) => plan.planType === 'base');
 }
 
 function getUsersTiers(basePlan) {

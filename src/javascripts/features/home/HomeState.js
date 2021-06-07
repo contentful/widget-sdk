@@ -66,7 +66,9 @@ export function EmptyHomeRouter() {
     init();
   }, [appsPurchase]);
 
-  if (loading) return <LoadingState />;
+  if (loading) {
+    return <LoadingState />;
+  }
 
   return <EmptyHome />;
 }

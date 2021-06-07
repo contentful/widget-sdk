@@ -16,7 +16,7 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import { SpaceFeatures, getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { entitySelector, useEntitySelectorSdk } from 'features/entity-search';
 import { MetadataTags, ReadTagsContext } from 'features/content-tags';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext, useSpaceEnvContentTypes } from 'core/services/SpaceEnvContext';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 import { createAPIClient } from 'core/services/APIClient/utils';
 import type { Role } from 'core/services/SpaceEnvContext/types';
@@ -103,8 +103,9 @@ export function RoleEditorRoute(props: { isNew: boolean }) {
   const { registerSaveAction, setDirty } = useUnsavedChangesModal();
 
   const entitySelectorSdk = useEntitySelectorSdk();
-  const { currentSpaceContentTypes, currentOrganization, currentEnvironmentId, currentSpaceId } =
-    useSpaceEnvContext();
+  const { currentOrganization, currentEnvironmentId, currentSpaceId } = useSpaceEnvContext();
+
+  const { currentSpaceContentTypes } = useSpaceEnvContentTypes();
   const { spaceEnvCMAClient: cmaClient } = useSpaceEnvCMAClient();
   const roleRepo = React.useMemo(() => RoleRepository.getInstance(cmaClient), [cmaClient]);
   const [role, setRole] = React.useState<Role | null>(null);

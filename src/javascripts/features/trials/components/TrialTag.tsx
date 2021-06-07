@@ -4,7 +4,6 @@ import tokens from '@contentful/forma-36-tokens';
 import { Tag, Tooltip } from '@contentful/forma-36-react-components';
 import { Pluralized } from 'core/components/formatting';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import StateLink from 'app/common/StateLink';
 import { useAsync } from 'core/hooks';
 import { calcTrialDaysLeft, isSpaceAccessible } from '../utils/utils';
 import { getOrganization } from 'services/TokenStore';
@@ -142,13 +141,15 @@ export const TrialTag = ({ organizationId }: TrialTagProps) => {
     if (isAppsTrialSpaceAccessible) {
       const tracking = getTracking();
       trialLink = (
-        <StateLink
+        <ReactRouterLink
           data-test-id={`${ctaType}-link`}
-          path="spaces.detail.home"
-          params={{ spaceId: appsTrialSpaceKey }}
+          route={{
+            path: 'spaces.detail.home',
+            spaceId: appsTrialSpaceKey,
+          }}
           {...tracking}>
           TRIAL
-        </StateLink>
+        </ReactRouterLink>
       );
     }
   } else if (isActiveTrialSpace || isTrialSpaceExpired) {
@@ -157,13 +158,15 @@ export const TrialTag = ({ organizationId }: TrialTagProps) => {
 
     const tracking = getTracking();
     trialLink = (
-      <StateLink
+      <ReactRouterLink
         data-test-id={`${ctaType}-link`}
-        path="spaces.detail.home"
-        params={{ spaceId: space?.sys.id }}
+        route={{
+          path: 'spaces.detail.home',
+          spaceId: space?.sys.id,
+        }}
         {...tracking}>
         TRIAL
-      </StateLink>
+      </ReactRouterLink>
     );
   }
 

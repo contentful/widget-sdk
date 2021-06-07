@@ -76,7 +76,9 @@ export function EnvironmentsRoute() {
   // top: effect forced to happen only once
 
   useEffect(() => {
-    if (!pubsubClient) return;
+    if (!pubsubClient) {
+      return;
+    }
 
     const handler = () => {
       RefetchEnvironments();

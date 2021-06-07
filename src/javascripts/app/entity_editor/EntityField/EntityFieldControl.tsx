@@ -5,7 +5,7 @@ import Collaborators from 'app/entity_editor/Collaborators';
 import { isRtlLocale } from 'utils/locales';
 import { createFieldWidgetSDK } from 'app/widgets/ExtensionSDKs';
 import { getEntityLink } from 'app/common/EntityStateLink';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext, useSpaceEnvContentTypes } from 'core/services/SpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 import { LocaleData } from './types';
 import { Preferences } from 'app/widgets/ExtensionSDKs/createEditorApi';
@@ -46,9 +46,9 @@ export function EntityFieldControl(props: EntityFieldControlProps) {
     currentEnvironmentAliasId,
     currentEnvironmentId,
     currentEnvironment,
-    currentSpaceContentTypes,
     documentPool,
   } = useSpaceEnvContext();
+  const { currentSpaceContentTypes } = useSpaceEnvContentTypes();
 
   const { client: cma, customWidgetClient } = useCurrentSpaceAPIClient();
   const pubSubClient = usePubSubClient();
@@ -142,7 +142,6 @@ export function EntityFieldControl(props: EntityFieldControlProps) {
   if (!widgetApi) {
     return null;
   }
-
   return (
     <>
       <div className="entity-editor__control-group">

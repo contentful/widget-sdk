@@ -36,7 +36,7 @@ export function AppListingRoute(props) {
     return hasAdvancedApps ? ADVANCED_APPS_LIMIT : BASIC_APPS_LIMIT;
   }
 
-  if ((props.isLoadingCanManageApps || props.isLoadingDefinitions) && props.canManageApps)
+  if ((props.isLoadingCanManageApps || props.isLoadingDefinitions) && props.canManageApps) {
     return (
       <Workbench>
         <DocumentTitle title="Apps" />
@@ -47,6 +47,7 @@ export function AppListingRoute(props) {
         <LoadingState />
       </Workbench>
     );
+  }
 
   return <AppListing {...props} definitionLimit={definitionLimit} />;
 }

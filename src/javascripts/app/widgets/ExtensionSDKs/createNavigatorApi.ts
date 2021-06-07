@@ -43,16 +43,7 @@ interface NavigatorProps {
   cma: any;
 }
 
-const SUPPORTED_WIDGET_NAMESPACE_ROUTES = {
-  [WidgetNamespace.EXTENSION]: {
-    path: ['pageExtensions'],
-    paramId: 'extensionId',
-  },
-  [WidgetNamespace.APP]: {
-    path: ['apps', 'page'],
-    paramId: 'appId',
-  },
-};
+const SUPPORTED_WIDGET_NAMESPACE_ROUTES = [WidgetNamespace.EXTENSION, WidgetNamespace.APP];
 
 const denyNavigate = () => {
   throw makeReadOnlyApiError(ReadOnlyApi.Navigate);
@@ -136,8 +127,7 @@ const makeNavigateToEntity = (cma: any) => {
 };
 
 const makeNavigateToPage = (dependencies, isOnPageLocation = false) => {
-  const { spaceId, environmentId, isMaster, currentWidgetId, currentWidgetNamespace } =
-    dependencies;
+  const { spaceId, environmentId, currentWidgetId, currentWidgetNamespace } = dependencies;
 
   return async (
     options: { id?: string; path?: string; type: WidgetNamespace } = {
@@ -155,7 +145,7 @@ const makeNavigateToPage = (dependencies, isOnPageLocation = false) => {
       throw new Error('Cannot navigate between different widget types!');
     }
 
-    if (!Object.keys(SUPPORTED_WIDGET_NAMESPACE_ROUTES).includes(type)) {
+    if (!SUPPORTED_WIDGET_NAMESPACE_ROUTES.includes(type)) {
       throw new Error(`Unsupported type "${type}" was given!`);
     }
 
@@ -168,7 +158,6 @@ const makeNavigateToPage = (dependencies, isOnPageLocation = false) => {
     }
 
     const isNavigatingToNewContext = currentWidgetId !== id;
-    const widgetRouting = SUPPORTED_WIDGET_NAMESPACE_ROUTES[currentWidgetNamespace];
 
     if (currentWidgetNamespace === WidgetNamespace.EXTENSION) {
       await router.navigate(
@@ -190,21 +179,15 @@ const makeNavigateToPage = (dependencies, isOnPageLocation = false) => {
       return { navigated: true, path } as NavigatorPageResponse;
     }
 
-    await Navigator.go({
-      path: ['spaces', isMaster ? 'detail' : 'environment'].concat(widgetRouting.path),
-      params: {
-        spaceId,
-        environmentId,
-        [widgetRouting.paramId]: id,
-        path: path || '',
-      },
-      options: {
+    router.navigate(
+      { path: 'apps.page', spaceId, environmentId, appId: id, pathname: path || '' },
+      {
         // If we are navigating to a new extension page OR we are not on the extension page,
         // we want to notify a state change of the URL. Otherwise, do NOT notify a state change
         // to ensure that the iframe on the page extension page doesn't reload.
         notify: isNavigatingToNewContext || !isOnPageLocation,
-      },
-    });
+      }
+    );
 
     return { navigated: true, path } as NavigatorPageResponse;
   };
@@ -224,17 +207,12 @@ const makeNavigateToAppConfig =
   }) =>
   () => {
     if (widgetNamespace === WidgetNamespace.APP) {
-      return Navigator.go({
-        path: ['spaces', 'environment', 'apps', 'detail'],
-        params: {
-          spaceId,
-          environmentId,
-          appId: widgetId,
-        },
-        options: {
+      return router.navigate(
+        { path: 'apps.app-configuration', spaceId, environmentId, appId: widgetId },
+        {
           notify: true,
-        },
-      });
+        }
+      );
     } else {
       throw new Error('Only apps can use the openAppConfig method');
     }

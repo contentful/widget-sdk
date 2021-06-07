@@ -10,9 +10,11 @@ jest.mock('services/TokenStore', () => ({
 const mockBasePlan = Fake.Plan({
   planType: 'base',
 });
-const mockAddOnPlan = Fake.Plan({
-  planType: 'add_on',
-});
+const mockAddOnPlans = [
+  Fake.Plan({
+    planType: 'add_on',
+  }),
+];
 
 const mockSpaceForPlanA = Fake.Space({ name: 'Space A', sys: { id: 'space_A' } });
 const mockSpaceForPlanB = Fake.Space({ name: 'Space B', sys: { id: 'space_B' } });
@@ -46,18 +48,18 @@ describe('findAllPlans', () => {
     const allPlans = findAllPlans([], []);
 
     expect(allPlans.basePlan).toBeUndefined();
-    expect(allPlans.addOnPlan).toBeUndefined();
+    expect(allPlans.addOnPlans).toEqual([]);
     expect(allPlans.spacePlans).toEqual([]);
   });
 
   it('separates an array of "plans" into a map with basePlan, addOnPlan, and spacePlans', () => {
     const allPlans = findAllPlans(
-      [mockBasePlan, mockAddOnPlan, mockSpacePlanA, mockSpacePlanB],
+      [mockBasePlan, ...mockAddOnPlans, mockSpacePlanA, mockSpacePlanB],
       [mockSpaceForPlanA, mockSpaceForPlanB]
     );
 
     expect(allPlans.basePlan).toEqual(mockBasePlan);
-    expect(allPlans.addOnPlan).toEqual(mockAddOnPlan);
+    expect(allPlans.addOnPlans).toEqual(mockAddOnPlans);
     // checks if spacePlans is in alphabetical order
     expect(allPlans.spacePlans).toEqual([mockSpacePlanA, mockSpacePlanB]);
   });

@@ -1,0 +1,1 @@
+export { useContentTypeTracking } from './useContentTypeTracking';

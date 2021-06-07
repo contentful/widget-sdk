@@ -90,7 +90,9 @@ const SnapshotComparator = (props) => {
   const { registerSaveAction, setDirty } = useUnsavedChangesModal();
   const getEditorData = useCallback(() => editorData, [editorData]);
   const widgets = useMemo(() => {
-    if (!editorData) return [];
+    if (!editorData) {
+      return [];
+    }
 
     return filter(editorData.fieldControls.form, (widget) => !get(widget, 'field.disabled'));
   }, [editorData]);
@@ -136,7 +138,9 @@ const SnapshotComparator = (props) => {
         trackVersioning.restored(pathsToRestore, diffCount, showOnlyDifferences);
         setDirty(false);
         Notification.success('Entry successfully restored.');
-        if (redirect) stateRedirect(false);
+        if (redirect) {
+          stateRedirect(false);
+        }
       } catch (error) {
         handleSaveError(error);
       }
@@ -150,7 +154,9 @@ const SnapshotComparator = (props) => {
   }, [pathsToRestoreExist, setDirty]);
 
   useEffect(() => {
-    if (!props.entryId) return;
+    if (!props.entryId) {
+      return;
+    }
     loadEditorData(getSpaceContext(), props.entryId)
       .then(setEditorData)
       .catch(() => {
@@ -164,14 +170,18 @@ const SnapshotComparator = (props) => {
   }, [registerSaveAction, onSave]);
 
   useEffect(() => {
-    if (!editorData || !snapshot || !props.source) return;
+    if (!editorData || !snapshot || !props.source) {
+      return;
+    }
 
     trackVersioning.setData(editorData.entity.data, snapshot);
     trackVersioning.opened(props.source);
   }, [editorData, snapshot, props.source]);
 
   useEffect(() => {
-    if (!editorData || !props.snapshotId) return;
+    if (!editorData || !props.snapshotId) {
+      return;
+    }
 
     async function init() {
       try {
@@ -208,7 +218,9 @@ const SnapshotComparator = (props) => {
   }
 
   function stateRedirect(reload) {
-    if (reload) return go({ path: '^.^', options: { reload: true } });
+    if (reload) {
+      return go({ path: '^.^', options: { reload: true } });
+    }
     return go({ path: '^.^' });
   }
 
@@ -284,7 +296,9 @@ const SnapshotComparator = (props) => {
           return (
             <div data-field-api-name={field.apiName} key={field.id}>
               {locales.map(({ fieldPath, isDifferent, locale }) => {
-                if (showOnlyDifferences && !isDifferent) return null;
+                if (showOnlyDifferences && !isDifferent) {
+                  return null;
+                }
 
                 const canEdit = permissions.canEditFieldLocale(field.apiName, locale.code);
                 const isDisabled = field.disabled || !canEdit;

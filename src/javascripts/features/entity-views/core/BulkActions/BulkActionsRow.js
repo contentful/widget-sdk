@@ -35,8 +35,12 @@ const getPublishLabel = (selectedEntities) => {
     { published: 0, unpublished: 0 }
   );
 
-  if (counts.published === 0) return 'Publish';
-  if (counts.unpublished === 0) return 'Republish';
+  if (counts.published === 0) {
+    return 'Publish';
+  }
+  if (counts.unpublished === 0) {
+    return 'Republish';
+  }
   return '(Re)publish';
 };
 
@@ -133,8 +137,9 @@ export const BulkActionsRow = ({
       !tagsEnabled &&
       (!isReleaseFeatureEnabled || !canAddToRelease);
 
-    if (noActionAvailable)
+    if (noActionAvailable) {
       return <span data-test-id="no-actions-message">No bulk action available</span>;
+    }
     return (
       <Flex marginTop="spacingXs">
         <BulkActionsButton label="Duplicate" onClick={fireAction} visible={showDuplicate} />
@@ -172,7 +177,9 @@ export const BulkActionsRow = ({
 
   const selectedCount = selectedEntities.length;
 
-  if (selectedCount <= 0) return null;
+  if (selectedCount <= 0) {
+    return null;
+  }
   return (
     <TableRow testId="bulk-actions">
       <TableCell colSpan={colSpan} className={styles.bulkActionsRow}>

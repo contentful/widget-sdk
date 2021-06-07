@@ -25,13 +25,17 @@ export function buildUrlWithUtmParams(utmParams = {}) {
    * @param {String} currentUrl The URL base to receive the UTM parameters
    */
   return (currentUrl = '') => {
-    if (!currentUrl) throw new Error('`currentUrl` is required.');
+    if (!currentUrl) {
+      throw new Error('`currentUrl` is required.');
+    }
 
     const finalUrl = currentUrl.startsWith('//') ? `https:${currentUrl}` : currentUrl;
     const { origin, pathname, searchParams, hash } = new URL(finalUrl); // only IE doesn't support it
 
     const hasRequiredParams = ['source', 'medium', 'campaign'].every((param) => !!utmParams[param]);
-    if (!hasRequiredParams) throw new Error('`source`, `medium` and `campaign` are required.');
+    if (!hasRequiredParams) {
+      throw new Error('`source`, `medium` and `campaign` are required.');
+    }
 
     Object.keys(utmParams).forEach((key) => {
       searchParams.set(`utm_${key}`, utmParams[key]); // using `set` instead of `append` to replace values with the same name

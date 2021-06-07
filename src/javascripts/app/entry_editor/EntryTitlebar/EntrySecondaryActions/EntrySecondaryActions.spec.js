@@ -2,7 +2,31 @@ import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react';
 import * as Navigator from 'states/Navigator';
 import EntrySecondaryActions from './EntrySecondaryActions';
-import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
+
+const mockEntry = { data: { sys: { id: 'entryId' } } };
+const mockCurrentSpace = {
+  createEntry: jest.fn().mockReturnValue(Promise.resolve(mockEntry)),
+};
+
+jest.mock('core/services/SpaceEnvContext', () => {
+  return {
+    useSpaceEnvContext: () => ({
+      currentSpace: mockCurrentSpace,
+    }),
+    useSpaceEnvContentTypes: () => {
+      return {
+        currentSpaceContentTypes: [
+          {
+            fields: [],
+            sys: {
+              id: 'ctid',
+            },
+          },
+        ],
+      };
+    },
+  };
+});
 
 jest.mock('states/Navigator');
 jest.mock('access_control/AccessChecker', () => ({
@@ -19,12 +43,7 @@ jest.mock('app/entity_editor/entityHelpers', () => ({
   appendDuplicateIndexToEntryTitle: jest.fn(),
 }));
 
-const entry = { data: { sys: { id: 'entryId' } } };
 const onDelete = { execute: jest.fn() };
-
-const currentSpace = {
-  createEntry: jest.fn().mockReturnValue(Promise.resolve(entry)),
-};
 
 describe('EntrySecondaryActions', () => {
   const build = (props) => {
@@ -48,25 +67,7 @@ describe('EntrySecondaryActions', () => {
       ...props,
     };
 
-    return [
-      render(
-        <SpaceEnvContext.Provider
-          value={{
-            currentSpaceContentTypes: [
-              {
-                fields: [],
-                sys: {
-                  id: resultProps.entityInfo.contentTypeId,
-                },
-              },
-            ],
-            currentSpace,
-          }}>
-          <EntrySecondaryActions {...resultProps} />
-        </SpaceEnvContext.Provider>
-      ),
-      resultProps,
-    ];
+    return [render(<EntrySecondaryActions {...resultProps} />), resultProps];
   };
 
   it.each([
@@ -75,11 +76,11 @@ describe('EntrySecondaryActions', () => {
   ])('Creates an entry for the current content type using %p', async (action, actionTestId) => {
     const [renderResult] = build();
     await triggerAction(renderResult, actionTestId);
-    expect(currentSpace[action]).toHaveBeenCalled();
+    expect(mockCurrentSpace[action]).toHaveBeenCalled();
     expect(Navigator.go).toHaveBeenCalledWith({
       path: '^.detail',
       params: {
-        entryId: entry.data.sys.id,
+        entryId: mockEntry.data.sys.id,
         previousEntries: '',
         addToContext: false,
       },

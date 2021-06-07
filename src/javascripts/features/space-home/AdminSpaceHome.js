@@ -12,7 +12,7 @@ import { AddCoworkerCTA } from './components/AddCoworkerCTA';
 import { SpaceTrialWidget } from 'features/trials';
 import { ComposeAndLaunchCTA } from './components/ComposeAndLaunchCTA';
 import { ContentfulAppsCTA } from './components/ContentfulAppsCTA';
-import { NewOnboardingCTA } from 'features/onboarding';
+import { NewOnboardingCTA, DiscoverOnboardingCTA } from 'features/onboarding';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import { tracking } from 'analytics/Analytics';
@@ -28,11 +28,18 @@ export const AdminSpaceHome = ({
   inviteCardExperimentEnabled,
 }) => {
   const [isNewOnboardingEnabled, setIsNewOnboardingEnabled] = useState(false);
+  const [isRecoverableOnboardingEnabled, setIsRecoverableOnboardingEnabled] = useState(false);
   const spaceContext = useSpaceEnvContext();
 
   useEffect(() => {
     (async function () {
       const newOnboardingEnabled = await getVariation(FLAGS.NEW_ONBOARDING_FLOW, {
+        spaceId: spaceContext.currentSpaceId,
+        organizationId: spaceContext.currentOrganizationId,
+        environmentId: spaceContext.currentEnvironmentId,
+      });
+
+      const recoverableOnboardingEnabled = await getVariation(FLAGS.RECOVERABLE_ONBOARDING_FLOW, {
         spaceId: spaceContext.currentSpaceId,
         organizationId: spaceContext.currentOrganizationId,
         environmentId: spaceContext.currentEnvironmentId,
@@ -57,6 +64,9 @@ export const AdminSpaceHome = ({
       }
 
       setIsNewOnboardingEnabled(newOnboardingEnabled && newOnboardingExperimentVariation);
+      setIsRecoverableOnboardingEnabled(
+        recoverableOnboardingEnabled && newOnboardingExperimentVariation
+      );
     })();
   }, [spaceContext]);
 
@@ -80,6 +90,12 @@ export const AdminSpaceHome = ({
       {isNewOnboardingEnabled && isEmptySpace && (
         <WidgetContainer.Row>
           <NewOnboardingCTA spaceId={spaceId} />
+        </WidgetContainer.Row>
+      )}
+
+      {isRecoverableOnboardingEnabled && !isEmptySpace && (
+        <WidgetContainer.Row>
+          <DiscoverOnboardingCTA spaceId={spaceId} />
         </WidgetContainer.Row>
       )}
 

@@ -52,7 +52,9 @@ export function RolesListRoute() {
   const isOrgOnTrial = isOrganizationOnTrial(currentOrganization);
 
   useEffect(() => {
-    if (!spaceId) return;
+    if (!spaceId) {
+      return;
+    }
 
     getVariation(FLAGS.ENTITLEMENTS_API).then((isEnabled) => {
       setEntitlementsAPIEnabled(isEnabled);

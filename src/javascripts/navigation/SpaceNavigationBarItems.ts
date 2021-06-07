@@ -171,10 +171,10 @@ export function getSpaceNavigationItems({
     !useSpaceEnvironment || isUnscopedRoute
       ? {
           if: canNavigateTo('spaceHome'),
-          sref: 'spaces.detail.home',
           dataViewType: 'space-home',
           navIcon: 'Home',
           title: 'Space home',
+          ...makeReactRouterRef('spaces.detail.home', withEnvironment),
         }
       : {
           if: canNavigateTo('spaceHome'),
@@ -185,11 +185,10 @@ export function getSpaceNavigationItems({
         },
     {
       if: canNavigateTo('contentType'),
-      sref: makeRef('content_types.list', isUnscopedRoute),
-      rootSref: makeRef('content_types', isUnscopedRoute),
       dataViewType: 'content-type-list',
       navIcon: 'ContentModel',
       title: 'Content model',
+      ...makeReactRouterRef('content_types.list', withEnvironment),
     },
     {
       if: canNavigateTo('entry'),
@@ -211,7 +210,7 @@ export function getSpaceNavigationItems({
       if: canNavigateTo('apps'),
       dataViewType: 'apps',
       navIcon: 'Apps',
-      rootSref: makeRef('apps', isUnscopedRoute),
+      rootSref: makeReactRouterRef('apps.list', withEnvironment).rootSref,
       title: 'Apps',
       render: (item) => renderAppsNavigationItem(item, { isUnscopedRoute, canManageSpace }),
     },

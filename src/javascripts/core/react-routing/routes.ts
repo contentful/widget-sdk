@@ -1,19 +1,34 @@
-import { spaceSettingsRoutes, accountSettingsRoutes, organizationSettingsRoutes } from './routes/';
+import {
+  spaceSettingsRoutes,
+  accountSettingsRoutes,
+  organizationSettingsRoutes,
+  contentTypesRoutes,
+  spacesRoutes,
+} from './routes/';
 import type {
   SpaceSettingsRouteType,
   AccountSettingsRouteType,
   CreateRouteDefinition,
   RouteDefinition,
   OrganizationSettingsRouteType,
+  ContentTypesRouteType,
+  SpacesRouteType,
 } from './routes/';
 
 const routes = {
   ...spaceSettingsRoutes,
   ...accountSettingsRoutes,
   ...organizationSettingsRoutes,
+  ...contentTypesRoutes,
+  ...spacesRoutes,
 };
 
-type RouteType = SpaceSettingsRouteType | AccountSettingsRouteType | OrganizationSettingsRouteType;
+type RouteType =
+  | SpaceSettingsRouteType
+  | AccountSettingsRouteType
+  | OrganizationSettingsRouteType
+  | ContentTypesRouteType
+  | SpacesRouteType;
 
 export { routes };
 

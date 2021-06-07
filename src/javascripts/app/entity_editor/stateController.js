@@ -76,15 +76,12 @@ export const initStateController = ({
     }
   );
 
+  // TODO: Remove from the system as the revert feature isn't in use since Aug 2019.
   controller.revertToPrevious = createCommand(
     async () => {
       try {
         await reverter.revert();
         notify(Notification.Success('revert'));
-        Analytics.track('entity_state:revert', {
-          id: entityInfo.id,
-          type: entityInfo.type,
-        });
       } catch (error) {
         notify(Notification.Error('revert', error));
       }
@@ -334,7 +331,9 @@ export const initStateController = ({
       />
     ));
 
-    if (result.action) return result;
+    if (result.action) {
+      return result;
+    }
     throw new Error();
   }
 };

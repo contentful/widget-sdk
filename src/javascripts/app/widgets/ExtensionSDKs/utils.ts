@@ -1,4 +1,4 @@
-import { ContentType, EntryAPI, User, IdsAPI } from '@contentful/app-sdk';
+import { ContentType, EntryAPI, UserAPI, IdsAPI } from '@contentful/app-sdk';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 
 interface CreateIdsApiProps {
@@ -7,7 +7,7 @@ interface CreateIdsApiProps {
   envAliasId: string | undefined;
   contentType: ContentType;
   entry: EntryAPI;
-  user: User;
+  user: UserAPI;
   widgetNamespace: WidgetNamespace;
   widgetId: string;
 }

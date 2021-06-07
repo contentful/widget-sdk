@@ -13,7 +13,7 @@ import {
   Paragraph,
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
-import { go } from 'states/Navigator';
+import { router } from 'core/react-routing';
 
 const styles = {
   nameCol: css({
@@ -35,12 +35,8 @@ interface SpacesListForMembersProps {
 }
 
 export const SpacesListForMembers = ({ spaces }: SpacesListForMembersProps) => {
-  const onViewSpace = (id: string) =>
-    go({
-      path: ['spaces', 'detail', 'home'],
-      params: { spaceId: id },
-      options: { reload: true },
-    });
+  const onViewSpace = (spaceId: string) =>
+    router.navigate({ path: 'spaces.detail.home', spaceId }, { reload: true });
 
   return (
     <>

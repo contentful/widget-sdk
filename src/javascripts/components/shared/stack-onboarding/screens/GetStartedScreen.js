@@ -7,13 +7,13 @@ import Icon from 'ui/Components/Icon';
 import { useAsync } from 'core/hooks';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { track } from 'analytics/Analytics';
-import { go } from 'states/Navigator';
 import { Flex, ModalLauncher } from '@contentful/forma-36-react-components';
 import { unmarkSpace } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import { FlexibleOnboardingDialog } from 'features/onboarding';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
+import { router } from 'core/react-routing';
 
 const icons = [
   'aws',
@@ -87,7 +87,7 @@ const GetStarted = () => {
               onClick={() => {
                 track('onboarding_gatsby_blog:back');
                 unmarkSpace();
-                go({ path: 'spaces.detail.home' });
+                router.navigate({ path: 'spaces.detail.home' });
                 ModalLauncher.open(({ isShown, onClose }) => {
                   return (
                     <FlexibleOnboardingDialog

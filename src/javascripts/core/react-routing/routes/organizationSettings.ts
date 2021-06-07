@@ -353,8 +353,8 @@ type OrganizationsSubscriptionOverviewCreateSpaceRoute = {
 type OrganizationsSubscriptionOverviewSpacePlansRoute = {
   path: 'organizations.subscription.overview.space-plans';
   orgId: string;
-  planId: string;
-  spaceId: string;
+  planId?: string;
+  spaceId?: string;
 };
 
 type OrganizationsSubscriptionRouteType =

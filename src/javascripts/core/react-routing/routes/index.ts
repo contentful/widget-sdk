@@ -7,4 +7,10 @@ export type { AccountSettingsRouteType } from './accountSettings';
 export { routes as organizationSettingsRoutes } from './organizationSettings';
 export type { OrganizationSettingsRouteType } from './organizationSettings';
 
+export { routes as contentTypesRoutes } from './contentTypes';
+export type { ContentTypesRouteType } from './contentTypes';
+
+export { routes as spacesRoutes } from './spaces';
+export type { SpacesRouteType } from './spaces';
+
 export type { CreateRouteDefinition, RouteDefinition } from './types';

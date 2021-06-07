@@ -35,7 +35,9 @@ export default function createResourceService(id, type = 'space', envId) {
     const apiResourceType = snakeCase(resourceType);
     let path = ['resources', apiResourceType];
 
-    if (environmentId) path = ['environments', environmentId, 'resources', apiResourceType];
+    if (environmentId) {
+      path = ['environments', environmentId, 'resources', apiResourceType];
+    }
 
     return endpoint(
       {
@@ -48,7 +50,9 @@ export default function createResourceService(id, type = 'space', envId) {
 
   async function getAll(environmentId) {
     let path = ['resources'];
-    if (environmentId) path = ['environments', environmentId, 'resources'];
+    if (environmentId) {
+      path = ['environments', environmentId, 'resources'];
+    }
 
     const raw = await endpoint(
       {

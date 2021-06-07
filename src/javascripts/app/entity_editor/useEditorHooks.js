@@ -6,7 +6,7 @@ import initLocaleData, {
   getStatusNotificationPropsDefault,
 } from 'app/entity_editor/setLocaleData';
 import { useProxyState } from 'core/services/proxy';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext, useSpaceEnvContentTypes } from 'core/services/SpaceEnvContext';
 import { getEditorState } from './editorState';
 import installTracking from './Tracking';
 import * as K from 'core/utils/kefir';
@@ -27,7 +27,8 @@ export const useEditorState = ({
   editorType,
   trackView,
 }) => {
-  const { currentSpaceContentTypes, currentSpaceId, currentEnvironmentId } = useSpaceEnvContext();
+  const { currentSpaceId, currentEnvironmentId } = useSpaceEnvContext();
+  const { currentSpaceContentTypes } = useSpaceEnvContentTypes();
   const lifeline = K.useLifeline();
 
   const [title, setTitle] = useState('');

@@ -1,9 +1,6 @@
 import React from 'react';
 import { AppSwitcher, AppSwitcherAction } from '@contentful/experience-components';
-import * as Navigator from 'states/Navigator';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { NavigationSwitcherAppProps } from './useAppsList';
-import * as accessChecker from 'access_control/AccessChecker';
 
 export const SidepanelAppSwitcher = ({
   isVisible,
@@ -14,8 +11,6 @@ export const SidepanelAppSwitcher = ({
   isVisible: boolean;
   onClose: () => void;
 }) => {
-  const spaceEnv = useSpaceEnvContext();
-
   const onAppSwitcherAction = (action: AppSwitcherAction) => {
     const { ctrlKey, shiftKey } = action.event;
 
@@ -30,24 +25,9 @@ export const SidepanelAppSwitcher = ({
         return;
       }
 
-      if (!app.isInstalled) {
-        Navigator.go(app.installRouteProps);
-
+      if (!app.isInstalled || app.active) {
         action.event.preventDefault();
-        return;
-      }
-
-      // go to space home or entries on click Web app
-      if (app.active) {
-        Navigator.go({
-          path: accessChecker.getSectionVisibility().spaceHome
-            ? 'spaces.detail.home'
-            : 'spaces.detail.entries.list',
-          params: { environmentId: spaceEnv.currentEnvironmentId },
-        });
-
-        action.event.preventDefault();
-        return;
+        app.navigate();
       }
     }
   };

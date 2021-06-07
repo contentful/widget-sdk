@@ -41,7 +41,9 @@ export default function CreateEntryComment({
   const sendButtonLabel = parentCommentId ? 'Post reply' : 'Post comment';
 
   const handleSubmit = () => {
-    if (!body || isLoading) return;
+    if (!body || isLoading) {
+      return;
+    }
     setIsSubmited(true);
     createComment(body);
   };
@@ -81,7 +83,9 @@ export default function CreateEntryComment({
   };
 
   const handleBlur = () => {
-    if (body) return;
+    if (body) {
+      return;
+    }
     onBlur ? onBlur() : setIsExpanded(false);
   };
 

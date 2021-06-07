@@ -9,7 +9,6 @@ import {
 } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import MarkdownRenderer from 'app/common/MarkdownRenderer';
-import StateLink from 'app/common/StateLink';
 import cx from 'classnames';
 import { ActionPerformerName } from 'core/components/ActionPerformerName';
 import { css } from 'emotion';
@@ -21,6 +20,7 @@ import { getContentfulAppUrl, getUsageExceededMessage, hasConfigLocation } from 
 import { AppHeader } from './AppHeader';
 import { AppPermissionScreen } from './AppPermissionsScreen';
 import { externalLinkProps, SpaceInformation } from './shared';
+import { useRouteNavigate } from 'core/react-routing';
 
 const styles = {
   root: css({
@@ -106,6 +106,7 @@ interface AppDetailsProps {
 }
 
 export function AppDetails(props: AppDetailsProps) {
+  const routeNavigate = useRouteNavigate();
   const {
     app,
     appManager,
@@ -123,25 +124,27 @@ export function AppDetails(props: AppDetailsProps) {
 
   if (showPermissions) {
     return (
-      <StateLink path="^.detail" params={{ appId: app.id, acceptedPermissions: true }}>
-        {({ onClick }) => (
-          <AppPermissionScreen
-            app={app}
-            spaceInformation={spaceInformation}
-            onInstall={async () => {
-              if (!hasConfig) {
-                await appManager.installApp(app, hasAdvancedAppsFeature);
-                await onClose();
-              } else {
-                onClick();
-              }
-            }}
-            onCancel={() => {
-              app.isPrivateApp ? onClose() : setShowPermissions(false);
-            }}
-          />
-        )}
-      </StateLink>
+      <AppPermissionScreen
+        app={app}
+        spaceInformation={spaceInformation}
+        onInstall={async () => {
+          if (!hasConfig) {
+            await appManager.installApp(app, hasAdvancedAppsFeature);
+            await onClose();
+          } else {
+            routeNavigate({
+              path: 'apps.app-configuration',
+              appId: app.id,
+              navigationState: {
+                acceptedPermissions: true,
+              },
+            });
+          }
+        }}
+        onCancel={() => {
+          app.isPrivateApp ? onClose() : setShowPermissions(false);
+        }}
+      />
     );
   }
 
@@ -294,6 +297,7 @@ function CTA({
   canManageApps,
   onClose,
 }: CTAProps) {
+  const routeNavigate = useRouteNavigate();
   if (app.isPaidApp && !app.appDefinition) {
     return (
       <Button
@@ -336,20 +340,16 @@ function CTA({
 
   if (hasConfigLocation(app.appDefinition)) {
     return (
-      <StateLink path="^.detail" params={{ appId: app.id }}>
-        {({ onClick }) => (
-          <Button
-            onClick={async () => {
-              await onClose();
-              onClick();
-            }}
-            isFullWidth
-            buttonType="primary"
-            disabled={!canManageApps}>
-            Configure
-          </Button>
-        )}
-      </StateLink>
+      <Button
+        onClick={async () => {
+          await onClose();
+          routeNavigate({ path: 'apps.app-configuration', appId: app.id });
+        }}
+        isFullWidth
+        buttonType="primary"
+        disabled={!canManageApps}>
+        Configure
+      </Button>
     );
   }
 

@@ -1,11 +1,12 @@
 import { createEntryFieldApi } from './createEntryFieldApi';
 import { InternalContentType, InternalContentTypeField } from './createContentTypeApi';
 import * as K from 'core/utils/kefir';
-import { EntryAPI, EntryFieldAPI, EntrySys, TaskInputData } from '@contentful/app-sdk';
+import { EntryAPI, EntryFieldAPI, TaskInputData } from '@contentful/app-sdk';
 import type { Document } from '@contentful/editorial-primitives';
 import { FieldLocaleLookup } from 'app/entry_editor/makeFieldLocaleListeners';
 import { isEqual } from 'lodash';
 import APIClient from 'data/APIClient';
+import type { EntryProps } from 'contentful-management/types';
 interface CreateEntryApiOptions {
   cma: APIClient;
   internalContentType: InternalContentType;
@@ -13,8 +14,8 @@ interface CreateEntryApiOptions {
   setInvalid: (localeCode: string, value: boolean) => void;
   fieldLocaleListeners: FieldLocaleLookup;
   readOnly?: boolean;
-  widgetNamespace: string;
   widgetId: string;
+  widgetNamespace: string;
 }
 
 export function createEntryApi({
@@ -34,8 +35,8 @@ export function createEntryApi({
       setInvalid,
       fieldLocaleListeners,
       readOnly,
-      widgetNamespace,
       widgetId,
+      widgetNamespace,
     });
   });
 
@@ -57,7 +58,7 @@ export function createEntryApi({
   return {
     getSys: () => {
       // TODO: the EntitySys type in doc doesn't match EntrySys from UIESDK
-      return K.getValue(doc.sysProperty) as unknown as EntrySys;
+      return K.getValue(doc.sysProperty) as unknown as EntryProps['sys'];
     },
     onSysChanged: (cb) => {
       return K.onValue(doc.sysProperty, cb as (value: unknown) => void);

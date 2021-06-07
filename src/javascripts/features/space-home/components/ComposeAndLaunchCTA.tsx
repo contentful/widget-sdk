@@ -2,10 +2,10 @@ import React, { ReactElement } from 'react';
 import { WidgetContainer } from '../widgets/WidgetContainer';
 import { ContentfulAppTile, SpaceInformation, canUserManageApps } from 'features/apps';
 import LaunchAndComposeIcon from 'svg/illustrations/launch-compose-screenshot.svg';
-import { go } from 'states/Navigator';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { useContentfulAppsConfig } from 'features/contentful-apps';
 import { useAppsTrial } from 'features/trials';
+import { router } from 'core/react-routing';
 
 export const ComposeAndLaunchCTA = (): ReactElement => {
   const { currentSpaceId, currentSpaceName, currentEnvironmentId, currentOrganizationId } =
@@ -77,7 +77,7 @@ export const ComposeAndLaunchCTA = (): ReactElement => {
               organizationId={currentOrganizationId}
               spaceInformation={spaceInfo as SpaceInformation}
               installAction={() => {
-                go({ path: ['spaces', 'detail', 'apps', 'list'] });
+                router.navigate({ path: 'apps.list' });
               }}
               isInstalled={false}
               isPurchased

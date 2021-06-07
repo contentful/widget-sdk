@@ -1,4 +1,5 @@
 import { WidgetNamespace, WidgetLocation } from '@contentful/widget-renderer';
+import { Editor } from 'contentful-management/types';
 export type AvailabilityStatus = 'alpha' | 'beta';
 export interface ConfigurationItem {
   widgetId: string;
@@ -30,9 +31,6 @@ export interface DefaultWidget {
   name: string;
 }
 
-export interface SavedConfigItem {
-  widgetId: string;
+export type SavedConfigItem = Editor & {
   widgetNamespace: WidgetNamespace;
-  disabled?: boolean;
-  settings?: Record<string, any>;
-}
+};

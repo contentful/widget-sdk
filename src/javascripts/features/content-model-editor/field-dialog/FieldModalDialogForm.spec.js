@@ -10,7 +10,7 @@ describe('Field Modal Dialog Form', () => {
     const onCloseMock = jest.fn();
     const updateFieldOnScope = jest.fn();
     const { getByTestId } = render(
-      <SpaceEnvContext.Provider value={{ currentSpaceContentTypes: [] }}>
+      <SpaceEnvContext.Provider value={{}}>
         <CurrentSpaceAPIClientProvider>
           <FieldModalDialogForm
             onClose={onCloseMock}

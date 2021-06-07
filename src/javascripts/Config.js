@@ -201,10 +201,10 @@ export function toolsUrl(path, params) {
 }
 
 /**
- * Builds a URL for calling micro-backends.
+ * Builds a URL for calling telemetry.
  */
-export function microBackendsUrl(path) {
-  return settings.microBackendsUrl + ensureLeadingSlash(path);
+export function telemetryUrl(path) {
+  return settings.telemetryUrl + ensureLeadingSlash(path);
 }
 
 /*

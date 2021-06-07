@@ -3,6 +3,14 @@ import * as React from 'react';
 import { noop } from 'lodash';
 import { MarketplacePage } from '../MarketplacePage';
 import { AppRoute } from '../AppPage';
+import {
+  CustomRouter,
+  RouteErrorBoundary,
+  Route,
+  Routes,
+  useNavigationState,
+  useParams,
+} from 'core/react-routing';
 import { makeAppHookBus, getAppsRepo } from 'features/apps-core';
 import {
   getSpaceFeature,
@@ -11,6 +19,7 @@ import {
   OrganizationFeatures,
 } from 'data/CMA/ProductCatalog';
 import { shouldHide, Action } from 'access_control/AccessChecker';
+import StateRedirect from 'app/common/StateRedirect';
 import { PageWidgetRenderer } from 'features/page-widgets';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 
@@ -61,38 +70,60 @@ function withAppsResolver(Component) {
   return WithAppsResolver;
 }
 
-function withAppHookBusResolver(Component) {
-  function WithAppHookBusResolver(props) {
-    const { current: appHookBus } = React.useRef(makeAppHookBus());
+const ProvidedListRoute = withAppsResolver(MarketplacePage);
+const ProvidedPageWidgetRenderer = withAppsResolver((props) => {
+  const params = useParams() as { appId: string; '*': string };
 
-    return <Component {...props} appHookBus={appHookBus} />;
+  const appId = params.appId;
+
+  let path = params['*'] || '';
+  if (path && !path.startsWith('/')) {
+    path = `/${path}`;
   }
 
-  return WithAppHookBusResolver;
+  return <PageWidgetRenderer {...props} appId={appId} path={path} />;
+});
+
+const ProvidedAppRoute = withAppsResolver((props) => {
+  const { appId } = useParams() as { appId: string };
+  const navigationState = useNavigationState<{ acceptedPermissions: boolean }>();
+  const { current: appHookBus } = React.useRef(makeAppHookBus());
+  return (
+    <AppRoute
+      {...props}
+      appHookBus={appHookBus}
+      appId={appId}
+      acceptedPermissions={navigationState?.acceptedPermissions}
+    />
+  );
+});
+
+function AppsRouter() {
+  const [basename] = window.location.pathname.split('apps');
+
+  return (
+    <CustomRouter splitter="apps">
+      <RouteErrorBoundary>
+        <Routes basename={basename + 'apps'}>
+          <Route name="spaces.detail.apps.list" path="/" element={<ProvidedListRoute />} />
+          <Route name="spaces.detail.apps.detail" path="/:appId" element={<ProvidedAppRoute />} />
+          <Route
+            name="spaces.detail.apps.page"
+            path="/app_installations/:appId/*"
+            element={<ProvidedPageWidgetRenderer />}
+          />
+          <Route name={null} path="*" element={<StateRedirect path="home" />} />
+        </Routes>
+      </RouteErrorBoundary>
+    </CustomRouter>
+  );
 }
 
 export const appRoute = {
   name: 'apps',
-  url: '/apps',
-  abstract: true,
-  children: [
-    {
-      name: 'list',
-      url: '?app',
-      component: withAppsResolver(MarketplacePage),
-    },
-    {
-      name: 'detail',
-      url: '/:appId',
-      params: {
-        acceptedPermissions: null,
-      },
-      component: withAppHookBusResolver(withAppsResolver(AppRoute)),
-    },
-    {
-      name: 'page',
-      url: '/app_installations/:appId{path:PathSuffix}',
-      component: withAppsResolver(PageWidgetRenderer),
-    },
-  ],
+  url: '/apps{pathname:any}',
+  params: {
+    navigationState: null,
+  },
+  component: AppsRouter,
 };

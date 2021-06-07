@@ -54,8 +54,6 @@ export const createEditorWidgetSDK = ({
   localeData,
   preferences,
   internalContentType,
-  widgetNamespace,
-  widgetId,
   parameters,
   doc,
   fieldLocaleListeners,
@@ -66,6 +64,8 @@ export const createEditorWidgetSDK = ({
   environment,
   contentTypes,
   pubSubClient,
+  widgetId,
+  widgetNamespace,
 }: CreateEditorExtensionSDKOptions): EditorExtensionSDK => {
   const contentTypeApi = createContentTypeApi(internalContentType);
   const source =
@@ -93,8 +93,8 @@ export const createEditorWidgetSDK = ({
     // field, but in context of editor there is no current field. We should move
     // it to field-locale level in a long run.
     setInvalid: noop,
-    widgetNamespace,
     widgetId,
+    widgetNamespace,
   });
 
   const idsApi = createIdsApiWithoutField({

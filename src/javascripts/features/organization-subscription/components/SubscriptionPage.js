@@ -26,6 +26,7 @@ import { UsersForPlan } from './UsersForPlan';
 import { SpacePlans } from './SpacePlans';
 import { V1MigrationNote } from './V1MigrationNote';
 import { generateBasePlanName } from '../utils/generateBasePlanName';
+import { useCalculateSubscriptionCosts } from '../hooks/useCalculateSubscriptionCosts';
 
 const styles = {
   fullRow: css({
@@ -39,11 +40,11 @@ export function SubscriptionPage({
   addOnPlan,
   usersMeta,
   organization,
-  grandTotal,
   memberAccessibleSpaces,
 }) {
   const organizationId = organization?.sys.id;
 
+  const subscriptionCosts = useCalculateSubscriptionCosts();
   const onCreateSpace = createSpace(organizationId);
 
   const handleStartAppTrial = async () => {
@@ -81,7 +82,7 @@ export function SubscriptionPage({
 
   return (
     <Grid testId="subscription-page" columns={2} columnGap="spacingXl" rowGap="spacingXl">
-      {isV1MigrationSucceeded && (
+      {isV1MigrationSucceeded && basePlanName && (
         <V1MigrationNote basePlanName={basePlanName} className={styles.fullRow} />
       )}
       {organization && isOrgOnTrial && (
@@ -126,7 +127,7 @@ export function SubscriptionPage({
           )}
           {showPayingOnDemandCopy && (
             <Flex flexDirection="column" marginBottom="spacingXl">
-              <PayingOnDemandOrgCopy grandTotal={grandTotal} />
+              <PayingOnDemandOrgCopy grandTotal={subscriptionCosts.total} />
             </Flex>
           )}
           {showContentfulAppsCard && (
@@ -164,7 +165,6 @@ export function SubscriptionPage({
 SubscriptionPage.propTypes = {
   basePlan: PropTypes.object,
   addOnPlan: PropTypes.object,
-  grandTotal: PropTypes.number,
   usersMeta: PropTypes.object,
   organization: PropTypes.object,
   memberAccessibleSpaces: PropTypes.array,

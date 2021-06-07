@@ -127,7 +127,9 @@ export const AssetView = () => {
         <FileSizeLimitWarning organizationId={currentOrganizationId} spaceId={currentSpaceId} />
       )}
       renderAddEntityActions={({ updateEntities }, className) => {
-        if (shouldHide('create', entityType)) return null;
+        if (shouldHide('create', entityType)) {
+          return null;
+        }
         return (
           <AddAssetButton
             className={className}

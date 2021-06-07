@@ -16,6 +16,7 @@ export {
   editorLoaded,
   editorWorkbenchTabOpen,
   elementClick,
+  editorInterfaceFieldUpdated,
   entityEditorEditConflict,
   entryCreate,
   entryPublish,

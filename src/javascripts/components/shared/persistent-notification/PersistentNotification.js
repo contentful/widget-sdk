@@ -37,7 +37,9 @@ export function PersistentNotification() {
     };
   }, []);
 
-  if (!showNotification) return null;
+  if (!showNotification) {
+    return null;
+  }
 
   return <NotificationBar {...data} />;
 }

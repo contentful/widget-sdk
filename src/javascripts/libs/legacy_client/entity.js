@@ -41,7 +41,9 @@ Entity.prototype = {
   getIdentity: function () {
     const id = this.getId();
     const type = this.getType();
-    if (id && type) return '' + type + '.' + id;
+    if (id && type) {
+      return '' + type + '.' + id;
+    }
   },
 
   getType: function () {

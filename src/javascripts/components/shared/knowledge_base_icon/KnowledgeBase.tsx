@@ -66,7 +66,7 @@ export enum KnowledgeBaseItems {
   management_api = 'management_api',
   cma_key = 'cma_key',
   content_preview = 'content_preview',
-  content_modelling_basics = 'content_modelling_basics',
+  content_modelling_basics = 'contentModellingBasics',
   createOAuthApp = 'createOAuthApp',
   spaceEnvironments = 'spaceEnvironments',
   spacesAndOrganizations = 'spacesAndOrganizations',

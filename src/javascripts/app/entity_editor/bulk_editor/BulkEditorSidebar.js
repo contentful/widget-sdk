@@ -9,7 +9,7 @@ import { entitySelector, useEntitySelectorSdk } from 'features/entity-search';
 import * as accessChecker from 'access_control/AccessChecker';
 import { get, uniq, isObject, extend } from 'lodash';
 import { useSpaceEnvCMAClient } from 'core/services/usePlainCMAClient';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContentTypes } from 'core/services/SpaceEnvContext';
 
 const styles = {
   helpText: css({
@@ -37,7 +37,7 @@ const linkEntity = (entity) => ({
 });
 
 export const BulkEditorSidebar = ({ linkCount, field, addLinks, track }) => {
-  const { currentSpaceContentTypes } = useSpaceEnvContext();
+  const { currentSpaceContentTypes } = useSpaceEnvContentTypes();
   const { spaceEnvCMAClient } = useSpaceEnvCMAClient();
   const entitySelectorSdk = useEntitySelectorSdk();
 

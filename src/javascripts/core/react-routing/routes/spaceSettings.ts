@@ -1,4 +1,5 @@
 import type { EnvironmentParams } from './types';
+import { withQueryParams } from './withQueryParams';
 import { spaceEnvBase } from './utils';
 
 /** Hibernation */
@@ -392,11 +393,91 @@ type TasksRouteType = {
 const tasksRoute = {
   tasks: (env: EnvironmentParams, params: Omit<TasksRouteType, 'path'>) => ({
     path: spaceEnvBase(env, 'tasks'),
-    params: {
-      spaceId: params.spaceId,
-      environmentId: params.environmentId,
-    },
+    params: Object.assign(
+      { pathname: '/' },
+      params?.spaceId ? { spaceId: params.spaceId } : {},
+      params?.environmentId ? { environmentId: params.environmentId } : {}
+    ),
   }),
+};
+
+/**
+ * Apps
+ */
+
+type AppsListRouteType = {
+  path: 'apps.list';
+  spaceId?: string;
+  environmentId?: string;
+  app?: string;
+  navigationState?: {
+    referrer?: string;
+  };
+};
+
+type AppConfigurationRouteType = {
+  path: 'apps.app-configuration';
+  appId: string;
+  spaceId?: string;
+  environmentId?: string;
+  navigationState?: {
+    acceptedPermissions?: boolean;
+    referrer?: string;
+  };
+};
+
+type AppsPageRouteType = {
+  path: 'apps.page';
+  spaceId?: string;
+  environmentId?: string;
+  appId: string;
+  pathname: string;
+};
+
+type AppsRouteType = AppsListRouteType | AppConfigurationRouteType | AppsPageRouteType;
+
+const appsRoute = {
+  'apps.list': (env: EnvironmentParams, params: Omit<AppsListRouteType, 'path'>) => ({
+    path: spaceEnvBase(env, 'apps'),
+    params: Object.assign(
+      {
+        pathname: withQueryParams('/', { app: params?.app }),
+        navigationState: params?.navigationState,
+      },
+      params?.spaceId ? { spaceId: params.spaceId } : {},
+      params?.environmentId ? { environmentId: params.environmentId } : {}
+    ),
+  }),
+  'apps.app-configuration': (
+    env: EnvironmentParams,
+    params: Omit<AppConfigurationRouteType, 'path'>
+  ) => ({
+    path: spaceEnvBase(env, 'apps'),
+    params: Object.assign(
+      {
+        pathname: `/${params.appId}`,
+        navigationState: params?.navigationState,
+      },
+      params?.spaceId ? { spaceId: params.spaceId } : {},
+      params?.environmentId ? { environmentId: params.environmentId } : {}
+    ),
+  }),
+  'apps.page': (env: EnvironmentParams, params: Omit<AppsPageRouteType, 'path'>) => {
+    let pathname = params.pathname;
+    if (pathname && !pathname.startsWith('/')) {
+      pathname = `/${pathname}`;
+    }
+    return {
+      path: spaceEnvBase(env, 'apps'),
+      params: Object.assign(
+        {
+          pathname: `/app_installations/${params.appId}${pathname}`,
+        },
+        params?.spaceId ? { spaceId: params.spaceId } : {},
+        params?.environmentId ? { environmentId: params.environmentId } : {}
+      ),
+    };
+  },
 };
 
 /**
@@ -469,6 +550,64 @@ const apiKeyListRoute = {
 };
 
 /**
+ * Onboarding routes
+ */
+
+type OnboardingGetStartedRouteType = {
+  path: 'spaces.detail.onboarding.getStarted';
+  spaceId?: string;
+};
+
+type OnboardingCopyRouteType = {
+  path: 'spaces.detail.onboarding.copy';
+  spaceId?: string;
+};
+
+type OnboardingExploreRouteType = {
+  path: 'spaces.detail.onboarding.explore';
+  spaceId?: string;
+};
+
+type OnboardingDeployRouteType = {
+  path: 'spaces.detail.onboarding.deploy';
+  spaceId?: string;
+};
+
+const onboardingRoute = {
+  'spaces.detail.onboarding.getStarted': (
+    _,
+    params: Omit<OnboardingGetStartedRouteType, 'path'>
+  ) => ({
+    path: 'spaces.detail.onboarding',
+    params: {
+      pathname: '/getStarted',
+      spaceId: params.spaceId,
+    },
+  }),
+  'spaces.detail.onboarding.copy': (_, params: Omit<OnboardingCopyRouteType, 'path'>) => ({
+    path: 'spaces.detail.onboarding',
+    params: {
+      pathname: '/copy',
+      spaceId: params.spaceId,
+    },
+  }),
+  'spaces.detail.onboarding.explore': (_, params: Omit<OnboardingExploreRouteType, 'path'>) => ({
+    path: 'spaces.detail.onboarding',
+    params: {
+      pathname: '/explore',
+      spaceId: params.spaceId,
+    },
+  }),
+  'spaces.detail.onboarding.deploy': (_, params: Omit<OnboardingDeployRouteType, 'path'>) => ({
+    path: 'spaces.detail.onboarding',
+    params: {
+      pathname: '/deploy',
+      spaceId: params.spaceId,
+    },
+  }),
+};
+
+/**
  * All paths combined together
  */
 
@@ -489,11 +628,16 @@ export type SpaceSettingsRouteType =
   | PageExtensionsRouteType
   | ScheduledActionsRouteType
   | TasksRouteType
+  | AppsRouteType
   | ApiKeyListRouteType
   | ApiKeyEditorRouteType
   | CMATokensType
   | CMAKeysType
-  | APIContentModelType;
+  | APIContentModelType
+  | OnboardingGetStartedRouteType
+  | OnboardingCopyRouteType
+  | OnboardingExploreRouteType
+  | OnboardingDeployRouteType;
 
 export const routes = {
   ...hibernationRoutes,
@@ -513,4 +657,6 @@ export const routes = {
   ...scheduledActionsRoute,
   ...tasksRoute,
   ...apiKeyListRoute,
+  ...appsRoute,
+  ...onboardingRoute,
 };

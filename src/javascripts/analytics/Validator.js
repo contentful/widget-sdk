@@ -35,7 +35,6 @@ export const validEvents = {
     'command_copied',
   ],
   notification: ['action_performed'],
-  learn: ['step_clicked', 'language_selected', 'resource_selected'],
   space_switcher: ['opened', 'create_clicked', 'space_switched'],
   space: ['template_selected', 'create'],
   space_wizard: [
@@ -56,7 +55,6 @@ export const validEvents = {
     'view_edited',
     'view_deleted',
     'view_loaded',
-    'search_terms_migrated',
     'entry_clicked',
     'filter_added',
     'filter_removed',
@@ -126,12 +124,8 @@ export const validEvents = {
   editor_workbench: ['tab_open'],
   asset: ['create'],
   api_key: ['create', 'clipboard_copy', 'boilerplate'],
-  invite_user: ['learn', 'create_space'],
   personal_access_token: ['action'],
   element: ['click'],
-  // TODO: These should be merged with the reference_editor_action
-  // schema.
-  reference_editor: ['create_entry', 'edit_entry'],
   account_dropdown: ['pending_tasks_fetched'],
   reference_editor_action: ['create', 'edit', 'delete', 'link'],
   incoming_links: [
@@ -171,11 +165,8 @@ export const validEvents = {
   perf: ['dom_content_loaded', 'first_contentful_paint', 'time_to_interactive'],
   jobs: ['cancel', 'create'],
   teams_in_space: ['teams_added', 'users_added', 'users_to_teams_page_navigation'],
-  entity_state: ['revert'],
   entity_list: ['bulk_action_performed'],
   asset_list: ['add_asset_single', 'add_asset_multiple'],
-  telemetry: ['measurement'],
-  app_management: ['created', 'deleted', 'updated'],
   tracking: ['invalid_event'],
   feedback: ['give'],
   cta_clicked: CTA_EVENTS,

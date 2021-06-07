@@ -28,7 +28,9 @@ const trackAction = (action) =>
   });
 
 export function determineEnforcement(space, reasons, entityType) {
-  if (!reasons || (reasons.length && reasons.length === 0)) return null;
+  if (!reasons || (reasons.length && reasons.length === 0)) {
+    return null;
+  }
 
   const organization = get(space, 'organization');
   const errorsByPriority = [

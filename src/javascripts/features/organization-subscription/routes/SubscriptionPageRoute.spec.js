@@ -73,6 +73,9 @@ jest.mock('utils/SubscriptionUtils', () => ({
   calculatePlansCost: jest.fn().mockReturnValue(1000),
   // import mock for BasePlan
   getEnabledFeatures: jest.fn().mockReturnValue([]),
+  calculateSubscriptionCosts: jest
+    .fn()
+    .mockReturnValue({ total: 100, lineItems: [{ name: 'spaces', price: 100 }] }),
 }));
 jest.mock('features/trials', () => ({
   AppTrialRepo: { getTrial: jest.fn() },
@@ -185,10 +188,15 @@ async function build(customProps) {
     orgId: mockOrganization.sys.id,
     ...customProps,
   };
+  const state = {
+    basePlan: mockFreeBasePlan,
+    spacePlans: [mockProductRatePlan],
+    addOnPlans: [],
+  };
 
   render(
     <MemoryRouter>
-      <OrgSubscriptionContextProvider>
+      <OrgSubscriptionContextProvider initialState={state}>
         <SubscriptionPageRoute {...props} />
       </OrgSubscriptionContextProvider>
     </MemoryRouter>

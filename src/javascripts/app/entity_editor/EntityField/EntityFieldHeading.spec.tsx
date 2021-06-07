@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { EntityFieldHeading } from './EntityFieldHeading';
-import { EntityType } from '@contentful/app-sdk';
+import { ContentEntityType } from '@contentful/app-sdk';
 import { FieldAccess } from './EntityFieldAccess';
 
 const renderComponent = (override = (props) => props) => {
@@ -30,7 +30,7 @@ const renderComponent = (override = (props) => props) => {
         id: 'de-DE',
       },
     },
-    entityType: 'Entry' as EntityType,
+    entityType: 'Entry' as ContentEntityType,
     withLocaleName: true,
   };
 

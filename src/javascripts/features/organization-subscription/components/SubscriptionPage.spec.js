@@ -14,6 +14,7 @@ import * as trackCTA from 'analytics/trackCTA';
 import { beginSpaceCreation } from 'services/CreateSpace';
 import { FREE, isFreePlan, SELF_SERVICE } from 'account/pricing/PricingDataProvider';
 import { useAppsTrial, isOrganizationOnTrial } from 'features/trials';
+import { calculateSubscriptionCosts } from 'utils/SubscriptionUtils';
 
 jest.mock('../utils/generateBasePlanName', () => ({
   generateBasePlanName: jest.fn(),
@@ -62,6 +63,11 @@ jest.mock('features/trials/hooks/useAppsTrial', () => ({
   useAppsTrial: jest.fn().mockReturnValue({}),
 }));
 
+jest.mock('utils/SubscriptionUtils', () => ({
+  ...jest.requireActual('utils/SubscriptionUtils'),
+  calculateSubscriptionCosts: jest.fn(),
+}));
+
 const trackCTAClick = jest.spyOn(trackCTA, 'trackCTAClick');
 const trackTargetedCTAClick = jest.spyOn(trackCTA, 'trackTargetedCTAClick');
 
@@ -77,6 +83,11 @@ const mockTrialOrganization = Fake.Organization({
 const mockBasePlan = Fake.Plan({ name: 'My cool base plan' });
 const mockFreeBasePlan = Fake.Plan({ customerType: FREE });
 const mockTeamBasePlan = Fake.Plan({ customerType: SELF_SERVICE });
+
+const mockSubscriptionCosts = {
+  lineItems: [{ name: 'First Item', price: 3000 }],
+  total: 3000,
+};
 
 describe('SubscriptionPage', () => {
   beforeEach(() => {
@@ -144,7 +155,7 @@ describe('SubscriptionPage', () => {
     });
 
     expect(router.navigate).toHaveBeenCalledWith(
-      { orgId: 'Organization3', path: 'organizations.subscription_billing' },
+      { orgId: mockOrganization.sys.id, path: 'organizations.subscription_billing' },
       { reload: true }
     );
   });
@@ -192,6 +203,7 @@ describe('SubscriptionPage', () => {
   });
 
   it('should show the monthly cost for on demand users', () => {
+    calculateSubscriptionCosts.mockReturnValue(mockSubscriptionCosts);
     build({ organization: Fake.Organization({ isBillable: true }), grandTotal: 3000 });
 
     expect(screen.getByText('Monthly total')).toBeVisible();
@@ -307,10 +319,16 @@ function build(customProps) {
     usersMeta: null,
     ...customProps,
   };
+  const state = {
+    spacePlans: [],
+    basePlan: mockFreeBasePlan,
+    addOnPlans: [],
+    numMemberships: 2,
+  };
 
   render(
     <MemoryRouter>
-      <OrgSubscriptionContextProvider>
+      <OrgSubscriptionContextProvider initialState={state}>
         <SubscriptionPage {...props} />
       </OrgSubscriptionContextProvider>
     </MemoryRouter>

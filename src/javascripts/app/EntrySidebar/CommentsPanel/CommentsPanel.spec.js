@@ -143,7 +143,7 @@ describe('CommentsPanel', () => {
   // You can make the case that they are all part of the same thing.
   // For instance, the only way for a user to create a comment is by using the form
   describe('comment added', () => {
-    const addComment = (container) => {
+    const addComment = async (container) => {
       const comment = {
         body: 'foobar8',
         sys: { id: '8', createdBy: mockAuthor, parentEntity: { sys: { id: 'test' } } },
@@ -158,24 +158,24 @@ describe('CommentsPanel', () => {
         jest.fn(),
       ]);
       fireEvent.click(submitBtn);
-      return wait();
+      await wait();
     };
 
-    it('adds a new comment when the list is empty and calls comments count update callback', () => {
+    it('adds a new comment when the list is empty and calls comments count update callback', async () => {
       setEmpty();
       const { container } = build();
       expect(screen.queryAllByTestId('comments.thread')).toHaveLength(0);
-      addComment(container);
+      await addComment(container);
       expect(screen.queryByTestId('comments.empty')).toBeNull();
       expect(screen.queryAllByTestId('comments.thread')).toHaveLength(1);
       expect(defaultProps.onCommentsCountUpdate).toHaveBeenCalledWith(1);
     });
 
-    it('adds a new comment when the list has other comments and calls comments count update callback', () => {
+    it('adds a new comment when the list has other comments and calls comments count update callback', async () => {
       setComments();
       const { container } = build();
       expect(screen.queryAllByTestId('comments.thread')).toHaveLength(6);
-      addComment(container);
+      await addComment(container);
       expect(screen.queryAllByTestId('comments.thread')).toHaveLength(7);
       expect(defaultProps.onCommentsCountUpdate).toHaveBeenCalledWith(7);
     });

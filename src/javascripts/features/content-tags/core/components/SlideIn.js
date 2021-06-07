@@ -46,7 +46,9 @@ const SlideIn = ({ isShown, children, onClose }) => {
     [blockerRef, close]
   );
 
-  if (!isShownState) return null;
+  if (!isShownState) {
+    return null;
+  }
 
   return (
     <div className={styles.blocker} ref={blockerRef} onClick={onBlockerClick}>

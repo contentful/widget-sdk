@@ -8,7 +8,9 @@ const useSortableColumns = ({ snapshots, setSnapshots }) => {
 
   const handleOrdering = (sorted) => {
     const results = [...sorted];
-    if (!isAscending) reverse(results);
+    if (!isAscending) {
+      reverse(results);
+    }
     setSnapshots(results);
     setIsAscending(!isAscending);
   };
@@ -29,8 +31,12 @@ const useSortableColumns = ({ snapshots, setSnapshots }) => {
     const sorted = snapshots.sort((a, b) => {
       const propA = get(a, stringPropertyPath, '');
       const propB = get(b, stringPropertyPath, '');
-      if (propA > propB) return 1;
-      if (propA < propB) return -1;
+      if (propA > propB) {
+        return 1;
+      }
+      if (propA < propB) {
+        return -1;
+      }
       return 0;
     });
     handleOrdering(sorted);

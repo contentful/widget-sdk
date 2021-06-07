@@ -4,9 +4,9 @@ import userEvent from '@testing-library/user-event';
 import * as FORMA_CONSTANTS from 'test/helpers/Forma36Constants';
 import { create } from 'access_control/SpaceMembershipRepository';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
-import { go } from 'states/Navigator';
 import { getSpaces } from 'services/TokenStore';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
+import { MemoryRouter, router } from 'core/react-routing';
 import * as fake from 'test/helpers/fakeFactory';
 
 import { SpaceMembershipsPage } from './SpaceMembershipsPage';
@@ -17,10 +17,6 @@ jest.mock('services/TokenStore', () => ({
   getSpaces: jest.fn(),
 }));
 
-jest.mock('states/Navigator', () => ({
-  go: jest.fn(),
-}));
-
 jest.mock('access_control/SpaceMembershipRepository', () => ({
   create: jest.fn(),
 }));
@@ -29,10 +25,23 @@ jest.mock('data/EndpointFactory', () => ({
   createSpaceEndpoint: jest.fn(),
 }));
 
+jest.mock('core/react-routing', () => ({
+  // @ts-expect-error mute in tests
+  ...jest.requireActual('core/react-routing'),
+  useSearchParams: jest.fn().mockReturnValue([new URLSearchParams()]),
+  router: {
+    navigate: jest.fn(),
+  },
+}));
+
 const remove = jest.fn();
 
 const build = async () => {
-  render(<SpaceMembershipsPage />);
+  render(
+    <MemoryRouter>
+      <SpaceMembershipsPage />
+    </MemoryRouter>
+  );
 
   return wait();
 };
@@ -115,9 +124,9 @@ describe('SpaceMembershipsPage', () => {
         )
       );
 
-      expect(go).toHaveBeenCalledWith({
-        path: ['spaces', 'detail', 'home'],
-        params: { spaceId: spaces[1].sys.id },
+      expect(router.navigate).toHaveBeenCalledWith({
+        path: 'spaces.detail.home',
+        spaceId: spaces[1].sys.id,
       });
     });
 
@@ -136,9 +145,9 @@ describe('SpaceMembershipsPage', () => {
         )
       );
 
-      expect(go).toHaveBeenCalledWith({
-        path: ['spaces', 'detail', 'home'],
-        params: { spaceId: spaces[0].sys.id },
+      expect(router.navigate).toHaveBeenCalledWith({
+        path: 'spaces.detail.home',
+        spaceId: spaces[0].sys.id,
       });
     });
   });

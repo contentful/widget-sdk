@@ -74,9 +74,9 @@ const formTabs = {
   APPEARANCE: 'appearance-tab',
 };
 
-const getAvailableWidgets = (customWidgets, ctField) => {
+const getAvailableWidgets = (customWidgets, contentType, editorInterface, ctField) => {
   const fieldType = toInternalFieldType(ctField);
-  return [...createBuiltinWidgetList(), ...customWidgets].filter(
+  return [...createBuiltinWidgetList({ contentType, editorInterface }), ...customWidgets].filter(
     (widget) => widget.fieldTypes && widget.fieldTypes.includes(fieldType)
   );
 };
@@ -110,7 +110,7 @@ const FieldModalDialogForm = ({
   }, [currentOrganizationId, currentSpaceId]);
 
   const availableWidgets = useMemo(
-    () => getAvailableWidgets(customWidgets, ctField),
+    () => getAvailableWidgets(customWidgets, contentType, editorInterface, ctField),
     [customWidgets, ctField]
   );
 

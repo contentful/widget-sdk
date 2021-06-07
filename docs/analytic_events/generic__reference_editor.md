@@ -4,8 +4,9 @@ _Inline a linked reference (1:1) to its parent form (prototype)_.
 
 
 ## `reference_editor:toggle_inline_editor`
-DEPRECATED
-Gets tracked whenever the user clicks on the toggle button enabling/disabling the 1:1 inline
+**DEPRECATED** - Not tracked since Feb 2019
+
+Got tracked whenever the user clicked on the toggle button enabling/disabling the 1:1 inline
 references editor BETA on a reference field. 
 
 **Only use data from events with `payload.version >= 3`** (see change-log below for details)
@@ -47,9 +48,10 @@ Total number of widgets visible for the user on the inlined entry.<sup>1</sup>
 
 
 ## `reference_editor:create_entry` and `:edit_entry`
+**DEPRECATED** - Not tracked since May 2019
 
-Get tracked when the user creates a new entry via a reference editor widget on a 1:1 reference
-entry field (`:create_entry`) or if the user visits the inlined entry by clicking on the card or the edit icon (`:edit_entry`).
+Got tracked when the user created a new entry via a reference editor widget on a 1:1 reference
+entry field (`:create_entry`) or when the user visited the inlined entry by clicking on the card or the edit icon (`:edit_entry`).
 
 **Only use data from events with `payload.version >= 2`** (see change-log below for details)
 

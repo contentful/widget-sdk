@@ -9,9 +9,13 @@ import { v1migrationDestinationNames } from 'classes/spaceContextTypes';
 import { BasePlanNames } from '../components/V1MigrationNote';
 
 export function generateBasePlanName(
-  basePlan: BasePlan,
+  basePlan?: BasePlan,
   v1migrationDestination?: v1migrationDestinationNames
 ) {
+  if (!basePlan) {
+    return undefined;
+  }
+
   let basePlanName;
   if (
     isFreePlan(basePlan) &&

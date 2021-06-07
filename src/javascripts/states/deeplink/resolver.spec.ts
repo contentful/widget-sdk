@@ -78,7 +78,7 @@ async function testSpaceScopedPathDeeplinks(
   });
 }
 
-async function testModernStackOnboardingDeeplinks(link, expected) {
+async function testModernStackOnboardingDeeplinks(link, expectedPathname) {
   const space = {
     sys: { id: 'test' },
   };
@@ -97,8 +97,8 @@ async function testModernStackOnboardingDeeplinks(link, expected) {
   const result = await resolveLink(link, {});
 
   expect(result).toEqual({
-    params: { spaceId: 'test' },
-    path: expected,
+    params: { spaceId: 'test', pathname: expectedPathname },
+    path: 'spaces.detail.onboarding',
   });
 }
 
@@ -180,7 +180,7 @@ describe('states/deeplink/resolver', () => {
 
   describe('#home', () => {
     it('should redirect the user to space home', async function () {
-      await testSpaceScopedPathDeeplinks('home', { path: ['spaces', 'detail', 'home'] });
+      await testSpaceScopedPathDeeplinks('home', { path: 'spaces.detail.home' });
     });
   });
 
@@ -235,9 +235,10 @@ describe('states/deeplink/resolver', () => {
 
   describe('#content-model', () => {
     it('should redirect the user to content model page', async function () {
-      await testSpaceScopedPathDeeplinks('content-model', {
-        path: ['spaces', 'detail', 'content_types', 'list'],
-      });
+      await testSpaceScopedPathDeeplinks(
+        'content-model',
+        routes['content_types.list']({ withEnvironment: false })
+      );
     });
   });
 
@@ -265,14 +266,21 @@ describe('states/deeplink/resolver', () => {
         id: 'netlify',
       });
 
-      expect(result).toEqual({
-        path: ['spaces', 'environment', 'apps', 'list'],
-        params: {
+      const route = routes['apps.list'](
+        { withEnvironment: false },
+        {
           spaceId: 'test-space-id',
           environmentId: 'master',
           app: 'netlify',
-          referrer: 'deeplink',
-        },
+          navigationState: {
+            referrer: 'deeplink',
+          },
+        }
+      );
+
+      expect(result).toEqual({
+        path: route.path,
+        params: route.params,
         deeplinkOptions: {
           selectSpace: true,
           selectEnvironment: true,
@@ -394,45 +402,25 @@ describe('states/deeplink/resolver', () => {
 
   describe('#onboarding-get-started', () => {
     it('should redirect the user to modern stack onboarding getting started page', async function () {
-      await testModernStackOnboardingDeeplinks('onboarding-get-started', [
-        'spaces',
-        'detail',
-        'onboarding',
-        'getStarted',
-      ]);
+      await testModernStackOnboardingDeeplinks('onboarding-get-started', '/getStarted');
     });
   });
 
   describe('#onboarding-copy', () => {
     it('should redirect the user to modern stack onboarding clone repo page', async function () {
-      await testModernStackOnboardingDeeplinks('onboarding-copy', [
-        'spaces',
-        'detail',
-        'onboarding',
-        'copy',
-      ]);
+      await testModernStackOnboardingDeeplinks('onboarding-copy', '/copy');
     });
   });
 
   describe('#onboarding-explore', () => {
     it('should redirect the user to modern stack onboarding explore content model page', async function () {
-      await testModernStackOnboardingDeeplinks('onboarding-explore', [
-        'spaces',
-        'detail',
-        'onboarding',
-        'explore',
-      ]);
+      await testModernStackOnboardingDeeplinks('onboarding-explore', '/explore');
     });
   });
 
   describe('#onboarding-deploy', () => {
     it('should redirect the user to modern stack onboarding deploy app page', async function () {
-      await testModernStackOnboardingDeeplinks('onboarding-deploy', [
-        'spaces',
-        'detail',
-        'onboarding',
-        'deploy',
-      ]);
+      await testModernStackOnboardingDeeplinks('onboarding-deploy', '/deploy');
     });
   });
 
@@ -499,9 +487,10 @@ describe('states/deeplink/resolver', () => {
       ]);
 
       expect(await resolveLink(LinkType.InvitationAccepted, { orgId: 'testOrgId' })).toEqual({
-        path: ['spaces', 'detail', 'home'],
+        path: 'spaces.detail.home',
         params: {
           spaceId: 'testSpaceId1',
+          pathname: '/',
         },
       });
     });

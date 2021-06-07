@@ -111,7 +111,9 @@ const Items = ({
   return getVisibleViews(items, roleAssignment).map((item, index) => {
     const { isFolder, views, id, folderId } = item;
     const isDefaultFolder = index === 0;
-    if (isDefaultFolder) return null;
+    if (isDefaultFolder) {
+      return null;
+    }
 
     const isFolderClosed = isClosed[folderId];
 
@@ -172,7 +174,9 @@ export const SortableTree = ({
 
   const onSortEnd = async ({ oldIndex, newIndex, collection }) => {
     setIsDragging(false);
-    if (oldIndex === newIndex) return;
+    if (oldIndex === newIndex) {
+      return;
+    }
     if (collection === 'folders') {
       await reorderFolders(oldIndex, newIndex);
     } else {

@@ -188,8 +188,12 @@ export function generateFilterDefinitions({
   };
 
   const definitions = [order, status, orgRole, space, spaceRole];
-  if (hasSsoEnabled) definitions.push(sso);
-  if (hasTeamsFeature) definitions.push(team);
+  if (hasSsoEnabled) {
+    definitions.push(sso);
+  }
+  if (hasTeamsFeature) {
+    definitions.push(team);
+  }
 
   return definitions;
 }

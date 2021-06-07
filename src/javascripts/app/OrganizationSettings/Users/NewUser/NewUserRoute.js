@@ -25,7 +25,7 @@ const styles = {
   }),
 };
 
-export default function NewUserRoute({ orgId }) {
+export default function NewUserRoute({ orgId, spaceId }) {
   const {
     isLoading,
     error,
@@ -54,7 +54,7 @@ export default function NewUserRoute({ orgId }) {
       <Workbench.Content className={styles.content} type="text">
         {isLoading && <LoadingState testId="cf-ui-loading-state" />}
         {!isLoading && error && <ErrorState />}
-        {!isLoading && !error && <NewUser orgId={orgId} {...componentProps} />}
+        {!isLoading && !error && <NewUser orgId={orgId} spaceId={spaceId} {...componentProps} />}
       </Workbench.Content>
     </Workbench>
   );
@@ -62,4 +62,5 @@ export default function NewUserRoute({ orgId }) {
 
 NewUserRoute.propTypes = {
   orgId: PropTypes.string.isRequired,
+  spaceId: PropTypes.string,
 };

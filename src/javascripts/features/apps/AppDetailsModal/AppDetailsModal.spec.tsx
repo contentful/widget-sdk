@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, wait } from '@testing-library/react';
 import { noop } from 'lodash';
-
+import { MemoryRouter } from 'core/react-routing';
 import { AppDetails } from './AppDetails';
 import { AppManager } from '../AppOperations';
 import { MarketplaceApp } from 'features/apps-core';
@@ -61,7 +61,11 @@ The Optimizely app makes it easier to power experiments with structured content.
   };
 
   it('should match the snapshot', async () => {
-    const { container } = render(<AppDetails appManager={appManager} {...modalProps} />);
+    const { container } = render(
+      <MemoryRouter>
+        <AppDetails appManager={appManager} {...modalProps} />
+      </MemoryRouter>
+    );
 
     await wait();
 

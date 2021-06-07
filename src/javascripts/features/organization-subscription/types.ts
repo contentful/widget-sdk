@@ -21,6 +21,7 @@ export interface BasePlanContent {
 
 export interface SpacePlan extends Plan {
   planType: 'space' | 'free_space';
+  legacyVersion: string;
   space?: {
     name: string;
     isAccessible: boolean;
@@ -29,6 +30,20 @@ export interface SpacePlan extends Plan {
       id: string;
     };
   };
+}
+
+export interface LineItem {
+  name: string;
+  price: number;
+}
+
+export interface SubscriptionCosts {
+  total: number;
+  lineItems: LineItem[];
+}
+
+export interface SpacePlanWithUsage extends SpacePlan {
+  usage: SpaceUsage;
 }
 
 export interface UsersMeta {
@@ -65,7 +80,7 @@ export interface SpaceUsage {
     limit: number;
     utilization: number;
   };
-  spaceTrialPeriodEndsAt: null;
+  spaceTrialPeriodEndsAt: string | null;
   sys: {
     type: 'SpaceUsage';
     id: string;

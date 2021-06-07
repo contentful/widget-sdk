@@ -69,7 +69,7 @@ const reducer = (state, action) => {
   }
 };
 
-export default function NewUser({ orgId, hasTeamsFeature, isOwner }) {
+export default function NewUser({ orgId, spaceId, hasTeamsFeature, isOwner }) {
   const [
     {
       submitted,
@@ -128,14 +128,22 @@ export default function NewUser({ orgId, hasTeamsFeature, isOwner }) {
   const handleSubmit = async () => {
     dispatch({ type: 'SUBMITTED' });
 
-    if (emailList.length === 0 || invalidAddresses.length || !orgRole) return;
-    if (spaceMemberships.length && spaceMemberships.some((membership) => !membership.roles.length))
+    if (emailList.length === 0 || invalidAddresses.length || !orgRole) {
       return;
+    }
+    if (
+      spaceMemberships.length &&
+      spaceMemberships.some((membership) => !membership.roles.length)
+    ) {
+      return;
+    }
 
     if (!spaceMemberships.length && !teams.length) {
       // if no spaces or teams were selected, display a confirmation dialog
       const confirmed = await confirmNoSpaces(emailList.length);
-      if (!confirmed) return;
+      if (!confirmed) {
+        return;
+      }
     }
 
     addToOrg(emailList, orgRole, spaceMemberships, teams);
@@ -147,7 +155,9 @@ export default function NewUser({ orgId, hasTeamsFeature, isOwner }) {
   };
 
   const emailsErrorMessage = useMemo(() => {
-    if (!submitted) return '';
+    if (!submitted) {
+      return '';
+    }
 
     if (emailList.length === 0) {
       return 'Enter at least one email address so we can invite them to your organization';
@@ -253,6 +263,7 @@ export default function NewUser({ orgId, hasTeamsFeature, isOwner }) {
             </Subheading>
             <AddToSpaces
               orgId={orgId}
+              spaceId={spaceId}
               onChange={handleSpaceSelected}
               submitted={submitted}
               inputWidth="large"
@@ -287,6 +298,7 @@ export default function NewUser({ orgId, hasTeamsFeature, isOwner }) {
 
 NewUser.propTypes = {
   orgId: PropTypes.string.isRequired,
+  spaceId: PropTypes.string,
   hasTeamsFeature: PropTypes.bool,
   isOwner: PropTypes.bool,
 };

@@ -1,4 +1,4 @@
-import { get as getAtPath, snakeCase } from 'lodash';
+import { snakeCase } from 'lodash';
 import { getSnowplowSchema } from './SchemasSnowplow';
 import * as segmentTypewriterPlans from './events';
 import { getSegmentSchema } from './SchemasSegment';
@@ -17,7 +17,6 @@ import BulkEditor from './transformers/BulkEditor';
 import SlideInEditor from './transformers/SlideInEditor';
 import TranslationSidebar from './transformers/TranslationSidebar';
 import Snapshot from './transformers/Snapshot';
-import InviteUserExperiment from './transformers/InviteUserExperiment';
 import SearchAndViews from './transformers/SearchAndViews';
 import ElementClickTransform from './transformers/ElementClick';
 import EntryViewTransform from './transformers/EntryView';
@@ -91,13 +90,6 @@ registerSnowplowEvent(
   'app_uninstallation_reason',
   AppUninstallationReasonTransformer
 );
-
-registerGenericEvent('learn:language_selected');
-registerGenericEvent('learn:resource_selected');
-registerGenericEvent('learn:step_clicked');
-
-registerGenericEvent('reference_editor:create_entry');
-registerGenericEvent('reference_editor:edit_entry');
 
 registerGenericEvent('entity_button:click');
 
@@ -246,14 +238,10 @@ registerGenericEvent('targeted_cta_impression:purchase_app_via_trial');
 registerSnowplowEvent('global:app_loaded', 'app_open', AppOpen);
 registerGenericEvent('global:logout_clicked');
 
-registerSnowplowEvent('invite_user:learn', 'generic', InviteUserExperiment);
-registerSnowplowEvent('invite_user:create_space', 'generic', InviteUserExperiment);
-
 registerGenericEvent('perf:dom_content_loaded');
 registerGenericEvent('perf:first_contentful_paint');
 registerGenericEvent('perf:time_to_interactive');
 
-registerGenericEvent('entity_state:revert');
 registerGenericEvent('entity_list:bulk_action_performed');
 registerGenericEvent('asset_list:add_asset_single');
 registerGenericEvent('asset_list:add_asset_multiple');
@@ -350,12 +338,13 @@ registerSnowplowEvent('search:view_created', 'view_create', SearchAndViews);
 registerSnowplowEvent('search:view_edited', 'view_edit', SearchAndViews);
 registerSnowplowEvent('search:view_deleted', 'view_delete', SearchAndViews);
 registerSnowplowEvent('search:view_loaded', 'view_load', SearchAndViewsWithSequence);
-registerSnowplowEvent('search:search_terms_migrated', 'ui_config_migrate', SearchAndViews);
 
-registerSnowplowEvent('search:entry_clicked', 'ui_click', SearchAndViewsWithSequence);
-registerSnowplowEvent('search:filter_added', 'ui_click', SearchAndViewsWithSequence);
-registerSnowplowEvent('search:filter_removed', 'ui_click', SearchAndViewsWithSequence);
-registerSnowplowEvent('search:query_changed', 'ui_click', SearchAndViewsWithSequence);
+// TODO Remove ":" from Segment schema names.
+registerSegmentEvent('search:entry_clicked', 'search:entry_clicked', SearchAndViewsWithSequence);
+registerSegmentEvent('search:filter_added', 'search:filter_added', SearchAndViewsWithSequence);
+registerSegmentEvent('search:filter_removed', 'search:filter_removed', SearchAndViewsWithSequence);
+// TODO: Re-implement tracking or remove:
+registerSegmentEvent('search:query_changed', 'search:query_changed', SearchAndViewsWithSequence);
 
 registerSnowplowEvent(
   'entry_editor:view',
@@ -399,12 +388,6 @@ registerSnowplowEvent('text_editor:action', 'feature_text_editor', FeatureTextEd
 registerSnowplowEvent('global:dialog', 'dialog', DialogTransformer);
 registerSnowplowEvent('jobs:create', 'jobs_create', JobsCreateTransformer);
 registerSnowplowEvent('jobs:cancel', 'jobs_cancel', JobsCancelTransformer);
-
-registerGenericEvent('telemetry:measurement');
-
-registerGenericEvent('app_management:created');
-registerGenericEvent('app_management:deleted');
-registerGenericEvent('app_management:updated');
 
 registerGenericEvent('widget_renderer:fallback_warning_shown');
 registerGenericEvent('widget_renderer:fallback_rendered');
@@ -566,8 +549,8 @@ function registerEnvironmentAliasesEvent(event) {
   registerSnowplowEvent(event, 'environment_aliases', EnvironmentAliases);
 }
 
-export function eventExists(eventName) {
-  return !!getAtPath(_events, [eventName]);
+export function eventExists(event) {
+  return !!_events[event];
 }
 
 /**

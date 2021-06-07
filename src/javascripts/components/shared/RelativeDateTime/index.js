@@ -55,8 +55,14 @@ function diffString(a, b) {
 function nextUpdateIn(momentDate) {
   const delta = Math.abs(moment().diff(momentDate));
 
-  if (delta < 45e3) return 45e3 - delta;
-  if (delta < 90e3) return 90e3 - delta;
-  if (delta < 45 * 60e3) return 60e3 - ((delta + 30e3) % 60e3);
+  if (delta < 45e3) {
+    return 45e3 - delta;
+  }
+  if (delta < 90e3) {
+    return 90e3 - delta;
+  }
+  if (delta < 45 * 60e3) {
+    return 60e3 - ((delta + 30e3) % 60e3);
+  }
   return 3660e3 - (delta % 3600e3);
 }

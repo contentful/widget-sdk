@@ -192,7 +192,9 @@ function compacto(object) {
   return _.reduce(
     object,
     (compacted, value, key) => {
-      if (truthy(value)) compacted[key] = value;
+      if (truthy(value)) {
+        compacted[key] = value;
+      }
       return compacted;
     },
     {}

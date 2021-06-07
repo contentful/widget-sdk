@@ -1,6 +1,8 @@
 export default function describeArchivable(names, description, context) {
   describe(`archivable ${names.singular}`, function () {
-    if (description) description();
+    if (description) {
+      description();
+    }
 
     describe('#archive', function () {
       it('sends PUT request', async function () {

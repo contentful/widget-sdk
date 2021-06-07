@@ -27,7 +27,9 @@ const ResourceUsageList = ({
   environmentMeta,
   entitlementsSet,
 }) => {
-  if (!spaceResources) return null;
+  if (!spaceResources) {
+    return null;
+  }
 
   const { environmentId, aliasId, isMasterEnvironment } = environmentMeta;
   const getEntitlementFromResources = (entitlement) =>

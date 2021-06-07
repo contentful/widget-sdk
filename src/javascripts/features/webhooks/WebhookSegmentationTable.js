@@ -32,7 +32,9 @@ export class WebhookSegmentationTable extends React.Component {
     const key = `${entityType}.${action}`;
 
     if (isActionDisabled(entityType, action)) {
-      if (shouldHideAction(action)) return;
+      if (shouldHideAction(action)) {
+        return;
+      }
 
       return (
         <TableCell key={key} className="x--disabled-cell">

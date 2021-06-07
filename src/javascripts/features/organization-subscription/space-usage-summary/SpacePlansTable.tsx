@@ -1,7 +1,6 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useAsync } from 'core/hooks';
 import { css } from 'emotion';
-import { keyBy } from 'lodash';
 import {
   Table,
   TableHead,
@@ -16,7 +15,7 @@ import Pagination from 'app/common/Pagination';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 
 import { getSpacesUsage } from '../services/SpacesUsageService';
-import type { SpacePlan } from '../types';
+import type { SpacePlan, SpacePlanWithUsage } from '../types';
 import { SpacePlanRow } from './SpacePlanRow';
 import { SortableHeaderCell, ColumnId, SortOrder } from './SortableHeaderCell';
 
@@ -53,15 +52,36 @@ const styles = {
   }),
 };
 
-async function fetchSpacesUsage(organizationId: string, sortParam: string, pagination) {
+interface PaginationParams {
+  skip: number;
+  limit: number;
+}
+
+async function fetchPlansWithUsage(
+  plans: SpacePlan[],
+  organizationId: string,
+  sortParam: string,
+  pagination: PaginationParams
+): Promise<{ plansWithUsage: SpacePlanWithUsage[]; total: number }> {
   const orgEndpoint = createOrganizationEndpoint(organizationId);
 
-  return await getSpacesUsage(orgEndpoint, {
+  const spacesUsage = await getSpacesUsage(orgEndpoint, {
     order: sortParam,
     skip: pagination.skip,
     limit: pagination.limit,
   });
+
+  const plansWithUsage = spacesUsage.items.reduce((acc, usage) => {
+    const plan = plans.find((plan) => plan.space?.sys.id === usage.sys.space.sys.id);
+
+    if (!plan) return acc;
+
+    return [...acc, { ...plan, usage }];
+  }, [] as SpacePlanWithUsage[]);
+
+  return { plansWithUsage, total: spacesUsage.total };
 }
+
 interface SpacePlansTableProps {
   // It tells if thise table is for an Enterprise customer or not
   enterprisePlan?: boolean;
@@ -69,7 +89,7 @@ interface SpacePlansTableProps {
   featureFlagLoading?: boolean;
   // function to be called when user clicks on "upgrade" link, "change" link, or "change plan type" button
   onChangeSpace: () => void;
-  // function to be called when user deletes a space
+  // function to generate the the correct onDelete function for each SpacePlanRow
   onDeleteSpace: (plan: SpacePlan) => () => void;
   // Id of the current organization
   organizationId: string;
@@ -84,7 +104,7 @@ interface SpacePlansTableProps {
   showV1MigrationCommunication?: boolean;
 }
 
-export const SpacePlansTable = ({
+export function SpacePlansTable({
   plans,
   onChangeSpace,
   onDeleteSpace,
@@ -94,12 +114,24 @@ export const SpacePlansTable = ({
   upgradedSpaceId,
   organizationId,
   showV1MigrationCommunication,
-}: SpacePlansTableProps) => {
-  const [pagination, setPagination] = useState({ skip: 0, limit: 10 });
-  const [plansLookup, setPlansLookup] = useState({});
+}: SpacePlansTableProps) {
+  const [pagination, setPagination] = useState<PaginationParams>({ skip: 0, limit: 10 });
 
   const [sortOrder, setSortOrder] = useState<SortOrder>('ASC');
   const [sortColumn, setSortColumn] = useState<ColumnId>(ColumnId.SPACE_NAME);
+
+  const sortParam = buildSortParam(sortColumn, sortOrder);
+
+  const {
+    isLoading: spacesUsageLoading,
+    error,
+    data,
+  } = useAsync(
+    useCallback(
+      () => fetchPlansWithUsage(plans, organizationId, sortParam, pagination),
+      [plans, organizationId, sortParam, pagination]
+    )
+  );
 
   const handleSort = (columnName: ColumnId) => {
     // Goto page zero on User sort
@@ -114,25 +146,10 @@ export const SpacePlansTable = ({
     }
   };
 
-  const handlePaginationChange = (newPagination) => {
+  const handlePaginationChange = (newPagination: PaginationParams) => {
     setPagination(newPagination);
     track('space_usage_summary:pagination_changed');
   };
-
-  const sortParam = buildSortParam(sortColumn, sortOrder);
-
-  const {
-    isLoading: spacesUsageLoading,
-    error,
-    data,
-  } = useAsync(
-    useCallback(
-      () => fetchSpacesUsage(organizationId, sortParam, pagination),
-      [organizationId, sortParam, pagination]
-    )
-  );
-
-  useEffect(() => setPlansLookup(keyBy(plans, (plan) => plan.space?.sys.id)), [plans]);
 
   return (
     <>
@@ -205,31 +222,26 @@ export const SpacePlansTable = ({
           {featureFlagLoading || spacesUsageLoading || !!error ? (
             <SkeletonRow columnCount={12} rowCount={pagination.limit} />
           ) : (
-            data?.items.map((spaceUsage) => {
-              const spaceId = spaceUsage.sys.space.sys.id;
-              const plan = plansLookup[spaceId];
-              return plan ? (
-                <SpacePlanRow
-                  key={spaceUsage.sys.id}
-                  organizationId={organizationId}
-                  plan={plansLookup[spaceId]}
-                  spaceUsage={spaceUsage}
-                  onChangeSpace={onChangeSpace}
-                  onDeleteSpace={onDeleteSpace}
-                  hasUpgraded={spaceId === upgradedSpaceId}
-                  enterprisePlan={enterprisePlan}
-                  showSpacePlanChangeBtn={showSpacePlanChangeBtn}
-                  showV1MigrationCommunication={
-                    showV1MigrationCommunication && plan?.legacyVersion === 'V1Migration'
-                  }
-                />
-              ) : null;
-            })
+            data?.plansWithUsage.map((plan, idx) => (
+              <SpacePlanRow
+                key={idx}
+                organizationId={organizationId}
+                plan={plan}
+                onChangeSpace={onChangeSpace}
+                onDeleteSpace={onDeleteSpace(plan)}
+                hasUpgraded={plan.space?.sys.id === upgradedSpaceId}
+                enterprisePlan={enterprisePlan}
+                showSpacePlanChangeBtn={showSpacePlanChangeBtn}
+                showV1MigrationCommunication={
+                  showV1MigrationCommunication && plan?.legacyVersion === 'V1Migration'
+                }
+              />
+            ))
           )}
         </TableBody>
       </Table>
 
-      {plans.length >= 10 && (
+      {plans.length > 10 && (
         <Pagination
           {...pagination}
           total={data?.total ?? 0}
@@ -239,7 +251,7 @@ export const SpacePlansTable = ({
       )}
     </>
   );
-};
+}
 
 function buildSortParam(sortColumn: ColumnId, sortOrder: SortOrder) {
   const firstLevelSortDirection = sortOrder === 'DESC' ? '-' : '';

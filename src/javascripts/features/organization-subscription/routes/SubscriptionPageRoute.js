@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect, useContext } from 'react';
+import React, { useCallback, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { Workbench } from '@contentful/forma-36-react-components';
@@ -7,6 +7,7 @@ import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import {
   getPlansWithSpaces,
+  isComposeAndLaunchPlan,
   isLegacyEnterpriseOrEnterprisePlan,
 } from 'account/pricing/PricingDataProvider';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
@@ -17,7 +18,7 @@ import { LoadingState } from 'features/loading-state';
 import createResourceService from 'services/ResourceService';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getOrganization, getSpaces } from 'services/TokenStore';
-import { calcUsersMeta, calculateSubscriptionTotal } from 'utils/SubscriptionUtils';
+import { calcUsersMeta } from 'utils/SubscriptionUtils';
 import { isOrganizationOnTrial } from 'features/trials';
 import { useAsync } from 'core/hooks';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
@@ -65,7 +66,10 @@ async function fetch(organizationId, dispatch) {
   const accessibleSpaces = await getSpaces();
 
   // separating all the different types of plans
-  const { basePlan, addOnPlan, spacePlans } = findAllPlans(plansWithSpaces.items, accessibleSpaces);
+  const { basePlan, addOnPlans, spacePlans } = findAllPlans(
+    plansWithSpaces.items,
+    accessibleSpaces
+  );
 
   const usersMeta = calcUsersMeta({ basePlan, numMemberships });
 
@@ -74,11 +78,12 @@ async function fetch(organizationId, dispatch) {
   );
   const orgIsEnterprise = isLegacyEnterpriseOrEnterprisePlan(organization, basePlan);
 
-  dispatch({ type: actions.SET_SPACE_PLANS, payload: spacePlans });
+  dispatch({
+    type: actions.SET_PLANS_AND_MEMBERSHIPS,
+    payload: { basePlan, addOnPlans, spacePlans, numMemberships },
+  });
 
   return {
-    basePlan,
-    addOnPlan,
     usersMeta,
     numMemberships,
     organization,
@@ -90,10 +95,9 @@ async function fetch(organizationId, dispatch) {
 
 export function SubscriptionPageRoute({ orgId: organizationId }) {
   const {
-    state: { spacePlans },
+    state: { basePlan, addOnPlans },
     dispatch,
   } = useContext(OrgSubscriptionContext);
-  const [grandTotal, setGrandTotal] = useState(0);
 
   const {
     isLoading,
@@ -103,21 +107,6 @@ export function SubscriptionPageRoute({ orgId: organizationId }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useCallback(() => fetch(organizationId, dispatch), [])
   );
-
-  useEffect(() => {
-    if (spacePlans.length > 0 && data.basePlan && data.numMemberships) {
-      // spacePlans gets updated after the user deletes a space
-      // we need to add the basePlan and the addons to it so we can correctly calculate the GrandTotal
-      const allPlans = [data.basePlan, ...spacePlans];
-
-      if (data.addOnPlan) {
-        allPlans.push(data.addOnPlan);
-      }
-
-      const totalPrice = calculateSubscriptionTotal(allPlans, data.numMemberships);
-      setGrandTotal(totalPrice);
-    }
-  }, [spacePlans, data.addOnPlan, data.basePlan, data.numMemberships]);
 
   if (isLoading) {
     return <LoadingState testId="subs-page-loading" />;
@@ -149,36 +138,31 @@ export function SubscriptionPageRoute({ orgId: organizationId }) {
            * if the feature flag is on and the base plan content is already created in Contentful, show one of the rebranded Subscription Pages
            * Otherwise, show the generic Subscription Page
            * */}
-          {data.isSubscriptionPageRebrandingEnabled && hasContentForBasePlan(data.basePlan) ? (
+          {data.isSubscriptionPageRebrandingEnabled && hasContentForBasePlan(basePlan) ? (
             <>
               {data.orgIsEnterprise && (
                 <EnterpriseSubscriptionPage
                   usersMeta={data.usersMeta}
                   organization={data.organization}
                   memberAccessibleSpaces={data.memberAccessibleSpaces}
-                  grandTotal={grandTotal}
                   // Currently this is the only way to know if a basePlan is plan used internally at Contentful
-                  isInternalBasePlan={/internal/i.test(data.basePlan.productName)}
+                  isInternalBasePlan={/internal/i.test(basePlan.productName)}
                 />
               )}
               {!data.orgIsEnterprise && (
                 <NonEnterpriseSubscriptionPage
-                  basePlan={data.basePlan}
-                  addOnPlan={data.addOnPlan}
                   usersMeta={data.usersMeta}
                   organization={data.organization}
-                  grandTotal={grandTotal}
                 />
               )}
             </>
           ) : (
             <SubscriptionPage
-              basePlan={data.basePlan}
-              addOnPlan={data.addOnPlan}
+              basePlan={basePlan}
+              addOnPlan={addOnPlans.find((plan) => isComposeAndLaunchPlan(plan))}
               usersMeta={data.usersMeta}
               organization={data.organization}
               memberAccessibleSpaces={data.memberAccessibleSpaces}
-              grandTotal={grandTotal}
             />
           )}
         </Workbench.Content>

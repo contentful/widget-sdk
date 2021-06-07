@@ -71,7 +71,9 @@ function Toggle({ isOpen, onClick, count }) {
   const label = `in ${pluralize('space', count, true)}`;
   const iconName = isOpen ? 'ChevronUp' : 'ChevronRight';
 
-  if (!hasMemberships) return 'No spaces';
+  if (!hasMemberships) {
+    return 'No spaces';
+  }
 
   return (
     /* eslint-disable-next-line rulesdir/restrict-non-f36-components  */
@@ -113,7 +115,9 @@ TeamSpaceMembershipList.propTypes = {
 // roles: ['Editor', 'Author', 'Translator', 'Translator 2']
 // => Editor, Author and 2 other space roles
 function getRolesText(membership) {
-  if (membership.admin) return 'Admin';
+  if (membership.admin) {
+    return 'Admin';
+  }
   if (membership.roles.length > 2) {
     const [first, second, ...rest] = membership.roles;
     return (

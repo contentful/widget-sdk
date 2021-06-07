@@ -1,6 +1,6 @@
 import { createEntryApi } from './createEntryApi';
 import { InternalContentType } from './createContentTypeApi';
-import type { Document } from '@contentful/editorial-primitives';
+import { Document } from '@contentful/editorial-primitives';
 import { EntryAPI } from '@contentful/app-sdk';
 import { constant } from 'kefir';
 import { onValue } from 'core/utils/kefir';
@@ -12,12 +12,13 @@ import APIClient from 'data/APIClient';
 
 const kefirHelpers = jestKefir(Kefir);
 
+const defaultLocale = { internal_code: 'internalCode', code: 'en-US' };
 jest.mock('services/localeStore', () => {
   const originalModule = jest.requireActual('services/localeStore');
 
   return {
     ...originalModule.default,
-    getDefaultLocale: () => ({ internal_code: 'internalCode', code: 'en-US' }),
+    getDefaultLocale: () => defaultLocale,
   };
 });
 
@@ -61,7 +62,7 @@ describe('createEntryApi', () => {
     name: 'content_type',
     description: 'a content type',
     displayField: '',
-  } as InternalContentType;
+  } as unknown as InternalContentType;
   const docData = kefirHelpers.stream();
   const doc = {
     data$: docData,
@@ -160,7 +161,6 @@ describe('createEntryApi', () => {
     };
     beforeEach(() => {
       (doc.getValueAt as jest.Mock).mockReturnValueOnce(metadata);
-
       entryApi = createEntryApi({
         cma,
         internalContentType,

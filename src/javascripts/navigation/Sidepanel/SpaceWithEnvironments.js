@@ -145,7 +145,9 @@ export default class SpaceWithEnvironments extends React.Component {
   state = { loading: false, environments: undefined };
 
   componentDidMount() {
-    if (this.isOpened()) this.refreshEnvironmentsList();
+    if (this.isOpened()) {
+      this.refreshEnvironmentsList();
+    }
   }
 
   isOpened = () => {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { styles } from './styles';
 import { Heading, Subheading, Card } from '@contentful/forma-36-react-components';
@@ -13,6 +13,8 @@ import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import { ComposeAndLaunchCTA } from './components/ComposeAndLaunchCTA';
 import { ContentfulAppsCTA } from './components/ContentfulAppsCTA';
+import { FLAGS, getVariation } from 'LaunchDarkly';
+import { DiscoverOnboardingCTA } from 'features/onboarding';
 
 const store = getBrowserStorage();
 
@@ -27,6 +29,29 @@ export const ModernStackAdminSpaceHome = ({
 }) => {
   const prefix = getStoragePrefix();
   const deploymentProvider = store.get(`${prefix}:deploymentProvider`);
+  const [isRecoverableOnboardingEnabled, setIsRecoverableOnboardingEnabled] = useState(false);
+
+  useEffect(() => {
+    (async function () {
+      const recoverableOnboardingEnabled = await getVariation(FLAGS.RECOVERABLE_ONBOARDING_FLOW, {
+        spaceId: spaceId,
+        organizationId: orgId,
+      });
+
+      const newOnboardingExperimentVariation = await getVariation(
+        FLAGS.EXPERIMENT_ONBOARDING_MODAL,
+        {
+          spaceId: spaceId,
+          organizationId: orgId,
+        }
+      );
+
+      setIsRecoverableOnboardingEnabled(
+        recoverableOnboardingEnabled && newOnboardingExperimentVariation
+      );
+    })();
+  }, [spaceId, orgId]);
+
   return (
     <WidgetContainer>
       <WidgetContainer.Row>
@@ -51,6 +76,12 @@ export const ModernStackAdminSpaceHome = ({
           )}
         </WidgetContainer.Col>
       </WidgetContainer.Row>
+
+      {isRecoverableOnboardingEnabled && (
+        <WidgetContainer.Row>
+          <DiscoverOnboardingCTA spaceId={spaceId} />
+        </WidgetContainer.Row>
+      )}
 
       <WidgetContainer.Row>
         <WidgetContainer.Col>

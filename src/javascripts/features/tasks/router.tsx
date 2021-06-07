@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContext, useSpaceEnvContentTypes } from 'core/services/SpaceEnvContext';
 import { getSpaceMember } from 'core/services/SpaceEnvContext/utils';
 import TheLocaleStore from 'services/localeStore';
 import { TasksPage } from './TasksPage';
@@ -11,8 +11,8 @@ const TasksPageRoute = () => {
     currentSpaceId: spaceId,
     currentEnvironmentId: environmentId,
     currentSpace,
-    currentSpaceContentTypes,
   } = useSpaceEnvContext();
+  const { currentSpaceContentTypes } = useSpaceEnvContentTypes();
   const currentUserId = getSpaceMember(currentSpace)?.sys.user.sys.id;
   const defaultLocaleCode = TheLocaleStore.getDefaultLocale().code;
   const getContentType = (contentTypeId: string) =>
@@ -36,7 +36,7 @@ const TasksPageRouter = () => {
     <CustomRouter splitter="/tasks">
       <RouteErrorBoundary>
         <Routes basename={basename + 'tasks'}>
-          <Route name="spaces.detail.tasks" element={<TasksPageRoute />} />
+          <Route path="/" name="spaces.detail.tasks" element={<TasksPageRoute />} />
           <Route name={null} element={<StateRedirect path="home" />} />
         </Routes>
       </RouteErrorBoundary>

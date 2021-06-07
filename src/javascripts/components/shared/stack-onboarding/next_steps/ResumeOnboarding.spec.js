@@ -5,7 +5,7 @@ import ResumeOnboarding from './ResumeOnboarding';
 import * as FakeFactory from 'test/helpers/fakeFactory';
 import { trackClickCTA } from 'features/space-home';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
-import { go } from 'states/Navigator';
+import { router } from 'core/react-routing';
 import { openDeleteSpaceDialog } from 'features/space-settings';
 import * as TokenStore from 'services/TokenStore';
 
@@ -25,8 +25,11 @@ jest.mock('core/services/BrowserStorage', () => {
   };
 });
 
-jest.mock('states/Navigator', () => ({
-  go: jest.fn(),
+jest.mock('core/react-routing', () => ({
+  ...jest.requireActual('core/react-routing'),
+  router: {
+    navigate: jest.fn(),
+  },
 }));
 
 jest.mock('components/shared/auto_create_new_space/CreateModernOnboardingUtils', () => ({
@@ -62,9 +65,9 @@ describe('ResumeOnboarding', () => {
 
     userEvent.click(screen.getByTestId('resume-onboarding-cta'));
 
-    expect(go).toBeCalledWith({
+    expect(router.navigate).toBeCalledWith({
       path: storeData.path,
-      params: storeData.params,
+      ...storeData.params,
     });
   });
 
@@ -73,9 +76,9 @@ describe('ResumeOnboarding', () => {
 
     userEvent.click(screen.getByTestId('resume-onboarding-cta'));
 
-    expect(go).toBeCalledWith({
+    expect(router.navigate).toBeCalledWith({
       path: 'spaces.detail.onboarding.copy',
-      params: { spaceId: mockSpace.sys.id },
+      spaceId: mockSpace.sys.id,
     });
   });
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import * as TokenStore from 'services/TokenStore';
-import { go } from 'states/Navigator';
+import { router } from 'core/react-routing';
 
 type WithRedirectReadOnlySpaceType = {
   spaceId: string;
@@ -21,10 +21,7 @@ export function withRedirectReadOnlySpace(Component) {
 
     React.useEffect(() => {
       if (space?.readOnlyAt) {
-        go({
-          path: ['spaces', 'detail', 'home'],
-          params: { spaceId: space.sys.id },
-        });
+        router.navigate({ path: 'spaces.detail.home', spaceId: space.sys.id });
       }
     }, [space]);
 

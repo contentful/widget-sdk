@@ -27,6 +27,7 @@ export const RouteLink = (
     as?: any;
     children: React.ReactNode | RouteLinkChildrenFn;
     testId?: string;
+    handlePrevented?: boolean;
   }
 ) => {
   const { children } = props;
@@ -40,7 +41,7 @@ export const RouteLink = (
   function handleClick(event: React.MouseEvent<HTMLAnchorElement>) {
     if (props.onClick) props.onClick(event);
     if (
-      !event.defaultPrevented && // onClick prevented default
+      (!event.defaultPrevented || props.handlePrevented) && // onClick prevented default
       event.button === 0 && // Ignore everything but left clicks
       (!props.target || props.target === '_self') && // Let browser handle "target=_blank" etc.
       !isModifiedEvent(event) // Ignore clicks with modifier keys

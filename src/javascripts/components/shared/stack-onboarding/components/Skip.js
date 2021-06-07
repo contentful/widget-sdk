@@ -6,41 +6,34 @@ import {
   getStoragePrefix,
   track,
 } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
-import { getModule } from 'core/NgRegistry';
+import { router } from 'core/react-routing';
 
 const store = getBrowserStorage();
 
-export default class StackOnboardingSkip extends React.Component {
-  static propTypes = {
-    link: PropTypes.oneOf(['getStarted', 'copy', 'explore', 'deploy']),
-  };
-
-  onClick = (onboardingStepsComplete) => {
-    const $state = getModule('$state');
-    const $stateParams = getModule('$stateParams');
-
+const StackOnboardingSkip = ({ link }) => {
+  const onClick = (onboardingStepsComplete) => {
     if (onboardingStepsComplete) {
-      track(`close_from_${this.props.link}`);
+      track(`close_from_${link}`);
     } else {
-      track(`skip_from_${this.props.link}`);
+      track(`skip_from_${link}`);
       updateUserInSegment({
         onboardingSkipped: true,
       });
     }
-    $state.go('spaces.detail.home', {
-      spaceId: $stateParams.spaceId,
-    });
+
+    router.navigate({ path: 'spaces.detail.home' });
   };
+  const onboardingStepsComplete = store.get(`${getStoragePrefix()}:completed`);
 
-  render() {
-    const onboardingStepsComplete = store.get(`${getStoragePrefix()}:completed`);
+  return (
+    <div onClick={() => onClick(onboardingStepsComplete)} className="modern-stack-onboarding--skip">
+      {onboardingStepsComplete ? 'Close' : 'Skip >'}
+    </div>
+  );
+};
 
-    return (
-      <div
-        onClick={() => this.onClick(onboardingStepsComplete)}
-        className="modern-stack-onboarding--skip">
-        {onboardingStepsComplete ? 'Close' : 'Skip >'}
-      </div>
-    );
-  }
-}
+StackOnboardingSkip.propTypes = {
+  link: PropTypes.oneOf(['getStarted', 'copy', 'explore', 'deploy']),
+};
+
+export default StackOnboardingSkip;

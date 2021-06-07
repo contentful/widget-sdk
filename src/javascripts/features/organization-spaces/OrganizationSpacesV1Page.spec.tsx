@@ -7,10 +7,10 @@ import createResourceService from 'services/ResourceService';
 import { openDeleteSpaceDialog } from 'features/space-settings';
 import { beginSpaceCreation } from 'services/CreateSpace';
 import { getSpaces, getUserSync } from 'services/TokenStore';
-import { go } from 'states/Navigator';
 import * as FORMA_CONSTANTS from 'test/helpers/Forma36Constants';
 import * as fake from 'test/helpers/fakeFactory';
 import { setUser } from 'services/OrganizationRoles';
+import { MemoryRouter, router } from 'core/react-routing';
 
 const DEFAULT_CREATED_AT_STRING = '2020-05-07T10:48:53Z';
 const CREATED_AT_FROM_NOW = moment(DEFAULT_CREATED_AT_STRING).fromNow();
@@ -56,8 +56,21 @@ jest.mock('states/Navigator', () => ({
   go: jest.fn(),
 }));
 
+jest.mock('core/react-routing', () => ({
+  // @ts-expect-error mute in tests
+  ...jest.requireActual('core/react-routing'),
+  useSearchParams: jest.fn().mockReturnValue([new URLSearchParams()]),
+  router: {
+    navigate: jest.fn(),
+  },
+}));
+
 const build = async () => {
-  render(<OrganizationSpacesV1Page orgId={mockOrganization.sys.id} />);
+  render(
+    <MemoryRouter>
+      <OrganizationSpacesV1Page orgId={mockOrganization.sys.id} />
+    </MemoryRouter>
+  );
 
   return waitFor(() => expect(getAllSpaces).toHaveBeenCalled());
 };
@@ -266,15 +279,19 @@ describe('SpacesRoute', () => {
 
       const actionIcons = screen.queryAllByTestId('v1-spaces-row.dropdown-menu.trigger');
 
+      screen.debug();
+
       goToSpaceHome(actionIcons[0]);
-      expect(go).not.toHaveBeenCalled();
+      expect(router.navigate).not.toHaveBeenCalled();
 
       goToSpaceHome(actionIcons[1]);
-      expect(go).toHaveBeenCalledWith({
-        path: ['spaces', 'detail', 'home'],
-        params: { spaceId: fakeSpace2.sys.id },
-        options: { reload: true },
-      });
+      expect(router.navigate).toHaveBeenCalledWith(
+        {
+          path: 'spaces.detail.home',
+          spaceId: fakeSpace2.sys.id,
+        },
+        { reload: true }
+      );
     });
   });
 });

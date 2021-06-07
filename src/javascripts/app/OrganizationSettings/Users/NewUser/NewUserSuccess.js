@@ -36,8 +36,12 @@ export default function NewUserSuccess({ failures = [], successes = [], onRestar
   const isPartialSuccess = !isTotalFailure && !isTotalSuccess;
 
   const title = useMemo(() => {
-    if (isTotalFailure) return `${pluralize('user', failures.length, true)} couldn’t be invited`;
-    if (isPartialSuccess) return 'Some users were invited';
+    if (isTotalFailure) {
+      return `${pluralize('user', failures.length, true)} couldn’t be invited`;
+    }
+    if (isPartialSuccess) {
+      return 'Some users were invited';
+    }
 
     return 'Done!';
   }, [isTotalFailure, failures, isPartialSuccess]);

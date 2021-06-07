@@ -11,9 +11,10 @@ import { makeRequest } from 'data/Request';
 import { getSpaceContext } from 'classes/spaceContext';
 import { axiosTransformResponse } from 'data/responseTransform';
 import { createAdapter } from './adapter';
+import { Source } from 'i13n/constants';
 
 export type BatchedPlainCmaClient = ReturnType<typeof getCMAClient>;
-type GetCmaClientOptions = { noBatch?: boolean };
+type GetCmaClientOptions = { noBatch?: boolean; source?: Source };
 
 const handleError = (error: Error, context?: any) => {
   const { status } = error['response'];
@@ -29,6 +30,7 @@ export function getCMAClient(defaults?: PlainClientDefaultParams, options?: GetC
       getToken,
       refreshToken,
     },
+    source: options?.source,
     clientName: 'contentful-management',
     overrideDefaultResponseTransform: axiosTransformResponse,
   });

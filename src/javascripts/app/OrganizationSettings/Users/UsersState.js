@@ -7,6 +7,11 @@ import { getModule } from 'core/NgRegistry';
 
 const WithOrgUserInvite = withOrganizationRoute((props) => <NewUserRoute {...props} />);
 
+const WithOrgUserInviteSpaceDefined = withOrganizationRoute((props) => {
+  const { spaceId } = useParams();
+  return <NewUserRoute spaceId={spaceId} {...props} />;
+});
+
 export const inviteUsersState = {
   name: 'invite',
   url: '/invite{pathname:any}',
@@ -22,6 +27,11 @@ export const inviteUsersState = {
               name="account.organizations.users.new"
               path="/"
               element={<WithOrgUserInvite orgId={orgId} />}
+            />
+            <Route
+              name="account.organizations.users.new"
+              path="/:spaceId"
+              element={<WithOrgUserInviteSpaceDefined orgId={orgId} />}
             />
             <Route name={null} path="*" element={<StateRedirect path="home" />} />
           </Routes>

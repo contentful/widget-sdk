@@ -10,6 +10,7 @@ interface OrgSubscriptionContext {
 
 const contextInitialState: OrgSubscriptionState = {
   spacePlans: [],
+  addOnPlans: [],
 };
 
 export const OrgSubscriptionContext = createContext({
