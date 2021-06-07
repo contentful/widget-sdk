@@ -260,12 +260,12 @@ registerGenericEvent('launch_app:link_clicked');
 
 registerSegmentEvent(
   'release:dialog_box_open',
-  'release:dialog_box_open', // Should actually be 'release_dialog_box' but we were tracking to wrong table all along.
+  'release_dialog_box',
   ReleasesTransformer.releaseDialogOpen
 );
 registerSegmentEvent(
   'release:dialog_box_close',
-  'release:dialog_box_close', // Should actually be 'release_dialog_box' but we were tracking to wrong table all along.
+  'release_dialog_box',
   ReleasesTransformer.releaseDialogClose
 );
 registerSegmentEvent(
