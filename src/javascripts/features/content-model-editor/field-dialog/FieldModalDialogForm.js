@@ -29,6 +29,7 @@ import { getRichTextOptions, getWidgetSettings } from './utils/helpers';
 import { getIconId } from 'services/fieldFactory';
 import { toInternalFieldType } from 'widgets/FieldTypes';
 import { create as createBuiltinWidgetList } from 'widgets/BuiltinWidgets';
+import { useSpaceEnvContentTypes } from 'core/services/SpaceEnvContext';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 
@@ -90,7 +91,8 @@ const FieldModalDialogForm = ({
   editorInterface,
   customWidgets,
 }) => {
-  const { currentOrganizationId, currentSpaceContentTypes, currentSpaceId } = useSpaceEnvContext();
+  const { currentSpaceContentTypes } = useSpaceEnvContentTypes();
+  const { currentOrganizationId, currentSpaceId } = useSpaceEnvContext();
   const [selectedTab, setSelectedTab] = useState(formTabs.SETTINGS);
   const [richTextOptions, setRichTextOptions] = useState(() => getRichTextOptions(ctField));
   const [widgetSettings, setWidgetSettings] = useState(() => getWidgetSettings(widget));
@@ -226,6 +228,7 @@ const FieldModalDialogForm = ({
                 ctField={ctField}
                 contentType={contentType}
                 contentTypes={currentSpaceContentTypes}
+                editorInterface={editorInterface}
                 widgetSettings={widgetSettings}
                 availableWidgets={availableWidgets}
               />

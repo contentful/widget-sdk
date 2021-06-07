@@ -5,12 +5,14 @@ import mitt from 'mitt';
 import type { FieldExtensionSDK } from '@contentful/app-sdk';
 import { createLocalesApi } from '@contentful/experience-sdk';
 import { css } from 'emotion';
+import keyBy from 'lodash/keyBy';
 
 import localeStore from 'services/localeStore';
 import { useFieldDialogContext } from './FieldDialogContext';
 
 interface UseFieldApi {
   contentType: any;
+  editorInterface: any;
   field: any;
   fields: any;
   locale: any;
@@ -21,6 +23,7 @@ interface UseFieldApi {
 
 const useFieldAPI = ({
   contentType,
+  editorInterface,
   field,
   fields,
   locale,
@@ -29,7 +32,6 @@ const useFieldAPI = ({
   setInvalid,
 }: UseFieldApi) => {
   const emitter = useMemo(() => mitt(), []);
-  // const localesApi = useMemo(() => createLocalesApi(locales), [locales]);
 
   const sdk = useMemo(() => {
     const localesApi = createLocalesApi({
@@ -37,6 +39,8 @@ const useFieldAPI = ({
       defaultLocaleCode: localeStore.getDefaultLocale().code,
       list: locales,
     });
+
+    const instance = keyBy(editorInterface.controls, 'fieldId')[field.apiName];
 
     return {
       field: {
@@ -86,18 +90,19 @@ const useFieldAPI = ({
       },
       parameters: {
         installation: {},
-        instance: {},
+        instance: instance.settings,
       },
       contentType,
       locales: localesApi,
     } as FieldExtensionSDK;
-  }, [contentType, emitter, field, fields, locale, locales, onChange, setInvalid]);
+  }, [contentType, editorInterface, emitter, field, fields, locale, locales, onChange, setInvalid]);
 
   return sdk;
 };
 
 export interface InitialValueFieldProps {
   contentType: any;
+  editorInterface: any;
   fields: any;
   isLocalized?: boolean;
   locale: any;
@@ -107,6 +112,7 @@ export interface InitialValueFieldProps {
 
 const InitialValueField = ({
   contentType,
+  editorInterface,
   fields,
   isLocalized,
   locale,
@@ -125,6 +131,7 @@ const InitialValueField = ({
   const sdk = useFieldAPI({
     ...fieldContext,
     contentType,
+    editorInterface,
     fields,
     locale,
     locales,
@@ -132,14 +139,16 @@ const InitialValueField = ({
     onChange,
   });
 
-  const field = <Field sdk={sdk} />;
+  const Customfield = () => {
+    return <Field sdk={sdk} />;
+  };
 
   return isLocalized ? (
     <FieldWrapper className={css({ marginLeft: 0, marginRight: 0 })} sdk={sdk} name={locale.name}>
-      {field}
+      <Customfield />
     </FieldWrapper>
   ) : (
-    field
+    <Customfield />
   );
 };
 

@@ -17,12 +17,14 @@ export const SUPPORTED_FIELD_TYPES = [
 export interface InitialValueTabComponentProps {
   contentType: Record<'string', unknown>;
   ctField: { id: string; localized: boolean; type: string };
+  editorInterface: any;
   fields: Record<'string', unknown>;
   onChange: () => unknown;
 }
 
 const InitialValueTabComponent = ({
   contentType,
+  editorInterface,
   ctField,
   fields,
   onChange,
@@ -48,6 +50,7 @@ const InitialValueTabComponent = ({
     return (
       <InitialValueField
         contentType={contentType}
+        editorInterface={editorInterface}
         fields={fields}
         locale={defaultLocale}
         locales={locales}
@@ -61,6 +64,7 @@ const InitialValueTabComponent = ({
       {locales.map((locale) => (
         <InitialValueField
           contentType={contentType}
+          editorInterface={editorInterface}
           fields={fields}
           isLocalized
           key={locale.code}

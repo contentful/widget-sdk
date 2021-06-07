@@ -12,7 +12,7 @@
   "dependencies": {
     "@contentful/app-sdk": "^4.0.0-alpha.7",
     "@contentful/asn1js": "^2.1.0",
-    "@contentful/default-field-editors": "^0.8.13",
+    "@contentful/default-field-editors": "^0.8.15",
     "@contentful/editorial-primitives": "^1.4.0",
     "@contentful/entity-search": "^1.2.0",
     "@contentful/errors": "^1.21.32",
