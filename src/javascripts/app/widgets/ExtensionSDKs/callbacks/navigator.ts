@@ -46,17 +46,17 @@ interface MakeNavigateToPageProps {
 
 async function navigateToAppConfig({ widgetRef, spaceContext }: MakeNavigateToPageProps) {
   if (widgetRef.widgetNamespace === WidgetNamespace.APP) {
-    await Navigator.go({
-      path: ['spaces', 'environment', 'apps', 'detail'],
-      params: {
+    return router.navigate(
+      {
+        path: 'apps.app-configuration',
         spaceId: spaceContext.spaceId,
         environmentId: spaceContext.environmentId,
         appId: widgetRef.widgetId,
       },
-      options: {
+      {
         notify: true,
-      },
-    });
+      }
+    );
   } else {
     throw new Error('Only apps can use the openAppConfig method');
   }
