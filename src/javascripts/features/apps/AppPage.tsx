@@ -16,7 +16,7 @@ import {
   TextLink,
 } from '@contentful/forma-36-react-components';
 import { get } from 'lodash';
-import { APP_EVENTS_IN, AppHookBus } from 'features/apps-core';
+import { APP_EVENTS_IN } from 'features/apps-core';
 import trackExtensionRender from 'widgets/TrackExtensionRender';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
 import ExtensionLocalDevelopmentWarning from 'widgets/ExtensionLocalDevelopmentWarning';
@@ -41,9 +41,11 @@ import {
 } from '@contentful/widget-renderer';
 import { MarketplaceApp } from 'features/apps-core';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContentTypes } from 'core/services/SpaceEnvContext';
 import { isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 import { createAppExtensionSDK as localCreateAppConfigWidgetSDK } from 'app/widgets/ExtensionSDKs';
+import { createPublicContentType } from 'app/widgets/ExtensionSDKs/createPublicContentType';
 import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
 import { usePubSubClient } from 'core/hooks';
 import LocaleStore from 'services/localeStore';
@@ -51,7 +53,11 @@ import { getSpaceContext } from 'classes/spaceContext';
 import { useRouteNavigate } from 'core/react-routing';
 import { FLAGS } from 'LaunchDarkly';
 import { useVariation } from 'core/hooks/useVariation';
-import { createAppConfigWidgetSDK, AppInstallationEvents } from '@contentful/experience-sdk';
+import {
+  createAppConfigWidgetSDK,
+  AppInstallationEvents,
+  AppHookBus,
+} from '@contentful/experience-sdk';
 import {
   createDialogCallbacks,
   createNavigatorCallbacks,
@@ -108,6 +114,7 @@ export function AppRoute(props: Props) {
   const pubSubClient = usePubSubClient();
   const installationStateRef = React.useRef<InstallationState>(installationState); // TODO: useEffect creates a snapshot of `installationState` where `onAppConfigured` receives a outdated value, we use useRef to bypass this
   const { customWidgetClient, customWidgetPlainClient, client: cma } = useCurrentSpaceAPIClient();
+  const { currentSpaceContentTypes } = useSpaceEnvContentTypes();
 
   const {
     currentOrganization: organization,
@@ -163,6 +170,7 @@ export function AppRoute(props: Props) {
             defaultLocaleCode: LocaleStore.getDefaultLocale().code,
             list: LocaleStore.getLocales(),
           },
+          contentTypes: currentSpaceContentTypes.map(createPublicContentType),
           cma: customWidgetPlainClient,
           user: spaceContext.user,
           environment: currentEnvironment,
@@ -183,17 +191,17 @@ export function AppRoute(props: Props) {
               },
             }),
             dialog: createDialogCallbacks(),
-            app:{
+            app: {
               setReady: onAppMarkedAsReady,
               refreshPublishedContentTypes() {
                 GlobalEventBus.emit(GlobalEvents.RefreshPublishedContentTypes);
-              }
+              },
             },
             space: createSpaceCallbacks({
               pubSubClient,
               environment: currentEnvironment,
-              cma: customWidgetPlainClient
-            })
+              cma: customWidgetPlainClient,
+            }),
           },
         }),
         onAppHook: (stage: AppStages, result: any) => {
@@ -230,8 +238,10 @@ export function AppRoute(props: Props) {
     props.appHookBus,
     useExperienceSDK,
     widgetLoader,
-    customWidgetClient,
-    onAppMarkedAsReady
+    customWidgetPlainClient,
+    onAppMarkedAsReady,
+    pubSubClient,
+    currentSpaceContentTypes,
   ]);
 
   const title: string = get(app, ['title'], get(app, ['appDefinition', 'name']));
@@ -251,6 +261,8 @@ export function AppRoute(props: Props) {
         Notification.error('Failed to load the app.');
         goBackToList();
       });
+    // no need to depend on a redirect method
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.repo, props.appId]);
 
   React.useEffect(() => {
@@ -423,6 +435,7 @@ export function AppRoute(props: Props) {
     setInstallationState(InstallationState.NotBusy);
   }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   async function onAppMarkedAsReady() {
     if (!loadingError) {
       setAppLoaded(true);
