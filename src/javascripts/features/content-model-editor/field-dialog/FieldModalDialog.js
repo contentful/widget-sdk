@@ -8,19 +8,22 @@ import { CurrentSpaceAPIClientProvider } from 'core/services/APIClient/CurrentSp
 import { FieldDialogProvider } from './components/FieldDialogContext';
 
 const FieldModalDialog = ({
-                            isShown,
-                            onClose,
-                            field: ctField,
-                            widget,
-                            contentType,
-                            updateFieldOnScope,
-                            editorInterface,
-                            customWidgets
-                          }) => {
+  isShown,
+  onClose,
+  field: ctField,
+  widget,
+  contentType,
+  updateFieldOnScope,
+  editorInterface,
+  customWidgets,
+}) => {
   return (
     <SpaceEnvContextProvider>
       <CurrentSpaceAPIClientProvider>
-        <FieldDialogProvider field={ctField} contentType={contentType} editorInterface={editorInterface}>
+        <FieldDialogProvider
+          field={ctField}
+          contentType={contentType}
+          editorInterface={editorInterface}>
           <Modal isShown={isShown} onClose={onClose} size="60em" allowHeightOverflow>
             {({ onClose }) => (
               <FieldModalDialogForm
@@ -48,7 +51,7 @@ FieldModalDialog.propTypes = {
   contentType: PropTypes.object.isRequired,
   updateFieldOnScope: PropTypes.func.isRequired,
   editorInterface: PropTypes.object.isRequired,
-  customWidgets: PropTypes.array.isRequired
+  customWidgets: PropTypes.array.isRequired,
 };
 
 const openFieldModalDialog = (
