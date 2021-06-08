@@ -96,13 +96,8 @@ registerSchema({
 });
 
 registerSchema({
-  name: 'app',
-  version: '1-0-0',
-});
-
-registerSchema({
   name: 'app_open',
-  version: '1-0-0',
+  version: '1-1-0',
 });
 
 registerSchema({
