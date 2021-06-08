@@ -76,7 +76,7 @@ async function fetch(organizationId, dispatch) {
   const isSubscriptionPageRebrandingEnabled = await getVariation(
     FLAGS.SUBSCRIPTION_PAGE_REBRANDING
   );
-  const orgIsEnterprise = isEnterprisePlan(organization, basePlan);
+  const orgIsEnterprise = isEnterprisePlan(basePlan);
 
   dispatch({
     type: actions.SET_PLANS_AND_MEMBERSHIPS,
