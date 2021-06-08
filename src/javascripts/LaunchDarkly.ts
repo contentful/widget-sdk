@@ -64,7 +64,7 @@ export enum FLAGS {
   CUSTOM_TRACKING_FIELD_FOR_SLUGS = 'dante-2021-05-custom-slug-field',
   EXPERIENCE_SDK_APP_CONFIG_LOCATION = 'feature-ext-05-2021-experience-sdk-app-config-location',
   INITIAL_FIELD_VALUES = 'dante-06-2021-initial-field-values',
-  
+
   // So that we can test the fallback mechanism without needing to rely on an actual
   // flag above, we use these special flags.
   __FLAG_FOR_UNIT_TESTS__ = 'test-flag',
