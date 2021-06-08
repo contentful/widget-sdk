@@ -1,3 +1,4 @@
+const { Crypto } = require('@peculiar/webcrypto');
 const Enzyme = require('enzyme');
 const EnzymeAdapter = require('enzyme-adapter-react-16');
 const ReactTestingLibrary = require('@testing-library/react');
@@ -85,6 +86,9 @@ if (global.document) {
     getClientRects: () => [],
   });
 }
+
+// Only node > 16 has webcrypto APIs, so we need a polyfill for tests.
+global.crypto = new Crypto();
 
 // eslint-disable-next-line no-undef
 HTMLElement.prototype.scrollIntoView = function scrollIntoView() {};

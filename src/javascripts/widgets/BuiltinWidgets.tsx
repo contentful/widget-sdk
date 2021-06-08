@@ -366,13 +366,7 @@ export function create({
           clientConfig={{ apiKey, policy, signature }}
           getUploadUrl={(url) => url}
           getExternalUrl={AssetUrlService.transformHostname}
-          signAssetUrl={async (url) => {
-            const result = await widgetApi.space.signAssetUrls({
-              urls: [url],
-              expiresIn: 60,
-            });
-            return result.data[url].payload;
-          }}
+          signAssetUrl={(url) => widgetApi.space.signAssetUrl(url)}
         />
       );
     },

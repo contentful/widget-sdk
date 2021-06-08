@@ -7,6 +7,10 @@ import { SpaceAPI, User } from '@contentful/app-sdk';
 import { InternalContentType, createContentTypeApi } from './createContentTypeApi';
 import { get, noop } from 'lodash';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
+import {
+  generateSignedAssetUrl,
+  importAsciiStringAsHS256Key,
+} from 'services/SignEmbargoedAssetUrl';
 
 const ASSET_PROCESSING_POLL_MS = 500;
 const GET_WAIT_ON_ENTITY_UPDATE = 500;
@@ -37,7 +41,8 @@ export type InternalSpaceAPI = SpaceAPI & {
   executeRelease: (action: string, entities: EntityLink[], type?: string) => Promise<any>;
   validateRelease: (action: string, entities: EntityLink[], type?: string) => Promise<any>;
   validateEntry: (data: any, version: number) => Promise<any>;
-  signAssetUrls: (data: any) => Promise<any>;
+  createAssetKey: (data: any) => Promise<any>;
+  signAssetUrl: (url: string) => Promise<string>;
   onEntityChanged: (
     entityType: string,
     entityId: string,
@@ -66,6 +71,10 @@ export function createSpaceApi({
   readOnly?: boolean;
   appId?: string;
 }): InternalSpaceAPI {
+  let cachedAssetKey:
+    | undefined
+    | { promise: Promise<{ cryptoKey: CryptoKey; policy: string }>; expiresAtMs: number };
+
   const spaceApi = {
     // Proxy directly to the CMA client:
     archiveEntry: makeReadOnlyGuardedMethod(readOnly, cma.archiveEntry),
@@ -73,12 +82,12 @@ export function createSpaceApi({
     createContentType: makeReadOnlyGuardedMethod(readOnly, cma.createContentType),
     createEntry: makeReadOnlyGuardedMethod(readOnly, cma.createEntry),
     createAsset: makeReadOnlyGuardedMethod(readOnly, cma.createAsset),
+    createAssetKey: cma.createAssetKey,
     deleteAsset: makeReadOnlyGuardedMethod(readOnly, cma.deleteAsset),
     deleteContentType: makeReadOnlyGuardedMethod(readOnly, cma.deleteContentType),
     deleteEntry: makeReadOnlyGuardedMethod(readOnly, cma.deleteEntry),
     getAsset: cma.getAsset,
     getAssets: cma.getAssets,
-    signAssetUrls: cma.signAssetUrls,
     getEditorInterface: cma.getEditorInterface,
     getEditorInterfaces: cma.getEditorInterfaces,
     getEntry: cma.getEntry,
@@ -118,6 +127,7 @@ export function createSpaceApi({
     validateEntry: makeReadOnlyGuardedMethod(readOnly, cma.validateEntry),
     onEntityChanged,
 
+    signAssetUrl,
     signRequest: makeReadOnlyGuardedMethod(readOnly, makeSignRequest(appId)),
   };
 
@@ -221,5 +231,44 @@ export function createSpaceApi({
     return () => {
       pubSubClient.off(CONTENT_ENTITY_UPDATED_EVENT, handler);
     };
+  }
+
+  function fetchCachedAssetKey(
+    minExpiresAtMs: number
+  ): Promise<{ policy: string; cryptoKey: CryptoKey }> {
+    if (!cachedAssetKey || cachedAssetKey.expiresAtMs < minExpiresAtMs) {
+      // Create a new key at 46h (near the maximum validity of 48h)
+      const expiresAtMs = Date.now() + 46 * 60 * 60 * 1000;
+      if (minExpiresAtMs > expiresAtMs) {
+        throw new Error(
+          `Cannot fetch an asset key so far in the future: ${minExpiresAtMs} > ${expiresAtMs}`
+        );
+      }
+      const promise = cma.createAssetKey({ expiresAt: Math.floor(expiresAtMs / 1000) }).then(
+        async ({ policy, secret }: { policy: string; secret: string }) => {
+          const cryptoKey = await importAsciiStringAsHS256Key(secret);
+          return {
+            policy,
+            cryptoKey,
+          };
+        },
+        (err: unknown) => {
+          // If we encounter an error, make sure to clear the cache item if
+          // this is the current pending fetch
+          if (cachedAssetKey && cachedAssetKey.promise === promise) {
+            cachedAssetKey = undefined;
+          }
+          return Promise.reject(err);
+        }
+      );
+      cachedAssetKey = { expiresAtMs, promise };
+    }
+    return cachedAssetKey.promise;
+  }
+
+  async function signAssetUrl(url: string, lifetimeSeconds = 60): Promise<string> {
+    const expiresAtMs = Date.now() + lifetimeSeconds * 1000;
+    const { policy, cryptoKey } = await fetchCachedAssetKey(expiresAtMs);
+    return await generateSignedAssetUrl(cryptoKey, policy, url, expiresAtMs);
   }
 }

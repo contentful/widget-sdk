@@ -4,6 +4,7 @@ import { CONTENT_ENTITY_UPDATED_EVENT } from 'services/PubSubService';
 import { InternalContentType } from './createContentTypeApi';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 import { ContentType } from '@contentful/app-sdk';
+import * as jwt from 'jsonwebtoken';
 
 jest.mock('Config', () => ({
   uploadApiUrl: jest.fn(() => 'example_url'),
@@ -35,6 +36,7 @@ const cma = {
   createContentType: jest.fn(),
   createEntry: jest.fn(),
   createAsset: jest.fn(),
+  createAssetKey: jest.fn().mockResolvedValue({ policy: 'POLICY', secret: 'SECRET' }),
   deleteAsset: jest.fn(),
   deleteContentType: jest.fn(),
   deleteEntry: jest.fn(),
@@ -62,6 +64,7 @@ const cma = {
   validateEntry: jest.fn(),
   validateRelease: jest.fn(),
   executeRelease: jest.fn(),
+  signAssetUrl: jest.fn(),
   signRequest: jest.fn(),
 };
 
@@ -298,18 +301,26 @@ describe('createSpaceApi', () => {
     let allMethods, readMethods, handlerMethods, otherMethods, spaceApi;
     beforeEach(() => {
       // Methods whose behaviour is read-only, but they are not getters
-      const readOnlyWhiteList = ['readTags', 'waitUntilAssetProcessed'];
+      const excludedMethods = ['signAssetUrl'];
+      const readOnlyWhiteList = ['readTags', 'waitUntilAssetProcessed', 'createAssetKey'];
 
       spaceApi = buildSpaceApi([], jest.fn(), true);
       allMethods = Object.getOwnPropertyNames(spaceApi).filter(
         (prop) => typeof spaceApi[prop] === 'function'
       );
       readMethods = allMethods.filter(
-        (method) => method.startsWith('get') || readOnlyWhiteList.includes(method)
+        (method) =>
+          method.startsWith('get') ||
+          (readOnlyWhiteList.includes(method) && !excludedMethods.includes(method))
       );
-      handlerMethods = allMethods.filter((method) => method.startsWith('on'));
+      handlerMethods = allMethods.filter(
+        (method) => method.startsWith('on') && !excludedMethods.includes(method)
+      );
       otherMethods = allMethods.filter(
-        (method) => !handlerMethods.includes(method) && !readMethods.includes(method)
+        (method) =>
+          !handlerMethods.includes(method) &&
+          !readMethods.includes(method) &&
+          !excludedMethods.includes(method)
       );
     });
 
@@ -331,6 +342,45 @@ describe('createSpaceApi', () => {
           makeReadOnlyApiError(ReadOnlyApi.Space, method)
         );
       }
+    });
+  });
+
+  describe('signAssetUrl', () => {
+    it('signs a url correctly', async () => {
+      const spaceApi = buildSpaceApi([]);
+
+      const policy = 'POLICY';
+      const secret = 'SECRET';
+
+      cma.createAssetKey.mockResolvedValue({ policy, secret });
+
+      const signedUrlStr = await spaceApi.signAssetUrl(
+        'https://images.secure.ctfassets.net/spaceid/assetid/rand/filename.png'
+      );
+
+      const url = new URL(signedUrlStr);
+      const baseUrl = url.origin + url.pathname;
+
+      const token = url.searchParams.get('token');
+      expect(token).toBeDefined();
+      expect(url.searchParams.get('policy')).toBe(policy);
+
+      jwt.verify(token as string, secret, { subject: baseUrl });
+    });
+
+    it('caches signing keys', async () => {
+      const spaceApi = buildSpaceApi([]);
+
+      cma.createAssetKey.mockResolvedValue({ policy: 'POLICY', secret: 'SECRET' });
+
+      await spaceApi.signAssetUrl(
+        'https://images.secure.ctfassets.net/spaceid/assetid/rand/filename1.png'
+      );
+      await spaceApi.signAssetUrl(
+        'https://images.secure.ctfassets.net/spaceid/assetid/rand/filename2.png'
+      );
+
+      expect(cma.createAssetKey).toHaveBeenCalledTimes(1);
     });
   });
 });
