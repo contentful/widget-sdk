@@ -149,6 +149,15 @@ export function AppRoute(props: Props) {
   }, [app]);
 
   const [useExperienceSDK] = useVariation<boolean>(FLAGS.EXPERIENCE_SDK_APP_CONFIG_LOCATION, false);
+  const onAppMarkedAsReady = React.useCallback(async () => {
+    if (!loadingError) {
+      setAppLoaded(true);
+    }
+  }, [loadingError, setAppLoaded]);
+
+  const goBackToList = React.useCallback(() => {
+    return routeNavigate({ path: 'apps.list' });
+  }, [routeNavigate]);
 
   const sdkInstance = React.useMemo(() => {
     if (!widget || !app || !customWidgetClient || !spaceId) return null;
@@ -261,9 +270,7 @@ export function AppRoute(props: Props) {
         Notification.error('Failed to load the app.');
         goBackToList();
       });
-    // no need to depend on a redirect method
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.repo, props.appId]);
+  }, [props.repo, props.appId, goBackToList]);
 
   React.useEffect(() => {
     if (!app) return;
@@ -362,10 +369,6 @@ export function AppRoute(props: Props) {
     routeNavigate,
   ]);
 
-  function goBackToList() {
-    return routeNavigate({ path: 'apps.list' });
-  }
-
   async function evictWidget(appInstallation) {
     const loader = await getCustomWidgetLoader();
 
@@ -433,13 +436,6 @@ export function AppRoute(props: Props) {
     const { appInstallation } = await appManager.checkAppStatus(app);
     setIsInstalled(!!appInstallation);
     setInstallationState(InstallationState.NotBusy);
-  }
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  async function onAppMarkedAsReady() {
-    if (!loadingError) {
-      setAppLoaded(true);
-    }
   }
 
   function update(installationState: InstallationState) {
