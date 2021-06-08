@@ -1,1 +1,1 @@
-export { organizationSpacesState } from './OrganizationSpacesV1Route';
+export { OrganizationSpacesV1Page } from './OrganizationSpacesV1Page';

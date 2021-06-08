@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { TextLink, Paragraph, Typography } from '@contentful/forma-36-react-components';
 import { track } from 'analytics/Analytics';
 
-import StateLink from 'app/common/StateLink';
 import { ReactRouterLink } from 'core/react-routing';
 
 export const AddUsersToSpaceNote = ({ orgId, isOwnerOrAdmin, hasTeamsFeature }) => (
@@ -49,9 +48,9 @@ export const AddUsersToSpaceNote = ({ orgId, isOwnerOrAdmin, hasTeamsFeature }) 
     {!hasTeamsFeature && isOwnerOrAdmin && (
       <Paragraph>
         It is possible to add a group of users with the same role through the{' '}
-        <StateLink component={TextLink} path="account.organizations.teams" params={{ orgId }}>
+        <ReactRouterLink component={TextLink} route={{ path: 'organizations.teams', orgId }}>
           teams feature
-        </StateLink>
+        </ReactRouterLink>
         . To access the teams feature, talk with your organization admin.
       </Paragraph>
     )}

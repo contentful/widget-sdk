@@ -8,6 +8,7 @@ import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { create as createSpaceMembershipRepo } from 'access_control/SpaceMembershipRepository';
 import { createTeamMembership } from 'access_control/TeamRepository';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
+import { MemoryRouter } from 'core/react-routing';
 
 const mockFooSpace = fakeFactory.Space();
 const mockBarSpace = fakeFactory.Space();
@@ -331,13 +332,15 @@ describe('NewUser', () => {
 
 async function build(isOwner = true, hasTeamsFeature = false, preselectedSpaceId) {
   render(
-    <NewUser
-      orgId="myorg"
-      spaceId={preselectedSpaceId}
-      onReady={mockOnReady}
-      isOwner={isOwner}
-      hasTeamsFeature={hasTeamsFeature}
-    />
+    <MemoryRouter>
+      <NewUser
+        orgId="myorg"
+        spaceId={preselectedSpaceId}
+        onReady={mockOnReady}
+        isOwner={isOwner}
+        hasTeamsFeature={hasTeamsFeature}
+      />
+    </MemoryRouter>
   );
 }
 

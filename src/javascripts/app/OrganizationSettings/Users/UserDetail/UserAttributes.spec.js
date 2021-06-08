@@ -9,8 +9,8 @@ import {
   reinvite,
 } from 'access_control/OrganizationMembershipRepository';
 import { ModalLauncher, Notification } from '@contentful/forma-36-react-components';
+import { MemoryRouter } from 'core/react-routing';
 
-import { go } from 'states/Navigator';
 import { act } from 'react-dom/test-utils';
 
 const mockMember = fake.OrganizationMembership('member', 'active');
@@ -23,10 +23,6 @@ jest.mock('access_control/OrganizationMembershipRepository', () => ({
   updateMembership: jest.fn(async () => mockDeveloper),
   removeMembership: jest.fn(async () => {}),
   reinvite: jest.fn(async () => {}),
-}));
-
-jest.mock('states/Navigator', () => ({
-  go: jest.fn(),
 }));
 
 describe('UserAttributes', () => {
@@ -111,7 +107,6 @@ describe('UserAttributes', () => {
     build();
     removeUser();
     await screen.findByTestId('cf-ui-notification');
-    expect(go).toHaveBeenCalled();
   });
 
   it('should reload the page after removing self from the org', async () => {
@@ -126,13 +121,15 @@ describe('UserAttributes', () => {
 
 function build(isSelf = false, isOwner = false, membership = mockMember) {
   return render(
-    <UserAttributes
-      membership={membership}
-      isSelf={isSelf}
-      isOwner={isOwner}
-      onRoleChange={onRoleChangeCb}
-      orgId="123"
-    />
+    <MemoryRouter>
+      <UserAttributes
+        membership={membership}
+        isSelf={isSelf}
+        isOwner={isOwner}
+        onRoleChange={onRoleChangeCb}
+        orgId="123"
+      />
+    </MemoryRouter>
   );
 }
 

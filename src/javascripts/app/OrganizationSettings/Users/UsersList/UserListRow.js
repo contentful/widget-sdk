@@ -15,7 +15,7 @@ import UserCard from '../UserCard';
 import { getLastActivityDate, get2FAStatus, getFullNameOrEmail } from '../UserUtils';
 import { OrganizationMembership as OrgMembershipPropType } from 'app/OrganizationSettings/PropTypes';
 import { isPendingMember } from 'utils/MembershipUtils';
-import { ReactRouterLink } from 'core/react-routing';
+import { RouteLink } from 'core/react-routing';
 
 const styles = {
   membershipLink: css({
@@ -41,12 +41,12 @@ export function UserListRow({ membership, onMembershipRemove, onReinvite, orgId 
       className="membership-list__item"
       data-test-id="organization-membership-list-row">
       <TableCell>
-        <ReactRouterLink
+        <RouteLink
           route={{ path: 'organizations.users.detail', userId: membership.sys.id, orgId }}
-          component={TextLink}
+          as={TextLink}
           className={styles.membershipLink}>
           <UserCard user={membership.sys.user} status={membership.sys.status} />
-        </ReactRouterLink>
+        </RouteLink>
       </TableCell>
       <TableCell>{startCase(membership.role)}</TableCell>
       <TableCell>{getLastActivityDate(membership)}</TableCell>
@@ -95,17 +95,17 @@ function UserActions({ membership, onRemove, onReinvite, orgId }) {
           onClick={() => handleAction(onRemove(membership))}>
           {isPendingMember(membership) ? 'Remove user' : `Remove ${userName}`}
         </DropdownListItem>
-        <ReactRouterLink
+        <RouteLink
           testId="userlist.row.actions.navigate"
           route={{
             path: 'organizations.users.detail',
             userId: membership.sys.id,
             orgId,
           }}
-          component={DropdownListItem}
+          as={DropdownListItem}
           className={styles.membershipLink}>
           Edit
-        </ReactRouterLink>
+        </RouteLink>
         {canBeReinvited && (
           <DropdownListItem
             testId="userlist.row.actions.reinvite"

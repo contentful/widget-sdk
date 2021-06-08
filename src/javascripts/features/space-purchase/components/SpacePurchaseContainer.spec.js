@@ -1,3 +1,5 @@
+import React from 'react';
+import { MemoryRouter } from 'core/react-routing';
 import { screen, within, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as FakeFactory from 'test/helpers/fakeFactory';
@@ -741,7 +743,11 @@ async function build(customProps, customState) {
   };
 
   renderWithProvider(
-    SpacePurchaseContainer,
+    () => (
+      <MemoryRouter>
+        <SpacePurchaseContainer {...props} />
+      </MemoryRouter>
+    ),
     {
       organization: mockOrganization,
       sessionId: mockSessionMetadata.sessionId,

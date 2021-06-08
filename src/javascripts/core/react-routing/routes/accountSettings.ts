@@ -101,30 +101,6 @@ const accountProfileOrgMembershipRoute = {
 };
 
 /**
- * StartTrial
- */
-
-type StartTrialType = {
-  path: 'account.organizations.start_trial';
-  orgId: string;
-  navigationState?: {
-    existingUsers?: boolean;
-    from?: string;
-  };
-};
-
-const startTrialRoute = {
-  'account.organizations.start_trial': (_, params: Omit<StartTrialType, 'path'>) => ({
-    path: 'account.organizations.start_trial',
-    params: {
-      pathname: '/',
-      orgId: params.orgId,
-      navigationState: params.navigationState,
-    },
-  }),
-};
-
-/**
  * All paths combined together
  */
 
@@ -135,7 +111,6 @@ const routes = {
   ...accountProfileOAuthApplicationsRoute,
   ...accountProfileOrgMembershipRoute,
   ...accountProfileUserRoute,
-  ...startTrialRoute,
 };
 
 type AccountSettingsRouteType =
@@ -144,8 +119,7 @@ type AccountSettingsRouteType =
   | AccountProfileOrgMembershipType
   | AccountProfileOAuthApplicationsType
   | AccountProfileOAuthTokensType
-  | AccountProfileUserType
-  | StartTrialType;
+  | AccountProfileUserType;
 
 export type { AccountSettingsRouteType };
 

@@ -16,6 +16,7 @@ const VALID_DEFINITION_PROPS = [
   'children',
   'template',
   'resolve',
+  'reloadOnSearch',
   'onEnter',
   'onExit',
   'params',
@@ -64,6 +65,7 @@ export default function register() {
             resolve: state.resolve,
             onEnter: state.onEnter,
             onExit: state.onExit,
+            reloadOnSearch: state.reloadOnSearch,
             // Our own props (they have no meaning to UI Router):
             params: state.params,
             redirectTo: state.redirectTo,
@@ -176,21 +178,11 @@ export default function register() {
 
         return ['$scope', '$state', '$stateParams'].concat(injectables).concat([
           function ($scope, $state, $stateParams, ...rest) {
-            function applyProps() {
-              $scope.props = Object.assign(
-                { ngStateUrl: $state.current.url || '' },
-                mapperFn(...rest),
-                $stateParams
-              );
-              $scope.$applyAsync();
-            }
-
-            $scope.$watch(() => $state.current.name, applyProps);
-
             $scope.context = {};
             $state.current.data = $scope.context;
             $scope.component = component;
-            applyProps();
+            $scope.props = Object.assign({}, mapperFn(...rest), $stateParams);
+            $scope.$applyAsync();
           },
         ]);
       }

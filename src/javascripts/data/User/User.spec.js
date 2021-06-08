@@ -10,7 +10,7 @@ jest.mock('services/TokenStore');
 jest.mock('core/NgRegistry');
 
 describe('data/User', () => {
-  let tokenStore, context, $stateParams, orgs, $rootScope, set, spy;
+  let tokenStore, context, $stateParams, orgs, $rootScope;
   beforeEach(async function () {
     tokenStore = {
       organizations$: K.createMockProperty(null),
@@ -65,94 +65,6 @@ describe('data/User', () => {
     TokenStore.organizations$ = tokenStore.organizations$;
     TokenStore.spacesByOrganization$ = tokenStore.spacesByOrganization$;
     TokenStore.user$ = tokenStore.user$;
-  });
-
-  describe('#userDataBus$', () => {
-    beforeEach(function () {
-      spy = jest.fn();
-      utils.getUserDataBus().onValue(spy);
-
-      set = function (params) {
-        const {
-          user = K.getValue(tokenStore.user$),
-          orgs = K.getValue(tokenStore.organizations$),
-          spacesByOrg = K.getValue(tokenStore.spacesByOrganization$),
-          org = context.organization,
-          orgId,
-          space = context.space.data,
-        } = params;
-
-        tokenStore.organizations$.set(orgs);
-        tokenStore.spacesByOrganization$.set(spacesByOrg);
-        context.organization = org;
-        context.space.data = space;
-        $stateParams.orgId = orgId;
-        $rootScope.$broadcast('$stateChangeSuccess', null, { orgId });
-        tokenStore.user$.set(user);
-      };
-    });
-    it('emits [user, org, spacesByOrg, space] where space is optional', function () {
-      const user = { email: 'a@b.c' };
-      const orgs = [
-        { name: '1', sys: { id: 1 } },
-        { name: '2', sys: { id: 2 } },
-      ];
-      const org = { name: 'some org', sys: { id: 'some-org-1' } };
-
-      expect(spy).not.toHaveBeenCalled();
-
-      set({ user, orgs, spacesByOrg: {}, org: null, orgId: 1 });
-      expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenCalledWith([user, orgs[0], {}, context.space.data]);
-
-      spy.mockClear();
-      set({ org });
-      expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenCalledWith([user, org, {}, context.space.data]);
-
-      spy.mockClear();
-      set({ org: null, space: { fields: [], sys: { id: 'space-1' } } });
-      expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenCalledWith([user, orgs[0], {}, context.space.data]);
-    });
-    it('emits a value only when the user is valid and the org and spacesByOrg are not falsy', function () {
-      const orgs = [
-        { name: '1', sys: { id: 1 } },
-        { name: '2', sys: { id: 2 } },
-      ];
-      const user = { email: 'a@b' };
-
-      // invalid user
-      set({ user: null });
-      expect(spy).not.toHaveBeenCalled();
-
-      // valid user but org is falsy since org prop init val is null
-      set({ user });
-      expect(spy).not.toHaveBeenCalled();
-
-      // spaces by org map is null
-      set({ user, orgs, spacesByOrg: null, orgId: 1 });
-      expect(spy).not.toHaveBeenCalled();
-
-      // all valid valus, hence spy must be called
-      set({ user, orgs, spacesByOrg: {}, orgId: 1 });
-      expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenCalledWith([user, orgs[0], {}, {}]);
-    });
-    it('skips duplicates', function () {
-      const setter = set.bind(this, {
-        user: { email: 'a@b.c' },
-        org: { name: 'org-1', sys: { id: 1 } },
-        spacesByOrg: {},
-        space: { name: 'space-1', sys: { id: 'space-1' } },
-      });
-      setter();
-      expect(spy).toHaveBeenCalledTimes(1);
-      setter();
-      expect(spy).toHaveBeenCalledTimes(1);
-      set({ space: null });
-      expect(spy).toHaveBeenCalledTimes(2);
-    });
   });
 
   describe('#getOrgRole', () => {

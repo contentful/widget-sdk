@@ -6,17 +6,8 @@ import { NewAppRoute } from '../management/NewAppRoute';
 import { AppDetailsRoute } from '../management/AppDetails/AppDetailsRoute';
 import { useAsync } from 'core/hooks';
 import { ManagementApiClient } from '../management/ManagementApiClient';
-import {
-  CustomRouter,
-  RouteErrorBoundary,
-  Routes,
-  Route,
-  router,
-  useParams,
-} from 'core/react-routing';
+import { Routes, Route, router, useParams } from 'core/react-routing';
 import StateRedirect from 'app/common/StateRedirect';
-import { getModule } from 'core/NgRegistry';
-import { withOrganizationRoute } from 'states/withOrganizationRoute';
 
 type OrganizationAppsRouteCommonProps = {
   orgId: string;
@@ -101,58 +92,40 @@ function withCanManageApps(Component, options = { redirectIfCannotManageApps: fa
   return WithCanManageApps;
 }
 
-const AppsListRoute = withOrganizationRoute(
-  withDefinitions(withCanManageApps(AppListingRoute, { redirectIfCannotManageApps: false }))
-);
-const AppsNewDefinitionRoute = withOrganizationRoute(
-  withCanManageApps(NewAppRoute, { redirectIfCannotManageApps: true })
-);
-const AppDefinitionRoute = withOrganizationRoute(
-  withBundles(
-    withDefinitions(withCanManageApps(AppDetailsRoute, { redirectIfCannotManageApps: true }))
-  )
+const AppsListRoute = withDefinitions(
+  withCanManageApps(AppListingRoute, { redirectIfCannotManageApps: false })
 );
 
-function OrganizationAppsRouter() {
-  const [basename] = window.location.pathname.split('apps');
-  const { orgId } = getModule('$stateParams');
+const AppsNewDefinitionRoute = withCanManageApps(NewAppRoute, { redirectIfCannotManageApps: true });
 
+const AppDefinitionRoute = withBundles(
+  withDefinitions(withCanManageApps(AppDetailsRoute, { redirectIfCannotManageApps: true }))
+);
+
+export function OrganizationAppsRouter({ orgId }: { orgId: string }) {
   return (
-    <CustomRouter splitter="apps">
-      <RouteErrorBoundary>
-        <Routes basename={basename + 'apps'}>
-          <Route
-            name="account.organizations.apps.list"
-            path="/"
-            element={<AppsListRoute orgId={orgId} />}
-          />
-          <Route
-            name="account.organizations.apps.new_definition"
-            path="/new_definition"
-            element={<AppsNewDefinitionRoute orgId={orgId} />}
-          />
-          <Route
-            name="account.organizations.apps.definition"
-            path="/definitions/:definitionId"
-            element={<AppDefinitionRoute orgId={orgId} />}
-          />
-          <Route
-            name="account.organizations.apps.definition"
-            path="/definitions/:definitionId/:tab"
-            element={<AppDefinitionRoute orgId={orgId} />}
-          />
-          <Route name={null} path="*" element={<StateRedirect path="home" />} />
-        </Routes>
-      </RouteErrorBoundary>
-    </CustomRouter>
+    <Routes>
+      <Route
+        name="account.organizations.apps.list"
+        path="/"
+        element={<AppsListRoute orgId={orgId} />}
+      />
+      <Route
+        name="account.organizations.apps.new_definition"
+        path="/new_definition"
+        element={<AppsNewDefinitionRoute orgId={orgId} />}
+      />
+      <Route
+        name="account.organizations.apps.definition"
+        path="/definitions/:definitionId"
+        element={<AppDefinitionRoute orgId={orgId} />}
+      />
+      <Route
+        name="account.organizations.apps.definition"
+        path="/definitions/:definitionId/:tab"
+        element={<AppDefinitionRoute orgId={orgId} />}
+      />
+      <Route name={null} path="*" element={<StateRedirect path="home" />} />
+    </Routes>
   );
 }
-
-export const orgAppsRoute = {
-  name: 'apps',
-  url: '/apps{pathname:any}',
-  params: {
-    navigationState: null,
-  },
-  component: OrganizationAppsRouter,
-};

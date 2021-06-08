@@ -9,5 +9,5 @@ export { isOrganizationOnTrial, clearTrialsCache } from './services/TrialService
 export { useAppsTrial } from './hooks/useAppsTrial';
 export { useTrialSpace } from './hooks/useTrialSpace';
 
-export { trialState } from './TrialState';
+export { StartAppTrialRoute } from './StartAppTrialRoute';
 export { calcTrialDaysLeft } from './utils/utils';

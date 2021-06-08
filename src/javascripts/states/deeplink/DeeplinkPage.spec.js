@@ -137,7 +137,7 @@ describe('deeplink/DeeplinkPage', () => {
   it('should show app selection form if resolver returned deeplinkOptions including selectApp', async function () {
     const orgId = 'my_org';
     resolveLink.mockResolvedValue({
-      path: 'account.organizations.apps.definition',
+      path: 'account.organizations',
       params: { orgId },
       deeplinkOptions: {
         selectApp: true,
@@ -185,7 +185,7 @@ describe('deeplink/DeeplinkPage', () => {
     await flush();
 
     expect($state.go).toHaveBeenCalledWith(
-      'account.organizations.apps.definition',
+      'account.organizations',
       { id: apps[1].sys.id, orgId },
       { location: 'replace' }
     );

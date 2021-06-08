@@ -19,7 +19,6 @@ import createResourceService from 'services/ResourceService';
 import { isLegacyOrganization } from 'utils/ResourceUtils';
 import * as trackCTA from 'analytics/trackCTA';
 import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
-import { LocationStateContext, LocationDispatchContext } from 'core/services/LocationContext';
 import * as Fake from 'test/helpers/fakeFactory';
 // eslint-disable-next-line no-restricted-imports
 import { MemoryRouter } from 'react-router';
@@ -79,18 +78,8 @@ const mockContentTypeList = [
   contentTypeFactory.createPublished(),
 ];
 
-const locationValueWithSearch = { search: '?searchTerm=initial%20search%20text%2042' };
-const updateLocation = jest.fn();
-
-function renderComponent({ props = {}, locationValue = {} }) {
-  render(
-    <LocationStateContext.Provider value={locationValue}>
-      <LocationDispatchContext.Provider value={updateLocation}>
-        <Page {...props} />
-      </LocationDispatchContext.Provider>
-    </LocationStateContext.Provider>,
-    { wrapper: MemoryRouter }
-  );
+function renderComponent({ props = {} }) {
+  render(<Page {...props} />, { wrapper: MemoryRouter });
   return waitForElementToBeRemoved(() => screen.getByTestId(testIds.contentLoader));
 }
 
@@ -125,17 +114,6 @@ describe('ContentTypeList Page', () => {
     await waitFor(() => expect(screen.getByTestId(testIds.emptyState)).toBeVisible());
 
     expect(screen.queryByTestId(testIds.contentTypeList)).not.toBeInTheDocument();
-  });
-
-  it('renders predefined search text', async () => {
-    const searchText = 'initial search text 42';
-    await renderComponent({
-      locationValue: locationValueWithSearch,
-    });
-
-    await waitFor(() => expect(screen.getByTestId(testIds.searchBox)).toBeVisible());
-
-    expect(screen.getByTestId(testIds.searchBox).value).toEqual(searchText);
   });
 
   describe('Search Box', () => {

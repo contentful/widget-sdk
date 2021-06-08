@@ -11,7 +11,7 @@ import { useAsyncFn } from 'core/hooks';
 import { fetchAndResolve } from 'data/LinkResolver';
 import { getAllSpaceMemberships } from 'access_control/OrganizationMembershipRepository';
 import { getAllTeamMemberships, removeTeamMembership } from 'access_control/TeamRepository';
-import { router } from 'core/react-routing';
+import { useRouteNavigate } from 'core/react-routing';
 import UserCard from '../UserCard';
 import UserSpaceList from './UserSpaceList';
 import UserTeamList from './UserTeamList';
@@ -85,6 +85,7 @@ export default function UserDetails({
   hasTeamsFeature,
 }) {
   const userId = initialMembership.sys.user.sys.id;
+  const routeNavigate = useRouteNavigate();
 
   const [{ membership, selectedTab, spaceMemberships, teamMemberships }, dispatch] = useReducer(
     reducer,
@@ -184,7 +185,7 @@ export default function UserDetails({
   };
 
   const handleBackButtonClicked = () => {
-    router.navigate({ path: 'organizations.users.list', orgId });
+    routeNavigate({ path: 'organizations.users.list', orgId });
   };
 
   return (

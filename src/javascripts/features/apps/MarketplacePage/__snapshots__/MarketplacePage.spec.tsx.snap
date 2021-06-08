@@ -56,7 +56,7 @@ exports[`MarketplacePage should match snapshot for loading state 1`] = `
         <a
           class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
           data-test-id="cf-ui-text-link"
-          href="account.organizations.apps?navigationState=&pathname=/&orgId=123"
+          href="account.organizations?navigationState=&pathname=/123/apps"
         >
           <span
             class="TabFocusTrap__TabFocusTrap___39Vty"
@@ -367,7 +367,7 @@ exports[`MarketplacePage should match snapshot of apps and contentful apps 1`] =
         <a
           class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
           data-test-id="cf-ui-text-link"
-          href="account.organizations.apps?navigationState=&pathname=/&orgId=123"
+          href="account.organizations?navigationState=&pathname=/123/apps"
         >
           <span
             class="TabFocusTrap__TabFocusTrap___39Vty"
@@ -678,7 +678,7 @@ exports[`MarketplacePage should match snapshot of apps loaded state 1`] = `
         <a
           class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
           data-test-id="cf-ui-text-link"
-          href="account.organizations.apps?navigationState=&pathname=/&orgId=123"
+          href="account.organizations?navigationState=&pathname=/123/apps"
         >
           <span
             class="TabFocusTrap__TabFocusTrap___39Vty"
@@ -989,7 +989,7 @@ exports[`MarketplacePage should match snapshot of apps loaded with limited acces
         <a
           class="TextLink__TextLink___1biUr a11y__focus-outline--default___2hwb1 TextLink__TextLink--primary___2Vc9F"
           data-test-id="cf-ui-text-link"
-          href="account.organizations.apps?navigationState=&pathname=/&orgId=123"
+          href="account.organizations?navigationState=&pathname=/123/apps"
         >
           <span
             class="TabFocusTrap__TabFocusTrap___39Vty"

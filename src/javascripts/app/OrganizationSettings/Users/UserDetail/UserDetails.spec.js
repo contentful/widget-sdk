@@ -8,6 +8,7 @@ import {
   waitForElementToBeRemoved,
 } from '@testing-library/react';
 import UserDetails from './UserDetails';
+import { MemoryRouter } from 'core/react-routing';
 
 import * as fake from 'test/helpers/fakeFactory';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
@@ -178,13 +179,15 @@ describe('User Details', () => {
 
 function build(options = { initialMembership: mockOrgMembership }) {
   render(
-    <UserDetails
-      initialMembership={options.initialMembership}
-      isSelf={false}
-      isOwner={false}
-      orgId="org-id"
-      hasTeamsFeature={true}
-    />
+    <MemoryRouter>
+      <UserDetails
+        initialMembership={options.initialMembership}
+        isSelf={false}
+        isOwner={false}
+        orgId="org-id"
+        hasTeamsFeature={true}
+      />
+    </MemoryRouter>
   );
 
   // the component makes requests on mount.

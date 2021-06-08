@@ -1,5 +1,5 @@
 import accountProfileState from './accountProfile';
-import { organization } from './organization';
+import { organizationReactState } from './organization';
 import newOrganizationState from './newOrganization';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
 
@@ -8,7 +8,7 @@ const accountState = {
   url: '/account',
   abstract: true,
   navComponent: EmptyNavigationBar,
-  children: [newOrganizationState, organization, accountProfileState],
+  children: [newOrganizationState, organizationReactState, accountProfileState],
 };
 
 export default accountState;

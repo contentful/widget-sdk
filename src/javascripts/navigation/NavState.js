@@ -37,8 +37,10 @@ export async function updateNavState(state, params, { space, organization, envir
     getOrganization(orgId).then((org) => {
       navStateBus.set(NavStates.UserProfile(org));
     });
-  } else if (startsWith(state.name, 'account.organizations') && params.orgId) {
-    getOrganization(params.orgId).then((org) => {
+  } else if (startsWith(state.name, 'account.organizations')) {
+    const path = window.location.pathname.split('/organizations/')[1];
+    const orgId = path.split('/')[0];
+    getOrganization(orgId).then((org) => {
       navStateBus.set(NavStates.OrgSettings(org));
     });
   } else if (space) {

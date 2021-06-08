@@ -75,9 +75,8 @@ const mappings: Record<LinkType, (params: any) => Promise<ResolvedLink>> = {
   [LinkType.Apps]: resolveApps,
   [LinkType.AppsContentful]: resolveContentfulApps,
   [LinkType.AppDefinition]: resolveAppDefinition,
-  [LinkType.AppDefinitionList]: makeOrgScopedPathResolver({
-    // orgId will be resolved in makeOrgScopedPathResolver and added as a parameter
-    path: routes['organizations.apps.list']({}, { orgId: '' }).path,
+  [LinkType.AppDefinitionList]: makeOrgScopedPathResolver((orgId) => {
+    return routes['organizations.apps.list']({}, { orgId });
   }),
   [LinkType.Home]: makeSpaceScopedPathResolver({ spaceScopedPath: 'spaces.detail.home' }),
   [LinkType.GeneralSettings]: makeSpaceScopedPathResolver({
@@ -118,13 +117,15 @@ const mappings: Record<LinkType, (params: any) => Promise<ResolvedLink>> = {
   [LinkType.OnboardingExplore]: createOnboardingScreenResolver('explore'),
   [LinkType.OnboardingDeploy]: createOnboardingScreenResolver('deploy'),
   // org scoped deeplinks
-  [LinkType.Invite]: makeOrgScopedPathResolver(
-    routes['organizations.users.invite']({}, { orgId: '' })
-  ),
-  [LinkType.Users]: makeOrgScopedPathResolver(
-    routes['organizations.users.list']({}, { orgId: '' })
-  ),
-  [LinkType.Org]: makeOrgScopedPathResolver(routes['organizations.edit']({}, { orgId: '' })),
+  [LinkType.Invite]: makeOrgScopedPathResolver((orgId) => {
+    return routes['organizations.users.invite']({}, { orgId });
+  }),
+  [LinkType.Users]: makeOrgScopedPathResolver((orgId) => {
+    return routes['organizations.users.list']({}, { orgId });
+  }),
+  [LinkType.Org]: makeOrgScopedPathResolver((orgId) => {
+    return routes['organizations.edit']({}, { orgId });
+  }),
   [LinkType.Subscription]: resolveSubscriptions,
   [LinkType.InvitationAccepted]: resolveSpaceHome,
   [LinkType.StartAppTrial]: resolveAppsTrial,
@@ -405,30 +406,15 @@ async function resolveAppDefinition({ id, tab, referrer }) {
   }
 }
 
-function makeOrgScopedPathResolver({
-  path,
-  params,
-}: {
-  path: string[] | string;
-  params?: { [key: string]: any };
-}) {
-  if (!path) {
-    throw new Error('A path for a deeplink to resolve to must be provided');
-  }
-
-  if (!path.includes('organizations')) {
-    throw new Error('An org scoped path must contain "organizations"');
-  }
-
+function makeOrgScopedPathResolver(fn: (orgId: string) => { path: string; params: unknown }) {
   return async function () {
     const { orgId } = await getOrg();
 
+    const { path, params } = fn(orgId);
+
     return await applyOrgAccess(orgId, {
       path,
-      params: {
-        ...params,
-        orgId,
-      },
+      params,
     });
   };
 }

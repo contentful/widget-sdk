@@ -13,7 +13,7 @@ import tokens from '@contentful/forma-36-tokens';
 import pluralize from 'pluralize';
 import { css } from 'emotion';
 import { isForbidden, isRateLimit } from 'utils/ServerErrorUtils';
-import { ReactRouterLink } from 'core/react-routing';
+import { RouteLink } from 'core/react-routing';
 
 const noteStyle = css({
   marginBottom: tokens.spacingS,
@@ -64,14 +64,14 @@ export default function NewUserSuccess({ failures = [], successes = [], onRestar
             'have',
             successes.length
           )} been invited to your organization.`}
-          <ReactRouterLink
+          <RouteLink
             className={linkStyle}
             route={{ path: 'organizations.users.list', orgId }}
-            component={TextLink}
+            as={TextLink}
             linkType="positive"
             replace>
             View all users
-          </ReactRouterLink>
+          </RouteLink>
           <TextLink onClick={onRestart} linkType="positive" className={linkStyle}>
             Invite more people
           </TextLink>

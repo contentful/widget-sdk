@@ -23,8 +23,6 @@ function getItems(params, { orgId }) {
       rootSref: state.path,
     };
   };
-  const orgAppsList = routes['organizations.apps.list']({}, { orgId });
-  const orgnaizationUsersListRoute = routes['organizations.users.list']({}, { orgId });
 
   const accessToolsDropdownItems = [
     {
@@ -105,14 +103,12 @@ function getItems(params, { orgId }) {
     {
       if: params.isOwnerOrAdmin,
       title: 'Users',
-      sref: orgnaizationUsersListRoute.path,
-      srefParams: orgnaizationUsersListRoute.params,
-      rootSref: 'account.organizations.users',
       srefOptions: {
         inherit: false,
       },
       navIcon: 'Users',
       dataViewType: 'organization-users',
+      ...makeReactRouterRef('organizations.users.list'),
     },
     {
       title: 'Teams',
@@ -129,19 +125,16 @@ function getItems(params, { orgId }) {
     {
       if: params.hasAdvancedExtensibility,
       title: 'Apps',
-      sref: orgAppsList.path,
-      srefParams: orgAppsList.params,
-      rootSref: orgAppsList.path,
       srefOptions: {
         inherit: false,
       },
       navIcon: 'Apps',
       dataViewType: 'organization-apps',
+      ...makeReactRouterRef('organizations.apps.list'),
     },
     {
       if: shouldDisplayAccessTools,
       title: 'Access Tools',
-      rootSref: 'account.organizations.access-tools',
       navIcon: 'Sso',
       dataViewType: 'organization-access-tools',
       children: accessToolsDropdownItems,
@@ -169,7 +162,7 @@ function getItems(params, { orgId }) {
 }
 
 type Props = {
-  stateParams: { orgId: string };
+  orgId: string;
   navVersion: string;
 };
 type State = {
@@ -199,7 +192,7 @@ export default class OrganizationNavigationBar extends React.Component<Props, St
   }
 
   async getConfiguration() {
-    const { orgId } = this.props.stateParams;
+    const { orgId } = this.props;
     const FeatureService = createLegacyFeatureService(orgId, 'organization');
 
     const organization = await TokenStore.getOrganization(orgId);
@@ -245,7 +238,7 @@ export default class OrganizationNavigationBar extends React.Component<Props, St
             showQuickNavigation={false}
             showModernStackOnboardingRelaunch={false}
             listItems={this.state.items}
-            organizationId={this.props.stateParams.orgId}
+            organizationId={this.props.orgId}
           />
         </div>
       </>

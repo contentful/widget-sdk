@@ -1,4 +1,4 @@
-import React, { useCallback, useReducer, useEffect, useContext, useState } from 'react';
+import React, { useCallback, useReducer, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { debounce, times } from 'lodash';
 import { css } from 'emotion';
@@ -44,9 +44,9 @@ import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { useAsyncFn } from 'core/hooks';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
 import { UserLimitBanner } from './UserLimitBanner';
-import { LocationStateContext, LocationDispatchContext } from 'core/services/LocationContext';
+import { RouteLink } from 'core/react-routing';
 import qs from 'qs';
-import { ReactRouterLink } from 'core/react-routing';
+import { useLegacyQueryParams } from 'core/react-routing/useLegacyQueryParams';
 
 const styles = {
   search: css({
@@ -94,8 +94,7 @@ const reducer = createImmerReducer({
 });
 
 export function UsersList({ orgId, spaceRoles, teams, spaces, hasSsoEnabled, hasTeamsFeature }) {
-  const updateLocation = useContext(LocationDispatchContext);
-  const locationValue = useContext(LocationStateContext);
+  const { searchQuery, updateSearchQuery } = useLegacyQueryParams();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterValues, setFilterValues] = useState(defaultFilterValues);
 
@@ -119,7 +118,7 @@ export function UsersList({ orgId, spaceRoles, teams, spaces, hasSsoEnabled, has
   const [{ users, pagination }, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    const queryValues = locationValue.search ? qs.parse(locationValue.search.slice(1)) : {};
+    const queryValues = searchQuery ? qs.parse(searchQuery.slice(1)) : {};
     setFilterValues(getFilterValuesFromQuery(queryValues));
     setSearchTerm(getSearchTermFromQuery(queryValues));
     dispatch({
@@ -129,7 +128,7 @@ export function UsersList({ orgId, spaceRoles, teams, spaces, hasSsoEnabled, has
         limit: 10,
       },
     });
-  }, [locationValue, dispatch]);
+  }, [searchQuery, dispatch]);
 
   const fetchUsers = useCallback(async () => {
     const orgEndpoint = createOrganizationEndpoint(orgId);
@@ -159,11 +158,11 @@ export function UsersList({ orgId, spaceRoles, teams, spaces, hasSsoEnabled, has
     if (searchTerm !== '') {
       newFilterValues = { ...newFilterValues, searchTerm: searchTerm };
     }
-    updateLocation(newFilterValues);
+    updateSearchQuery(newFilterValues);
   };
 
   const handleFiltersReset = () => {
-    updateLocation({});
+    updateSearchQuery({});
   };
 
   const debouncedSearch = useCallback(
@@ -172,7 +171,7 @@ export function UsersList({ orgId, spaceRoles, teams, spaces, hasSsoEnabled, has
       if (newSearchTerm !== '') {
         newQuery = { ...newQuery, searchTerm: newSearchTerm };
       }
-      updateLocation(newQuery);
+      updateSearchQuery(newQuery);
     }, 500),
     []
   );
@@ -241,11 +240,9 @@ export function UsersList({ orgId, spaceRoles, teams, spaces, hasSsoEnabled, has
               value={searchTerm}
             />
             <div className={styles.ctaWrapper}>
-              <ReactRouterLink
-                component={Button}
-                route={{ path: 'organizations.users.invite', orgId }}>
+              <RouteLink as={Button} route={{ path: 'organizations.users.invite', orgId }}>
                 Invite users
-              </ReactRouterLink>
+              </RouteLink>
             </div>
           </div>
         }

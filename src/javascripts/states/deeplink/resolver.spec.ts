@@ -300,10 +300,9 @@ describe('states/deeplink/resolver', () => {
       it('should redirect the user to the appDefinition management screen for the app id', async () => {
         const result = await resolveLink(LinkType.AppDefinition, { id });
         expect(result).toEqual({
-          path: 'account.organizations.apps',
+          path: 'account.organizations',
           params: {
-            pathname: '/definitions/my-app-id/general',
-            orgId: 'some',
+            pathname: '/some/apps/definitions/my-app-id/general',
           },
           referrer: 'deeplink',
         });
@@ -313,10 +312,9 @@ describe('states/deeplink/resolver', () => {
         ['events', 'security'].forEach(async (tab) => {
           const result = await resolveLink(LinkType.AppDefinition, { id, tab });
           expect(result).toEqual({
-            path: 'account.organizations.apps',
+            path: 'account.organizations',
             params: {
-              pathname: `/definitions/my-app-id/${tab}`,
-              orgId: 'some',
+              pathname: `/some/apps/definitions/my-app-id/${tab}`,
             },
             referrer: 'deeplink',
           });
@@ -331,10 +329,9 @@ describe('states/deeplink/resolver', () => {
             deeplinkOptions: {
               selectApp: true,
             },
-            path: 'account.organizations.apps',
+            path: 'account.organizations',
             params: {
-              pathname: `/definitions//${tab}`,
-              orgId: 'some',
+              pathname: `/some/apps/definitions//${tab}`,
             },
             referrer: 'deeplink',
           });
@@ -352,9 +349,9 @@ describe('states/deeplink/resolver', () => {
     it('should redirect the user to the appDefinition list for the current org id', async () => {
       const result = await resolveLink(LinkType.AppDefinitionList, {});
       expect(result).toEqual({
-        path: 'account.organizations.apps',
+        path: 'account.organizations',
         params: {
-          orgId: 'some',
+          pathname: '/some/apps',
         },
       });
     });

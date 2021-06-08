@@ -1,1 +1,1 @@
-export { usageState } from './OrganizationUsageRoute';
+export { OrganizationUsageRoute } from './OrganizationUsageRoute';

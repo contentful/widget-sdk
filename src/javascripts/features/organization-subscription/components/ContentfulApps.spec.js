@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { ContentfulApps } from './ContentfulApps';
 import { useAppsTrial } from 'features/trials';
+import { MemoryRouter } from 'core/react-routing';
 
 import * as Fake from 'test/helpers/fakeFactory';
 
@@ -16,7 +17,9 @@ jest.mock('features/trials', () => ({
 
 function build(props) {
   render(
-    <ContentfulApps organization={mockOrganization} startAppTrial={startAppTrial} {...props} />
+    <MemoryRouter>
+      <ContentfulApps organization={mockOrganization} startAppTrial={startAppTrial} {...props} />
+    </MemoryRouter>
   );
 }
 

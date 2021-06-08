@@ -1,23 +1,7 @@
 import moment from 'moment';
-import { isEqual, find, get } from 'lodash';
-import { organizations$, user$, spacesByOrganization$ } from 'services/TokenStore';
+import { find, get } from 'lodash';
 
-import { combine, onValue, getValue, createPropertyBus } from 'core/utils/kefir';
-import { getModule } from 'core/NgRegistry';
 import { getSpaceContext } from 'classes/spaceContext';
-
-/**
- * @description
- * A stream combining user, current org, current space and spaces grouped by org id
- */
-export const getUserDataBus = () =>
-  combine(
-    [user$, getCurrentOrgSpaceBus(), spacesByOrganization$],
-    (user, [org, space], spacesByOrg) => [user, org, spacesByOrg, space]
-  )
-    .filter(([user, org, spacesByOrg]) => user && user.email && org && spacesByOrg) // space is a maybe
-    .skipDuplicates(isEqual)
-    .toProperty();
 
 /**
  * @description
@@ -175,41 +159,6 @@ export function getUserSpaceRoles(space) {
 }
 
 /**
- * Implemented together since we want the org and space
- * values to always be in sync which is not the case when
- * there are two streams, one for curr space and one for
- * the curr org.
- */
-function getCurrentOrgSpaceBus() {
-  const $rootScope = getModule('$rootScope');
-
-  const currOrgSpaceBus = createPropertyBus([]);
-  const currOrgSpaceUpdater = updateCurrOrgSpace(currOrgSpaceBus);
-
-  // emit when orgs stream emits
-  onValue(
-    organizations$.filter((orgs) => orgs && orgs.length),
-    currOrgSpaceUpdater
-  );
-  // emit when ever state changes (for e.g., space was changed)
-  $rootScope.$on('$stateChangeSuccess', currOrgSpaceUpdater);
-
-  return currOrgSpaceBus.property;
-}
-
-function updateCurrOrgSpace(bus) {
-  const $stateParams = getModule('$stateParams');
-
-  return (_) => {
-    const orgId = $stateParams.orgId;
-    const orgs = getValue(organizations$);
-    const org = getCurrOrg(orgs, orgId);
-    const space = getCurrSpace();
-    bus.set([org, space]);
-  };
-}
-
-/**
  * @description
  * Get the current organization the user is in the context of. Returns null if
  * the user is not currently in any organization.
@@ -223,12 +172,6 @@ export function getCurrOrg(orgs, orgId) {
   const spaceContext = getSpaceContext();
 
   return getOrgById(orgs, orgId) || get(spaceContext, ['organization'], null) || orgs[0] || null;
-}
-
-function getCurrSpace() {
-  const spaceContext = getSpaceContext();
-
-  return get(spaceContext, 'space.data', null);
 }
 
 function getOrgById(orgs, orgId) {

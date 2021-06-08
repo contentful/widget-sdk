@@ -16,7 +16,7 @@ import {
 import { isEnterprisePlan, isFreePlan } from 'account/pricing/PricingDataProvider';
 import { isOrganizationOnTrial, EnterpriseTrialInfo, SpacesListForMembers } from 'features/trials';
 import { Price } from 'core/components/formatting';
-import { router } from 'core/react-routing';
+import { useRouteNavigate } from 'core/react-routing';
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { createSpace } from '../utils/spaceUtils';
 
@@ -43,12 +43,12 @@ export function SubscriptionPage({
   memberAccessibleSpaces,
 }) {
   const organizationId = organization?.sys.id;
-
+  const routeNavigate = useRouteNavigate();
   const subscriptionCosts = useCalculateSubscriptionCosts();
   const onCreateSpace = createSpace(organizationId);
 
   const handleStartAppTrial = async () => {
-    router.navigate({
+    routeNavigate({
       path: 'account.organizations.start_trial',
       orgId: organizationId,
       navigationState: {
