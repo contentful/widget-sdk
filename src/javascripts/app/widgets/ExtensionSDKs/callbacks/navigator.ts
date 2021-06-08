@@ -46,17 +46,17 @@ interface MakeNavigateToPageProps {
 
 async function navigateToAppConfig({ widgetRef, spaceContext }: MakeNavigateToPageProps) {
   if (widgetRef.widgetNamespace === WidgetNamespace.APP) {
-    await Navigator.go({
-      path: ['spaces', 'environment', 'apps', 'detail'],
-      params: {
+    return router.navigate(
+      {
+        path: 'apps.app-configuration',
         spaceId: spaceContext.spaceId,
         environmentId: spaceContext.environmentId,
         appId: widgetRef.widgetId,
       },
-      options: {
+      {
         notify: true,
-      },
-    });
+      }
+    );
   } else {
     throw new Error('Only apps can use the openAppConfig method');
   }
@@ -153,7 +153,6 @@ function makeNavigateToPage(props: MakeNavigateToPageProps) {
     }
 
     const isNavigatingToNewContext = widgetRef.widgetId !== id;
-    const widgetRouting = SUPPORTED_WIDGET_NAMESPACE_ROUTES[widgetRef.widgetNamespace];
 
     if (widgetRef.widgetNamespace === WidgetNamespace.EXTENSION) {
       await router.navigate(
@@ -175,21 +174,21 @@ function makeNavigateToPage(props: MakeNavigateToPageProps) {
       return { navigated: true, path } as NavigatorPageResponse;
     }
 
-    await Navigator.go({
-      path: ['spaces', spaceContext.isMaster ? 'detail' : 'environment'].concat(widgetRouting.path),
-      params: {
+    await router.navigate(
+      {
+        path: 'apps.page',
         spaceId: spaceContext.spaceId,
         environmentId: spaceContext.environmentId,
-        [widgetRouting.paramId]: id,
-        path: path || '',
+        appId: id,
+        pathname: path || '',
       },
-      options: {
+      {
         // If we are navigating to a new extension page OR we are not on the extension page,
         // we want to notify a state change of the URL. Otherwise, do NOT notify a state change
         // to ensure that the iframe on the page extension page doesn't reload.
         notify: isNavigatingToNewContext || !isOnPageLocation,
-      },
-    });
+      }
+    );
 
     return { navigated: true, path } as NavigatorPageResponse;
   };
@@ -204,7 +203,7 @@ async function openEntity<T extends AssetProps | EntryProps>({
 }): Promise<NavigatorOpenResponse<T>> {
   const { slideIn } = options;
   const ret: NavigatorOpenResponse<T> = { navigated: true };
-  const slideInfo = { id: entity.sys.id, type: entity.sys.id };
+  const slideInfo = { id: entity.sys.id, type: entity.sys.type };
 
   try {
     if (slideIn) {
@@ -253,7 +252,7 @@ export function createNavigatorCallbacks(
     openBulkEditor,
     openAppConfig: () => navigateToAppConfig(options),
     openCurrentAppPage(options?: AppPageLocationOptions) {
-      return navigateTo({ ...options, type: WidgetNamespace.EXTENSION });
+      return navigateTo({ ...options, type: WidgetNamespace.APP });
     },
     openEntry<Field>(entry: EntryProps<Field>, options?: NavigatorAPIOptions) {
       return openEntity({ entity: entry, options });
