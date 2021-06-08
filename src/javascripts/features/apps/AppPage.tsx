@@ -124,6 +124,7 @@ export function AppRoute(props: Props) {
     currentSpaceId: spaceId,
     currentEnvironment,
     currentEnvironmentId: environmentId,
+    currentSpaceData,
   } = useSpaceEnvContext();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
   const appManager = React.useMemo<AppManager>(
@@ -169,6 +170,7 @@ export function AppRoute(props: Props) {
       useExperienceSDK &&
       widgetLoader &&
       currentEnvironment &&
+      currentSpaceData &&
       pubSubClient &&
       customWidgetPlainClient
     ) {
@@ -184,8 +186,8 @@ export function AppRoute(props: Props) {
           cma: customWidgetPlainClient,
           user: getUserWithMinifiedSys(),
           environment: currentEnvironment,
-          space: spaceContext.space.data,
-          widgetId: app.appDefinition.sys.id,
+          space: currentSpaceData,
+          widgetId: widget.id,
           widgetNamespace: WidgetNamespace.APP,
           appHookBus: props.appHookBus,
           callbacks: {
@@ -196,7 +198,7 @@ export function AppRoute(props: Props) {
                 isMaster: isMasterEnvironment,
               },
               widgetRef: {
-                widgetId: app.appDefinition.sys.id,
+                widgetId: widget.id,
                 widgetNamespace: WidgetNamespace.APP,
               },
             }),
@@ -252,6 +254,7 @@ export function AppRoute(props: Props) {
     onAppMarkedAsReady,
     pubSubClient,
     currentSpaceContentTypes,
+    currentSpaceData,
   ]);
 
   const title: string = get(app, ['title'], get(app, ['appDefinition', 'name']));
