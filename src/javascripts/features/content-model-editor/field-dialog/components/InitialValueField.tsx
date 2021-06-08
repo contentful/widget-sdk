@@ -43,6 +43,9 @@ const useFieldAPI = ({
     const instance = keyBy(editorInterface.controls, 'fieldId')[field.apiName];
 
     return {
+      access: {
+        can: () => Promise.resolve(false),
+      },
       field: {
         ...field,
         locale: locale.code,
@@ -94,7 +97,7 @@ const useFieldAPI = ({
       },
       contentType,
       locales: localesApi,
-    } as FieldExtensionSDK;
+    } as unknown as FieldExtensionSDK;
   }, [contentType, editorInterface, emitter, field, fields, locale, locales, onChange, setInvalid]);
 
   return sdk;

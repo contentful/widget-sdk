@@ -1,24 +1,31 @@
-import React from 'react';
-import { Flex, Note } from '@contentful/forma-36-react-components';
+import React, { Fragment, useState } from 'react';
+import {
+  Button,
+  Flex,
+  Modal,
+  Note,
+  Paragraph,
+  TextLink,
+} from '@contentful/forma-36-react-components';
 
 import localeStore from 'services/localeStore';
 import { InitialValueField } from './InitialValueField';
 
 export const SUPPORTED_FIELD_TYPES = [
-  // 'Array',
   'Boolean',
   'Date',
   'Integer',
   'Number',
   'Symbol',
-  // 'Text',
+  // 'Text'
 ];
+const MANAGABLE_NUMBER_OF_LOCALES = 1;
 
 export interface InitialValueTabComponentProps {
   contentType: Record<'string', unknown>;
   ctField: { id: string; localized: boolean; type: string };
   editorInterface: any;
-  fields: Record<'string', unknown>;
+  fields: { initialValue?: { value: Record<'string', unknown> } };
   onChange: () => unknown;
 }
 
@@ -29,6 +36,7 @@ const InitialValueTabComponent = ({
   fields,
   onChange,
 }: InitialValueTabComponentProps) => {
+  const [isModalShown, setIsModalShown] = useState(false);
   const isFieldTypeSupported = SUPPORTED_FIELD_TYPES.includes(ctField.type);
 
   if (!isFieldTypeSupported) {
@@ -43,10 +51,10 @@ const InitialValueTabComponent = ({
   }
 
   const locales = localeStore.getLocales();
+  const defaultLocale = localeStore.getDefaultLocale();
+  const otherLocales = locales.filter((locale) => locale.code !== defaultLocale.code);
 
   if (!ctField.localized) {
-    const defaultLocale = localeStore.getDefaultLocale();
-
     return (
       <InitialValueField
         contentType={contentType}
@@ -59,9 +67,100 @@ const InitialValueTabComponent = ({
     );
   }
 
+  const numberOfLocales = locales.length;
+  const initialValueForDefaultLocale =
+    fields.initialValue?.value && fields.initialValue.value[defaultLocale.code] !== undefined
+      ? fields.initialValue.value[defaultLocale.code]
+      : undefined;
+  const otherLocalesHaveValues =
+    fields.initialValue?.value &&
+    Object.keys(fields.initialValue.value)
+      .filter((localeCode) => localeCode !== defaultLocale.code)
+      .some((localeCode) => fields.initialValue.value[localeCode] !== undefined);
+
+  const applyValueToOtherLocales = (value: unknown) => {
+    const payload = fields.initialValue?.value ? { ...fields.initialValue.value } : {};
+
+    for (const locale of otherLocales) {
+      payload[locale.code] = value;
+    }
+
+    onChange('initialValue', payload);
+  };
+
   return (
     <Flex flexDirection="column">
-      {locales.map((locale) => (
+      <InitialValueField
+        contentType={contentType}
+        editorInterface={editorInterface}
+        fields={fields}
+        isLocalized
+        locale={defaultLocale}
+        locales={locales}
+        onChange={onChange}
+      />
+
+      {numberOfLocales > MANAGABLE_NUMBER_OF_LOCALES && (
+        <Fragment>
+          <Modal isShown={isModalShown} onClose={() => setIsModalShown(false)}>
+            {() => (
+              <Fragment>
+                <Modal.Header title="You are replacing initial values" />
+                <Modal.Content>
+                  Applying the same initial value to all locales will replace the values you have
+                  already set.
+                </Modal.Content>
+                <Modal.Controls>
+                  <Button
+                    buttonType="negative"
+                    onClick={() => {
+                      applyValueToOtherLocales(initialValueForDefaultLocale);
+                      setIsModalShown(false);
+                    }}>
+                    Replace
+                  </Button>
+                  <Button buttonType="muted" onClick={() => setIsModalShown(false)}>
+                    Cancel
+                  </Button>
+                </Modal.Controls>
+              </Fragment>
+            )}
+          </Modal>
+          <div>
+            <Flex flexDirection="row" marginBottom="spacingXs">
+              <Button
+                disabled={initialValueForDefaultLocale === undefined}
+                onClick={() => {
+                  if (otherLocalesHaveValues) {
+                    setIsModalShown(true);
+                  } else {
+                    applyValueToOtherLocales(initialValueForDefaultLocale);
+                  }
+                }}>
+                Apply to all locales
+              </Button>
+              {initialValueForDefaultLocale !== undefined && (
+                <Flex marginLeft="spacingM">
+                  <TextLink
+                    disabled={!otherLocalesHaveValues}
+                    onClick={() => {
+                      applyValueToOtherLocales(undefined);
+                    }}
+                    linkType="secondary">
+                    Clear all
+                  </TextLink>
+                </Flex>
+              )}
+            </Flex>
+
+            <Paragraph>
+              All locales will be set to the same initial value as the main locale.
+            </Paragraph>
+          </div>
+        </Fragment>
+      )}
+
+      {otherLocales.map((locale) => (
         <InitialValueField
           contentType={contentType}
           editorInterface={editorInterface}
