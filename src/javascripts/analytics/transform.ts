@@ -185,6 +185,7 @@ registerSnowplowEvent('api_key:boilerplate', 'boilerplate', BoilerplateTransform
 registerActionEvent('experiment:start', createExperimentTransformer('start'));
 registerActionEvent('experiment:interaction', createExperimentTransformer('interaction'));
 
+// TODO: Most of these events seem to be gone after refactorings etc. Re-implement or remove.
 registerActionEvent('content_type:create', EntityAction);
 registerActionEvent('entry:create', EntryActionV2);
 registerActionEvent('entry:publish', EntryActionV2);

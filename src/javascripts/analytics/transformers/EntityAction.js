@@ -1,4 +1,3 @@
-import { get, extend, snakeCase } from 'lodash';
 import { getSnowplowSchema } from 'analytics/SchemasSnowplow';
 
 /**
@@ -12,7 +11,7 @@ import { getSnowplowSchema } from 'analytics/SchemasSnowplow';
  * created using an example space template.
  */
 export default function EntityAction(_eventName, eventData) {
-  const contexts = [getEntityContext(eventData)];
+  const contexts = [];
 
   if (eventData.template) {
     contexts.push(getSpaceTemplateContext(eventData));
@@ -24,7 +23,10 @@ export default function EntityAction(_eventName, eventData) {
   if (eventData.entityAutomationScope) {
     contexts.push({
       schema: getSnowplowSchema('entity_automation_scope').path,
-      data: extend({ scope: eventData.entityAutomationScope.scope }, getBaseData(eventData)),
+      data: {
+        ...getBaseData(eventData),
+        scope: eventData.entityAutomationScope.scope,
+      },
     });
   }
 
@@ -36,40 +38,11 @@ export default function EntityAction(_eventName, eventData) {
 function getSpaceTemplateContext(eventData) {
   return {
     schema: getSnowplowSchema('space_template').path,
-    data: Object.assign({ name: eventData.template }, getBaseData(eventData)),
-  };
-}
-
-function getEntityContext(eventData) {
-  const schema = getSnowplowSchema(snakeCase(eventData.actionData.entity));
-  return {
-    schema: schema.path,
-    data: Object.assign(
-      getBaseEntityData(eventData),
-      getEntitySpecificData(schema.name, eventData)
-    ),
-  };
-}
-
-function getBaseEntityData(eventData) {
-  return Object.assign(
-    {
-      action: eventData.actionData.action,
-      version: eventData.response.sys.version,
+    data: {
+      ...getBaseData(eventData),
+      name: eventData.template,
     },
-    getBaseData(eventData)
-  );
-}
-
-function getEntitySpecificData(schemaName, eventData) {
-  const data = {};
-  data[`${schemaName}_id`] = get(eventData, 'response.sys.id');
-  // We track 2 additional fields on entries compared to all other entities
-  if (eventData.actionData.entity === 'Entry') {
-    data['content_type_id'] = get(eventData, 'response.sys.contentType.sys.id');
-    data['revision'] = get(eventData, 'response.sys.revision');
-  }
-  return data;
+  };
 }
 
 function getBaseData(eventData) {
