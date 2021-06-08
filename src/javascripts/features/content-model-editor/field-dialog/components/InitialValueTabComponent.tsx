@@ -11,14 +11,7 @@ import {
 import localeStore from 'services/localeStore';
 import { InitialValueField } from './InitialValueField';
 
-export const SUPPORTED_FIELD_TYPES = [
-  'Boolean',
-  'Date',
-  'Integer',
-  'Number',
-  'Symbol',
-  // 'Text'
-];
+export const SUPPORTED_FIELD_TYPES = ['Boolean', 'Date', 'Integer', 'Number', 'Symbol', 'Text'];
 
 // @todo: Change this to 4
 const MANAGABLE_NUMBER_OF_LOCALES = 1;
