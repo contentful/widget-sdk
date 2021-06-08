@@ -11,7 +11,6 @@ import {
   ContentPreview as ContentPreviewWidget,
   Links as LinksWidget,
   Translation as TranslationWidget,
-  Users as UsersWidget,
 } from '../defaults';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 
@@ -152,10 +151,6 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
           widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
         },
         {
-          widgetId: UsersWidget.widgetId,
-          widgetNamespace: WidgetNamespace.SIDEBAR_BUILTIN,
-        },
-        {
           widgetId: 'netlify-extension',
           widgetNamespace: WidgetNamespace.EXTENSION,
           settings: {
@@ -209,7 +204,6 @@ describe('EntrySidebar/Configuration/SidebarSync', () => {
           PublicationWidget,
           TasksWidget,
           VersionsWidget,
-          UsersWidget,
           {
             name: 'Netlify Extension',
             widgetId: 'netlify-extension',

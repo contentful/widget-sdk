@@ -314,10 +314,6 @@
         {
           "widgetId": "versions-widget",
           "widgetNamespace": "sidebar-builtin"
-        },
-        {
-          "widgetId": "users-widget",
-          "widgetNamespace": "sidebar-builtin"
         }
       ],
       "controls": [

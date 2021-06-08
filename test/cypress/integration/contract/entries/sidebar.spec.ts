@@ -35,7 +35,7 @@ describe('Entries page', () => {
     });
     describe('Opening the Entry page', () => {
       it('shows the default sidebar', () => {
-        const widgetNames = ['Status', 'Preview', 'Links', 'Translation', 'Versions', 'Users'];
+        const widgetNames = ['Status', 'Preview', 'Links', 'Translation', 'Versions'];
 
         cy.findByTestId('entry-editor-sidebar')
           .find('h2')

@@ -71,7 +71,6 @@ export const defaultWidgetsMap = {
   [Links.widgetId]: Links,
   [Translation.widgetId]: Translation,
   [Versions.widgetId]: Versions,
-  [Users.widgetId]: Users,
 };
 
 export const EntryConfiguration = [
@@ -82,10 +81,9 @@ export const EntryConfiguration = [
   Links,
   Translation,
   Versions,
-  Users,
 ];
 
-export const AssetConfiguration = [Publication, Releases, Links, Translation, Users];
+export const AssetConfiguration = [Publication, Releases, Links, Translation];
 
 const getAvailabilityMap = (spaceId, environmentId, organizationId) => ({
   [Publication.widgetId]: true,
@@ -98,7 +96,6 @@ const getAvailabilityMap = (spaceId, environmentId, organizationId) => ({
   [Links.widgetId]: true,
   [Translation.widgetId]: true,
   [Versions.widgetId]: true,
-  [Users.widgetId]: true,
 });
 
 export const getEntryConfiguration = async ({ spaceId, environmentId, organizationId }) => {
