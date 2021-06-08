@@ -26,7 +26,7 @@ export interface InitialValueTabComponentProps {
   ctField: { id: string; localized: boolean; type: string };
   editorInterface: any;
   fields: { initialValue?: { value: Record<'string', unknown> } };
-  onChange: () => unknown;
+  onChange: (fieldName: string, value: unknown) => void;
 }
 
 const InitialValueTabComponent = ({
@@ -76,7 +76,7 @@ const InitialValueTabComponent = ({
     fields.initialValue?.value &&
     Object.keys(fields.initialValue.value)
       .filter((localeCode) => localeCode !== defaultLocale.code)
-      .some((localeCode) => fields.initialValue.value[localeCode] !== undefined);
+      .some((localeCode) => fields.initialValue?.value[localeCode] !== undefined);
 
   const applyValueToOtherLocales = (value: unknown) => {
     const payload = fields.initialValue?.value ? { ...fields.initialValue.value } : {};

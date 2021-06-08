@@ -51,6 +51,7 @@ const useFieldAPI = ({
         locale: locale.code,
         getValue: () => {
           try {
+            // @ts-ignore
             const [, value] = Object.entries(fields.initialValue.value).find(
               ([key]) => key === locale.code
             );
@@ -123,7 +124,7 @@ const InitialValueField = ({
   onChange,
 }: InitialValueFieldProps) => {
   const fieldContext = useFieldDialogContext();
-  const [invalidControls, setInvalidControls] = useState({});
+  const [, setInvalidControls] = useState({});
   const setInvalidLocale = useCallback((localeId, isInvalid) => {
     setInvalidControls((state) => ({
       ...state,
