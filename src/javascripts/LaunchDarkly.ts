@@ -62,6 +62,7 @@ export enum FLAGS {
   EXPERIENCE_SDK_PAGE_LOCATION = 'feature-ext-05-2021-experience-sdk-page-location',
   RICH_TEXT_TABLES = 'feature-shelley-05-2021-rich-text-tables',
   CUSTOM_TRACKING_FIELD_FOR_SLUGS = 'dante-2021-05-custom-slug-field',
+  EXPERIENCE_SDK_APP_CONFIG_LOCATION = 'feature-ext-05-2021-experience-sdk-app-config-location',
 
   // So that we can test the fallback mechanism without needing to rely on an actual
   // flag above, we use these special flags.
@@ -96,6 +97,7 @@ const FALLBACK_VALUES = {
   [FLAGS.RICH_TEXT_TABLES]: false,
   [FLAGS.EXPERIMENT_ONBOARDING_MODAL]: null,
   [FLAGS.CUSTOM_TRACKING_FIELD_FOR_SLUGS]: false,
+  [FLAGS.EXPERIENCE_SDK_APP_CONFIG_LOCATION]: false,
 
   // TODO: remove or flip this flag to `true` once it's fully rolled out
   [FLAGS.REFERENCE_TREE_BULK_ACTIONS_SUPPORT]: false,

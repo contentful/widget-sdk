@@ -9,7 +9,7 @@ import { createNavigatorApi } from '../createNavigatorApi';
 import { createDialogsApi } from '../createDialogsApi';
 import { AppHookListener, createAppApi } from '../createAppApi';
 import { createBaseExtensionSdk } from '../createBaseExtensionSdk';
-import { AppHookBus } from 'features/apps-core';
+import { AppHookBus } from '@contentful/experience-sdk';
 import APIClient from 'data/APIClient';
 
 interface CreateAppExtensionSDKOptions {
