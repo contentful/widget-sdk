@@ -19,6 +19,8 @@ export const SUPPORTED_FIELD_TYPES = [
   'Symbol',
   // 'Text'
 ];
+
+// @todo: Change this to 4
 const MANAGABLE_NUMBER_OF_LOCALES = 1;
 
 export interface InitialValueTabComponentProps {
