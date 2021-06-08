@@ -126,6 +126,10 @@ const InitialValueField = ({
 }: InitialValueFieldProps) => {
   const fieldContext = useFieldDialogContext();
   const [, setInvalidControls] = useState({});
+  const instance = useMemo(
+    () => keyBy(editorInterface.controls, 'fieldId')[fieldContext.field.apiName],
+    [editorInterface, fieldContext.field.apiName]
+  );
   const setInvalidLocale = useCallback((localeId, isInvalid) => {
     setInvalidControls((state) => ({
       ...state,
@@ -145,7 +149,7 @@ const InitialValueField = ({
   });
 
   const Customfield = () => {
-    return <Field sdk={sdk} />;
+    return <Field sdk={sdk} widgetId={instance.widgetId || undefined} />;
   };
 
   return isLocalized ? (
