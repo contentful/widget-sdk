@@ -1,12 +1,35 @@
-import React from 'react';
-import SidePanelTrigger from './SidePanelTrigger';
-import Sidepanel from './Sidepanel';
-import keycodes from 'utils/keycodes';
-import * as Config from 'Config';
-import { SidepanelAppSwitcher } from './SidepanelAppSwitcher';
-import { useAppsList } from './useAppsList';
+import React, { useEffect, useState, useCallback, MouseEvent } from 'react';
+import { css, cx } from 'emotion';
 import { WhatsNewContextProvider } from '@contentful/experience-components';
+import tokens from '@contentful/forma-36-tokens';
+
+import * as Config from 'Config';
+import keycodes from 'utils/keycodes';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
+import { useAppsList } from './useAppsList';
+import SidePanelTrigger from './SidePanelTrigger';
+import { Sidepanel } from './Sidepanel';
+import { SidepanelAppSwitcher } from './SidepanelAppSwitcher';
+
+const styles = {
+  sidepanelContainer: css({
+    position: 'absolute',
+    zIndex: 1000,
+  }),
+  sidepanelBG: css({
+    position: 'absolute',
+    width: '100vw',
+    height: '100vh',
+    backgroundColor: tokens.colorContrastDark,
+    opacity: 0,
+    transition: `all ${tokens.transitionDurationDefault} ${tokens.transitionEasingDefault}`,
+    visibility: 'hidden',
+  }),
+  isVisible: css({
+    opacity: 0.75,
+    visibility: 'visible',
+  }),
+};
 
 const urlWithUtm = buildUrlWithUtmParams({
   source: 'webapp',
@@ -14,13 +37,13 @@ const urlWithUtm = buildUrlWithUtmParams({
   campaign: 'in-app-help',
 });
 
-const SidepanelContainer = () => {
-  const [sidePanelIsShown, setSidePanelIsShown] = React.useState(false);
-  const [orgDropdownIsShown, setOrgDropdownIsShown] = React.useState(false);
-  const [appSwitcherIsShown, setAppSwitcherIsShown] = React.useState(false);
+export function SidepanelContainer() {
+  const [sidePanelIsShown, setSidePanelIsShown] = useState(false);
+  const [orgDropdownIsShown, setOrgDropdownIsShown] = useState(false);
+  const [appSwitcherIsShown, setAppSwitcherIsShown] = useState(false);
   const { appsList } = useAppsList();
 
-  const closeDropdownOrPanel = React.useCallback(() => {
+  const closeDropdownOrPanel = useCallback(() => {
     if (orgDropdownIsShown) {
       setOrgDropdownIsShown(false);
     } else {
@@ -28,7 +51,7 @@ const SidepanelContainer = () => {
     }
   }, [orgDropdownIsShown]);
 
-  const handleEsc = React.useCallback(
+  const handleEsc = useCallback(
     (ev) => {
       if (ev.keyCode === keycodes.ESC) {
         closeDropdownOrPanel();
@@ -37,7 +60,7 @@ const SidepanelContainer = () => {
     [closeDropdownOrPanel]
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     window.addEventListener('keyup', handleEsc);
 
     return () => window.removeEventListener('keyup', handleEsc);
@@ -47,19 +70,18 @@ const SidepanelContainer = () => {
 
   return (
     <WhatsNewContextProvider changelogUrl={changelogUrl}>
-      <React.Fragment>
-        <div className="nav-sidepanel-container">
+      <>
+        <div className={styles.sidepanelContainer}>
           <div
-            className={`nav-sidepanel__bg ${
-              sidePanelIsShown ? 'nav-sidepanel__bg--is-visible' : ''
-            }`}
             data-test-id="close-sidepanel-bg"
+            className={cx(styles.sidepanelBG, { [styles.isVisible]: sidePanelIsShown })}
             onClick={closeDropdownOrPanel}
           />
+
           <Sidepanel
             sidePanelIsShown={sidePanelIsShown}
             orgDropdownIsShown={orgDropdownIsShown}
-            openOrgsDropdown={(event: React.MouseEvent) => {
+            openOrgsDropdown={(event: MouseEvent) => {
               if (orgDropdownIsShown === false) {
                 setOrgDropdownIsShown(true);
                 // Don't bubble click event to container that would close the dropdown
@@ -74,6 +96,7 @@ const SidepanelContainer = () => {
             }}
           />
         </div>
+
         <SidepanelAppSwitcher
           appsList={appsList}
           isVisible={appSwitcherIsShown}
@@ -83,9 +106,7 @@ const SidepanelContainer = () => {
           onClickOrganization={() => setSidePanelIsShown(true)}
           openAppSwitcher={() => setAppSwitcherIsShown(true)}
         />
-      </React.Fragment>
+      </>
     </WhatsNewContextProvider>
   );
-};
-
-export default SidepanelContainer;
+}

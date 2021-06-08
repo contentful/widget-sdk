@@ -4,7 +4,7 @@ import NavBar from './NavBar/NavBar';
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
 import { getOrgFeature, OrganizationFeatures } from '../data/CMA/ProductCatalog';
-import SidepanelContainer from './Sidepanel/SidepanelContainer';
+import { SidepanelContainer } from './Sidepanel/SidepanelContainer';
 import createLegacyFeatureService from 'services/LegacyFeatureService';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import { AdvancedExtensibilityFeature } from 'features/extensions-management';

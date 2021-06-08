@@ -1,7 +1,7 @@
 import { routes } from 'core/react-routing';
 import React from 'react';
 import NavBar from './NavBar/NavBar';
-import SidepanelContainer from './Sidepanel/SidepanelContainer';
+import { SidepanelContainer } from './Sidepanel/SidepanelContainer';
 
 export default function ProfileNavigationBar() {
   const user = routes['account.profile.user']();
