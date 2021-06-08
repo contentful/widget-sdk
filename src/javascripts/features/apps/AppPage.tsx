@@ -45,6 +45,7 @@ import { useSpaceEnvContentTypes } from 'core/services/SpaceEnvContext';
 import { isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 import { createAppExtensionSDK as localCreateAppConfigWidgetSDK } from 'app/widgets/ExtensionSDKs';
+import { getUserWithMinifiedSys } from 'app/widgets/ExtensionSDKs/utils';
 import { createPublicContentType } from 'app/widgets/ExtensionSDKs/createPublicContentType';
 import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
 import { usePubSubClient } from 'core/hooks';
@@ -181,7 +182,7 @@ export function AppRoute(props: Props) {
           },
           contentTypes: currentSpaceContentTypes.map(createPublicContentType),
           cma: customWidgetPlainClient,
-          user: spaceContext.user,
+          user: getUserWithMinifiedSys(),
           environment: currentEnvironment,
           space: spaceContext.space.data,
           widgetId: app.appDefinition.sys.id,
