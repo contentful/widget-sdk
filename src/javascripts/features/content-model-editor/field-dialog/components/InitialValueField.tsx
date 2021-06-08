@@ -95,7 +95,7 @@ const useFieldAPI = ({
       },
       parameters: {
         installation: {},
-        instance: instance.settings,
+        instance: instance ? instance.settings : {},
       },
       contentType,
       locales: localesApi,
@@ -149,7 +149,7 @@ const InitialValueField = ({
   });
 
   const Customfield = () => {
-    return <Field sdk={sdk} widgetId={instance.widgetId || undefined} />;
+    return <Field sdk={sdk} widgetId={instance?.widgetId || undefined} />;
   };
 
   return isLocalized ? (
