@@ -10,7 +10,6 @@ import {
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import Icon from 'ui/Components/Icon';
 import { websiteUrl } from 'Config';
-import isLegacyEnterprise from 'data/isLegacyEnterprise';
 import { trackClickCTA } from './tracking';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
@@ -39,10 +38,6 @@ export class UpgradePricing extends React.Component {
     }
 
     if (org.pricingVersion !== 'pricing_version_1') {
-      return false;
-    }
-
-    if (isLegacyEnterprise(org)) {
       return false;
     }
 

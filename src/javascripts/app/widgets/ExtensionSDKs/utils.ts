@@ -1,5 +1,6 @@
 import { ContentType, EntryAPI, UserAPI, IdsAPI } from '@contentful/app-sdk';
 import { WidgetNamespace } from '@contentful/widget-renderer';
+import { getUserSync } from 'services/TokenStore';
 
 interface CreateIdsApiProps {
   spaceId: string;
@@ -67,4 +68,17 @@ export function serializeJSONValue(value: unknown): SerializedJSONValue | undefi
   } else {
     return value as string | number | boolean;
   }
+}
+
+/**
+ * Minifies the users sys object with only id and type
+ */
+
+export function getUserWithMinifiedSys() {
+  const { sys, ...restOfUser } = getUserSync();
+  const { id, type } = sys;
+  return {
+    sys: { id, type },
+    ...restOfUser,
+  };
 }

@@ -66,11 +66,6 @@
       "disabled": true,
       "widgetId": "versions-widget",
       "widgetNamespace": "sidebar-builtin"
-    },
-    {
-      "disabled": true,
-      "widgetId": "users-widget",
-      "widgetNamespace": "sidebar-builtin"
     }
   ],
   "controls": [

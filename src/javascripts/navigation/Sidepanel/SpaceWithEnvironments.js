@@ -1,15 +1,35 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import AnimateHeight from 'react-animate-height';
-import FolderIcon from 'svg/folder.svg';
-import { createSpaceEndpoint } from 'data/EndpointFactory';
-import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo';
-import EnvOrAliasLabel from 'app/common/EnvOrAliasLabel';
+import { css, cx } from 'emotion';
+import { Spinner, Flex, Icon, Grid } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import { css } from 'emotion';
+
+import EnvOrAliasLabel from 'app/common/EnvOrAliasLabel';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { isMasterEnvironment, getEnvironmentAliasesIds } from 'core/services/SpaceEnvContext/utils';
-import { Spinner, Flex } from '@contentful/forma-36-react-components';
+import { createSpaceEndpoint } from 'data/EndpointFactory';
+import * as SpaceEnvironmentRepo from 'data/CMA/SpaceEnvironmentsRepo';
+
+const styles = {
+  folderIcon: css({
+    marginRight: tokens.spacingXs,
+  }),
+  spaceListItem: css({
+    cursor: 'pointer',
+    margin: 0,
+    '&:hover': {
+      backgroundColor: tokens.colorElementLight,
+    },
+  }),
+  isActive: css({
+    backgroundColor: tokens.colorElementLight,
+  }),
+  spaceNameContainer: css({
+    alignItems: 'center',
+    padding: `${tokens.spacingXs} ${tokens.spacingM}`,
+  }),
+};
 
 function EnvironmentList({
   environments = [],
@@ -220,37 +240,28 @@ export default class SpaceWithEnvironments extends React.Component {
     const { index, space, currentEnvId, currentAliasId, isCurrSpace, goToSpace } = this.props;
 
     const isOpened = this.isOpened();
-    const containerClassNames = `
-      nav-sidepanel__space-list-item
-      ${isCurrSpace ? 'nav-sidepanel__space-list-item--is-active' : ''}
-      ${isOpened ? 'nav-sidepanel__space-list-item--is-open' : ''}
-    `;
-
-    const spaceNameClassNames = `
-      nav-sidepanel__space-name u-truncate
-      ${isCurrSpace ? 'nav-sidepanel__space-name--is-active' : ''}
-    `;
 
     return (
       <li
-        className={containerClassNames}
+        className={cx(styles.spaceListItem, { [styles.isActive]: isCurrSpace })}
         onClick={() => this.toggleEnvironmentList()}
         data-test-id={`sidepanel-space-link-${index}`}
         data-test-group-id="sidepanel-space-link"
         aria-selected={isCurrSpace ? 'true' : 'false'}>
-        <div className="nav-sidepanel__space-title">
-          <div className="nav-sidepanel__space-icon">
-            <FolderIcon />
-          </div>
-          <span className={spaceNameClassNames}>{space.name} </span>
-          {this.state.loading ? (
-            <Flex marginRight="spacingM">
+        <Grid className={styles.spaceNameContainer} columns="15px auto 18px" columnGap="spacingXs">
+          <Icon className={styles.folderIcon} icon="FolderOpen" color="muted" />
+
+          {space.name}
+
+          <Flex>
+            {this.state.loading ? (
               <Spinner size="small" />
-            </Flex>
-          ) : (
-            <span className="nav-sidepanel__space-open-indicator" />
-          )}
-        </div>
+            ) : (
+              <Icon icon={isOpened ? 'ChevronDown' : 'ChevronRight'} color="muted" />
+            )}
+          </Flex>
+        </Grid>
+
         <AnimateHeight height={isOpened ? 'auto' : 0}>
           <EnvironmentList
             environments={this.state.environments}

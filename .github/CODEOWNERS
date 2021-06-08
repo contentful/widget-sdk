@@ -9,7 +9,6 @@ src/javascripts/features/extensions-management/ @contentful/team-extensibility
 src/javascripts/features/webhooks/              @contentful/team-extensibility
 
 # Team Dev Workflows
-src/javascripts/features/content-tags/            @contentful/team-dev-workflows
 src/javascripts/features/environments-settings/   @contentful/team-dev-workflows
 src/javascripts/features/api-keys-management/     @contentful/team-dev-workflows
 
@@ -66,6 +65,8 @@ src/javascripts/features/entity-views/      @contentful/team-homer
 # Team Dante
 src/javascripts/features/locales-management/      @contentful/team-dante
 src/javascripts/features/content-model-editor/    @contentful/team-dante
+# to facilitate knowledge exchange, we will keep both teams for some time
+src/javascripts/features/content-tags/            @contentful/team-dante @contentful/team-dev-workflows
 
 # Team Dev Velocity
 src/javascripts/features/embargoed-assets/  @team-dev-velocity

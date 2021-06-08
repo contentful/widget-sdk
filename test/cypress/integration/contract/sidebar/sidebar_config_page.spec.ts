@@ -20,7 +20,7 @@ describe('Sidebar configuration', () => {
     cy.wait(interactions);
   });
 
-  const widgetNames = ['Publish & Status', 'Preview', 'Links', 'Translation', 'Versions', 'Users'];
+  const widgetNames = ['Publish & Status', 'Preview', 'Links', 'Translation', 'Versions'];
 
   describe('Opening the page with no configuration saved', () => {
     it('renders the page with default configuration', () => {
@@ -36,14 +36,7 @@ describe('Sidebar configuration', () => {
     it('checks changing the order of widgets in custom sidebar', () => {
       const space: number = 32;
       const arrowDown: number = 40;
-      const widgetsReordered = [
-        'Publish & Status',
-        'Preview',
-        'Links',
-        'Versions',
-        'Translation',
-        'Users',
-      ];
+      const widgetsReordered = ['Publish & Status', 'Preview', 'Links', 'Versions', 'Translation'];
 
       // Pick up and move Translation from slot 4 to slot 5
       // NOTE: Publish & Status is not draggable

@@ -1,5 +1,5 @@
 import React from 'react';
-import SidepanelContainer from './Sidepanel/SidepanelContainer';
+import { SidepanelContainer } from './Sidepanel/SidepanelContainer';
 import NavBar from './NavBar/NavBar';
 
 export default function EmptyNavigationBar() {

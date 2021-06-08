@@ -5,8 +5,6 @@ import { DashboardRouter } from './DashboardRouter';
 import * as Fake from 'test/helpers/fakeFactory';
 import { isOwner } from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
-import isLegacyEnterprise from 'data/isLegacyEnterprise';
-import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { isSelfServicePlan, isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 
 import { MemoryRouter } from 'core/react-routing';
@@ -14,15 +12,6 @@ import { go } from 'states/Navigator';
 
 // eslint-disable-next-line
 import { mockEndpoint } from 'data/EndpointFactory';
-
-jest.mock('data/isLegacyEnterprise', () => ({
-  __esModule: true,
-  default: jest.fn(),
-}));
-
-jest.mock('utils/ResourceUtils', () => ({
-  isLegacyOrganization: jest.fn(),
-}));
 
 jest.mock('account/pricing/PricingDataProvider', () => ({
   isSelfServicePlan: jest.fn(),
@@ -67,8 +56,6 @@ const mockOrganization = Fake.Organization();
 describe('DashboardRouter', () => {
   beforeEach(() => {
     TokenStore.getOrganization.mockResolvedValue(mockOrganization);
-    isLegacyOrganization.mockReturnValue(false);
-    isLegacyEnterprise.mockReturnValue(false);
     isSelfServicePlan.mockReturnValue(true);
     isEnterprisePlan.mockReturnValue(false);
   });
@@ -162,31 +149,12 @@ describe('DashboardRouter', () => {
     );
   });
 
-  it('should show billing details to v1 self-service', async () => {
-    isLegacyOrganization.mockReturnValue(true);
-    build();
-
-    await waitFor(() => expect(screen.queryByTestId('invoices-loading')).toBeNull());
-
-    expect(screen.getByTestId('billing-details-card')).toBeVisible();
-  });
-
   it('should show billing details to v2 self-service', async () => {
     build();
 
     await waitFor(() => expect(screen.queryByTestId('invoices-loading')).toBeNull());
 
     expect(screen.getByTestId('billing-details-card')).toBeVisible();
-  });
-
-  it('should NOT show billing details to v1 enterprise', async () => {
-    isLegacyOrganization.mockReturnValue(true);
-    isLegacyEnterprise.mockReturnValue(true);
-    build();
-
-    await waitFor(() => expect(screen.queryByTestId('invoices-loading')).toBeNull());
-
-    expect(screen.queryByTestId('billing-details-card')).toBeNull();
   });
 
   it('should NOT show billing details to v2 enterprise', async () => {

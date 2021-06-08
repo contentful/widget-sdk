@@ -1,7 +1,8 @@
 import { AppConfigAPI } from '@contentful/app-sdk';
 import { WidgetNamespace, AppStages } from '@contentful/widget-renderer';
 import { getCurrentState } from 'features/apps';
-import { APP_EVENTS_IN, APP_EVENTS_OUT, AppHookBus } from 'features/apps-core';
+import { APP_EVENTS_IN, APP_EVENTS_OUT } from 'features/apps-core';
+import { AppHookBus } from '@contentful/experience-sdk';
 import { isObject } from 'lodash';
 import APIClient from 'data/APIClient';
 import { GlobalEventBus, GlobalEvents } from 'core/services/GlobalEventsBus';
@@ -68,6 +69,7 @@ export function createAppApi({
   };
 
   return {
+    // @ts-expect-error old AppConfigApi that will be deprecated
     appApi,
     onAppHook,
   };

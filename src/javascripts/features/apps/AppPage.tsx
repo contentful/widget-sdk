@@ -16,7 +16,7 @@ import {
   TextLink,
 } from '@contentful/forma-36-react-components';
 import { get } from 'lodash';
-import { APP_EVENTS_IN, APP_EVENTS_OUT, AppHookBus } from 'features/apps-core';
+import { APP_EVENTS_IN } from 'features/apps-core';
 import trackExtensionRender from 'widgets/TrackExtensionRender';
 import { toLegacyWidget } from 'widgets/WidgetCompat';
 import ExtensionLocalDevelopmentWarning from 'widgets/ExtensionLocalDevelopmentWarning';
@@ -36,15 +36,35 @@ import {
   WidgetLocation,
   buildAppDefinitionWidget,
   WidgetNamespace,
+  WidgetLoader,
+  AppStages,
 } from '@contentful/widget-renderer';
 import { MarketplaceApp } from 'features/apps-core';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { useSpaceEnvContentTypes } from 'core/services/SpaceEnvContext';
 import { isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
-import { createAppExtensionSDK } from 'app/widgets/ExtensionSDKs';
+import { createAppExtensionSDK as localCreateAppConfigWidgetSDK } from 'app/widgets/ExtensionSDKs';
+import { getUserWithMinifiedSys } from 'app/widgets/ExtensionSDKs/utils';
+import { createPublicContentType } from 'app/widgets/ExtensionSDKs/createPublicContentType';
 import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
+import { usePubSubClient } from 'core/hooks';
+import LocaleStore from 'services/localeStore';
 import { getSpaceContext } from 'classes/spaceContext';
 import { useRouteNavigate } from 'core/react-routing';
+import { FLAGS } from 'LaunchDarkly';
+import { useVariation } from 'core/hooks/useVariation';
+import {
+  createAppConfigWidgetSDK,
+  AppInstallationEvents,
+  AppHookBus,
+} from '@contentful/experience-sdk';
+import {
+  createDialogCallbacks,
+  createNavigatorCallbacks,
+  createSpaceCallbacks,
+} from 'app/widgets/ExtensionSDKs/callbacks';
+import { GlobalEventBus, GlobalEvents } from 'core/services/GlobalEventsBus';
 
 enum InstallationState {
   Installation = 'installation',
@@ -88,15 +108,23 @@ export function AppRoute(props: Props) {
   const [installationState, setInstallationState] = React.useState<InstallationState>(
     InstallationState.NotBusy
   );
+  const [widgetLoader, setWidgetLoader] = React.useState<WidgetLoader | null>(null);
+  React.useEffect(() => {
+    getCustomWidgetLoader().then(setWidgetLoader);
+  }, []);
+  const pubSubClient = usePubSubClient();
   const installationStateRef = React.useRef<InstallationState>(installationState); // TODO: useEffect creates a snapshot of `installationState` where `onAppConfigured` receives a outdated value, we use useRef to bypass this
-  const { customWidgetClient, client: cma } = useCurrentSpaceAPIClient();
+  const { customWidgetClient, customWidgetPlainClient, client: cma } = useCurrentSpaceAPIClient();
+  const { currentSpaceContentTypes } = useSpaceEnvContentTypes();
 
   const {
-    currentSpaceId: spaceId,
-    currentOrganizationId: organizationId,
-    currentEnvironmentId: environmentId,
     currentOrganization: organization,
+    currentOrganizationId: organizationId,
     currentSpace,
+    currentSpaceId: spaceId,
+    currentEnvironment,
+    currentEnvironmentId: environmentId,
+    currentSpaceData,
   } = useSpaceEnvContext();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
   const appManager = React.useMemo<AppManager>(
@@ -122,20 +150,112 @@ export function AppRoute(props: Props) {
     );
   }, [app]);
 
+  const [useExperienceSDK] = useVariation<boolean>(FLAGS.EXPERIENCE_SDK_APP_CONFIG_LOCATION, false);
+  const onAppMarkedAsReady = React.useCallback(async () => {
+    if (!loadingError) {
+      setAppLoaded(true);
+    }
+  }, [loadingError, setAppLoaded]);
+
+  const goBackToList = React.useCallback(() => {
+    return routeNavigate({ path: 'apps.list' });
+  }, [routeNavigate]);
+
   const sdkInstance = React.useMemo(() => {
-    if (!widget || !app || !customWidgetClient) return null;
+    if (!widget || !app || !customWidgetClient || !spaceId) return null;
 
     const spaceContext = getSpaceContext();
 
-    return createAppExtensionSDK({
-      spaceContext,
-      cma: customWidgetClient,
-      widgetNamespace: WidgetNamespace.APP,
-      widgetId: app.appDefinition.sys.id,
-      appHookBus: props.appHookBus,
-      currentAppWidget: widget,
-    });
-  }, [widget, app, customWidgetClient, props.appHookBus]);
+    if (
+      useExperienceSDK &&
+      widgetLoader &&
+      currentEnvironment &&
+      currentSpaceData &&
+      pubSubClient &&
+      customWidgetPlainClient
+    ) {
+      return {
+        sdk: createAppConfigWidgetSDK({
+          widgetLoader,
+          locales: {
+            activeLocaleCode: LocaleStore.getFocusedLocale().code,
+            defaultLocaleCode: LocaleStore.getDefaultLocale().code,
+            list: LocaleStore.getLocales(),
+          },
+          contentTypes: currentSpaceContentTypes.map(createPublicContentType),
+          cma: customWidgetPlainClient,
+          user: getUserWithMinifiedSys(),
+          environment: currentEnvironment,
+          space: currentSpaceData,
+          widgetId: widget.id,
+          widgetNamespace: WidgetNamespace.APP,
+          appHookBus: props.appHookBus,
+          callbacks: {
+            navigator: createNavigatorCallbacks({
+              spaceContext: {
+                environmentId,
+                spaceId,
+                isMaster: isMasterEnvironment,
+              },
+              widgetRef: {
+                widgetId: widget.id,
+                widgetNamespace: WidgetNamespace.APP,
+              },
+            }),
+            dialog: createDialogCallbacks(),
+            app: {
+              setReady: onAppMarkedAsReady,
+              refreshPublishedContentTypes() {
+                GlobalEventBus.emit(GlobalEvents.RefreshPublishedContentTypes);
+              },
+            },
+            space: createSpaceCallbacks({
+              pubSubClient,
+              environment: currentEnvironment,
+              cma: customWidgetPlainClient,
+            }),
+          },
+        }),
+        onAppHook: (stage: AppStages, result: any) => {
+          if (stage !== AppStages.PreInstall) {
+            // We only handle results of pre install hooks, abort.
+            return;
+          }
+
+          if (result === false) {
+            props.appHookBus.emit(APP_EVENTS_IN.MISCONFIGURED);
+          } else {
+            props.appHookBus.emit(APP_EVENTS_IN.CONFIGURED, { config: result });
+          }
+        },
+      };
+    } else {
+      return localCreateAppConfigWidgetSDK({
+        spaceContext,
+        cma: customWidgetClient,
+        widgetNamespace: WidgetNamespace.APP,
+        widgetId: app.appDefinition.sys.id,
+        appHookBus: props.appHookBus,
+        currentAppWidget: widget,
+      });
+    }
+  }, [
+    widget,
+    app,
+    environmentId,
+    currentEnvironment,
+    isMasterEnvironment,
+    spaceId,
+    customWidgetClient,
+    props.appHookBus,
+    useExperienceSDK,
+    widgetLoader,
+    customWidgetPlainClient,
+    onAppMarkedAsReady,
+    pubSubClient,
+    currentSpaceContentTypes,
+    currentSpaceData,
+  ]);
 
   const title: string = get(app, ['title'], get(app, ['appDefinition', 'name']));
   const appIcon: string = get(app, ['icon'], '');
@@ -154,7 +274,7 @@ export function AppRoute(props: Props) {
         Notification.error('Failed to load the app.');
         goBackToList();
       });
-  }, [props.repo, props.appId]);
+  }, [props.repo, props.appId, goBackToList]);
 
   React.useEffect(() => {
     if (!app) return;
@@ -253,10 +373,6 @@ export function AppRoute(props: Props) {
     routeNavigate,
   ]);
 
-  function goBackToList() {
-    return routeNavigate({ path: 'apps.list' });
-  }
-
   async function evictWidget(appInstallation) {
     const loader = await getCustomWidgetLoader();
 
@@ -296,7 +412,7 @@ export function AppRoute(props: Props) {
       setInstallationState(InstallationState.NotBusy);
 
       props.appHookBus.setInstallation(appInstallation);
-      props.appHookBus.emit(APP_EVENTS_OUT.SUCCEEDED);
+      props.appHookBus.emit(AppInstallationEvents.SUCCEEDED);
     } catch (err) {
       if (isUsageExceededErrorResponse(err)) {
         Notification.error(getUsageExceededMessage(props.hasAdvancedAppsFeature));
@@ -314,7 +430,7 @@ export function AppRoute(props: Props) {
       setInstallationState(InstallationState.NotBusy);
 
       props.appHookBus.setInstallation(appInstallation);
-      props.appHookBus.emit(APP_EVENTS_OUT.FAILED);
+      props.appHookBus.emit(AppInstallationEvents.FAILED);
     }
   }
 
@@ -326,12 +442,6 @@ export function AppRoute(props: Props) {
     setInstallationState(InstallationState.NotBusy);
   }
 
-  async function onAppMarkedAsReady() {
-    if (!loadingError) {
-      setAppLoaded(true);
-    }
-  }
-
   function update(installationState: InstallationState) {
     if (!app || !appManager) return;
 
@@ -339,7 +449,7 @@ export function AppRoute(props: Props) {
 
     if (hasConfigLocation(app.appDefinition)) {
       // The app implements config - hand over control.
-      props.appHookBus.emit(APP_EVENTS_OUT.STARTED);
+      props.appHookBus.emit(AppInstallationEvents.STARTED);
     } else {
       // No config location - just use an empty config right away.
       onAppConfigured({ config: {} });

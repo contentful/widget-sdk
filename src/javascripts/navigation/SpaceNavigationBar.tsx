@@ -9,7 +9,7 @@ import {
 import NavBar from './NavBar/NavBar';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import { getSpaceNavigationItems } from './SpaceNavigationBarItems';
-import SidepanelContainer from './Sidepanel/SidepanelContainer';
+import { SidepanelContainer } from './Sidepanel/SidepanelContainer';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import {
   getOrganization,

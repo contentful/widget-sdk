@@ -1,7 +1,6 @@
 import * as config from 'Config';
 import * as DegradedAppPerformance from 'core/services/DegradedAppPerformance';
 import { getOrgFeature, OrganizationFeatures } from 'data/CMA/ProductCatalog';
-import isLegacyEnterprise from 'data/isLegacyEnterprise';
 import {
   getOrgRole,
   getUserAgeInDays,
@@ -63,8 +62,9 @@ export enum FLAGS {
   EXPERIENCE_SDK_PAGE_LOCATION = 'feature-ext-05-2021-experience-sdk-page-location',
   RICH_TEXT_TABLES = 'feature-shelley-05-2021-rich-text-tables',
   CUSTOM_TRACKING_FIELD_FOR_SLUGS = 'dante-2021-05-custom-slug-field',
+  EXPERIENCE_SDK_APP_CONFIG_LOCATION = 'feature-ext-05-2021-experience-sdk-app-config-location',
   INITIAL_FIELD_VALUES = 'dante-06-2021-initial-field-values',
-
+  
   // So that we can test the fallback mechanism without needing to rely on an actual
   // flag above, we use these special flags.
   __FLAG_FOR_UNIT_TESTS__ = 'test-flag',
@@ -98,6 +98,7 @@ const FALLBACK_VALUES = {
   [FLAGS.RICH_TEXT_TABLES]: false,
   [FLAGS.EXPERIMENT_ONBOARDING_MODAL]: null,
   [FLAGS.CUSTOM_TRACKING_FIELD_FOR_SLUGS]: false,
+  [FLAGS.EXPERIENCE_SDK_APP_CONFIG_LOCATION]: false,
   [FLAGS.INITIAL_FIELD_VALUES]: false,
 
   // TODO: remove or flip this flag to `true` once it's fully rolled out
@@ -140,7 +141,6 @@ export function reset() {
 interface CustomData {
   currentOrgId?: string; // current org in the app the user is in the context of
   currentOrgSubscriptionStatus?: string; // one of free, paid, free_paid, trial (works for V1 only)
-  currentOrgPlanIsEnterprise?: boolean; // true if the current org is on an enterprise plan (works for V1 only)
   currentOrgHasSpace?: boolean; // true if the current org has a space
 
   currentOrgPricingVersion?: 'pricing_version_1' | 'pricing_version_2'; //the current organization pricing version, currently either `pricing_version_1` or `pricing_version_2`
@@ -205,7 +205,6 @@ async function ldUser({
       currentOrgId: organizationId,
       currentOrgSubscriptionStatus: _.get(org, 'subscription.status', null),
       currentOrgPricingVersion: org.pricingVersion,
-      currentOrgPlanIsEnterprise: isLegacyEnterprise(org),
       currentOrgHasSpace: Boolean(_.get(spacesByOrg, [organizationId, 'length'], 0)),
       currentOrgHasPaymentMethod: Boolean(org.isBillable),
       currentOrgCreationDate: new Date(org.sys.createdAt).getTime(),

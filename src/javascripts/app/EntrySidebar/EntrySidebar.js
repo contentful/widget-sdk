@@ -14,7 +14,6 @@ import TasksWidgetContainer from './TasksWidget/TasksWidgetContainer';
 import ContentPreviewWidget from './ContentPreviewWidget/ContentPreviewWidget';
 import IncomingLinksWidgetContainer from './IncomingLinksWidget/IncomingLinksWidgetContainer';
 import TranslationWidget from './TranslationWidget/TranslationWidget';
-import UsersWidgetContainer from './UsersWidget/UsersWidgetContainer';
 import VersionsWidgetContainer from './VersionsWidget/VersionsWidgetContainer';
 import SidebarWidgetTypes from './SidebarWidgetTypes';
 import EntryInfoPanelContainer from './EntryInfoPanel/EntryInfoPanelContainer';
@@ -73,7 +72,8 @@ const ComponentsMap = {
   [SidebarWidgetTypes.CONTENT_PREVIEW]: ContentPreviewWidget,
   [SidebarWidgetTypes.INCOMING_LINKS]: IncomingLinksWidgetContainer,
   [SidebarWidgetTypes.TRANSLATION]: TranslationWidget,
-  [SidebarWidgetTypes.USERS]: UsersWidgetContainer,
+  // Turned off until CmaDocument.presence is re-implemented
+  // [SidebarWidgetTypes.USERS]: UsersWidgetContainer,
   [SidebarWidgetTypes.VERSIONS]: VersionsWidgetContainer,
 };
 
