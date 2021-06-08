@@ -5,7 +5,7 @@ import * as Fake from 'test/helpers/fakeFactory';
 import { getOrganization } from 'services/TokenStore';
 import {
   getPlansWithSpaces,
-  isLegacyEnterpriseOrEnterprisePlan,
+  isEnterprisePlan,
   FREE,
   SELF_SERVICE,
   ENTERPRISE,
@@ -37,19 +37,13 @@ jest.mock('services/OrganizationRoles', () => ({
   isOwner: jest.fn().mockReturnValue(true),
   isOwnerOrAdmin: jest.fn().mockReturnValue(true),
 }));
-jest.mock('data/isLegacyEnterprise', () => ({
-  isLegacyEnterprise: jest.fn().mockReturnValue(false),
-}));
-jest.mock('utils/ResourceUtils', () => ({
-  isLegacyOrganization: jest.fn().mockReturnValue(false),
-}));
+
 jest.mock('account/pricing/PricingDataProvider', () => ({
   getPlansWithSpaces: jest.fn().mockReturnValue([]),
-  isEnterprisePlan: jest.fn().mockReturnValue(false),
   isFreeSpacePlan: jest.fn().mockReturnValue(true),
   isFreePlan: jest.fn().mockReturnValue(true),
   isPartnerPlan: jest.fn().mockReturnValue(false),
-  isLegacyEnterpriseOrEnterprisePlan: jest.fn().mockReturnValue(false),
+  isEnterprisePlan: jest.fn().mockReturnValue(false),
 }));
 jest.mock('features/pricing-entities', () => ({
   getAllProductRatePlans: jest.fn().mockReturnValue([]),
@@ -166,7 +160,7 @@ describe('SubscriptionPageRouter', () => {
     it('renders the EnterpriseSubscriptionPage for orgs with a "Enterprise" basePlan ', async () => {
       const enterpriseBasePlan = { ...mockFreeBasePlan, customerType: ENTERPRISE };
       getPlansWithSpaces.mockResolvedValue({ items: [enterpriseBasePlan] });
-      isLegacyEnterpriseOrEnterprisePlan.mockReturnValue(true);
+      isEnterprisePlan.mockReturnValue(true);
       await build();
 
       expect(screen.getByTestId('enterprise-subs-page')).toBeVisible();
@@ -175,7 +169,7 @@ describe('SubscriptionPageRouter', () => {
     it('renders the EnterpriseSubscriptionPage for orgs with a "Enterprise High Demand" basePlan ', async () => {
       const enterpriseBasePlan = { ...mockFreeBasePlan, customerType: ENTERPRISE_HIGH_DEMAND };
       getPlansWithSpaces.mockResolvedValue({ items: [enterpriseBasePlan] });
-      isLegacyEnterpriseOrEnterprisePlan.mockReturnValue(true);
+      isEnterprisePlan.mockReturnValue(true);
       await build();
 
       expect(screen.getByTestId('enterprise-subs-page')).toBeVisible();

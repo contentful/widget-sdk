@@ -8,7 +8,7 @@ import { getVariation, FLAGS } from 'LaunchDarkly';
 import {
   getPlansWithSpaces,
   isComposeAndLaunchPlan,
-  isLegacyEnterpriseOrEnterprisePlan,
+  isEnterprisePlan,
 } from 'account/pricing/PricingDataProvider';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
 import DocumentTitle from 'components/shared/DocumentTitle';
@@ -76,7 +76,7 @@ async function fetch(organizationId, dispatch) {
   const isSubscriptionPageRebrandingEnabled = await getVariation(
     FLAGS.SUBSCRIPTION_PAGE_REBRANDING
   );
-  const orgIsEnterprise = isLegacyEnterpriseOrEnterprisePlan(organization, basePlan);
+  const orgIsEnterprise = isEnterprisePlan(organization, basePlan);
 
   dispatch({
     type: actions.SET_PLANS_AND_MEMBERSHIPS,

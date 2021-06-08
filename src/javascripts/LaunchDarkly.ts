@@ -1,7 +1,6 @@
 import * as config from 'Config';
 import * as DegradedAppPerformance from 'core/services/DegradedAppPerformance';
 import { getOrgFeature, OrganizationFeatures } from 'data/CMA/ProductCatalog';
-import isLegacyEnterprise from 'data/isLegacyEnterprise';
 import {
   getOrgRole,
   getUserAgeInDays,
@@ -138,7 +137,6 @@ export function reset() {
 interface CustomData {
   currentOrgId?: string; // current org in the app the user is in the context of
   currentOrgSubscriptionStatus?: string; // one of free, paid, free_paid, trial (works for V1 only)
-  currentOrgPlanIsEnterprise?: boolean; // true if the current org is on an enterprise plan (works for V1 only)
   currentOrgHasSpace?: boolean; // true if the current org has a space
 
   currentOrgPricingVersion?: 'pricing_version_1' | 'pricing_version_2'; //the current organization pricing version, currently either `pricing_version_1` or `pricing_version_2`
@@ -203,7 +201,6 @@ async function ldUser({
       currentOrgId: organizationId,
       currentOrgSubscriptionStatus: _.get(org, 'subscription.status', null),
       currentOrgPricingVersion: org.pricingVersion,
-      currentOrgPlanIsEnterprise: isLegacyEnterprise(org),
       currentOrgHasSpace: Boolean(_.get(spacesByOrg, [organizationId, 'length'], 0)),
       currentOrgHasPaymentMethod: Boolean(org.isBillable),
       currentOrgCreationDate: new Date(org.sys.createdAt).getTime(),
