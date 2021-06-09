@@ -9,6 +9,7 @@ import keyBy from 'lodash/keyBy';
 
 import localeStore from 'services/localeStore';
 import { useFieldDialogContext } from './FieldDialogContext';
+import { FieldValueChangedHandler } from '../../types';
 
 interface UseFieldApi {
   contentType: any;
@@ -111,7 +112,7 @@ export interface InitialValueFieldProps {
   isLocalized?: boolean;
   locale: any;
   locales: any;
-  onChange: any;
+  onChange: FieldValueChangedHandler;
 }
 
 const InitialValueField = ({

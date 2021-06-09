@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useCallback, useState } from 'react';
 import {
   Button,
   Flex,
@@ -7,13 +7,16 @@ import {
   Paragraph,
   TextLink,
 } from '@contentful/forma-36-react-components';
-
 import localeStore from 'services/localeStore';
 import { InitialValueField } from './InitialValueField';
+import { ContentType, ContentTypeField } from 'core/typings';
+import type { FieldValueChangedHandler } from '../../types';
+import { useInitialValueDocument } from './useInitialValueDocument';
+import { useInitialValueDocumentErrors } from './useInitialValueDocumentErrors';
 
 export const SUPPORTED_FIELD_TYPES = ['Boolean', 'Date', 'Integer', 'Number', 'Symbol', 'Text'];
 
-const MANAGABLE_NUMBER_OF_LOCALES = 4;
+const MANAGABLE_NUMBER_OF_LOCALES = 1;
 
 const StyleTagHidingMarkdownEditorAssetButton = () => {
   return (
@@ -26,11 +29,11 @@ const StyleTagHidingMarkdownEditorAssetButton = () => {
 };
 
 export interface InitialValueTabComponentProps {
-  contentType: Record<'string', unknown>;
-  ctField: { id: string; localized: boolean; type: string };
+  contentType: ContentType;
+  ctField: ContentTypeField;
   editorInterface: any;
   fields: { initialValue?: { value: Record<'string', unknown> } };
-  onChange: (fieldName: string, value: unknown) => void;
+  onChange: FieldValueChangedHandler;
 }
 
 const InitialValueTabComponent = ({
@@ -42,6 +45,18 @@ const InitialValueTabComponent = ({
 }: InitialValueTabComponentProps) => {
   const [isModalShown, setIsModalShown] = useState(false);
   const isFieldTypeSupported = SUPPORTED_FIELD_TYPES.includes(ctField.type);
+  const locales = localeStore.getLocales();
+  const defaultLocale = localeStore.getDefaultLocale();
+
+  const { doc, validator } = useInitialValueDocument(ctField, fields, contentType, locales);
+  const onFieldChange = useCallback(
+    (fieldName: string, value: unknown) => {
+      void doc.setValueAt(['fields', ctField.id], value);
+      onChange(fieldName, value);
+    },
+    [onChange, ctField, fields]
+  );
+  const { errors } = useInitialValueDocumentErrors(validator);
 
   if (!isFieldTypeSupported) {
     return (
@@ -54,60 +69,33 @@ const InitialValueTabComponent = ({
     );
   }
 
-  const locales = localeStore.getLocales();
-  const defaultLocale = localeStore.getDefaultLocale();
   const otherLocales = locales.filter((locale) => locale.code !== defaultLocale.code);
+  const ErrorNote = () => (
+    <Flex marginBottom="spacingS" marginTop="spacingS">
+      <Note title="Entry may not be publishable" noteType="warning">
+        The values you have chosen fail one or more validations and therefore newly created entries
+        for this content type can not be published.
+      </Note>
+    </Flex>
+  );
 
-  if (!ctField.localized) {
-    return (
-      <Fragment>
-        <StyleTagHidingMarkdownEditorAssetButton />
-        <InitialValueField
-          contentType={contentType}
-          editorInterface={editorInterface}
-          fields={fields}
-          locale={defaultLocale}
-          locales={locales}
-          onChange={onChange}
-        />
-      </Fragment>
-    );
-  }
-
-  const numberOfLocales = locales.length;
-  const initialValueForDefaultLocale =
-    fields.initialValue?.value && fields.initialValue.value[defaultLocale.code] !== undefined
-      ? fields.initialValue.value[defaultLocale.code]
-      : undefined;
-  const otherLocalesHaveValues =
-    fields.initialValue?.value &&
-    Object.keys(fields.initialValue.value)
-      .filter((localeCode) => localeCode !== defaultLocale.code)
-      .some((localeCode) => fields.initialValue?.value[localeCode] !== undefined);
-
-  const applyValueToOtherLocales = (value: unknown) => {
-    const payload = fields.initialValue?.value ? { ...fields.initialValue.value } : {};
-
-    for (const locale of otherLocales) {
-      payload[locale.code] = value;
-    }
-
-    onChange('initialValue', payload);
-  };
-
-  return (
-    <Flex flexDirection="column">
+  const DefaultLocaleField = () => (
+    <>
       <StyleTagHidingMarkdownEditorAssetButton />
       <InitialValueField
         contentType={contentType}
         editorInterface={editorInterface}
         fields={fields}
-        isLocalized
+        isLocalized={ctField.localized}
         locale={defaultLocale}
         locales={locales}
-        onChange={onChange}
+        onChange={onFieldChange}
       />
+    </>
+  );
 
+  const OtherLocaleFields = () => (
+    <>
       {numberOfLocales > MANAGABLE_NUMBER_OF_LOCALES && (
         <Fragment>
           <Modal isShown={isModalShown} onClose={() => setIsModalShown(false)}>
@@ -177,9 +165,39 @@ const InitialValueTabComponent = ({
           key={locale.code}
           locale={locale}
           locales={locales}
-          onChange={onChange}
+          onChange={onFieldChange}
         />
       ))}
+    </>
+  );
+
+  const numberOfLocales = locales.length;
+  const initialValueForDefaultLocale =
+    fields.initialValue?.value && fields.initialValue.value[defaultLocale.code] !== undefined
+      ? fields.initialValue.value[defaultLocale.code]
+      : undefined;
+  const otherLocalesHaveValues =
+    fields.initialValue?.value &&
+    Object.keys(fields.initialValue.value)
+      .filter((localeCode) => localeCode !== defaultLocale.code)
+      .some((localeCode) => fields.initialValue?.value[localeCode] !== undefined);
+
+  const applyValueToOtherLocales = (value: unknown) => {
+    const payload = fields.initialValue?.value ?? {};
+
+    for (const locale of otherLocales) {
+      payload[locale.code] = value;
+    }
+
+    onFieldChange('initialValue', payload);
+  };
+
+  return (
+    <Flex flexDirection="column">
+      {errors.length > 0 && <ErrorNote />}
+      <StyleTagHidingMarkdownEditorAssetButton />
+      <DefaultLocaleField />
+      {ctField.localized && <OtherLocaleFields />}
     </Flex>
   );
 };

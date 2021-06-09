@@ -5,6 +5,7 @@ import {
   ContentFields,
   EditorInterfaceProps,
   Control,
+  LocaleProps,
 } from 'contentful-management/types';
 
 export type Entry = EntryProps;
@@ -14,3 +15,4 @@ export type ContentType = ContentTypeProps;
 export type ContentTypeField = ContentFields;
 export type EditorInterface = EditorInterfaceProps;
 export type EditorInterfaceControl = Control;
+export type Locale = LocaleProps;
