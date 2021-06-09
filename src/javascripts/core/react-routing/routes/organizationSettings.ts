@@ -427,23 +427,6 @@ const organizationUserDetailsRoute = {
 };
 
 /**
- * New organization
- */
-
-type NewOrganizationType = {
-  path: 'account.new_organization';
-};
-
-const newOrganizationRoute = {
-  'account.new_organization': () => ({
-    path: 'account.new_organization',
-    params: {
-      pathname: `/`,
-    },
-  }),
-};
-
-/**
  * StartTrial
  */
 
@@ -458,11 +441,27 @@ type StartTrialType = {
 
 const startTrialRoute = {
   'account.organizations.start_trial': (_, params: Omit<StartTrialType, 'path'>) => ({
-    path: 'account.organizations.start_trial',
+    path: 'account.organizations',
     params: {
-      pathname: '/',
-      orgId: params.orgId,
+      pathname: `/${params.orgId}/start_trial`,
       navigationState: params.navigationState,
+    },
+  }),
+};
+
+/**
+ * New organization
+ */
+
+type NewOrganizationType = {
+  path: 'account.new_organization';
+};
+
+const newOrganizationRoute = {
+  'account.new_organization': () => ({
+    path: 'account.new_organization',
+    params: {
+      pathname: `/`,
     },
   }),
 };
