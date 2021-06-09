@@ -290,7 +290,7 @@
     "dev-production": "NODE_ENV=development UI_CONFIG=dev-on-production webpack serve",
     "dev-localhost": "NODE_ENV=development UI_CONFIG=localhost webpack serve",
     "cypress": "npm run clean-logs-pacts && npx cypress open",
-    "smoke-staging": "SMOKE_TEST_DOMAIN='flinkly.com' npm run smoke",
+    "smoke-staging": "SMOKE_TEST_ENVIRONMENT=staging npm run smoke",
     "smoke": "npx cypress open --config-file ./cypress-smoke.json",
     "smoke:report": "npx ts-node --transpile-only ./tools/bin/report-smoke-test-telemetry.ts",
     "lint": "eslint src test tools --ext '.ts,.tsx,.js,.jsx' --quiet",
