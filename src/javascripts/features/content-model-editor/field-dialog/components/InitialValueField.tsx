@@ -88,7 +88,6 @@ const useFieldAPI = ({
             fields.initialValue = {};
           }
 
-          // todo: create this initialValue object if it's undefined
           onChange('initialValue', payload);
           emitter.emit('valueChanged', value);
         },
@@ -148,16 +147,20 @@ const InitialValueField = ({
     onChange,
   });
 
-  const Customfield = () => {
-    return <Field sdk={sdk} widgetId={instance?.widgetId || undefined} />;
-  };
+  const customfield = (
+    <Field
+      key={`initialvaluefield_${locale.code}`}
+      sdk={sdk}
+      widgetId={instance?.widgetId || undefined}
+    />
+  );
 
   return isLocalized ? (
     <FieldWrapper className={css({ marginLeft: 0, marginRight: 0 })} sdk={sdk} name={locale.name}>
-      <Customfield />
+      {customfield}
     </FieldWrapper>
   ) : (
-    <Customfield />
+    customfield
   );
 };
 
