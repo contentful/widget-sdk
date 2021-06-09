@@ -4,7 +4,6 @@ import { getCMAClient } from 'core/services/usePlainCMAClient';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import OnboardingModal from './OnboardingModal';
 import { router } from 'core/react-routing';
-
 import {
   track,
   markSpace,
@@ -12,6 +11,7 @@ import {
   createManagementToken,
   MODERN_STACK_ONBOARDING_SPACE_NAME,
 } from './CreateModernOnboardingUtils';
+import { BLANK_SPACE_NAME } from 'features/onboarding';
 
 const DEFAULT_LOCALE = 'en-US';
 
@@ -100,7 +100,7 @@ async function createBlankSpace({ closeModal, orgId, markOnboarding }) {
       organizationId: orgId,
     },
     {
-      name: 'Blank space',
+      name: BLANK_SPACE_NAME,
       defaultLocale: DEFAULT_LOCALE,
     }
   );

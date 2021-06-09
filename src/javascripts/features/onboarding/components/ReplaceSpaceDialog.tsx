@@ -21,8 +21,7 @@ import { ReactRouterLink } from 'core/react-routing';
 import { getCMAClient } from 'core/services/usePlainCMAClient';
 import * as TokenStore from 'services/TokenStore';
 import { track } from 'analytics/Analytics';
-
-const NEW_SPACE_NAME = 'New space';
+import { BLANK_SPACE_NAME } from '../utils/util';
 
 const styles = {
   header: css({
@@ -75,7 +74,7 @@ export const ReplaceSpaceDialog = ({ isShown, onConfirm, onClose, spaceId }: Pro
           organizationId,
         },
         {
-          name: NEW_SPACE_NAME,
+          name: BLANK_SPACE_NAME,
         }
       );
       await TokenStore.refresh();

@@ -92,11 +92,20 @@ export const AdminSpaceHome = ({
           </Heading>
           {!isTrialSpace && (
             <>
-              {isNewOnboardingEnabled || isRecoverableOnboardingEnabled ? (
-                <Subheading className={styles.description}>
-                  Use this blank space to build it your way from scratch.
-                </Subheading>
-              ) : (
+              {(isNewOnboardingEnabled || isRecoverableOnboardingEnabled) && (
+                <>
+                  {isEmptySpace ? (
+                    <Subheading className={styles.description}>
+                      Use this blank space to build it your way from scratch.
+                    </Subheading>
+                  ) : (
+                    <Subheading className={styles.description}>
+                      Use this pre-built space to place your content.
+                    </Subheading>
+                  )}
+                </>
+              )}
+              {!isNewOnboardingEnabled && !isRecoverableOnboardingEnabled && (
                 <Subheading className={styles.description}>
                   Use this space to create and publish content with others from your organization.
                   <br />
