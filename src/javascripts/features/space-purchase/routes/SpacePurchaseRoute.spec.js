@@ -25,9 +25,7 @@ import {
   getSpaceProductRatePlans,
 } from 'features/pricing-entities';
 import { getPlansWithSpaces } from 'account/pricing/PricingDataProvider';
-// eslint-disable-next-line no-restricted-imports
-import { MemoryRouter } from 'react-router-dom';
-import { router } from 'core/react-routing';
+import { MemoryRouter, router } from 'core/react-routing';
 
 const mockOrganization = FakeFactory.Organization();
 const mockSpace = FakeFactory.Space();

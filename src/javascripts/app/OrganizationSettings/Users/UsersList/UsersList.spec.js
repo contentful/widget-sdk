@@ -10,11 +10,11 @@ import {
   getMemberships,
   reinvite,
 } from 'access_control/OrganizationMembershipRepository';
-import { LocationStateContext, LocationDispatchContext } from 'core/services/LocationContext';
 import { getOrganization } from 'services/TokenStore';
 import { getBasePlan } from 'features/pricing-entities';
 import { THRESHOLD_NUMBER_TO_DISPLAY_BANNER } from './UserLimitBanner';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'core/react-routing';
 
 const filters = generateFilterDefinitions({ hasSsoEnabled: true });
 
@@ -47,8 +47,7 @@ jest.mock('services/TokenStore', () => ({
   getOrganization: jest.fn(() => mockOrg),
 }));
 jest.mock('account/pricing/PricingDataProvider', () => ({
-  isFreePlan: jest.fn((org) => org.customerType === 'Free'),
-  isSelfServicePlan: jest.fn((org) => org.customerType === 'Self-service'),
+  isFreePlan: jest.fn().mockReturnValue(true),
 }));
 jest.mock('access_control/OrganizationMembershipRepository', () => ({
   getMemberships: jest.fn(async () => ({ items: mockOrgMemberships, total: 13 })), //mock bigger total to test pagination
@@ -61,26 +60,18 @@ jest.mock('features/pricing-entities', () => ({
 
 jest.useFakeTimers();
 
-const locationValueWithSearch = { search: '?order=-sys.createdAt&sys.status=pending' };
-const locationValueWithSSO = {
-  search: '?order=-sys.createdAt&sys.sso.lastSignInAt%5Bexists%5D=true',
-};
-const updateLocation = jest.fn();
-
-async function build(locationValue = {}) {
+async function build() {
   render(
-    <LocationStateContext.Provider value={locationValue}>
-      <LocationDispatchContext.Provider value={updateLocation}>
-        <UsersList
-          orgId={mockOrg.sys.id}
-          spaceRoles={[spaceRoleOne, spaceRoleTwo]}
-          spaces={[spaceOne, spaceTwo]}
-          teams={[]}
-          hasSsoEnabled={true}
-          hasTeamsFeature={false}
-        />
-      </LocationDispatchContext.Provider>
-    </LocationStateContext.Provider>
+    <MemoryRouter>
+      <UsersList
+        orgId={mockOrg.sys.id}
+        spaceRoles={[spaceRoleOne, spaceRoleTwo]}
+        spaces={[spaceOne, spaceTwo]}
+        teams={[]}
+        hasSsoEnabled={true}
+        hasTeamsFeature={false}
+      />
+    </MemoryRouter>
   );
 
   return waitFor(() =>
@@ -112,61 +103,7 @@ describe('UsersList', () => {
       mockOrgMemberships.length
     );
   });
-  it('should call updateLocation and getMemberships with correct args when filters change', async () => {
-    await build(locationValueWithSearch);
-    //user sets status filter to Invited
-    const selectEl = screen.getAllByTestId('search-filter.options');
-    fireEvent.change(selectEl[1], {
-      target: {
-        value: 'pending',
-      },
-    });
-    expect(updateLocation).toHaveBeenCalledWith({
-      order: '-sys.createdAt',
-      'sys.status': 'pending',
-    });
-    expect(getMemberships).toHaveBeenCalledWith(mockOrgEndpoint, {
-      order: '-sys.createdAt',
-      'sys.status': 'pending',
-      query: '',
-      include: ['sys.user'],
-      skip: 0,
-      limit: 10,
-    });
-    await screen.findAllByTestId('organization-membership-list-row');
-  });
-  it('should call updateLocation and getMemberships with correct args when filters with operator change', async () => {
-    await build(locationValueWithSSO);
-    //user sets SSO filter to Has logged in
-    const selectEl = screen.getAllByTestId('search-filter.options');
-    fireEvent.change(selectEl[5], {
-      target: {
-        value: 'true',
-      },
-    });
-    expect(updateLocation).toHaveBeenCalledWith({
-      order: '-sys.createdAt',
-      'sys.sso.lastSignInAt[exists]': 'true',
-    });
-    expect(getMemberships).toHaveBeenCalledWith(mockOrgEndpoint, {
-      order: '-sys.createdAt',
-      'sys.sso.lastSignInAt[exists]': 'true',
-      query: '',
-      include: ['sys.user'],
-      skip: 0,
-      limit: 10,
-    });
-    await screen.findAllByTestId('organization-membership-list-row');
-  });
-  it('should call clear filters on click reset', async () => {
-    await build(locationValueWithSearch);
-    getMemberships.mockClear();
-    //user resets filters
-    expect(screen.getByText('Clear filters')).toBeVisible();
-    fireEvent.click(screen.getByText('Clear filters'));
-    expect(updateLocation).toHaveBeenCalledWith({});
-    await screen.findAllByTestId('organization-membership-list-row');
-  });
+
   it('should get users with correct query when pagination changes', async () => {
     await build({});
     const query = {
@@ -222,7 +159,7 @@ describe('UsersList', () => {
     });
 
     it('should show it when the user is in a Free plan', async () => {
-      getOrganization.mockReturnValue(fake.Organization({ pricingVersion: 'pricing_version_2' }));
+      getOrganization.mockReturnValue(fake.Organization());
       getBasePlan.mockReturnValue(fake.Plan({ customerType: 'Free' }));
 
       await build();
@@ -231,7 +168,7 @@ describe('UsersList', () => {
     });
 
     it('should show it when the user is in a Self Service plan and reached the limit of users', async () => {
-      getOrganization.mockReturnValue(fake.Organization({ pricingVersion: 'pricing_version_2' }));
+      getOrganization.mockReturnValue(fake.Organization());
       getMemberships.mockReturnValue({
         items: getMockUsers(THRESHOLD_NUMBER_TO_DISPLAY_BANNER),
         total: 13,

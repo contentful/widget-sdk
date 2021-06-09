@@ -24,7 +24,7 @@ import {
   reinvite,
 } from 'access_control/OrganizationMembershipRepository';
 import RemoveUserConfirmation from '../RemoveUserDialog';
-import { router } from 'core/react-routing';
+import { useRouteNavigate } from 'core/react-routing';
 
 const styles = {
   row: css({
@@ -54,6 +54,7 @@ const styles = {
 };
 
 export default function UserAttributes({ membership, isSelf, isOwner, onRoleChange, orgId }) {
+  const routeNavigate = useRouteNavigate();
   const lastActiveAt = getLastActivityDate(membership);
   const memberSince = moment(membership.sys.createdAt, moment.ISO_8601).format('MMMM DD, YYYY');
   const invitedBy = getUserName(membership.sys.createdBy);
@@ -112,7 +113,7 @@ export default function UserAttributes({ membership, isSelf, isOwner, onRoleChan
     if (isSelf) {
       window.location.reload();
     } else {
-      router.navigate({ path: 'organizations.users.list', orgId });
+      routeNavigate({ path: 'organizations.users.list', orgId });
     }
 
     const message = user.firstName

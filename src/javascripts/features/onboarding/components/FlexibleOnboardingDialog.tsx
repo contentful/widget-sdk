@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, IconButton, Flex, ModalLauncher } from '@contentful/forma-36-react-components';
+import { Modal, IconButton, Flex } from '@contentful/forma-36-react-components';
 import { Choices, DeveloperChoiceDialog } from './DeveloperChoiceDialog';
 import { track } from 'analytics/Analytics';
 import { SampleSpaceDialog } from './SampleSpaceDialog';
@@ -8,9 +8,9 @@ import {
   MODERN_STACK_ONBOARDING_SPACE_NAME,
   unmarkSpace,
 } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
-import { BLANK_SPACE_NAME, renameSpace } from '../utils/util';
+import { BLANK_SPACE_NAME, markExploreOnboardingSeen, renameSpace } from '../utils/util';
 import { router } from 'core/react-routing';
-import { ReplaceSpaceDialog } from './ReplaceSpaceDialog';
+import { showReplaceSpaceWarning } from './ReplaceSpaceDialog';
 
 enum Views {
   DEVELOPER_CHOICE_MODAL = 'developerChoice',
@@ -35,19 +35,15 @@ export const FlexibleOnboardingDialog = ({
     setModalShown(Views.DEVELOPER_CHOICE_MODAL);
   };
 
-  const showReplaceSpaceWarning = async (onConfirm) => {
-    await ModalLauncher.open(({ onClose }) => (
-      <ReplaceSpaceDialog isShown onConfirm={onConfirm} onClose={onClose} spaceId={spaceId} />
-    ));
-  };
-
   const handleEmptyChoice = async (spaceId) => {
+    !replaceSpace && markExploreOnboardingSeen();
     unmarkSpace();
     renameSpace(BLANK_SPACE_NAME, spaceId);
     router.navigate({ path: 'content_types.list', spaceId });
   };
 
   const handleGatsbyChoice = async (spaceId) => {
+    !replaceSpace && markExploreOnboardingSeen();
     markSpace(spaceId);
     renameSpace(MODERN_STACK_ONBOARDING_SPACE_NAME, spaceId);
     router.navigate({
@@ -61,11 +57,7 @@ export const FlexibleOnboardingDialog = ({
     switch (choice) {
       case Choices.GATSBY_BLOG_OPTION:
         onClose();
-        if (replaceSpace) {
-          showReplaceSpaceWarning(handleGatsbyChoice);
-        } else {
-          handleGatsbyChoice(spaceId);
-        }
+        handleGatsbyChoice(spaceId);
         return;
       case Choices.SAMPLE_SPACE_OPTION:
         setModalShown(Views.SAMPLE_SPACE_MODAL);
@@ -73,7 +65,7 @@ export const FlexibleOnboardingDialog = ({
       case Choices.EMPTY_SPACE_OPTION:
         onClose();
         if (replaceSpace) {
-          showReplaceSpaceWarning(handleEmptyChoice);
+          showReplaceSpaceWarning(spaceId, handleEmptyChoice);
         } else {
           handleEmptyChoice(spaceId);
         }
@@ -86,7 +78,7 @@ export const FlexibleOnboardingDialog = ({
   return (
     <Modal
       isShown={isShown}
-      testId="developer-choice-modal"
+      testId="flexible-onboarding-modal"
       size="1500"
       onClose={onClose}
       shouldCloseOnOverlayClick>

@@ -1,4 +1,4 @@
-export { billingRoutingState } from './routes';
+export { BillingRouter } from './routes';
 export { ZuoraCreditCardIframe } from './components/ZuoraCreditCardIframe';
 export { BillingDetailsForm } from './components/BillingDetailsForm';
 export { createBillingDetails, getBillingDetails } from './services/BillingDetailsService';

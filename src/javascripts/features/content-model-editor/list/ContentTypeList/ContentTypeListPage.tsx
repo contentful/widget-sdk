@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   Heading,
   Note,
@@ -21,7 +21,7 @@ import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { css } from 'emotion';
 import ExternalTextLink from 'app/common/ExternalTextLink';
-import { getResourceLimits, isLegacyOrganization } from 'utils/ResourceUtils';
+import { getResourceLimits } from 'utils/ResourceUtils';
 import { CTA_EVENTS, trackTargetedCTAClick } from 'analytics/trackCTA';
 import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
@@ -30,9 +30,9 @@ import createResourceService from 'services/ResourceService';
 import { useAsync } from 'core/hooks';
 import { debounce } from 'lodash';
 import qs from 'qs';
-import { LocationDispatchContext, LocationStateContext } from 'core/services/LocationContext';
 import tokens from '@contentful/forma-36-tokens';
 import type { Organization } from 'classes/spaceContextTypes';
+import { useLegacyQueryParams } from 'core/react-routing/useLegacyQueryParams';
 
 const styles = {
   banner: css({
@@ -59,9 +59,8 @@ export function ContentTypeListPage({
   currentOrganization,
   currentOrganizationId,
 }: Props) {
-  const updateLocation = useContext(LocationDispatchContext);
-  const locationValue = useContext(LocationStateContext);
-  const queryValues = locationValue.search ? qs.parse(locationValue.search.slice(1)) : {};
+  const { searchQuery, updateSearchQuery } = useLegacyQueryParams();
+  const queryValues = searchQuery ? qs.parse(searchQuery.slice(1)) : {};
   const [searchTerm, setSearchTerm] = useState(queryValues ? queryValues.searchTerm : null);
   const [status, setStatus] = useState(undefined);
 
@@ -73,10 +72,9 @@ export function ContentTypeListPage({
 
     const promisesArray = [service.fetchContentTypes()];
     const isOrgAdminOrOwner = isOwnerOrAdmin(currentOrganization);
-    const orgIsLegacy = isLegacyOrganization(currentOrganization);
 
-    // Only want to make this fetch if isNewPricingReleased.
-    if (!orgIsLegacy && isOrgAdminOrOwner) {
+    // fetch only if admin or owner
+    if (isOrgAdminOrOwner) {
       promisesArray.push(
         Promise.race([
           Promise.all([
@@ -119,7 +117,7 @@ export function ContentTypeListPage({
   const debouncedSearch = useCallback(
     debounce<(term: string) => void>((searchTerm) => {
       setSearchTerm(searchTerm);
-      updateLocation({ searchTerm });
+      updateSearchQuery({ searchTerm });
     }, 200),
     []
   );

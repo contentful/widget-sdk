@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import UserDetails from './UserDetails';
 import OrgAdminOnly from 'app/common/OrgAdminOnly';
-import { ReactRouterRedirect } from 'core/react-routing';
+import { RouteNavigate } from 'core/react-routing';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import createFetcherComponent, { FetcherLoading } from 'app/common/createFetcherComponent';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
@@ -66,7 +66,7 @@ export default class UserDetailRoute extends React.Component {
             }
             if (isError) {
               captureError(error);
-              return <ReactRouterRedirect route={{ path: 'organizations.users.list', orgId }} />;
+              return <RouteNavigate route={{ path: 'organizations.users.list', orgId }} replace />;
             }
             const user = data.initialMembership.sys.user;
 

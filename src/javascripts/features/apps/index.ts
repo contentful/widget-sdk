@@ -1,6 +1,6 @@
 export { ManagementApiClient } from './management/ManagementApiClient';
 export { appRoute } from './routes';
-export { orgAppsRoute } from './routes/OrganizationAppsRouter';
+export { OrganizationAppsRouter } from './routes/OrganizationAppsRouter';
 export { renderAppsNavigationItem } from './AppsNavigationItem';
 export { formatPastDate, base64ToHex } from './management/util';
 

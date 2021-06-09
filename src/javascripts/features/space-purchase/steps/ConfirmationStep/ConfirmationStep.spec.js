@@ -1,11 +1,12 @@
+import React from 'react';
 import userEvent from '@testing-library/user-event';
 import { screen } from '@testing-library/react';
 import * as Fake from 'test/helpers/fakeFactory';
 import { EVENTS } from '../../utils/analyticsTracking';
 import { setUser } from 'services/OrganizationRoles';
-import { router } from 'core/react-routing';
 import { ConfirmationStep } from './ConfirmationStep';
 import { renderWithProvider } from '../../__tests__/helpers';
+import { MemoryRouter } from 'core/react-routing';
 
 const mockOrganization = Fake.Organization();
 const mockOrgOwner = Fake.User({
@@ -32,12 +33,6 @@ const mockPaymentMethod = {
   number: '************1111',
   expirationDate: { month: 3, year: 2021 },
 };
-
-jest.mock('core/react-routing', () => ({
-  router: {
-    navigate: jest.fn(),
-  },
-}));
 
 describe('ConfirmationStep', () => {
   beforeEach(() => {
@@ -82,11 +77,6 @@ describe('ConfirmationStep', () => {
     expect(track).toHaveBeenCalledWith(EVENTS.INTERNAL_LINK_CLICKED, {
       state: 'account.organizations.billing',
       intent: 'edit_billing',
-    });
-
-    expect(router.navigate).toHaveBeenCalledWith({
-      path: 'organizations.billing',
-      orgId: mockOrganization.sys.id,
     });
   });
 
@@ -133,7 +123,11 @@ async function build(customProps, customState) {
   };
 
   await renderWithProvider(
-    ConfirmationStep,
+    () => (
+      <MemoryRouter>
+        <ConfirmationStep {...props} />
+      </MemoryRouter>
+    ),
     {
       organization: mockOrganization,
       selectedPlan: mockSelectedPlan,

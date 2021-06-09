@@ -13,7 +13,6 @@ import { Space as SpacePropType } from 'app/OrganizationSettings/PropTypes';
 import { isFreePlan, isSelfServicePlan } from 'account/pricing/PricingDataProvider';
 import { getBasePlan } from 'features/pricing-entities';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
@@ -45,22 +44,12 @@ export function UserLimitBanner({ orgId, spaces }) {
       const users = await getMemberships(endpoint);
       setUsersCount(users.total);
 
-      // If the base plan can't be fetched (for v1), we can just consider it
-      // not free, since the community banner shouldn't show in this case
-      // anyway.
-      let basePlan = null;
+      const basePlan = await getBasePlan(endpoint);
 
-      if (!isLegacyOrganization(organization)) {
-        basePlan = await getBasePlan(endpoint);
-
-        if (isFreePlan(basePlan)) {
-          setShouldShowCommunityBanner(true);
-        } else if (
-          isSelfServicePlan(basePlan) &&
-          users.total >= THRESHOLD_NUMBER_TO_DISPLAY_BANNER
-        ) {
-          setShouldShowSelfServiceBanner(true);
-        }
+      if (isFreePlan(basePlan)) {
+        setShouldShowCommunityBanner(true);
+      } else if (isSelfServicePlan(basePlan) && users.total >= THRESHOLD_NUMBER_TO_DISPLAY_BANNER) {
+        setShouldShowSelfServiceBanner(true);
       }
 
       setBasePlan(basePlan);

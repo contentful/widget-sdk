@@ -1,5 +1,4 @@
 import { MemoryRouter, useLocation } from 'react-router-dom';
-
 import { getModule } from 'core/NgRegistry';
 import * as React from 'react';
 
@@ -13,7 +12,11 @@ function SyncState({ splitter }: { splitter: string }) {
 
     $state.transitionTo(
       $state.current,
-      { ...$stateParams, navigationState: null, pathname: path.split(splitter)[1] },
+      {
+        ...$stateParams,
+        navigationState: null,
+        pathname: path.split(splitter)[1],
+      },
       { reload: false, inherit: true, notify: false, location: true }
     );
   }, [path, splitter]);
@@ -24,9 +27,11 @@ function SyncState({ splitter }: { splitter: string }) {
 export function CustomRouter({
   children,
   splitter,
+  disableSync,
 }: {
   children: JSX.Element | JSX.Element[];
   splitter: string;
+  disableSync?: boolean;
 }) {
   const $stateParams = getModule('$stateParams');
   return (
@@ -38,7 +43,7 @@ export function CustomRouter({
           state: $stateParams.navigationState,
         },
       ]}>
-      <SyncState splitter={splitter} />
+      {disableSync === true ? null : <SyncState splitter={splitter} />}
       {children}
     </MemoryRouter>
   );

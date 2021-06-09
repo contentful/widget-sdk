@@ -49,7 +49,6 @@ export function EnvironmentsSidebar({
   isLoading,
   canCreateEnv,
   resource,
-  isLegacyOrganization,
   canUpgradeSpace,
   OpenCreateDialog,
   OpenCreateAliasDialog,
@@ -128,9 +127,9 @@ export function EnvironmentsSidebar({
               You are using {usage}{' '}
               {limit ? `out of ${limit} environments available ` : pluralize('environment', usage)}{' '}
               in this space.
-              {!isLegacyOrganization && <UsageTooltip resource={resource} />}
+              <UsageTooltip resource={resource} />
             </Paragraph>
-            {!canCreateEnv && !isLegacyOrganization && (
+            {!canCreateEnv && (
               <Paragraph testId="upgradeMessage">
                 {!canUpgradeSpace &&
                   'Ask the administrator of your organization to upgrade the space plan.'}
@@ -151,7 +150,7 @@ export function EnvironmentsSidebar({
         </>
       )}
 
-      {!canCreateEnv && !isLegacyOrganization && canUpgradeSpace && loadedHasNextSpacePlan && (
+      {!canCreateEnv && canUpgradeSpace && loadedHasNextSpacePlan && (
         <TrackTargetedCTAImpression
           impressionType={
             hasNextSpacePlan ? CTA_EVENTS.UPGRADE_SPACE_PLAN : CTA_EVENTS.UPGRADE_TO_ENTERPRISE
@@ -207,7 +206,6 @@ export function EnvironmentsSidebar({
 EnvironmentsSidebar.propTypes = {
   canCreateEnv: PropTypes.bool,
   resource: PropTypes.object,
-  isLegacyOrganization: PropTypes.bool,
   customAliasesEnabled: PropTypes.bool,
   isLoading: PropTypes.bool,
   canUpgradeSpace: PropTypes.bool,

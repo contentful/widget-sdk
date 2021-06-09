@@ -8,7 +8,6 @@ import { Sidebar as SavedViewsSidebar } from './SavedViews/Sidebar';
 import { css } from 'emotion';
 import { Paginator } from 'core/components/Paginator';
 import RecordsResourceUsage from 'components/RecordsResourceUsage';
-import * as ResourceUtils from 'utils/ResourceUtils';
 import tokens from '@contentful/forma-36-tokens';
 import { noop } from 'lodash';
 import { NoSearchResultsAdvice } from 'core/components/NoSearchResultsAdvice';
@@ -88,7 +87,6 @@ export const EntitiesView = ({
   searchControllerProps,
   title,
   environmentId,
-  organization,
   isMasterEnvironment,
   space,
 }) => {
@@ -112,7 +110,6 @@ export const EntitiesView = ({
   });
   const isLoading = isTagsEnabledLoading || searchLoading;
   const pageCount = paginator.getPageCount();
-  const isLegacyOrganization = ResourceUtils.isLegacyOrganization(organization);
 
   const onSelect = useCallback(
     (page = 0) => {
@@ -203,14 +200,12 @@ export const EntitiesView = ({
                       count={paginator.getTotal()}
                       restOfTheMsg="found"
                     />
-                    {!isLegacyOrganization && (
-                      <RecordsResourceUsage
-                        className={styles.usageResults}
-                        space={space}
-                        environmentId={environmentId}
-                        isMasterEnvironment={isMasterEnvironment}
-                      />
-                    )}
+                    <RecordsResourceUsage
+                      className={styles.usageResults}
+                      space={space}
+                      environmentId={environmentId}
+                      isMasterEnvironment={isMasterEnvironment}
+                    />
                     {!hasNoSearchResults && renderEntityList(renderPropArgs)}
                   </Fragment>
                 )}
@@ -257,7 +252,6 @@ EntitiesView.propTypes = {
   renderSavedViewsActions: PropTypes.func.isRequired,
   renderTopContent: PropTypes.func.isRequired,
   environmentId: PropTypes.string.isRequired,
-  organization: PropTypes.object.isRequired,
   isMasterEnvironment: PropTypes.bool.isRequired,
   space: PropTypes.object.isRequired,
 };

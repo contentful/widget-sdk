@@ -13,7 +13,7 @@ import { StartAppTrialModal, useAppsTrial } from 'features/trials';
 import { PRESELECT_VALUES } from 'features/space-purchase';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 import { CancelAppsSubscriptionModal } from './CancelAppsSubscriptionModal';
-import { router } from 'core/react-routing';
+import { useRouteNavigate } from 'core/react-routing';
 
 const openCancelAppsSubscriptionModal = (organizationId, addOnPlan) => {
   return ModalLauncher.open(({ isShown, onClose }) => (
@@ -54,9 +54,10 @@ export function ContentfulApps({ organizationId, startAppTrial, addOnPlan }) {
   const { canStartTrial, isAppsTrialActive, hasAppsTrialExpired } = useAppsTrial(organizationId);
   const showStartTrialButton = canStartTrial;
   const showBuyButton = isAppsTrialActive || hasAppsTrialExpired;
+  const routeNavigate = useRouteNavigate();
 
   const showPurchase = () => {
-    router.navigate({
+    routeNavigate({
       path: 'organizations.subscription.new_space',
       orgId: organizationId,
       navigationState: {

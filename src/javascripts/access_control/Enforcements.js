@@ -1,7 +1,6 @@
 import { uncapitalize } from 'utils/StringUtils';
 import * as OrganizationRoles from 'services/OrganizationRoles';
 import { get, forEach } from 'lodash';
-import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { supportUrl } from 'Config';
 import * as Analytics from 'analytics/Analytics';
 import { router } from 'core/react-routing';
@@ -123,11 +122,7 @@ export function determineEnforcement(space, reasons, entityType) {
 
   function upgradeAction() {
     trackAction('Quota Increase');
-    if (isLegacyOrganization(organization)) {
-      router.navigate({ path: 'organizations.subscription_v1', orgId: organization.sys.id });
-    } else {
-      router.navigate({ path: 'organizations.subscription.overview', orgId: organization.sys.id });
-    }
+    router.navigate({ path: 'organizations.subscription.overview', orgId: organization.sys.id });
   }
 }
 

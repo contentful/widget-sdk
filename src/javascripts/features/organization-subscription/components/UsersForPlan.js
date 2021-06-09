@@ -4,10 +4,9 @@ import PropTypes from 'prop-types';
 import { Paragraph, TextLink, Heading } from '@contentful/forma-36-react-components';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import { Pluralized, Price } from 'core/components/formatting';
-import { ReactRouterLink } from 'core/react-routing';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import * as Config from 'Config';
-import { router } from 'core/react-routing';
+import { useRouteNavigate, RouteLink } from 'core/react-routing';
 import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 
 const ENTERPRISE_FREE_USER_COUNT = 10;
@@ -20,12 +19,14 @@ const withInAppHelpUtmParams = buildUrlWithUtmParams({
 });
 
 const AboveHardLimitWarning = ({ isFreePlan, hardLimit, organizationId }) => {
+  const routeNavigate = useRouteNavigate();
+
   const onUpgradeToTeam = () => {
     trackTargetedCTAClick(CTA_EVENTS.UPGRADE_TO_TEAM, {
       organizationId: organizationId,
     });
 
-    router.navigate(
+    routeNavigate(
       { path: 'organizations.subscription_billing', orgId: organizationId },
       { reload: true }
     );
@@ -41,13 +42,13 @@ const AboveHardLimitWarning = ({ isFreePlan, hardLimit, organizationId }) => {
     <>
       <Pluralized text="user" count={hardLimit} /> are included {isFreePlan ? 'free ' : null}with
       your subscription.{' '}
-      <ReactRouterLink
+      <RouteLink
         route={{ path: 'organizations.users.list', orgId: organizationId }}
         options={{ reload: true }}
-        component={TextLink}
+        as={TextLink}
         testId="subscription-page.org-memberships-link">
         Manage users
-      </ReactRouterLink>{' '}
+      </RouteLink>{' '}
       or{' '}
       {isFreePlan ? (
         <TrackTargetedCTAImpression
@@ -137,13 +138,13 @@ export function UsersForPlan({
         )}
         {isOnEnterpriseTrial && <EnterpriseTrialWarning numberFreeUsers={numberFreeUsers} />}
         {!isAboveHardLimit && (
-          <ReactRouterLink
+          <RouteLink
             route={{ path: 'organizations.users.list', orgId: organizationId }}
             options={{ reload: true }}
-            component={TextLink}
+            as={TextLink}
             testId="subscription-page.org-memberships-link">
             Manage users
-          </ReactRouterLink>
+          </RouteLink>
         )}
       </Paragraph>
     </div>

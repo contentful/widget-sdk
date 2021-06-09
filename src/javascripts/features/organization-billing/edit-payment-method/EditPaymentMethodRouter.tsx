@@ -47,7 +47,7 @@ const handleSuccess = async (organizationId, paymentMethodRefId) => {
 };
 
 export function EditPaymentMethodRouter({ orgId }: { orgId: string }) {
-  const navigate = useRouteNavigate();
+  const routeNavigate = useRouteNavigate();
 
   const [showZuoraIframe, setShowZuoraIframe] = useState(false);
 
@@ -56,9 +56,9 @@ export function EditPaymentMethodRouter({ orgId }: { orgId: string }) {
   const onSuccess = useCallback(
     ({ refId }) =>
       handleSuccess(orgId, refId).then(() => {
-        navigate({ path: 'organizations.billing', orgId });
+        routeNavigate({ path: 'organizations.billing', orgId });
       }),
-    [orgId, navigate]
+    [orgId, routeNavigate]
   );
 
   const onError = useCallback((error) => {
@@ -97,7 +97,7 @@ export function EditPaymentMethodRouter({ orgId }: { orgId: string }) {
                 organizationId={orgId}
                 onSuccess={onSuccess}
                 onCancel={() => {
-                  navigate({ path: 'organizations.billing', orgId });
+                  routeNavigate({ path: 'organizations.billing', orgId });
                 }}
                 onError={onError}
               />

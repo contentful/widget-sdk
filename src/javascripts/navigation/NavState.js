@@ -3,6 +3,7 @@ import { startsWith } from 'lodash';
 import * as K from 'core/utils/kefir';
 import { getOrganization } from 'services/TokenStore';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
+import { window } from 'core/services/window';
 const store = getBrowserStorage();
 
 /**
@@ -37,8 +38,14 @@ export async function updateNavState(state, params, { space, organization, envir
     getOrganization(orgId).then((org) => {
       navStateBus.set(NavStates.UserProfile(org));
     });
-  } else if (startsWith(state.name, 'account.organizations') && params.orgId) {
-    getOrganization(params.orgId).then((org) => {
+  } else if (startsWith(state.name, 'account.organizations')) {
+    const orgInUrl = window.location.pathname.split('/organizations/');
+    let orgId = store.get('lastUsedOrg');
+    if (orgInUrl) {
+      const path = orgInUrl[1];
+      orgId = path.split('/')[0];
+    }
+    getOrganization(orgId).then((org) => {
       navStateBus.set(NavStates.OrgSettings(org));
     });
   } else if (space) {

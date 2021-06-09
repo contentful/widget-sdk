@@ -7,14 +7,18 @@ import { AppDetailsStateProvider } from './AppDetails/AppDetailsStateContext';
 import { useRouteNavigate } from 'core/react-routing';
 
 export function NewAppRoute(props) {
-  const navigate = useRouteNavigate();
+  const routeNavigate = useRouteNavigate();
 
   function goToDefinition(definitionId) {
-    return navigate({ path: 'organizations.apps.definition', definitionId, orgId: props.orgId });
+    return routeNavigate({
+      path: 'organizations.apps.definition',
+      definitionId,
+      orgId: props.orgId,
+    });
   }
 
   function goToListView() {
-    return navigate({ path: 'organizations.apps.list', orgId: props.orgId });
+    return routeNavigate({ path: 'organizations.apps.list', orgId: props.orgId });
   }
 
   return (

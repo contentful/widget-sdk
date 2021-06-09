@@ -12,10 +12,16 @@ import { AddCoworkerCTA } from './components/AddCoworkerCTA';
 import { SpaceTrialWidget } from 'features/trials';
 import { ComposeAndLaunchCTA } from './components/ComposeAndLaunchCTA';
 import { ContentfulAppsCTA } from './components/ContentfulAppsCTA';
-import { NewOnboardingCTA, DiscoverOnboardingCTA } from 'features/onboarding';
+import {
+  NewOnboardingCTA,
+  DiscoverOnboardingCTA,
+  hasSeenExploreOnboarding,
+} from 'features/onboarding';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import { tracking } from 'analytics/Analytics';
+import { isOwnerOrAdmin } from 'services/OrganizationRoles';
+import { getOrganization } from 'services/TokenStore';
 
 export const AdminSpaceHome = ({
   spaceName,
@@ -62,13 +68,20 @@ export const AdminSpaceHome = ({
             : 'control',
         });
       }
+      const organization = await getOrganization(orgId);
+      const hasSeenOnboarding = await hasSeenExploreOnboarding();
 
-      setIsNewOnboardingEnabled(newOnboardingEnabled && newOnboardingExperimentVariation);
+      setIsNewOnboardingEnabled(
+        newOnboardingEnabled && newOnboardingExperimentVariation && !hasSeenOnboarding
+      );
       setIsRecoverableOnboardingEnabled(
-        recoverableOnboardingEnabled && newOnboardingExperimentVariation
+        recoverableOnboardingEnabled &&
+          newOnboardingExperimentVariation &&
+          isOwnerOrAdmin(organization) &&
+          hasSeenOnboarding
       );
     })();
-  }, [spaceContext]);
+  }, [spaceContext, orgId]);
 
   return (
     <WidgetContainer testId="admin-space-home">
@@ -78,11 +91,19 @@ export const AdminSpaceHome = ({
             Welcome to your <span className={styles.demiBold}>{spaceName}</span> space
           </Heading>
           {!isTrialSpace && (
-            <Subheading className={styles.description}>
-              Use this space to create and publish content with others from your organization.
-              <br />
-              Explore ways to get started below.
-            </Subheading>
+            <>
+              {isNewOnboardingEnabled || isRecoverableOnboardingEnabled ? (
+                <Subheading className={styles.description}>
+                  Use this blank space to build it your way from scratch.
+                </Subheading>
+              ) : (
+                <Subheading className={styles.description}>
+                  Use this space to create and publish content with others from your organization.
+                  <br />
+                  Explore ways to get started below.
+                </Subheading>
+              )}
+            </>
           )}
         </WidgetContainer.Col>
       </WidgetContainer.Row>
@@ -93,7 +114,7 @@ export const AdminSpaceHome = ({
         </WidgetContainer.Row>
       )}
 
-      {isRecoverableOnboardingEnabled && !isEmptySpace && (
+      {isRecoverableOnboardingEnabled && (
         <WidgetContainer.Row>
           <DiscoverOnboardingCTA spaceId={spaceId} />
         </WidgetContainer.Row>

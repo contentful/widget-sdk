@@ -11,7 +11,7 @@ import {
   InternalActionValues,
   InternalVariableValues,
 } from 'core/services/ContentfulCDA';
-import { ReactRouterLink } from 'core/react-routing';
+import { RouteLink } from 'core/react-routing';
 
 const styles = {
   list: css({
@@ -79,33 +79,31 @@ export const getCustomRenderNode = (
 
       if (fields.action === InternalActionValues.CHANGE_SPACE && options?.upgradableSpaceId) {
         return (
-          <ReactRouterLink
+          <RouteLink
             route={{
               path: 'organizations.subscription.upgrade_space',
               orgId,
               spaceId: options.upgradableSpaceId,
             }}
-            component={TextLink}>
+            as={TextLink}>
             {fields.label}
-          </ReactRouterLink>
+          </RouteLink>
         );
       }
 
       if (fields.action === InternalActionValues.MANAGE_USERS) {
         return (
-          <ReactRouterLink component={TextLink} route={{ path: 'organizations.users.list', orgId }}>
+          <RouteLink as={TextLink} route={{ path: 'organizations.users.list', orgId }}>
             {fields.label}
-          </ReactRouterLink>
+          </RouteLink>
         );
       }
 
       if (fields.action === InternalActionValues.ADD_SPACE) {
         return (
-          <ReactRouterLink
-            route={{ path: 'organizations.subscription.new_space', orgId }}
-            component={TextLink}>
+          <RouteLink route={{ path: 'organizations.subscription.new_space', orgId }} as={TextLink}>
             {fields.label}
-          </ReactRouterLink>
+          </RouteLink>
         );
       }
 

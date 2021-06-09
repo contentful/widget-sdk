@@ -11,10 +11,9 @@ type OrganizationUsageRouteType = {
 
 const organizationsUsageRoute = {
   'organizations.usage': (_, { orgId }: Omit<OrganizationUsageRouteType, 'path'>) => ({
-    path: 'account.organizations.usage',
+    path: 'account.organizations',
     params: {
-      pathname: '/',
-      orgId,
+      pathname: `/${orgId}/usage`,
     },
   }),
 };
@@ -30,10 +29,9 @@ type OrganizationEditRouteType = {
 
 const organizationsEditRoute = {
   'organizations.edit': (_, { orgId }: Omit<OrganizationEditRouteType, 'path'>) => ({
-    path: 'account.organizations.edit',
+    path: 'account.organizations',
     params: {
-      pathname: '/',
-      orgId,
+      pathname: `/${orgId}/edit`,
     },
   }),
 };
@@ -49,10 +47,9 @@ type OrganizationSpacesRouteType = {
 
 const organizationsSpacesRoute = {
   'organizations.spaces': (_, { orgId }: Omit<OrganizationSpacesRouteType, 'path'>) => ({
-    path: 'account.organizations.spaces',
+    path: 'account.organizations',
     params: {
-      pathname: '/',
-      orgId,
+      pathname: `/${orgId}/spaces`,
     },
   }),
 };
@@ -71,10 +68,9 @@ const organizationsOffisiteBackupRoute = {
     _,
     { orgId }: Omit<OrganizationOffisiteBackupRouteType, 'path'>
   ) => ({
-    path: 'account.organizations.offsitebackup',
+    path: 'account.organizations',
     params: {
-      pathname: '/',
-      orgId,
+      pathname: `/${orgId}/offsite_backup/edit`,
     },
   }),
 };
@@ -93,10 +89,9 @@ const organizationsSubscriptionV1Route = {
     _,
     { orgId }: Omit<OrganizationSubscriptionV1RouteType, 'path'>
   ) => ({
-    path: 'account.organizations.subscription',
+    path: 'account.organizations',
     params: {
-      pathname: '/',
-      orgId,
+      pathname: `/${orgId}/z_subscription`,
     },
   }),
 };
@@ -115,10 +110,9 @@ const organizationsSubscriptionBillingRoute = {
     _,
     { orgId }: Omit<OrganizationSubscriptionBillingRouteType, 'path'>
   ) => ({
-    path: 'account.organizations.subscription_billing',
+    path: 'account.organizations',
     params: {
-      pathname: '/billing_address',
-      orgId,
+      pathname: `/${orgId}/subscription/billing_address`,
     },
   }),
 };
@@ -139,20 +133,18 @@ type OrganizationBillingEditPaymentRouteType = {
 
 const organizationsBillingRoute = {
   'organizations.billing': (_, { orgId }: Omit<OrganizationBillingRouteType, 'path'>) => ({
-    path: 'account.organizations.billing',
+    path: 'account.organizations',
     params: {
-      pathname: '/',
-      orgId,
+      pathname: `/${orgId}/billing`,
     },
   }),
   'organizations.billing.edit-payment-method': (
     _,
     { orgId }: Omit<OrganizationBillingEditPaymentRouteType, 'path'>
   ) => ({
-    path: 'account.organizations.billing',
+    path: 'account.organizations',
     params: {
-      pathname: '/edit_payment_method',
-      orgId,
+      pathname: `/${orgId}/billing/edit_payment_method`,
     },
   }),
 };
@@ -176,9 +168,9 @@ const organizationsAccessToolsRoutes = {
     _,
     { orgId }: Omit<OrganizationsAccessToolsUserProvisioningRouteType, 'path'>
   ) => ({
-    path: 'account.organizations.access-tools',
+    path: 'account.organizations',
     params: {
-      pathname: '/user_provisioning',
+      pathname: `/${orgId}/access_tools/user_provisioning`,
       orgId,
     },
   }),
@@ -186,10 +178,9 @@ const organizationsAccessToolsRoutes = {
     _,
     { orgId }: Omit<OrganizationsAccessToolsSSORouteType, 'path'>
   ) => ({
-    path: 'account.organizations.access-tools',
+    path: 'account.organizations',
     params: {
-      pathname: '/sso',
-      orgId,
+      pathname: `/${orgId}/access_tools/sso`,
     },
   }),
 };
@@ -211,20 +202,18 @@ type OrganizationsTeamsRouteType =
 
 const organizationsTeamsRoutes = {
   'organizations.teams': (_, { orgId }: Omit<OrganizationsTeamsListRouteType, 'path'>) => ({
-    path: 'account.organizations.teams',
+    path: 'account.organizations',
     params: {
-      pathname: '/',
-      orgId,
+      pathname: `/${orgId}/teams`,
     },
   }),
   'organizations.teams.detail': (
     _,
     { orgId, teamId }: Omit<OrganizationsTeamsDetailRouteType, 'path'>
   ) => ({
-    path: 'account.organizations.teams',
+    path: 'account.organizations',
     params: {
-      pathname: `/${teamId}`,
-      orgId,
+      pathname: `/${orgId}/teams/${teamId}`,
     },
   }),
 };
@@ -252,30 +241,27 @@ type OrganizationAppsDefinitionRouteType = {
 
 const organizationAppsRoute = {
   'organizations.apps.list': (_, { orgId }: Omit<OrganizationAppsListRouteType, 'path'>) => ({
-    path: 'account.organizations.apps',
+    path: 'account.organizations',
     params: {
-      pathname: '/',
-      orgId,
+      pathname: `/${orgId}/apps`,
     },
   }),
   'organizations.apps.new_definition': (
     _,
     { orgId }: Omit<OrganizationAppsNewDefinitionRouteType, 'path'>
   ) => ({
-    path: 'account.organizations.apps',
+    path: 'account.organizations',
     params: {
-      pathname: '/new_definition',
-      orgId,
+      pathname: `/${orgId}/apps/new_definition`,
     },
   }),
   'organizations.apps.definition': (
     _,
     { orgId, definitionId, tab = 'general' }: Omit<OrganizationAppsDefinitionRouteType, 'path'>
   ) => ({
-    path: 'account.organizations.apps',
+    path: 'account.organizations',
     params: {
-      pathname: `/definitions/${definitionId}/${tab}`,
-      orgId,
+      pathname: `/${orgId}/apps/definitions/${definitionId}/${tab}`,
     },
   }),
 };
@@ -291,10 +277,9 @@ type OrganisationInvitationType = {
 
 const organisationInvitationRoute = {
   'organizations.users.invite': (_, { orgId }: Omit<OrganisationInvitationType, 'path'>) => ({
-    path: 'account.organizations.invite',
+    path: 'account.organizations',
     params: {
-      pathname: '/',
-      orgId,
+      pathname: `/${orgId}/invite`,
     },
   }),
 };
@@ -306,13 +291,17 @@ const organisationInvitationRoute = {
 type OrganizationMembershipsListType = {
   path: 'organizations.users.list';
   orgId: string;
+  search?: { [key: string]: unknown };
 };
 
 const organizationMembershipsListRoute = {
-  'organizations.users.list': (_, { orgId }: Omit<OrganizationMembershipsListType, 'path'>) => ({
-    path: 'account.organizations.users',
+  'organizations.users.list': (
+    _,
+    { orgId, search }: Omit<OrganizationMembershipsListType, 'path'>
+  ) => ({
+    path: 'account.organizations',
     params: {
-      pathname: '/',
+      pathname: withQueryParams(`/${orgId}/organization_memberships`, search),
       orgId,
     },
   }),
@@ -369,10 +358,9 @@ const organizationsSubscriptionRoutes = {
     _,
     { orgId, navigationState }: Omit<OrganizationsSubscriptionNewSpaceRoute, 'path'>
   ) => ({
-    path: 'account.organizations.subscription_new.new_space',
+    path: 'account.organizations',
     params: {
-      pathname: '/',
-      orgId,
+      pathname: `/${orgId}/new_space`,
       navigationState,
     },
   }),
@@ -380,10 +368,9 @@ const organizationsSubscriptionRoutes = {
     _,
     { orgId, spaceId, navigationState }: Omit<OrganizationsSubscriptionUpgradeSpaceRoute, 'path'>
   ) => ({
-    path: 'account.organizations.subscription_new.upgrade_space',
+    path: 'account.organizations',
     params: {
-      pathname: `/${spaceId}`,
-      orgId,
+      pathname: `/${orgId}/upgrade_space/${spaceId}`,
       navigationState,
     },
   }),
@@ -391,30 +378,27 @@ const organizationsSubscriptionRoutes = {
     _,
     { orgId }: Omit<OrganizationsSubscriptionOverviewRoute, 'path'>
   ) => ({
-    path: 'account.organizations.subscription_new.overview',
+    path: 'account.organizations',
     params: {
-      pathname: '/',
-      orgId,
+      pathname: `/${orgId}/subscription_overview`,
     },
   }),
   'organizations.subscription.overview.create-space': (
     _,
     { orgId, planId }: Omit<OrganizationsSubscriptionOverviewCreateSpaceRoute, 'path'>
   ) => ({
-    path: 'account.organizations.subscription_new.overview',
+    path: 'account.organizations',
     params: {
-      pathname: withQueryParams('/space_create', { planId }),
-      orgId,
+      pathname: withQueryParams(`/${orgId}/subscription_overview/space_create`, { planId }),
     },
   }),
   'organizations.subscription.overview.space-plans': (
     _,
     { orgId, planId, spaceId }: Omit<OrganizationsSubscriptionOverviewSpacePlansRoute, 'path'>
   ) => ({
-    path: 'account.organizations.subscription_new.overview',
+    path: 'account.organizations',
     params: {
-      pathname: withQueryParams(`/space_plans`, { planId, spaceId }),
-      orgId,
+      pathname: withQueryParams(`/${orgId}/subscription_overview/space_plans`, { planId, spaceId }),
     },
   }),
 };
@@ -434,11 +418,33 @@ const organizationUserDetailsRoute = {
     _,
     { orgId, userId }: Omit<OrganizationUserDetailsListType, 'path'>
   ) => ({
-    path: 'account.organizations.users',
+    path: 'account.organizations',
     params: {
-      pathname: `/${userId}`,
-      orgId,
+      pathname: `/${orgId}/organization_memberships/${userId}`,
       userId,
+    },
+  }),
+};
+
+/**
+ * StartTrial
+ */
+
+type StartTrialType = {
+  path: 'account.organizations.start_trial';
+  orgId: string;
+  navigationState?: {
+    existingUsers?: boolean;
+    from?: string;
+  };
+};
+
+const startTrialRoute = {
+  'account.organizations.start_trial': (_, params: Omit<StartTrialType, 'path'>) => ({
+    path: 'account.organizations',
+    params: {
+      pathname: `/${params.orgId}/start_trial`,
+      navigationState: params.navigationState,
     },
   }),
 };
@@ -476,6 +482,7 @@ const routes = {
   ...organizationsSubscriptionRoutes,
   ...organizationUserDetailsRoute,
   ...newOrganizationRoute,
+  ...startTrialRoute,
 };
 
 type OrganizationSettingsRouteType =
@@ -496,7 +503,8 @@ type OrganizationSettingsRouteType =
   | OrganisationInvitationType
   | OrganizationsSubscriptionRouteType
   | OrganizationUserDetailsListType
-  | NewOrganizationType;
+  | NewOrganizationType
+  | StartTrialType;
 
 export type { OrganizationSettingsRouteType };
 

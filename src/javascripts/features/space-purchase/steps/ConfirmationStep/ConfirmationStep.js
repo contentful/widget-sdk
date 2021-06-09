@@ -13,7 +13,7 @@ import {
 import { Grid, Flex } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import { EVENTS } from '../../utils/analyticsTracking';
-import { router } from 'core/react-routing';
+import { useRouteNavigate } from 'core/react-routing';
 import { isOwner as isOrgOwner } from 'services/OrganizationRoles';
 
 import { BillingDetailsLoading, CreditCardDetailsLoading } from 'features/organization-billing';
@@ -48,6 +48,7 @@ export const ConfirmationStep = ({ track, onBack, onSubmit }) => {
   const {
     state: { organization, billingDetails, paymentDetails },
   } = useContext(SpacePurchaseState);
+  const routeNavigate = useRouteNavigate();
 
   const userIsOrgOwner = isOrgOwner(organization);
   const showEditLink = organization.isBillable;
@@ -84,7 +85,7 @@ export const ConfirmationStep = ({ track, onBack, onSubmit }) => {
                         intent: 'edit_billing',
                       });
 
-                      router.navigate({
+                      routeNavigate({
                         path: 'organizations.billing',
                         orgId: organization.sys.id,
                       });

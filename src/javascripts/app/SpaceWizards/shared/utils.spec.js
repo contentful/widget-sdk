@@ -461,8 +461,8 @@ describe('utils', () => {
       utils.goToBillingPage(mockOrganization, utils.WIZARD_INTENT.CREATE, mockWizardSessionId);
 
       expect(go).toBeCalledWith({
-        path: 'account.organizations.subscription_billing',
-        params: { orgId: mockOrganization.sys.id, pathname: '/billing_address' },
+        path: 'account.organizations',
+        params: { pathname: `/${mockOrganization.sys.id}/subscription/billing_address` },
         options: { reload: true },
       });
     });

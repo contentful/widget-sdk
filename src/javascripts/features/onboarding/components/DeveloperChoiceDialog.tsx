@@ -21,6 +21,9 @@ const styles = {
   tag: css({
     marginBottom: tokens.spacingS,
   }),
+  header: css({
+    marginBottom: tokens.spacingXs,
+  }),
   subheading: css({
     marginBottom: tokens.spacingM,
   }),
@@ -48,8 +51,9 @@ export const DeveloperChoiceDialog = ({ onContinue }) => {
 
   return (
     <Modal.Content testId="developer-choice-modal">
-      <Flex marginBottom="spacing3Xl">
-        <DisplayText>How would you like to start?</DisplayText>
+      <Flex marginBottom="spacing3Xl" flexDirection="column">
+        <DisplayText className={styles.header}>How would you like to start?</DisplayText>
+        <Paragraph>You can change your choice at any time.</Paragraph>
       </Flex>
       <Flex marginBottom="spacing3Xl">
         <Grid columnGap="spacingXl" columns={3} flow="row" rowGap="none" rows={1}>

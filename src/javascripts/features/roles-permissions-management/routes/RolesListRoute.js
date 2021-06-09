@@ -9,7 +9,6 @@ import * as RoleListHandler from '../components/RoleListHandler';
 import { RolesList } from '../roles_list/RolesList';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import * as ResourceUtils from 'utils/ResourceUtils';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getSpaceEntitlementSet } from 'features/space-usage';
 import { FLAGS, getVariation } from 'LaunchDarkly';
@@ -44,7 +43,6 @@ export function RolesListRoute() {
     currentSpaceId: spaceId,
     currentEnvironmentId: environmentId,
   } = useSpaceEnvContext();
-  const isLegacyOrganization = ResourceUtils.isLegacyOrganization(currentOrganization);
   const canUpgradeOrganization = isOwnerOrAdmin(currentOrganization);
   const [entitlementsAPIEnabled, setEntitlementsAPIEnabled] = useState();
   const [entitlementsSet, setEntitlementsSet] = useState();
@@ -90,7 +88,6 @@ export function RolesListRoute() {
           return (
             <RolesList
               canUpgradeOrganization={canUpgradeOrganization}
-              isLegacyOrganization={isLegacyOrganization}
               refetch={fetch}
               newApiRolesLimit={newApiRolesLimit}
               highValueLabelEnabled={highValueLabelEnabled && !currentOrganization.isBillable}

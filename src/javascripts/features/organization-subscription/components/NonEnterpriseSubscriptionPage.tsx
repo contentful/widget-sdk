@@ -23,7 +23,7 @@ import { OrgSubscriptionContext } from '../context';
 import { BasePlanCard } from './BasePlanCard';
 import { ContentfulApps } from './ContentfulApps';
 import { SpacePlans } from './SpacePlans';
-import { router } from 'core/react-routing';
+import { useRouteNavigate } from 'core/react-routing';
 import { V1MigrationNote } from './V1MigrationNote';
 import { generateBasePlanName } from '../utils/generateBasePlanName';
 import { MonthlyTotalCard } from './MonthlyTotalCard';
@@ -77,6 +77,7 @@ export function NonEnterpriseSubscriptionPage({
   const {
     state: { spacePlans, basePlan, addOnPlans },
   } = useContext(OrgSubscriptionContext);
+  const routeNavigate = useRouteNavigate();
 
   const composeAndLaunchAddOnPlan = addOnPlans.find((plan) => isComposeAndLaunchPlan(plan));
 
@@ -97,7 +98,7 @@ export function NonEnterpriseSubscriptionPage({
   const basePlanName = generateBasePlanName(basePlan, v1migrationDestination);
 
   const onStartAppTrial = async () => {
-    router.navigate({
+    routeNavigate({
       path: 'account.organizations.start_trial',
       orgId: organizationId,
       navigationState: {

@@ -50,7 +50,7 @@ const renderComponent = (props = {}) => {
     environmentId: 'environment-id',
     organization,
     isMasterEnvironment: true,
-    space: { data: space },
+    space,
     fetchEntities: jest.fn().mockResolvedValue([]),
     renderAddEntityActions: mockRenderProp('add-entity-action'),
     renderEmptyState: mockRenderProp('empty-state'),
@@ -59,6 +59,7 @@ const renderComponent = (props = {}) => {
     renderTopContent: mockRenderProp('top-content'),
     ...props,
   };
+
   return render(<EntitiesView {...defaultProps} />);
 };
 

@@ -92,7 +92,7 @@ function RoleListActions(props) {
       {props.hasCustomRolesFeature && (
         <>
           <Paragraph>
-            Your {props.isLegacyOrganization ? 'organization' : 'space'} is using {usage} out of{' '}
+            Your space is using {usage} out of{' '}
             {props.newApiRolesLimit ? props.newApiRolesLimit : props.limit} available roles.
           </Paragraph>
           {props.isOrgOnTrial && props.highValueLabelEnabled ? (
@@ -138,7 +138,6 @@ RoleListActions.propTypes = {
   hasReachedLimit: PropTypes.bool.isRequired,
   hasCustomRolesFeature: PropTypes.bool.isRequired,
   rolesResource: PropTypes.object.isRequired,
-  isLegacyOrganization: PropTypes.bool.isRequired,
   newApiRolesLimit: PropTypes.number,
   highValueLabelEnabled: PropTypes.bool,
   isOrgOnTrial: PropTypes.bool,
@@ -162,7 +161,6 @@ export function RolesList(props) {
         <RoleListActions
           limit={limit}
           hasReachedLimit={hasReachedLimit}
-          isLegacyOrganization={props.isLegacyOrganization}
           hasCustomRolesFeature={props.hasCustomRolesFeature}
           rolesResource={props.rolesResource}
           newApiRolesLimit={props.newApiRolesLimit}
@@ -173,14 +171,11 @@ export function RolesList(props) {
       <div className={styles.container}>
         {props.hasCustomRolesFeature && hasReachedLimit && (
           <ReachedRolesLimitNote
-            isLegacyOrganization={props.isLegacyOrganization}
             canUpgradeOrganization={props.canUpgradeOrganization}
             limit={limit}
           />
         )}
-        {!props.hasCustomRolesFeature && (
-          <CustomRolesPlanNote isLegacyOrganization={props.isLegacyOrganization} />
-        )}
+        {!props.hasCustomRolesFeature && <CustomRolesPlanNote />}
         <Table testId="roles-list-table">
           <TableHead>
             <TableRow>
@@ -213,7 +208,6 @@ export function RolesList(props) {
 RolesList.propTypes = {
   roles: PropTypes.array.isRequired,
   hasCustomRolesFeature: PropTypes.bool.isRequired,
-  isLegacyOrganization: PropTypes.bool.isRequired,
   canUpgradeOrganization: PropTypes.bool.isRequired,
   roleCounts: PropTypes.shape({
     admin: PropTypes.number.isRequired,

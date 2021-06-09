@@ -1,1 +1,1 @@
-export { teamsState } from './routes/TeamsRouter';
+export { TeamsRouter } from './routes/TeamsRouter';
