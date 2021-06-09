@@ -229,17 +229,6 @@ describe('Space Plan Row', () => {
       ).toThrow();
     });
 
-    it('does not have successful-upgrade styling when not upgraded', () => {
-      build({ hasUpgraded: false });
-
-      // The class 'x--success' comes from the SpacePlanRow.js file
-      expect(
-        screen
-          .getByTestId('subscription-page.spaces-list.table-row')
-          .classList.contains('x--success')
-      ).toBeFalsy();
-    });
-
     it('has successful-upgrade styling when upgraded', () => {
       build({ hasUpgraded: true });
 

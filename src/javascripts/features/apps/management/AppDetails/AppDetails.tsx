@@ -32,6 +32,7 @@ import { AppBundles } from '../AppBundle';
 import { TAB_PATHS } from './constants';
 import { InvalidChangesDialog } from './InvalidChangesDialog';
 import { styles } from './styles';
+import { headerActions } from '../styles';
 import { UnsavedChangesDialog } from './UnsavedChangesDialog';
 import { AppDefinitionWithBundle } from '../AppEditor/AppHosting';
 import { evictCustomAppDefinition } from 'widgets/CustomWidgetLoaderInstance';
@@ -298,7 +299,7 @@ export const AppDetails = (props: Props) => {
       <Workbench.Header
         title="App details"
         actions={
-          <div className="workbench-header__actions">
+          <Flex alignItems="center" alignSelf="center" className={headerActions}>
             <Dropdown
               isOpen={actionsDropdownOpen}
               onClose={() => setActionsDropdownOpen(false)}
@@ -337,7 +338,7 @@ export const AppDetails = (props: Props) => {
               testId="app-save">
               Save
             </Button>
-          </div>
+          </Flex>
         }
         onBack={props.goToListView}
       />

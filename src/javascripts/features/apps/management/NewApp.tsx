@@ -5,6 +5,7 @@ import {
   Paragraph,
   TextLink,
   Workbench,
+  Flex,
 } from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
@@ -90,7 +91,7 @@ export const NewApp = (props: NewAppProps) => {
         onBack={props.goToListView}
         icon={<ProductIcon icon="Apps" size="large" />}
         actions={
-          <div className="workbench-header__actions">
+          <Flex alignItems="center" alignSelf="center">
             <Button
               loading={busy}
               disabled={busy}
@@ -99,7 +100,7 @@ export const NewApp = (props: NewAppProps) => {
               testId="app-create">
               Create
             </Button>
-          </div>
+          </Flex>
         }
       />
       <Workbench.Content type="text">
