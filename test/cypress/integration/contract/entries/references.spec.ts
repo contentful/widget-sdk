@@ -1,4 +1,3 @@
-import { FeatureFlag } from '../../../util/featureFlag';
 import { defaultRequestsMock } from '../../../util/factories';
 import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
 
@@ -82,10 +81,6 @@ describe('Entry references', () => {
     });
 
     describe('with BulkActions API feature flag enabled', () => {
-      beforeEach(() => {
-        cy.enableFeatureFlags([FeatureFlag.REFERENCE_TREE_BULK_ACTIONS_SUPPORT]);
-      });
-
       it('should validate publishing entities successfully', () => {
         Entry.getEntryReferences.willReturnSeveralWithVersion();
 

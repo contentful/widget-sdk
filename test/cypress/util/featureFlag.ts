@@ -13,5 +13,4 @@ export enum FeatureFlag {
   TWO_FA = 'feature-ogg-10-2019-2fa',
   ACCESS_TOOLS = 'feature-ogg-02-2020-access-tools',
   PRICING_2020_RELEASED = 'feature-ogg-06-2020-enable-pricing-2020-features',
-  REFERENCE_TREE_BULK_ACTIONS_SUPPORT = 'feature-pulitzer-01-2021-reference-tree-bulk-actions',
 }
