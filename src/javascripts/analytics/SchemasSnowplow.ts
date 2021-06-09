@@ -11,26 +11,6 @@ registerSchema({
 });
 
 registerSchema({
-  name: 'entry',
-  version: '1-0-0',
-});
-
-registerSchema({
-  name: 'asset',
-  version: '1-0-0',
-});
-
-registerSchema({
-  name: 'content_type',
-  version: '1-0-0',
-});
-
-registerSchema({
-  name: 'api_key',
-  version: '2-0-0',
-});
-
-registerSchema({
   name: 'entry_create',
   version: '2-0-2',
 });
@@ -38,21 +18,6 @@ registerSchema({
 registerSchema({
   name: 'entry_publish',
   version: '2-0-2',
-});
-
-registerSchema({
-  name: 'asset_create',
-  version: '1-0-0',
-});
-
-registerSchema({
-  name: 'content_type_create',
-  version: '1-0-0',
-});
-
-registerSchema({
-  name: 'api_key_create',
-  version: '1-0-0',
 });
 
 registerSchema({

@@ -3,7 +3,6 @@ import { getSnowplowSchema } from './SchemasSnowplow';
 import * as segmentTypewriterPlans from './events';
 import { TransformedEventData, EventData } from './types';
 
-import EntityAction from './transformers/EntityAction';
 import EntryActionV2 from './transformers/EntryActionV2';
 import Generic from './transformers/Generic';
 import SpaceCreate from './transformers/SpaceCreate';
@@ -185,14 +184,17 @@ registerSnowplowEvent('api_key:boilerplate', 'boilerplate', BoilerplateTransform
 registerActionEvent('experiment:start', createExperimentTransformer('start'));
 registerActionEvent('experiment:interaction', createExperimentTransformer('interaction'));
 
-// TODO: Most of these events seem to be gone after refactorings etc. Re-implement or remove.
-registerActionEvent('content_type:create', EntityAction);
-registerActionEvent('entry:create', EntryActionV2);
-registerActionEvent('entry:publish', EntryActionV2);
-registerActionEvent('api_key:create', EntityAction);
-registerActionEvent('asset:create', EntityAction);
-
-registerActionEvent('space:create', SpaceCreate);
+registerEvent('space:create', { snowplow: 'space_create', segment: 'space_created' }, SpaceCreate);
+registerEvent(
+  'entry:create',
+  { snowplow: 'entry_create', segment: 'entry_created' },
+  EntryActionV2
+);
+registerEvent(
+  'entry:publish',
+  { snowplow: 'entry_publish', segment: 'entry_published' },
+  EntryActionV2
+);
 
 registerSpaceWizardEvent('space_wizard:open');
 registerSpaceWizardEvent('space_wizard:cancel');
