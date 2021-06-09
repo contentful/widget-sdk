@@ -12,7 +12,7 @@ import type { RouteDefinition, CreateRouteDefinition } from 'core/react-routing'
 const SECTION_ACCESS_ORDER: [string, RouteDefinition | CreateRouteDefinition][] = [
   ['entry', { path: '.entries.list' }],
   ['contentType', routes['content_types.list']],
-  ['asset', { path: '.assets.list' }],
+  ['asset', routes['assets.list']],
   ['apiKey', routes['api.keys.list']],
   ['settings', routes['users.list']],
 ];
