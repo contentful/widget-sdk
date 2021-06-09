@@ -16,6 +16,16 @@ export const SUPPORTED_FIELD_TYPES = ['Boolean', 'Date', 'Integer', 'Number', 'S
 // @todo: Change this to 4
 const MANAGABLE_NUMBER_OF_LOCALES = 1;
 
+const StyleTagHidingMarkdownEditorAssetButton = () => {
+  return (
+    <style>{`
+      button[data-test-id="markdownEditor.linkExistingAssets"] {
+        display: none;
+      }
+      `}</style>
+  );
+};
+
 export interface InitialValueTabComponentProps {
   contentType: Record<'string', unknown>;
   ctField: { id: string; localized: boolean; type: string };
@@ -51,14 +61,17 @@ const InitialValueTabComponent = ({
 
   if (!ctField.localized) {
     return (
-      <InitialValueField
-        contentType={contentType}
-        editorInterface={editorInterface}
-        fields={fields}
-        locale={defaultLocale}
-        locales={locales}
-        onChange={onChange}
-      />
+      <Fragment>
+        <StyleTagHidingMarkdownEditorAssetButton />
+        <InitialValueField
+          contentType={contentType}
+          editorInterface={editorInterface}
+          fields={fields}
+          locale={defaultLocale}
+          locales={locales}
+          onChange={onChange}
+        />
+      </Fragment>
     );
   }
 
@@ -85,6 +98,7 @@ const InitialValueTabComponent = ({
 
   return (
     <Flex flexDirection="column">
+      <StyleTagHidingMarkdownEditorAssetButton />
       <InitialValueField
         contentType={contentType}
         editorInterface={editorInterface}
