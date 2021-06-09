@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'emotion';
-import { isEqual, uniqWith, uniqueId } from 'lodash';
+import { uniqueId } from 'lodash';
 import tokens from '@contentful/forma-36-tokens';
 import {
   Button,
@@ -29,10 +29,8 @@ import {
   SET_REFERENCE_TREE_KEY,
   SET_PROCESSING_ACTION,
 } from './state/actions';
-import { validateEntities, getReferencesForEntryId } from './referencesService';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { getReferencesForEntryId } from './referencesService';
 import { createPublishBulkAction, createValidateBulkAction } from './BulkAction/BulkActionService';
-import { getBulkActionSupportFeatureFlag } from './BulkAction/BulkActionFeatureFlag';
 import { BulkActionErrorMessage, convertBulkActionErrors } from './BulkAction/BulkActionError';
 
 const styles = {
@@ -56,18 +54,6 @@ const trackingEvents = {
   validate: 'entry_references:validate',
 };
 
-const mapEntities = (entities) =>
-  uniqWith(
-    entities.map((entity) => ({
-      sys: {
-        id: entity.sys.id,
-        linkType: entity.sys.type,
-        type: 'Link',
-      },
-    })),
-    isEqual
-  );
-
 const SELECTED_ENTITIES_LIMIT = 200;
 
 const ReferencesSideBar = ({ entityTitle, entity }) => {
@@ -75,17 +61,6 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
   const { references, selectedEntities, isTooComplex, initialReferencesAmount } = referencesState;
 
   const [isReleaseDialogShown, setReleaseDialogShown] = useState(false);
-  const [isBulkActionSupportEnabled, setIsBulkActionSupportEnabled] = useState(false);
-
-  const spaceContext = useSpaceEnvContext();
-
-  useEffect(() => {
-    (async function () {
-      const bulkActionEnabled = await getBulkActionSupportFeatureFlag(spaceContext);
-
-      setIsBulkActionSupportEnabled(bulkActionEnabled);
-    })();
-  }, [spaceContext]);
 
   const getReferencesForEntry = async () => {
     const { resolved } = await getReferencesForEntryId(entity.sys.id);
@@ -128,21 +103,8 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
       references_count: selectedEntities.length,
     });
 
-    let validationResponse = {
-      errored: [],
-    };
-
     try {
-      if (isBulkActionSupportEnabled) {
-        await createValidateBulkAction(selectedEntities);
-      } else {
-        const entitiesToValidate = mapEntities(selectedEntities);
-        validationResponse = await validateEntities({
-          entities: entitiesToValidate,
-          action: 'publish',
-        });
-      }
-      displayValidation(validationResponse);
+      await createValidateBulkAction(selectedEntities);
       dispatch({ type: SET_PROCESSING_ACTION, value: null });
     } catch (error) {
       dispatch({ type: SET_PROCESSING_ACTION, value: null });
@@ -187,9 +149,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
     isSelectedEntitesMoreThanLimit;
 
   return (
-    <div
-      className={styles.sideBarWrapper}
-      data-test={isBulkActionSupportEnabled ? 'bulk-actions' : 'immediate'}>
+    <div className={styles.sideBarWrapper}>
       <header className="entity-sidebar__header">
         <Subheading className={`entity-sidebar__heading ${styles.subHeading}`}>
           References
