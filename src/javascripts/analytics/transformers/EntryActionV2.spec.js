@@ -1,34 +1,7 @@
 import transformer from './EntryActionV2';
-import EntityActionStub from './EntityAction';
-import { when } from 'jest-when';
 
 describe('analytics/snowplow/transformers/EntryActionV2', () => {
-  const BASE_EVENT = {
-    data: {},
-    contexts: [{ data: 1 }, { bar: 2 }],
-  };
-
-  let transform;
-
-  beforeEach(async function () {
-    transform = (eventData) => {
-      when(EntityActionStub)
-        .calledWith('entry:create', {
-          ...eventData,
-          actionData: {
-            entity: 'Entry',
-            action: 'create',
-          },
-        })
-        .mockReturnValue(BASE_EVENT);
-      return transformer('entry:create', eventData);
-    };
-  });
-
-  it("adds `EntityAction`'s `contexts`", function () {
-    const { contexts } = transform({});
-    expect(contexts).toEqual(BASE_EVENT.contexts);
-  });
+  const transform = (eventData) => transformer('entry:create', eventData);
 
   it('contains the base tracking data', function () {
     const eventData = {
