@@ -24,17 +24,16 @@ export function createCmaDocumentWithApiNames(
   }
 
   function getValueWithIds(path: string[], value: any) {
-    let convertedValue = value;
     if (isEqual(path, [])) {
-      convertedValue = {
+      return {
         ...value,
-        fields: convertFieldPropertyToIds(value.value, contentType),
+        fields: convertFieldPropertyToIds(value.fields, contentType),
       };
     }
     if (isEqual(path, ['fields'])) {
-      convertedValue = convertFieldPropertyToIds(convertedValue, contentType);
+      return convertFieldPropertyToIds(value, contentType);
     }
-    return convertedValue;
+    return value;
   }
 
   const wrappedDocument: Document = {
