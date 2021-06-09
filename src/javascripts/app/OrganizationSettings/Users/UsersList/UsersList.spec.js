@@ -47,8 +47,7 @@ jest.mock('services/TokenStore', () => ({
   getOrganization: jest.fn(() => mockOrg),
 }));
 jest.mock('account/pricing/PricingDataProvider', () => ({
-  isFreePlan: jest.fn((org) => org.customerType === 'Free'),
-  isSelfServicePlan: jest.fn((org) => org.customerType === 'Self-service'),
+  isFreePlan: jest.fn().mockReturnValue(true),
 }));
 jest.mock('access_control/OrganizationMembershipRepository', () => ({
   getMemberships: jest.fn(async () => ({ items: mockOrgMemberships, total: 13 })), //mock bigger total to test pagination
@@ -160,7 +159,7 @@ describe('UsersList', () => {
     });
 
     it('should show it when the user is in a Free plan', async () => {
-      getOrganization.mockReturnValue(fake.Organization({ pricingVersion: 'pricing_version_2' }));
+      getOrganization.mockReturnValue(fake.Organization());
       getBasePlan.mockReturnValue(fake.Plan({ customerType: 'Free' }));
 
       await build();
@@ -169,7 +168,7 @@ describe('UsersList', () => {
     });
 
     it('should show it when the user is in a Self Service plan and reached the limit of users', async () => {
-      getOrganization.mockReturnValue(fake.Organization({ pricingVersion: 'pricing_version_2' }));
+      getOrganization.mockReturnValue(fake.Organization());
       getMemberships.mockReturnValue({
         items: getMockUsers(THRESHOLD_NUMBER_TO_DISPLAY_BANNER),
         total: 13,

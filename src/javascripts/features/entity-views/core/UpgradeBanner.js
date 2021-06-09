@@ -3,7 +3,7 @@ import { get } from 'lodash';
 import { useAsync } from 'core/hooks';
 import { css } from 'emotion';
 
-import { getResourceLimits, isLegacyOrganization } from 'utils/ResourceUtils';
+import { getResourceLimits } from 'utils/ResourceUtils';
 import { beginSpaceChange } from 'services/ChangeSpaceService';
 import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import { getBasePlan } from 'features/pricing-entities';
@@ -61,13 +61,9 @@ export function UpgradeBanner() {
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
 
   const updateResource = useCallback(async () => {
-    // We only want to make these fetches if the user is an owner or admin && the organization is v2+
+    // We only want to make these fetches if the user is an owner or admin
     // && it's the master environment
-    if (
-      !isOwnerOrAdmin(currentOrganization) ||
-      isLegacyOrganization(currentOrganization) ||
-      !isMasterEnvironment
-    ) {
+    if (!isOwnerOrAdmin(currentOrganization) || !isMasterEnvironment) {
       return {
         shouldShow: false,
       };

@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { getResourceLimits, isLegacyOrganization } from 'utils/ResourceUtils';
+import { getResourceLimits } from 'utils/ResourceUtils';
 import { beginSpaceChange } from 'services/ChangeSpaceService';
 import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
@@ -32,7 +32,6 @@ jest.mock('services/ChangeSpaceService', () => ({
 }));
 
 jest.mock('utils/ResourceUtils', () => ({
-  isLegacyOrganization: jest.fn(),
   getResourceLimits: jest.fn(),
 }));
 
@@ -80,7 +79,6 @@ describe('UpgradeBanner', () => {
     getResourceLimits.mockReturnValue(mockLimits);
 
     isOwnerOrAdmin.mockReturnValue(true);
-    isLegacyOrganization.mockReturnValue(false);
     isEnterprisePlan.mockReturnValue(false);
 
     jest.spyOn(PricingService, 'nextSpacePlanForResource').mockResolvedValue(null);
@@ -164,13 +162,6 @@ describe('UpgradeBanner', () => {
   describe('should not trigger the banner', () => {
     it('when user is not an owner or admin', async () => {
       isOwnerOrAdmin.mockReturnValue(false);
-      await build();
-
-      expect(screen.queryByTestId('upgrade-banner.container')).toBeNull();
-    });
-
-    it('when it is a legacy organization', async () => {
-      isLegacyOrganization.mockReturnValue(true);
       await build();
 
       expect(screen.queryByTestId('upgrade-banner.container')).toBeNull();

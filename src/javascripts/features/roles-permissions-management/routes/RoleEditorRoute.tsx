@@ -103,14 +103,13 @@ export function RoleEditorRoute(props: { isNew: boolean }) {
   const { registerSaveAction, setDirty } = useUnsavedChangesModal();
 
   const entitySelectorSdk = useEntitySelectorSdk();
-  const { currentOrganization, currentEnvironmentId, currentSpaceId } = useSpaceEnvContext();
+  const { currentEnvironmentId, currentSpaceId } = useSpaceEnvContext();
 
   const { currentSpaceContentTypes } = useSpaceEnvContentTypes();
   const { spaceEnvCMAClient: cmaClient } = useSpaceEnvCMAClient();
   const roleRepo = React.useMemo(() => RoleRepository.getInstance(cmaClient), [cmaClient]);
   const [role, setRole] = React.useState<Role | null>(null);
   const [baseRole, setBaseRole] = React.useState(null);
-  const isLegacyOrganization = ResourceUtils.isLegacyOrganization(currentOrganization);
   const apiClient = React.useMemo(
     () => createAPIClient(currentSpaceId, currentEnvironmentId),
     [currentSpaceId, currentEnvironmentId]
@@ -218,7 +217,6 @@ export function RoleEditorRoute(props: { isNew: boolean }) {
                             <RoleEditor
                               {...data}
                               isNew={props.isNew}
-                              isLegacyOrganization={isLegacyOrganization}
                               role={role}
                               baseRole={baseRole}
                               roleRepo={roleRepo}

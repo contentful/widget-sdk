@@ -62,20 +62,6 @@ describe('UserLimitBanner', () => {
     getBasePlan.mockReset();
   });
 
-  it('should not render if organizaion is LegacyOrganization (it is not pricing_version_2)', async () => {
-    mockOrgCall.mockImplementation(() =>
-      fake.Organization({ pricingVersion: 'pricing_version_1' })
-    );
-    build({});
-
-    await waitFor(() => {
-      expect(mockOrgCall).toBeCalled();
-    });
-
-    expect(mockOrgCall().pricingVersion).toBe('pricing_version_1');
-    expect(screen.queryByTestId('users-limit-banner')).toBeNull();
-  });
-
   describe('when the plan is Free', () => {
     it('should render correct text if user is not an owner', async () => {
       await build();

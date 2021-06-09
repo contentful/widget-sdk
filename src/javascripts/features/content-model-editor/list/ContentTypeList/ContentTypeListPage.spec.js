@@ -16,7 +16,6 @@ import * as contentTypeFactory from 'test/helpers/contentTypeFactory';
 import * as PricingService from 'services/PricingService';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import createResourceService from 'services/ResourceService';
-import { isLegacyOrganization } from 'utils/ResourceUtils';
 import * as trackCTA from 'analytics/trackCTA';
 import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
 import * as Fake from 'test/helpers/fakeFactory';
@@ -36,7 +35,6 @@ jest.mock('services/OrganizationRoles', () => ({
 const trackTargetedCTAClick = jest.spyOn(trackCTA, 'trackTargetedCTAClick');
 
 jest.mock('utils/ResourceUtils', () => ({
-  isLegacyOrganization: jest.fn().mockReturnValue(false),
   getResourceLimits: jest.fn((r) => r.limits),
 }));
 
@@ -185,16 +183,6 @@ describe('ContentTypeList Page', () => {
       it('does not show up if they are not an owner or admin', async () => {
         createResourceService().get.mockResolvedValue({ usage: 44, limits: { maximum: 48 } });
         isOwnerOrAdmin.mockReturnValue(false);
-
-        await renderComponent({});
-
-        expect(screen.queryByTestId('content-type-limit-banner')).toBeNull();
-      });
-
-      it('does not show up if the org is legacy', async () => {
-        createResourceService().get.mockResolvedValue({ usage: 48, limits: { maximum: 48 } });
-        isOwnerOrAdmin.mockReturnValue(true);
-        isLegacyOrganization.mockReturnValueOnce(true);
 
         await renderComponent({});
 

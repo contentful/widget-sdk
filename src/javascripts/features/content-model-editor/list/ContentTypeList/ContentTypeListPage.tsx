@@ -21,7 +21,7 @@ import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { css } from 'emotion';
 import ExternalTextLink from 'app/common/ExternalTextLink';
-import { getResourceLimits, isLegacyOrganization } from 'utils/ResourceUtils';
+import { getResourceLimits } from 'utils/ResourceUtils';
 import { CTA_EVENTS, trackTargetedCTAClick } from 'analytics/trackCTA';
 import { CONTACT_SALES_URL_WITH_IN_APP_BANNER_UTM } from 'analytics/utmLinks';
 import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
@@ -72,10 +72,9 @@ export function ContentTypeListPage({
 
     const promisesArray = [service.fetchContentTypes()];
     const isOrgAdminOrOwner = isOwnerOrAdmin(currentOrganization);
-    const orgIsLegacy = isLegacyOrganization(currentOrganization);
 
-    // Only want to make this fetch if isNewPricingReleased.
-    if (!orgIsLegacy && isOrgAdminOrOwner) {
+    // fetch only if admin or owner
+    if (isOrgAdminOrOwner) {
       promisesArray.push(
         Promise.race([
           Promise.all([
