@@ -15,8 +15,7 @@ import { useInitialValueDocument } from './useInitialValueDocument';
 import { useInitialValueDocumentErrors } from './useInitialValueDocumentErrors';
 
 export const SUPPORTED_FIELD_TYPES = ['Boolean', 'Date', 'Integer', 'Number', 'Symbol', 'Text'];
-
-const MANAGABLE_NUMBER_OF_LOCALES = 1;
+const MANAGABLE_NUMBER_OF_LOCALES = 4;
 
 const StyleTagHidingMarkdownEditorAssetButton = () => {
   return (
@@ -183,7 +182,9 @@ const InitialValueTabComponent = ({
       .some((localeCode) => fields.initialValue?.value[localeCode] !== undefined);
 
   const applyValueToOtherLocales = (value: unknown) => {
-    const payload = fields.initialValue?.value ?? {};
+    // Our form value objects prevent manually adding keys so we have to create
+    // a clone before we can add locales
+    const payload = fields.initialValue?.value ? { ...fields.initialValue.value } : {};
 
     for (const locale of otherLocales) {
       payload[locale.code] = value;
