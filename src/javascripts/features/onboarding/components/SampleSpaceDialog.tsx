@@ -5,7 +5,6 @@ import {
   Flex,
   Modal,
   Notification,
-  ModalLauncher,
 } from '@contentful/forma-36-react-components';
 import * as TokenStore from 'services/TokenStore';
 import { css } from 'emotion';
@@ -15,9 +14,9 @@ import { getTemplatesList } from 'services/SpaceTemplateLoader';
 import { useAsync } from 'core/hooks/useAsync';
 import { LoadingCard } from './LoadingCard';
 import { applyTemplateToSpace, SelectedTemplate } from 'features/space-purchase';
-import { ReplaceSpaceDialog } from './ReplaceSpaceDialog';
-import { router } from 'core/react-routing';
-import { renameSpace } from '../utils/util';
+import { showReplaceSpaceWarning } from './ReplaceSpaceDialog';
+import { renameSpace, markExploreOnboardingSeen } from '../utils/util';
+import { go } from 'states/Navigator';
 
 const styles = {
   container: css({
@@ -34,16 +33,13 @@ export const SampleSpaceDialog = ({ onClose, onBack, spaceId, replaceSpace = fal
   const [selectedTemplate, setSelectedTemplate] = useState<SelectedTemplate>();
   const [loading, setLoading] = useState(false);
 
-  const showReplaceSpaceWarning = async () => {
-    onClose();
-    await ModalLauncher.open(({ onClose }) => (
-      <ReplaceSpaceDialog isShown onConfirm={applyTemplate} onClose={onClose} spaceId={spaceId} />
-    ));
-  };
-
   const handleContinue = async (spaceId) => {
+    track('onboarding_sample_space:continue', {
+      templateName: `${selectedTemplate?.name}`,
+    });
     if (replaceSpace) {
-      showReplaceSpaceWarning();
+      onClose();
+      showReplaceSpaceWarning(spaceId, applyTemplate);
     } else {
       setLoading(true);
       try {
@@ -56,17 +52,14 @@ export const SampleSpaceDialog = ({ onClose, onBack, spaceId, replaceSpace = fal
   };
 
   const applyTemplate = async (spaceId) => {
+    markExploreOnboardingSeen();
     const space = await TokenStore.getSpace(spaceId);
     if (selectedTemplate && space) {
-      track('onboarding_sample_space:continue', {
-        templateName: `${selectedTemplate?.name}`,
-      });
-
       try {
         renameSpace(selectedTemplate.name, spaceId);
         await applyTemplateToSpace(space, selectedTemplate);
       } finally {
-        router.navigate({ path: 'content_types.list', spaceId });
+        go({ path: 'spaces.detail.entries.list' });
         Notification.success('You have successfully created a pre-built space.');
       }
     }
@@ -82,7 +75,7 @@ export const SampleSpaceDialog = ({ onClose, onBack, spaceId, replaceSpace = fal
   }, [selectedTemplate, setSelectedTemplate, data]);
 
   return (
-    <Modal.Content className={styles.container}>
+    <Modal.Content className={styles.container} testId="sample-space-dialog">
       {isLoading && <LoadingCard />}
       {!isLoading && data?.templatesList && (
         <>

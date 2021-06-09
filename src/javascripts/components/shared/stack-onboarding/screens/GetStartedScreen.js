@@ -9,7 +9,13 @@ import { getVariation, FLAGS } from 'LaunchDarkly';
 import { track } from 'analytics/Analytics';
 import { Flex, ModalLauncher } from '@contentful/forma-36-react-components';
 import { unmarkSpace } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
-import { FlexibleOnboardingDialog } from 'features/onboarding';
+import {
+  handleReplaceSpace,
+  FlexibleOnboardingDialog,
+  renameSpace,
+  BLANK_SPACE_NAME,
+  hasSeenExploreOnboarding,
+} from 'features/onboarding';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
@@ -39,9 +45,15 @@ const styles = {
 const GetStarted = () => {
   const spaceContext = useSpaceEnvContext();
 
-  const { data: showFlexibleOnboarding } = useAsync(
+  const { data } = useAsync(
     useCallback(async () => {
       const newOnboardingEnabled = await getVariation(FLAGS.NEW_ONBOARDING_FLOW, {
+        spaceId: spaceContext.currentSpaceId,
+        organizationId: spaceContext.currentOrganizationId,
+        environmentId: spaceContext.currentEnvironmentId,
+      });
+
+      const recoverableOnboardingEnabled = await getVariation(FLAGS.RECOVERABLE_ONBOARDING_FLOW, {
         spaceId: spaceContext.currentSpaceId,
         organizationId: spaceContext.currentOrganizationId,
         environmentId: spaceContext.currentEnvironmentId,
@@ -55,7 +67,12 @@ const GetStarted = () => {
           environmentId: spaceContext.currentEnvironmentId,
         }
       );
-      return newOnboardingEnabled && newOnboardingExperimentVariation;
+      const hasSeenOnboarding = await hasSeenExploreOnboarding();
+      return {
+        recoverableOnboardingEnabled:
+          recoverableOnboardingEnabled && newOnboardingExperimentVariation && hasSeenOnboarding,
+        showFlexibleOnboarding: newOnboardingEnabled && newOnboardingExperimentVariation,
+      };
     }, [spaceContext])
   );
 
@@ -80,13 +97,14 @@ const GetStarted = () => {
         {logos}
         <Icon className={'modern-stack-onboarding--logogrid-image'} name={'stack-overview'} />
         <Flex justifyContent="center">
-          {showFlexibleOnboarding === true && (
+          {data?.showFlexibleOnboarding === true && (
             <Button
               buttonType="muted"
               className={styles.backButton}
               onClick={() => {
                 track('onboarding_gatsby_blog:back');
                 unmarkSpace();
+                renameSpace(BLANK_SPACE_NAME, spaceContext.currentSpaceId);
                 router.navigate({ path: 'spaces.detail.home' });
                 ModalLauncher.open(({ isShown, onClose }) => {
                   return (
@@ -107,7 +125,15 @@ const GetStarted = () => {
             trackingElementId="get_started_screen_completed"
             link="copy">
             {(move) => (
-              <Button onClick={move} data-test-id="onboarding-get-started-cta">
+              <Button
+                onClick={() => {
+                  if (data.recoverableOnboardingEnabled) {
+                    handleReplaceSpace(spaceContext.currentSpaceId);
+                  } else {
+                    move();
+                  }
+                }}
+                data-test-id="onboarding-get-started-cta">
                 Get started
               </Button>
             )}

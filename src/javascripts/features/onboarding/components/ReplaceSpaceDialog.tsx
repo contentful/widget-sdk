@@ -8,6 +8,7 @@ import {
   Typography,
   TextLink,
   Notification,
+  ModalLauncher,
 } from '@contentful/forma-36-react-components';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
@@ -35,6 +36,12 @@ interface Props {
   spaceId: string;
 }
 
+export const showReplaceSpaceWarning = async (spaceId, onConfirm) => {
+  await ModalLauncher.open(({ onClose }) => (
+    <ReplaceSpaceDialog isShown onConfirm={onConfirm} onClose={onClose} spaceId={spaceId} />
+  ));
+};
+
 export const ReplaceSpaceDialog = ({ isShown, onConfirm, onClose, spaceId }: Props) => {
   const [spaceNameConfirmation, setSpaceNameConfirmation] = useState('');
   const [deleting, setDeleting] = useState(false);
@@ -51,6 +58,7 @@ export const ReplaceSpaceDialog = ({ isShown, onConfirm, onClose, spaceId }: Pro
   const handleReplace = async () => {
     setDeleting(true);
     if (space) {
+      const oldSpaceName = space.name;
       const organizationId = space.sys.organization.sys.id;
       const endpoint = createSpaceEndpoint(space.sys.id);
       const client = new APIClient(endpoint);
@@ -76,6 +84,7 @@ export const ReplaceSpaceDialog = ({ isShown, onConfirm, onClose, spaceId }: Pro
       try {
         await onConfirm(newSpace.sys.id);
       } finally {
+        Notification.success(`Space ${oldSpaceName} replaced successfully.`);
         setDeleting(false);
         onClose();
       }
@@ -84,6 +93,7 @@ export const ReplaceSpaceDialog = ({ isShown, onConfirm, onClose, spaceId }: Pro
 
   return (
     <Modal
+      testId="replace-space-dialog"
       isShown={isShown}
       onClose={onClose}
       shouldCloseOnEscapePress={false}
@@ -101,7 +111,7 @@ export const ReplaceSpaceDialog = ({ isShown, onConfirm, onClose, spaceId }: Pro
                     is limited to one per organization. You can also{' '}
                     <ReactRouterLink
                       route={{
-                        path: 'organizations.subscription.overview',
+                        path: 'organizations.subscription.new_space',
                         orgId: space.sys.organization.sys.id,
                       }}>
                       <TextLink onClick={onClose}>buy more spaces</TextLink>

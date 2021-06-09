@@ -30,6 +30,7 @@ export const ModernStackAdminSpaceHome = ({
   const prefix = getStoragePrefix();
   const deploymentProvider = store.get(`${prefix}:deploymentProvider`);
   const [isRecoverableOnboardingEnabled, setIsRecoverableOnboardingEnabled] = useState(false);
+  const [isNewOnboardingEnabled, setIsNewOnboardingEnabled] = useState(false);
 
   useEffect(() => {
     (async function () {
@@ -46,9 +47,8 @@ export const ModernStackAdminSpaceHome = ({
         }
       );
 
-      setIsRecoverableOnboardingEnabled(
-        recoverableOnboardingEnabled && newOnboardingExperimentVariation
-      );
+      setIsRecoverableOnboardingEnabled(recoverableOnboardingEnabled);
+      setIsNewOnboardingEnabled(newOnboardingExperimentVariation);
     })();
   }, [spaceId, orgId]);
 
@@ -69,15 +69,24 @@ export const ModernStackAdminSpaceHome = ({
               </Subheading>
             </>
           ) : (
-            <Heading className={styles.header}>
-              Welcome to your <span className={styles.demiBold}>Gatsby Starter for Contentful</span>{' '}
-              blog space
-            </Heading>
+            <>
+              <Heading className={styles.header}>
+                Welcome to your{' '}
+                <span className={styles.demiBold}>Gatsby Starter for Contentful</span> blog space
+              </Heading>
+              {isNewOnboardingEnabled && (
+                <Subheading className={styles.description}>
+                  {
+                    'To become familiar with our API and content modelling, create a space on top of our code sample.'
+                  }
+                </Subheading>
+              )}
+            </>
           )}
         </WidgetContainer.Col>
       </WidgetContainer.Row>
 
-      {isRecoverableOnboardingEnabled && (
+      {isRecoverableOnboardingEnabled && isNewOnboardingEnabled && (
         <WidgetContainer.Row>
           <DiscoverOnboardingCTA spaceId={spaceId} />
         </WidgetContainer.Row>
