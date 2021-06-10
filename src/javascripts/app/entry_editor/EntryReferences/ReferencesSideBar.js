@@ -68,6 +68,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
     dispatch({ type: SET_REFERENCE_TREE_KEY, value: uniqueId('id_') });
   };
 
+  // This is linked to ReferencesTree.js:L56
   const displayValidation = (validationResponse) => {
     dispatch({ type: SET_VALIDATIONS, value: validationResponse });
 
