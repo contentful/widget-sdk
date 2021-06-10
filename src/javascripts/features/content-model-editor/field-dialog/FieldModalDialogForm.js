@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { Fragment, useEffect, useState, useMemo } from 'react';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
@@ -34,15 +34,22 @@ import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvCon
 import { FLAGS, getVariation } from 'LaunchDarkly';
 
 const styles = {
+  modalControls: css({
+    backgroundColor: tokens.colorWhite,
+    borderTop: `1px solid ${tokens.colorElementMid}`,
+    paddingTop: tokens.spacingL,
+    position: 'relative',
+    width: '100%',
+  }),
   modalHeader: css({
     display: 'flex',
     flexShrink: 0,
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: tokens.colorElementLightest,
-    borderRadius: '3px 3px 0 0',
-    borderBottom: `1px solid ${tokens.colorElementDark}`,
-    padding: `${tokens.spacingXs} ${tokens.spacingL} 0 ${tokens.spacingL}`,
+    borderRadius: `${tokens.borderRadiusMedium} ${tokens.borderRadiusMedium} 0 0 `,
+    borderBottom: `1px solid ${tokens.colorElementMid}`,
+    padding: `${tokens.spacingXs} ${tokens.spacingM} 0 ${tokens.spacingL}`,
   }),
   leftPanel: css({
     display: 'flex',
@@ -134,7 +141,7 @@ const FieldModalDialogForm = ({
   const iconId = getIconId(ctField) + '-small';
 
   return (
-    <div data-test-id="field-dialog">
+    <Fragment>
       <div className={styles.modalHeader}>
         <div className={styles.modalTitle}>
           <Icon name={iconId} />
@@ -188,69 +195,68 @@ const FieldModalDialogForm = ({
           />
         </div>
       </div>
+
       <Modal.Content>
-        <div>
-          {selectedTab === formTabs.SETTINGS && (
-            <TabPanel id="settings-tab-panel">
-              <SettingsTabComponent
-                onBlur={onBlur}
-                onChange={onChange}
-                fields={fields}
-                form={form}
-                ctField={ctField}
-                contentTypes={currentSpaceContentTypes}
-                contentType={contentType}
-                richTextOptions={richTextOptions}
-                setRichTextOptions={setRichTextOptions}
-              />
-            </TabPanel>
-          )}
-          {selectedTab === formTabs.VALIDATION && (
-            <TabPanel id="validation-tab-panel">
-              <ValidationTabComponent
-                onBlur={onBlur}
-                onChange={onChange}
-                fields={fields}
-                form={form}
-                ctField={ctField}
-                contentTypes={currentSpaceContentTypes}
-                widgetSettings={widgetSettings}
-                availableWidgets={availableWidgets}
-              />
-            </TabPanel>
-          )}
-          {isInitialFieldValuesEnabled && selectedTab === formTabs.INITIAL_VALUE && (
-            <TabPanel id="initial-value-tab-panel">
-              <InitialValueTabComponent
-                onBlur={onBlur}
-                onChange={onChange}
-                fields={fields}
-                ctField={ctField}
-                contentType={contentType}
-                contentTypes={currentSpaceContentTypes}
-                editorInterface={editorInterface}
-                widgetSettings={widgetSettings}
-                availableWidgets={availableWidgets}
-              />
-            </TabPanel>
-          )}
-          {selectedTab === formTabs.APPEARANCE && (
-            <TabPanel id="appearance-tab-panel">
-              <AppearanceTabComponent
-                editorInterface={editorInterface}
-                customWidgets={customWidgets}
-                availableWidgets={availableWidgets}
-                widgetSettings={widgetSettings}
-                setWidgetSettings={setWidgetSettings}
-                contentType={contentType}
-                ctField={ctField}
-                widget={widget}
-              />
-            </TabPanel>
-          )}
-        </div>
+        {selectedTab === formTabs.SETTINGS && (
+          <TabPanel id="settings-tab-panel">
+            <SettingsTabComponent
+              onBlur={onBlur}
+              onChange={onChange}
+              fields={fields}
+              form={form}
+              ctField={ctField}
+              contentTypes={currentSpaceContentTypes}
+              contentType={contentType}
+              richTextOptions={richTextOptions}
+              setRichTextOptions={setRichTextOptions}
+            />
+          </TabPanel>
+        )}
+        {selectedTab === formTabs.VALIDATION && (
+          <TabPanel id="validation-tab-panel">
+            <ValidationTabComponent
+              onBlur={onBlur}
+              onChange={onChange}
+              fields={fields}
+              form={form}
+              ctField={ctField}
+              contentTypes={currentSpaceContentTypes}
+              widgetSettings={widgetSettings}
+              availableWidgets={availableWidgets}
+            />
+          </TabPanel>
+        )}
+        {isInitialFieldValuesEnabled && selectedTab === formTabs.INITIAL_VALUE && (
+          <TabPanel id="initial-value-tab-panel">
+            <InitialValueTabComponent
+              onBlur={onBlur}
+              onChange={onChange}
+              fields={fields}
+              ctField={ctField}
+              contentType={contentType}
+              contentTypes={currentSpaceContentTypes}
+              editorInterface={editorInterface}
+              widgetSettings={widgetSettings}
+              availableWidgets={availableWidgets}
+            />
+          </TabPanel>
+        )}
+        {selectedTab === formTabs.APPEARANCE && (
+          <TabPanel id="appearance-tab-panel">
+            <AppearanceTabComponent
+              editorInterface={editorInterface}
+              customWidgets={customWidgets}
+              availableWidgets={availableWidgets}
+              widgetSettings={widgetSettings}
+              setWidgetSettings={setWidgetSettings}
+              contentType={contentType}
+              ctField={ctField}
+              widget={widget}
+            />
+          </TabPanel>
+        )}
       </Modal.Content>
-      <Modal.Controls>
+      <Modal.Controls className={styles.modalControls}>
         <Button
           testId="confirm-field-dialog-form"
           disabled={form.invalid || form.pristine}
@@ -262,7 +268,7 @@ const FieldModalDialogForm = ({
           Cancel
         </Button>
       </Modal.Controls>
-    </div>
+    </Fragment>
   );
 };
 

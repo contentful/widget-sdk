@@ -61,7 +61,7 @@ export const InitialValueTabComponent = ({
 
   const otherLocales = locales.filter((locale) => locale.code !== defaultLocale.code);
 
-  const DefaultLocaleField = () => (
+  const defaultLocaleField = (
     <>
       <StyleTagHidingMarkdownEditorAssetButton />
       <InitialValueField
@@ -69,6 +69,7 @@ export const InitialValueTabComponent = ({
         editorInterface={editorInterface}
         fields={fields}
         isLocalized={ctField.localized}
+        key={defaultLocale.code}
         locale={defaultLocale}
         locales={locales}
         onChange={onChange}
@@ -76,7 +77,30 @@ export const InitialValueTabComponent = ({
     </>
   );
 
-  const OtherLocaleFields = () => (
+  const numberOfLocales = locales.length;
+  const initialValueForDefaultLocale =
+    fields.initialValue?.value && fields.initialValue.value[defaultLocale.code] !== undefined
+      ? fields.initialValue.value[defaultLocale.code]
+      : undefined;
+  const otherLocalesHaveValues =
+    fields.initialValue?.value &&
+    Object.keys(fields.initialValue.value)
+      .filter((localeCode) => localeCode !== defaultLocale.code)
+      .some((localeCode) => fields.initialValue?.value[localeCode] !== undefined);
+
+  const applyValueToOtherLocales = (value: unknown) => {
+    // Our form value objects prevent manually adding keys so we have to create
+    // a clone before we can add locales
+    const payload = fields.initialValue?.value ? { ...fields.initialValue.value } : {};
+
+    for (const locale of otherLocales) {
+      payload[locale.code] = value;
+    }
+
+    onChange('initialValue', payload);
+  };
+
+  const otherLocaleFields = (
     <>
       {numberOfLocales > MANAGABLE_NUMBER_OF_LOCALES && (
         <Fragment>
@@ -153,35 +177,12 @@ export const InitialValueTabComponent = ({
     </>
   );
 
-  const numberOfLocales = locales.length;
-  const initialValueForDefaultLocale =
-    fields.initialValue?.value && fields.initialValue.value[defaultLocale.code] !== undefined
-      ? fields.initialValue.value[defaultLocale.code]
-      : undefined;
-  const otherLocalesHaveValues =
-    fields.initialValue?.value &&
-    Object.keys(fields.initialValue.value)
-      .filter((localeCode) => localeCode !== defaultLocale.code)
-      .some((localeCode) => fields.initialValue?.value[localeCode] !== undefined);
-
-  const applyValueToOtherLocales = (value: unknown) => {
-    // Our form value objects prevent manually adding keys so we have to create
-    // a clone before we can add locales
-    const payload = fields.initialValue?.value ? { ...fields.initialValue.value } : {};
-
-    for (const locale of otherLocales) {
-      payload[locale.code] = value;
-    }
-
-    onChange('initialValue', payload);
-  };
-
   return (
     <Flex flexDirection="column">
       <InitialValueUsageNote />
       <StyleTagHidingMarkdownEditorAssetButton />
-      <DefaultLocaleField />
-      {ctField.localized && <OtherLocaleFields />}
+      {defaultLocaleField}
+      {ctField.localized && otherLocaleFields}
     </Flex>
   );
 };

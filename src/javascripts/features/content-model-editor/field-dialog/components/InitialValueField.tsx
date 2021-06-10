@@ -7,18 +7,19 @@ import { createLocalesApi } from '@contentful/experience-sdk';
 import { css } from 'emotion';
 import keyBy from 'lodash/keyBy';
 
+import type { ContentType } from 'core/typings';
 import localeStore from 'services/localeStore';
 import { useFieldDialogContext } from './FieldDialogContext';
-import { FieldValueChangedHandler } from '../../types';
+import type { FieldValueChangedHandler } from '../../types';
 
 interface UseFieldApi {
-  contentType: any;
+  contentType: ContentType;
   editorInterface: any;
   field: any;
   fields: any;
   locale: any;
-  locales: any; //Array<{ [key: string]: unknown }>;
-  onChange: any;
+  locales: any;
+  onChange: FieldValueChangedHandler;
   setInvalid: any;
 }
 
@@ -106,7 +107,7 @@ const useFieldAPI = ({
 };
 
 export interface InitialValueFieldProps {
-  contentType: any;
+  contentType: UseFieldApi['contentType'];
   editorInterface: any;
   fields: any;
   isLocalized?: boolean;

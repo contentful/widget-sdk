@@ -24,7 +24,7 @@ const FieldModalDialog = ({
           field={ctField}
           contentType={contentType}
           editorInterface={editorInterface}>
-          <Modal isShown={isShown} onClose={onClose} size="60em" allowHeightOverflow>
+          <Modal isShown={isShown} onClose={onClose} size="60em">
             {({ onClose }) => (
               <FieldModalDialogForm
                 onClose={onClose}
