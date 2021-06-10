@@ -11,6 +11,7 @@ import { Flex, ModalLauncher } from '@contentful/forma-36-react-components';
 import { unmarkSpace } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import {
   handleReplaceSpace,
+  handleGetStarted,
   FlexibleOnboardingDialog,
   hasSeenExploreOnboarding,
 } from 'features/onboarding';
@@ -128,6 +129,9 @@ const GetStarted = () => {
                   if (data.recoverableOnboardingEnabled) {
                     handleReplaceSpace(spaceContext.currentSpaceId);
                   } else {
+                    if (data.showFlexibleOnboarding) {
+                      handleGetStarted(spaceContext.currentSpaceId);
+                    }
                     move();
                   }
                 }}

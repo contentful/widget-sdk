@@ -13,7 +13,6 @@ import { getSpace } from 'services/TokenStore';
 import * as fake from 'test/helpers/fakeFactory';
 import {
   markSpace,
-  MODERN_STACK_ONBOARDING_SPACE_NAME,
   unmarkSpace,
 } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 
@@ -101,9 +100,7 @@ describe('FlexibleOnboardingDialog', () => {
       flow: Choices.GATSBY_BLOG_OPTION,
     });
     expect(mockOnClose).toHaveBeenCalled();
-    expect(markExploreOnboardingSeen).toHaveBeenCalled();
     expect(markSpace).toHaveBeenCalledWith(mockSpace.sys.id);
-    expect(renameSpace).toHaveBeenCalledWith(MODERN_STACK_ONBOARDING_SPACE_NAME, mockSpace.sys.id);
   });
 
   it('should show replace space warning if replaceSpace is true', async () => {

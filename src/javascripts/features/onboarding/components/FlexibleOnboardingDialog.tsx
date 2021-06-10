@@ -5,7 +5,6 @@ import { track } from 'analytics/Analytics';
 import { SampleSpaceDialog } from './SampleSpaceDialog';
 import {
   markSpace,
-  MODERN_STACK_ONBOARDING_SPACE_NAME,
   unmarkSpace,
 } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import { BLANK_SPACE_NAME, markExploreOnboardingSeen, renameSpace } from '../utils/util';
@@ -43,10 +42,6 @@ export const FlexibleOnboardingDialog = ({
   };
 
   const handleGatsbyChoice = async (spaceId) => {
-    if (!replaceSpace) {
-      markExploreOnboardingSeen();
-      renameSpace(MODERN_STACK_ONBOARDING_SPACE_NAME, spaceId);
-    }
     markSpace(spaceId);
     router.navigate({
       path: 'spaces.detail.onboarding.getStarted',
