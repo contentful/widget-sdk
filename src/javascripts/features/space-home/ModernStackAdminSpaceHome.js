@@ -6,7 +6,6 @@ import { WidgetContainer } from './widgets/WidgetContainer';
 import { ContactAnExpertCTA } from './components/ContactAnExpertCTA';
 import { AddCoworkerCTA } from './components/AddCoworkerCTA';
 import { GetSdkSection } from './components/GetSdkSection';
-import { UpgradePricing } from './UpgradePricing';
 import { LearnAboutContentful } from './components/LearnAboutContentful';
 import ModernStackOverview from 'components/shared/stack-onboarding/next_steps/ModernStackOverview';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
@@ -91,12 +90,6 @@ export const ModernStackAdminSpaceHome = ({
           <DiscoverOnboardingCTA spaceId={spaceId} />
         </WidgetContainer.Row>
       )}
-
-      <WidgetContainer.Row>
-        <WidgetContainer.Col>
-          <UpgradePricing />
-        </WidgetContainer.Col>
-      </WidgetContainer.Row>
 
       <WidgetContainer.Row>
         <WidgetContainer.Col>

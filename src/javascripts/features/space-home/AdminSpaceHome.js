@@ -4,7 +4,6 @@ import { styles } from './styles';
 import { Heading, Subheading, Card } from '@contentful/forma-36-react-components';
 import { WidgetContainer } from './widgets/WidgetContainer';
 import { GetSdkSection } from './components/GetSdkSection';
-import { UpgradePricing } from './UpgradePricing';
 import { LearnAboutContentful } from './components/LearnAboutContentful';
 import { ContactAnExpertCTA } from './components/ContactAnExpertCTA';
 import { AppsCTA } from './components/AppsCTA';
@@ -128,10 +127,6 @@ export const AdminSpaceHome = ({
           <DiscoverOnboardingCTA spaceId={spaceId} />
         </WidgetContainer.Row>
       )}
-
-      <WidgetContainer.Row>
-        <UpgradePricing />
-      </WidgetContainer.Row>
 
       <ContentfulAppsCTA />
       <ComposeAndLaunchCTA />

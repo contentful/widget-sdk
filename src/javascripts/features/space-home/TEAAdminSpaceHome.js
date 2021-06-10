@@ -7,7 +7,6 @@ import { WidgetContainer } from './widgets/WidgetContainer';
 import { ContactAnExpertCTA } from './components/ContactAnExpertCTA';
 import { AddCoworkerCTA } from './components/AddCoworkerCTA';
 import { GetSdkSection } from './components/GetSdkSection';
-import { UpgradePricing } from './UpgradePricing';
 import { LearnAboutContentful } from './components/LearnAboutContentful';
 import { ExampleProjectOverview } from './components/ExampleProjectOverview';
 import { SpaceTrialWidget } from 'features/trials';
@@ -75,12 +74,6 @@ export const TEAAdminSpaceHome = ({
 
       <ComposeAndLaunchCTA />
       <ContentfulAppsCTA />
-
-      <WidgetContainer.Row>
-        <WidgetContainer.Col>
-          <UpgradePricing />
-        </WidgetContainer.Col>
-      </WidgetContainer.Row>
 
       <WidgetContainer.Row>
         <SpaceTrialWidget />

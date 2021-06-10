@@ -82,29 +82,6 @@ describe('ApiKeyListRoute', () => {
     expect(getByText('Add the first API key to start delivering content')).toBeInTheDocument();
   });
 
-  it('should render non-empty list', async () => {
-    spaceContextMocked.organization.pricingVersion = 'pricing_version_1';
-    mockApiKeyRepo.getAll.mockResolvedValue(mockKeyData);
-
-    const { getByTestId, getByText } = render(
-      <SpaceEnvContextProvider>
-        <ApiKeyListRoute />
-      </SpaceEnvContextProvider>,
-      {
-        wrapper: MemoryRouter,
-      }
-    );
-
-    await waitForElement(() => {
-      return getByTestId('api-key-list');
-    });
-
-    expect(getByTestId('add-api-key')).toBeEnabled();
-    mockKeyData.forEach((key) => {
-      expect(getByText(key.name)).toBeInTheDocument();
-    });
-  });
-
   describe('when limit is reached', () => {
     beforeEach(() => {
       mockedResource = {

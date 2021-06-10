@@ -141,7 +141,7 @@ interface CustomData {
   currentOrgSubscriptionStatus?: string; // one of free, paid, free_paid, trial (works for V1 only)
   currentOrgHasSpace?: boolean; // true if the current org has a space
 
-  currentOrgPricingVersion?: 'pricing_version_1' | 'pricing_version_2'; //the current organization pricing version, currently either `pricing_version_1` or `pricing_version_2`
+  currentOrgPricingVersion?: 'pricing_version_2'; //the current organization pricing version, currently only `pricing_version_2` is valid
   currentOrgHasPaymentMethod?: boolean; //  the organizations that have no payment method added, regardless of their pricing version
 
   currentUserOrgRole?: string; //user's role in current org
