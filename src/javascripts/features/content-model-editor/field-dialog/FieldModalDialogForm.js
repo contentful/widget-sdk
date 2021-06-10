@@ -1,8 +1,7 @@
-import React, { Fragment, useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
-import { useForm } from 'core/hooks/useForm';
 import {
   Modal,
   Button,
@@ -19,19 +18,14 @@ import { SettingsTabComponent } from './components/SettingsTabComponent';
 import { ValidationTabComponent } from './components/ValidationTabComponent';
 import { InitialValueTabComponent } from './components/InitialValueTabComponent';
 import { AppearanceTabComponent } from './components/AppearanceTabComponent';
-import {
-  getSettingsFormFields,
-  getValidationsFormFields,
-  getNodeValidationsFormFields,
-  getInitialValueFormFields,
-} from './utils/formFieldDefinitions';
-import { getRichTextOptions, getWidgetSettings } from './utils/helpers';
+import { getRichTextOptions } from './utils/helpers';
 import { getIconId } from 'services/fieldFactory';
 import { toInternalFieldType } from 'widgets/FieldTypes';
 import { create as createBuiltinWidgetList } from 'widgets/BuiltinWidgets';
 import { useSpaceEnvContentTypes } from 'core/services/SpaceEnvContext';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { FLAGS, getVariation } from 'LaunchDarkly';
+import { useContentTypeField } from './hooks/useContentTypeField';
 
 const styles = {
   modalControls: css({
@@ -102,7 +96,6 @@ const FieldModalDialogForm = ({
   const { currentOrganizationId, currentSpaceId } = useSpaceEnvContext();
   const [selectedTab, setSelectedTab] = useState(formTabs.SETTINGS);
   const [richTextOptions, setRichTextOptions] = useState(() => getRichTextOptions(ctField));
-  const [widgetSettings, setWidgetSettings] = useState(() => getWidgetSettings(widget));
   const [isInitialFieldValuesEnabled, setIsInitialFieldValuesEnabled] = useState(false);
 
   useEffect(() => {
@@ -123,25 +116,26 @@ const FieldModalDialogForm = ({
     [customWidgets, ctField]
   );
 
-  const submitForm = (values, richTextOptions, widgetSettings) => {
+  const submitFn = (values, richTextOptions, widgetSettings) => {
     updateFieldOnScope(values, richTextOptions, widgetSettings);
     onClose();
   };
-
-  const { onBlur, onChange, onSubmit, fields, form } = useForm({
-    fields: {
-      ...getSettingsFormFields(ctField, contentType),
-      ...getValidationsFormFields(ctField),
-      ...getNodeValidationsFormFields(ctField),
-      ...getInitialValueFormFields(ctField),
-    },
-    submitFn: submitForm,
+  const {
+    contentType: contentTypeForm,
+    widgetSettings,
+    isPristine,
+    isInvalid,
+  } = useContentTypeField({
+    submitFn,
+    field: ctField,
+    contentType,
+    widget,
   });
-
+  const { onBlur, onChange, onSubmit, fields, form } = contentTypeForm;
   const iconId = getIconId(ctField) + '-small';
 
   return (
-    <Fragment>
+    <>
       <div className={styles.modalHeader}>
         <div className={styles.modalTitle}>
           <Icon name={iconId} />
@@ -221,7 +215,7 @@ const FieldModalDialogForm = ({
               form={form}
               ctField={ctField}
               contentTypes={currentSpaceContentTypes}
-              widgetSettings={widgetSettings}
+              widgetSettings={widgetSettings.data}
               availableWidgets={availableWidgets}
             />
           </TabPanel>
@@ -236,7 +230,7 @@ const FieldModalDialogForm = ({
               contentType={contentType}
               contentTypes={currentSpaceContentTypes}
               editorInterface={editorInterface}
-              widgetSettings={widgetSettings}
+              widgetSettings={widgetSettings.data}
               availableWidgets={availableWidgets}
             />
           </TabPanel>
@@ -247,8 +241,8 @@ const FieldModalDialogForm = ({
               editorInterface={editorInterface}
               customWidgets={customWidgets}
               availableWidgets={availableWidgets}
-              widgetSettings={widgetSettings}
-              setWidgetSettings={setWidgetSettings}
+              widgetSettings={widgetSettings.data}
+              setWidgetSettings={widgetSettings.setData}
               contentType={contentType}
               ctField={ctField}
               widget={widget}
@@ -259,8 +253,8 @@ const FieldModalDialogForm = ({
       <Modal.Controls className={styles.modalControls}>
         <Button
           testId="confirm-field-dialog-form"
-          disabled={form.invalid || form.pristine}
-          onClick={() => onSubmit(richTextOptions, widgetSettings)}
+          disabled={isInvalid || isPristine}
+          onClick={() => onSubmit(richTextOptions, widgetSettings.data)}
           buttonType="positive">
           Confirm
         </Button>
@@ -268,7 +262,7 @@ const FieldModalDialogForm = ({
           Cancel
         </Button>
       </Modal.Controls>
-    </Fragment>
+    </>
   );
 };
 
