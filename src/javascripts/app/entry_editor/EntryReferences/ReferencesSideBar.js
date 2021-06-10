@@ -78,6 +78,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
 
       // Expected shape on ReferenceTree.js:L56
       dispatch({ type: SET_VALIDATIONS, value: errored });
+      return Notification.error('Some references did not pass validation');
     }
 
     Notification.error(
@@ -101,19 +102,13 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
       await createValidateBulkAction(selectedEntities);
       dispatch({ type: SET_PROCESSING_ACTION, value: null });
       // Expected shape on ReferenceTree.js:L56
+      // This resets the errored list in case a failed Validation ran before
       dispatch({ type: SET_VALIDATIONS, value: { errored: [] } });
 
-      Notification.success(
-        createSuccessMessage({
-          selectedEntities,
-          root: references[0],
-          entityTitle,
-          action: 'validated',
-        })
-      );
+      return Notification.success('All references passed validation');
     } catch (error) {
       dispatch({ type: SET_PROCESSING_ACTION, value: null });
-      handleError(error, 'validated');
+      handleError(error, 'validate');
     }
   };
 
