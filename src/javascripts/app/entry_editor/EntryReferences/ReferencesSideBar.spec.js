@@ -11,7 +11,6 @@ import ReferencesSideBar from './ReferencesSideBar';
 import { getReferencesForEntryId } from './referencesService';
 import { getReleases } from '../../Releases/releasesService';
 
-import { getBulkActionSupportFeatureFlag } from './BulkAction/BulkActionFeatureFlag';
 import { createPublishBulkAction, createValidateBulkAction } from './BulkAction/BulkActionService';
 import { convertBulkActionErrors } from './BulkAction/BulkActionError';
 
@@ -66,10 +65,6 @@ jest.mock('./BulkAction/BulkActionService', () => ({
   createValidateBulkAction: jest.fn(),
 }));
 
-jest.mock('./BulkAction/BulkActionFeatureFlag', () => ({
-  getBulkActionSupportFeatureFlag: jest.fn(),
-}));
-
 const MockPovider = ({ children, references, selectedEntities, dispatch }) => (
   <ReferencesContext.Provider value={{ state: { references, selectedEntities }, dispatch }}>
     {children}
@@ -84,8 +79,6 @@ describe('ReferencesSideBar component', () => {
   beforeEach(async () => {
     jest.spyOn(Notification, 'success').mockImplementation(() => {});
     jest.spyOn(Notification, 'error').mockImplementation(() => {});
-
-    getBulkActionSupportFeatureFlag.mockResolvedValue(false);
 
     getReleases.mockResolvedValue({ items: releases });
     getReferencesForEntryId.mockResolvedValue({
@@ -167,11 +160,7 @@ describe('ReferencesSideBar component', () => {
     });
   });
 
-  describe('when using bulk actions', () => {
-    beforeEach(() => {
-      getBulkActionSupportFeatureFlag.mockResolvedValue(true);
-    });
-
+  describe('when publishing/validating', () => {
     it('should use the bulk api for validation', async () => {
       createValidateBulkAction.mockResolvedValue(simpleReferencesValidationSuccessResponse);
       const response = cfResolveResponse(simpleReferences);

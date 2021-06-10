@@ -106,6 +106,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
     try {
       await createValidateBulkAction(selectedEntities);
       dispatch({ type: SET_PROCESSING_ACTION, value: null });
+      displayValidation({ errored: [] });
     } catch (error) {
       dispatch({ type: SET_PROCESSING_ACTION, value: null });
       handleError(error);
