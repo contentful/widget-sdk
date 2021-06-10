@@ -253,7 +253,7 @@ const FieldModalDialogForm = ({
       <Modal.Controls>
         <Button
           testId="confirm-field-dialog-form"
-          disabled={form.invalid}
+          disabled={form.invalid || form.pristine}
           onClick={() => onSubmit(richTextOptions, widgetSettings)}
           buttonType="positive">
           Confirm
