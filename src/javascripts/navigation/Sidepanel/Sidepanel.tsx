@@ -2,7 +2,7 @@ import React, { MouseEvent } from 'react';
 import { get } from 'lodash';
 import { css, cx } from 'emotion';
 import { getVariation, FLAGS } from 'LaunchDarkly';
-import { Icon } from '@contentful/forma-36-react-components';
+import { Icon, TextLink } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
 import * as accessChecker from 'access_control/AccessChecker/index';
@@ -246,7 +246,7 @@ export class Sidepanel extends React.Component<SidepanelProps, SidepanelState> {
               setOpenedSpaceId={this.setOpenedSpaceId}
             />
 
-            <div
+            <TextLink
               className={styles.orgSettingsButton}
               onClick={this.gotoOrgSettings}
               data-test-id="sidepanel-org-actions-settings">
@@ -257,7 +257,7 @@ export class Sidepanel extends React.Component<SidepanelProps, SidepanelState> {
               />
               Organization settings
               {showSubscriptionSettings && ' & subscriptions'}
-            </div>
+            </TextLink>
           </>
         )}
 
