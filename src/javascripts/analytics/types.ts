@@ -6,6 +6,17 @@ declare global {
   }
 }
 
+export type SegmentSchema = {
+  name: string;
+  isLegacySnowplowGeneric?: boolean;
+};
+
+export type SnowplowSchema = {
+  name: string;
+  version: string;
+  path: string;
+};
+
 /**
  * Raw analytics event data as accepted by Analytics.track()
  * This is not the data that will be sent to Snowplow or Segment as it's not "transformed".
@@ -19,5 +30,9 @@ export type EventData = Record<string, unknown>;
 export type TransformedEventData = {
   schema?: string;
   data: Record<string, unknown>;
-  contexts?: Record<string, unknown>;
+  contexts?: Record<string, unknown>[];
+};
+
+export type TransformedSegmentEventData = {
+  payload: Record<string, unknown>;
 };

@@ -1,31 +1,33 @@
-import EntityAction from './EntityAction';
-import { get, upperFirst } from 'lodash';
+import { addUserOrgSpace } from './Decorators';
+import { get } from 'lodash';
 
-export default function EntryActionV2(eventName, eventData) {
-  const [downcaseEntity, action] = eventName.split(':');
-  const entity = upperFirst(downcaseEntity);
-  const fullEventData = { ...eventData, actionData: { entity, action } };
-  const trackingData = EntityAction(eventName, fullEventData);
-  Object.assign(trackingData.data, getData(eventData));
-  return trackingData;
-}
-
-function getData(eventData) {
-  const data = getBaseData(eventData);
+export default addUserOrgSpace((_eventName, eventData) => {
   const { contentType, eventOrigin } = eventData;
   const entryId = get(eventData, 'response.sys.id');
+  const data = {};
 
   if (entryId) {
-    data['entry_id'] = entryId;
+    data.entry_id = entryId;
+    data.entry_version = get(eventData, 'response.sys.version');
   }
   if (eventOrigin) {
-    data['event_origin'] = eventOrigin;
+    data.event_origin = eventOrigin;
   }
   if (contentType) {
-    data['entry_ct_entry_reference_fields_count'] = countEntryReferenceFields(contentType);
+    data.content_type_id = get(contentType, 'sys.id');
+    data.entry_ct_fields_count = contentType.fields.length;
+    data.entry_ct_entry_reference_fields_count = countEntryReferenceFields(contentType);
   }
-  return data;
-}
+
+  if (eventData.widgetTrackingContexts) {
+    // Used for `entry:publish`, not for `entry:create`
+    return {
+      data,
+      contexts: eventData.widgetTrackingContexts,
+    };
+  }
+  return { data };
+});
 
 /**
  *
@@ -40,12 +42,4 @@ function countEntryReferenceFields(contentTypeDto) {
 
 function isEntryReferenceField({ type, linkType }) {
   return type === 'Link' && linkType === 'Entry';
-}
-
-function getBaseData(eventData) {
-  return {
-    executing_user_id: eventData.userId,
-    organization_id: eventData.organizationId,
-    space_id: eventData.spaceId,
-  };
 }
