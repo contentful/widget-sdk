@@ -2,7 +2,7 @@ import React, { MouseEvent } from 'react';
 import { get } from 'lodash';
 import { css, cx } from 'emotion';
 import { getVariation, FLAGS } from 'LaunchDarkly';
-import { Icon } from '@contentful/forma-36-react-components';
+import { Icon, TextLink } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
 import * as accessChecker from 'access_control/AccessChecker/index';
@@ -37,12 +37,17 @@ const styles = {
   }),
   orgSettingsButton: css({
     display: 'flex',
-    alignItems: 'center',
-    borderTop: `1px solid ${tokens.colorElementLight}`,
-    padding: tokens.spacingM,
     cursor: 'pointer',
-    '&:hover': {
-      backgroundColor: tokens.colorElementLight,
+    borderTop: `1px solid ${tokens.colorElementLight}`,
+    '&:link': {
+      display: 'flex',
+      padding: tokens.spacingM,
+      alignItems: 'center',
+      fontWeight: tokens.fontWeightNormal,
+      '&:hover': {
+        backgroundColor: tokens.colorElementLight,
+        textDecoration: 'none',
+      },
     },
   }),
 };
@@ -141,9 +146,7 @@ export class Sidepanel extends React.Component<SidepanelProps, SidepanelState> {
     }));
   };
 
-  gotoOrgSettings = () => {
-    this.props.closeSidePanel();
-
+  getLinktoOrgSettings = () => {
     if (this.state.currOrg) {
       const orgId = this.state.currOrg.sys.id;
       const isPricingV2 = this.state.currOrg.pricingVersion === 'pricing_version_2';
@@ -152,11 +155,11 @@ export class Sidepanel extends React.Component<SidepanelProps, SidepanelState> {
         OrgRoles.isOwnerOrAdmin(this.state.currOrg) || isOrganizationOnTrial(this.state.currOrg);
 
       if (isOwnerOrAdminOrOnTrial && isPricingV2) {
-        router.navigate({ path: 'organizations.subscription.overview', orgId });
+        return router.href({ path: 'organizations.subscription.overview', orgId });
       } else if (isOwnerOrAdminOrOnTrial && !isPricingV2) {
-        router.navigate({ path: 'organizations.subscription_v1', orgId });
+        return router.href({ path: 'organizations.subscription_v1', orgId });
       } else {
-        router.navigate({ path: 'organizations.teams', orgId });
+        return router.href({ path: 'organizations.teams', orgId });
       }
     }
   };
@@ -246,18 +249,21 @@ export class Sidepanel extends React.Component<SidepanelProps, SidepanelState> {
               setOpenedSpaceId={this.setOpenedSpaceId}
             />
 
-            <div
-              className={styles.orgSettingsButton}
-              onClick={this.gotoOrgSettings}
-              data-test-id="sidepanel-org-actions-settings">
-              <Icon
-                className={css({ marginRight: tokens.spacingXs })}
-                icon="Settings"
-                color="muted"
-              />
-              Organization settings
-              {showSubscriptionSettings && ' & subscriptions'}
-            </div>
+            {this.state.currOrg && (
+              <TextLink
+                className={styles.orgSettingsButton}
+                linkType="muted"
+                href={this.getLinktoOrgSettings()}
+                data-test-id="sidepanel-org-actions-settings">
+                <Icon
+                  className={css({ marginRight: tokens.spacingXs })}
+                  icon="Settings"
+                  color="muted"
+                />
+                Organization settings
+                {showSubscriptionSettings && ' & subscriptions'}
+              </TextLink>
+            )}
           </>
         )}
 
