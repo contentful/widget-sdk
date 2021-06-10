@@ -37,7 +37,6 @@ import AliasIcon from 'svg/alias.svg';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { go } from 'states/Navigator';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { usePubSubClient } from 'core/hooks';
 
 export function EnvironmentsRoute() {
@@ -59,7 +58,6 @@ export function EnvironmentsRoute() {
     environmentId: currentEnvironmentId,
     getSpaceData: () => currentSpaceData,
     goToSpaceDetail: () => go({ path: 'spaces.detail' }),
-    isLegacyOrganization: isLegacyOrganization(currentOrganization),
     organizationId: currentOrganizationId,
     pubsubClient: spacePubSubClient,
     spaceId: currentSpaceId,

@@ -20,8 +20,7 @@ import { removeMembership } from 'access_control/OrganizationMembershipRepositor
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { Organization as OrganizationPropType } from 'app/OrganizationSettings/PropTypes';
 import { fetchCanLeaveOrg } from './OrganizationUtils';
-import { isOwnerOrAdmin, getOrganizationMembership } from 'services/OrganizationRoles';
-import { isLegacyOrganization } from 'utils/ResourceUtils';
+import { getOrganizationMembership } from 'services/OrganizationRoles';
 import { captureError } from 'core/monitoring';
 import { goToOrganizationSettings } from './goToOrganizationSettings';
 
@@ -80,12 +79,6 @@ const OrganizationRow = ({ organization, onLeaveSuccess }) => {
   } = getOrganizationMembership(organization.sys.id);
 
   const [canUserLeaveOrg, setCanUserLeaveOrg] = useState(true);
-  let userCanAccessOrgSettings = true;
-
-  // If it's a legacy organization (V1), then only the owner or admin can access the org settings.
-  if (isLegacyOrganization(organization) && !isOwnerOrAdmin(organization)) {
-    userCanAccessOrgSettings = false;
-  }
 
   const goToOrgSettings = () => {
     goToOrganizationSettings(organization.sys.id);
@@ -97,9 +90,6 @@ const OrganizationRow = ({ organization, onLeaveSuccess }) => {
 
   const toolTipContentLeaveOrg = !canUserLeaveOrg
     ? 'You cannot leave this organization since you are the only owner remaining'
-    : '';
-  const toolTipContentOrgSettingsLink = !userCanAccessOrgSettings
-    ? 'Only owners or admins of the organization can access the settings'
     : '';
 
   return (
@@ -119,16 +109,8 @@ const OrganizationRow = ({ organization, onLeaveSuccess }) => {
           }}
           data-test-id="organization-row.dropdown-menu">
           <DropdownList>
-            <DropdownListItem
-              onClick={goToOrgSettings}
-              isDisabled={!userCanAccessOrgSettings}
-              testId="organization-row.go-to-org-link">
-              <Tooltip
-                place="top"
-                content={toolTipContentOrgSettingsLink}
-                className={styles.tooltip}>
-                Go to Organization Settings
-              </Tooltip>
+            <DropdownListItem onClick={goToOrgSettings} testId="organization-row.go-to-org-link">
+              Go to Organization Settings
             </DropdownListItem>
             <DropdownListItem
               isDisabled={!canUserLeaveOrg}

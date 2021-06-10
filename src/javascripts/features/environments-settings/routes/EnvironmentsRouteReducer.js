@@ -71,7 +71,6 @@ export const useEnvironmentsRouteState = (props) => {
     allSpaceAliases: [],
     resource: { usage: 0 },
     canUpgradeSpace: props.canUpgradeSpace,
-    isLegacyOrganization: props.isLegacyOrganization,
     organizationId: props.organizationId,
     spaceId: props.spaceId,
     hasNextSpacePlan: undefined,
@@ -128,22 +127,19 @@ export const useEnvironmentsRouteState = (props) => {
   };
 
   const FetchEnvironments = async () => {
-    const { isLegacyOrganization } = props;
     dispatch({ type: SET_IS_LOADING, value: true });
 
     const { environments, aliases } = await resourceEndpoint.getAll();
 
     const items = environments.map(makeEnvironmentModel);
 
-    const resource = isLegacyOrganization
-      ? { usage: items.length && items.length - 1 } // exclude master for consistency with v2 api
-      : await resourceService.get('environment');
+    const resource = await resourceService.get('environment');
 
     dispatch({
       type: SET_ENVIRONMENTS,
       resource,
       items,
-      canCreateEnv: isLegacyOrganization || canCreate(resource),
+      canCreateEnv: canCreate(resource),
       hasOptedInEnv: aliases.length > 0,
       allSpaceAliases: aliases,
     });
@@ -151,21 +147,17 @@ export const useEnvironmentsRouteState = (props) => {
   };
 
   const RefetchEnvironments = async () => {
-    const { isLegacyOrganization } = props;
-
     const { environments, aliases } = await resourceEndpoint.getAll();
 
     const items = environments.map(makeEnvironmentModel);
 
-    const resource = isLegacyOrganization
-      ? { usage: items.length && items.length - 1 } // exclude master for consistency with v2 api
-      : await resourceService.get('environment');
+    const resource = await resourceService.get('environment');
 
     dispatch({
       type: SET_ENVIRONMENTS,
       resource,
       items,
-      canCreateEnv: isLegacyOrganization || canCreate(resource),
+      canCreateEnv: canCreate(resource),
       hasOptedInEnv: !!aliases,
       allSpaceAliases: aliases,
     });
