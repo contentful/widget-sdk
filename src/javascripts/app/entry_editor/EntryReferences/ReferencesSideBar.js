@@ -77,7 +77,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
       const errored = convertBulkActionErrors(error.data.details.errors);
 
       // Expected shape on ReferenceTree.js:L56
-      dispatch({ type: SET_VALIDATIONS, value: errored });
+      dispatch({ type: SET_VALIDATIONS, value: { errored } });
       return Notification.error('Some references did not pass validation');
     }
 
