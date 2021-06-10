@@ -7,18 +7,9 @@ import '@testing-library/jest-dom/extend-expect';
 import { ReferencesContext } from './ReferencesContext';
 import ReferencesTree, { hasLinks } from './index';
 
-import {
-  validateEntities,
-  getDefaultLocale,
-  getReferencesForEntryId,
-  getEntityTitle,
-} from './referencesService';
+import { getDefaultLocale, getReferencesForEntryId, getEntityTitle } from './referencesService';
 
-import {
-  entityWithNoRefs,
-  simpleReferences,
-  simpleReferencesValidationErrorResponse,
-} from './__fixtures__';
+import { entityWithNoRefs, simpleReferences } from './__fixtures__';
 
 jest.mock('access_control/EntityPermissions', () => ({
   create: () => ({
@@ -30,7 +21,6 @@ jest.mock('./referencesService', function () {
   return {
     getDefaultLocale: jest.fn(),
     getReferencesForEntryId: jest.fn(),
-    validateEntities: jest.fn(),
     publishEntities: jest.fn(),
     getEntityTitle: jest.fn(),
   };
@@ -63,7 +53,6 @@ describe('ReferencesTree component', () => {
   });
 
   it('should not render the references tree if there are no references', async () => {
-    validateEntities.mockResolvedValue(simpleReferencesValidationErrorResponse);
     const renderResult = render(
       <MockPovider>
         <ReferencesTree entity={entityWithNoRefs} />

@@ -47,7 +47,6 @@ export enum FLAGS {
   PATCH_ENTRY_UPDATES = 'feature-penguin-12-2020-patch-entry-updates',
   COMPOSE_APP_LISTING_EAP = 'feature-ext-12-2020-contentful-apps-compose-eap',
   LAUNCH_APP_LISTING_EAP = 'feature-ext-12-2020-contentful-apps-launch-eap',
-  REFERENCE_TREE_BULK_ACTIONS_SUPPORT = 'feature-pulitzer-01-2021-reference-tree-bulk-actions',
   REACT_MIGRATION_CT = 'react-migration-10-2020-content-type-editor',
   APP_HOSTING_UI = 'feature-extensibility-03-2021-app-hosting-ui',
   HIGH_VALUE_LABEL = 'feature-hejo-03-2021-high-value-label',
@@ -100,9 +99,6 @@ const FALLBACK_VALUES = {
   [FLAGS.CUSTOM_TRACKING_FIELD_FOR_SLUGS]: false,
   [FLAGS.EXPERIENCE_SDK_APP_CONFIG_LOCATION]: false,
   [FLAGS.EXPERIENCE_SDK_ENTRY_EDITOR_LOCATION]: false,
-
-  // TODO: remove or flip this flag to `true` once it's fully rolled out
-  [FLAGS.REFERENCE_TREE_BULK_ACTIONS_SUPPORT]: false,
 
   [FLAGS.REACT_MIGRATION_CT]: false,
 

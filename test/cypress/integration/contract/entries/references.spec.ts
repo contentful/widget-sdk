@@ -1,4 +1,3 @@
-import { FeatureFlag } from '../../../util/featureFlag';
 import { defaultRequestsMock } from '../../../util/factories';
 import { defaultEntryId, defaultSpaceId } from '../../../util/requests';
 
@@ -53,9 +52,11 @@ describe('Entry references', () => {
       cy.visit(`/spaces/${defaultSpaceId}/entries/${defaultEntryId}`);
     });
 
-    it('validates release without errors', () => {
-      Entry.getEntryReferences.willReturnSeveral();
-      Entry.validateEntryReferencesResponse.willReturnNoErrors();
+    it('should validate publishing entities successfully', () => {
+      Entry.getEntryReferences.willReturnSeveralWithVersion();
+
+      BulkAction.validateBulkAction.willSucceed();
+      BulkAction.getValidateBulkAction.willReturnStatusSucceeded();
 
       cy.findByTestId('test-id-editor-builtin-reference-tree').click();
       cy.findByTestId('selectAllReferences').check();
@@ -67,9 +68,11 @@ describe('Entry references', () => {
         .should('contain', 'All references passed validation');
     });
 
-    it('validates release with errors', () => {
-      Entry.getEntryReferences.willReturnSeveral();
-      Entry.validateEntryReferencesResponse.willReturnErrors();
+    it('should display an error message when a validate BulkAction fails', () => {
+      Entry.getEntryReferences.willReturnSeveralWithVersion();
+
+      BulkAction.validateBulkAction.willSucceed();
+      BulkAction.getValidateBulkAction.willReturnStatusFailed();
 
       cy.findByTestId('test-id-editor-builtin-reference-tree').click();
       cy.findByTestId('selectAllReferences').check();
@@ -79,44 +82,6 @@ describe('Entry references', () => {
         .click({ timeout: 5000 })
         .should('be.visible')
         .should('contain', 'Some references did not pass validation');
-    });
-
-    describe('with BulkActions API feature flag enabled', () => {
-      beforeEach(() => {
-        cy.enableFeatureFlags([FeatureFlag.REFERENCE_TREE_BULK_ACTIONS_SUPPORT]);
-      });
-
-      it('should validate publishing entities successfully', () => {
-        Entry.getEntryReferences.willReturnSeveralWithVersion();
-
-        BulkAction.validateBulkAction.willSucceed();
-        BulkAction.getValidateBulkAction.willReturnStatusSucceeded();
-
-        cy.findByTestId('test-id-editor-builtin-reference-tree').click();
-        cy.findByTestId('selectAllReferences').check();
-        cy.findByTestId('validateReferencesBtn').click();
-
-        cy.findByTestId('cf-ui-notification')
-          .click({ timeout: 5000 }) // official cypress workaround for animation
-          .should('be.visible')
-          .should('contain', 'All references passed validation');
-      });
-
-      it('should display an error message when a validate BulkAction fails', () => {
-        Entry.getEntryReferences.willReturnSeveralWithVersion();
-
-        BulkAction.validateBulkAction.willSucceed();
-        BulkAction.getValidateBulkAction.willReturnStatusFailed();
-
-        cy.findByTestId('test-id-editor-builtin-reference-tree').click();
-        cy.findByTestId('selectAllReferences').check();
-        cy.findByTestId('validateReferencesBtn').click();
-
-        cy.findByTestId('cf-ui-notification')
-          .click({ timeout: 5000 })
-          .should('be.visible')
-          .should('contain', 'Some references did not pass validation');
-      });
     });
   });
 
