@@ -1,3 +1,4 @@
+import { makeLink } from '@contentful/types';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { getFirstAccessibleSref } from 'access_control/SectionAccess';
 import * as Analytics from 'analytics/Analytics';
@@ -57,7 +58,12 @@ const spaceEnvironment = {
     '$stateParams',
     (spaceData, $state, $stateParams) => {
       const organizationData = spaceData.organization;
-      Analytics.trackContextChange(spaceData, organizationData);
+      const environmentLink = makeLink('Environment', $stateParams.environmentId || 'master');
+      Analytics.trackContextChange({
+        organization: organizationData,
+        space: spaceData,
+        environment: environmentLink,
+      });
 
       // if there's empty environment id, for example "/environments//"
       // redirect to master environment
@@ -119,7 +125,12 @@ const spaceDetail = {
     'spaceData',
     (spaceData) => {
       const organizationData = spaceData.organization;
-      Analytics.trackContextChange(spaceData, organizationData);
+      const environmentLink = makeLink('Environment', 'master');
+      Analytics.trackContextChange({
+        organization: organizationData,
+        space: spaceData,
+        environment: environmentLink,
+      });
       storeCurrentIds(spaceData);
     },
   ],

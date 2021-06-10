@@ -68,8 +68,8 @@ export function identify(userId: string): void {
 /**
  * Tracks an event in Snowplow if it is registered in the snowplow events service.
  */
-export function track(eventName: string, rawData: TransformedEventData): void {
-  const eventData = buildUnstructEventData(eventName, rawData);
+export function track(eventName: string, data: TransformedEventData): void {
+  const eventData = buildUnstructEventData(eventName, data);
 
   if (eventData) {
     snowplowSend(...eventData);

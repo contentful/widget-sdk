@@ -7,11 +7,17 @@ import {
   DropdownList,
   DropdownListItem,
   TextLink,
+  Flex,
 } from '@contentful/forma-36-react-components';
 
 const styles = {
   dropdownContainer: css({
     width: '150px',
+  }),
+  headerActions: css({
+    ['> *']: {
+      marginLeft: '1em',
+    },
   }),
 };
 
@@ -31,7 +37,7 @@ export function ContentTypePageActions(props) {
         </TextLink>
       )}
       {props.canEdit && (
-        <div className="workbench-header__actions">
+        <Flex alignItems="center" alignSelf="center" className={styles.headerActions}>
           {props.isNew && (
             <Button
               buttonType="muted"
@@ -88,7 +94,7 @@ export function ContentTypePageActions(props) {
             disabled={props.save.isDisabled()}>
             Save
           </Button>
-        </div>
+        </Flex>
       )}
     </>
   );

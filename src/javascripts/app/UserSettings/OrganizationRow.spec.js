@@ -8,7 +8,6 @@ import OrganizationRow from './OrganizationRow';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { fetchCanLeaveOrg } from './OrganizationUtils';
 import { isOwnerOrAdmin, getOrganizationMembership } from 'services/OrganizationRoles';
-import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { removeMembership } from 'access_control/OrganizationMembershipRepository';
 import { Table, TableBody } from '@contentful/forma-36-react-components';
 import { captureError } from 'core/monitoring';
@@ -20,10 +19,6 @@ const onLeaveSuccess = jest.fn();
 
 jest.mock('./OrganizationUtils', () => ({
   fetchCanLeaveOrg: jest.fn(Promise.resolve()),
-}));
-
-jest.mock('utils/ResourceUtils', () => ({
-  isLegacyOrganization: jest.fn(),
 }));
 
 jest.mock('services/OrganizationRoles', () => ({
@@ -67,7 +62,6 @@ describe('OrganizationRow', () => {
     removeMembership.mockResolvedValueOnce(jest.fn());
     fetchCanLeaveOrg.mockResolvedValue(true);
     isOwnerOrAdmin.mockReturnValue(false);
-    isLegacyOrganization.mockReturnValue(false);
     getOrganizationMembership.mockReturnValue(fakeOrgMemberhip);
 
     jest.spyOn(ModalLauncher, 'open').mockImplementation(() => Promise.resolve(true));
@@ -129,20 +123,6 @@ describe('OrganizationRow', () => {
       expect(screen.getByTestId('organization-row.leave-org-button')).toBeVisible();
     });
 
-    it('should not render the go to org settings button as disabled if they are a legacy V1 org and the user is not admin or owner', async () => {
-      isLegacyOrganization.mockReturnValue(true);
-
-      await build();
-      fireEvent.click(screen.getByTestId('organization-row.dropdown-menu.trigger'));
-
-      const leaveButtonContainer = screen.getByTestId('organization-row.go-to-org-link');
-      fireEvent.click(
-        within(leaveButtonContainer).getByTestId(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
-      );
-
-      await expect(ModalLauncher.open).not.toHaveBeenCalled();
-    });
-
     it('should render the leave button as disabled when they are the last owner of an organization', async () => {
       fetchCanLeaveOrg.mockResolvedValue(false);
 
@@ -155,22 +135,6 @@ describe('OrganizationRow', () => {
       );
 
       await expect(ModalLauncher.open).not.toHaveBeenCalled();
-    });
-
-    it('should go to the org settings if they are a V1 legacy customer and user is admin or owner and click on the go to org settings button', async () => {
-      isLegacyOrganization.mockReturnValue(true);
-      isOwnerOrAdmin.mockReturnValue(true);
-
-      await build();
-      fireEvent.click(screen.getByTestId('organization-row.dropdown-menu.trigger'));
-
-      const goToOrgButtonContainer = screen.getByTestId('organization-row.go-to-org-link');
-
-      fireEvent.click(
-        within(goToOrgButtonContainer).getByTestId(FORMA_CONSTANTS.DROPDOWN_BUTTON_TEST_ID)
-      );
-
-      expect(goToOrganizationSettings).toHaveBeenCalledWith(fakeOrganization.sys.id);
     });
 
     it('should go to the org settings if they are a V2 pricing customer and click on the go to org settings button', async () => {

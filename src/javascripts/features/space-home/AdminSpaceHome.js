@@ -4,7 +4,6 @@ import { styles } from './styles';
 import { Heading, Subheading, Card } from '@contentful/forma-36-react-components';
 import { WidgetContainer } from './widgets/WidgetContainer';
 import { GetSdkSection } from './components/GetSdkSection';
-import { UpgradePricing } from './UpgradePricing';
 import { LearnAboutContentful } from './components/LearnAboutContentful';
 import { ContactAnExpertCTA } from './components/ContactAnExpertCTA';
 import { AppsCTA } from './components/AppsCTA';
@@ -92,11 +91,20 @@ export const AdminSpaceHome = ({
           </Heading>
           {!isTrialSpace && (
             <>
-              {isNewOnboardingEnabled || isRecoverableOnboardingEnabled ? (
-                <Subheading className={styles.description}>
-                  Use this blank space to build it your way from scratch.
-                </Subheading>
-              ) : (
+              {(isNewOnboardingEnabled || isRecoverableOnboardingEnabled) && (
+                <>
+                  {isEmptySpace ? (
+                    <Subheading className={styles.description}>
+                      Use this blank space to build it your way from scratch.
+                    </Subheading>
+                  ) : (
+                    <Subheading className={styles.description}>
+                      Use this pre-built space to place your content.
+                    </Subheading>
+                  )}
+                </>
+              )}
+              {!isNewOnboardingEnabled && !isRecoverableOnboardingEnabled && (
                 <Subheading className={styles.description}>
                   Use this space to create and publish content with others from your organization.
                   <br />
@@ -119,10 +127,6 @@ export const AdminSpaceHome = ({
           <DiscoverOnboardingCTA spaceId={spaceId} />
         </WidgetContainer.Row>
       )}
-
-      <WidgetContainer.Row>
-        <UpgradePricing />
-      </WidgetContainer.Row>
 
       <ContentfulAppsCTA />
       <ComposeAndLaunchCTA />

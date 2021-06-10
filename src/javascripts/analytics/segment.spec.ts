@@ -1,7 +1,7 @@
 import { noop } from 'lodash';
 import { getSegmentSchemaForEvent } from './transform';
-import { Schema } from './SchemasSegment';
-import { TransformedEventData } from './types';
+import { TransformedEventData, SegmentSchema as Schema } from './types';
+import { transformSnowplowToSegmentData } from './segment';
 
 let mockAnalytics;
 
@@ -57,6 +57,12 @@ describe('Segment', () => {
     });
   });
 
+  // Arbitrary event, replaced with another one if this gets removed or moved to typewriter tracking.
+  const event = 'entry:create';
+  const eventSchema = getSegmentSchemaForEvent(event) as Schema;
+  // Sanity check to ensure above event isn't a generic one:
+  expect(eventSchema.isLegacySnowplowGeneric).toBe(false);
+
   describe('#track()', () => {
     const data = { foo: 'bar' };
 
@@ -64,69 +70,76 @@ describe('Segment', () => {
       segment.enable();
     });
 
-    describe('for events using `wrapPayloadInData: true` legacy option', () => {
-      // Use arbitrary legacy event name from Snowplow -> Segment migration. Can be replaced with any other
-      // event if this one gets removed in the future or if the `wrapPayloadInData` gets removed from it.
-      const legacyEventName = 'entry:create';
-      const schema = getSegmentSchemaForEvent('entry:create') as Schema;
-      // Sanity check to ensure above event falls into the right category:
-      expect(schema.wrapPayloadInData).toBe(true);
-
-      it('tracks passed `data` as `{data}', () => {
-        segment.track(legacyEventName, { data });
-        expect(track).toHaveBeenCalledWith(schema.name, { data }, expect.any(Object));
-        expect(track).toHaveBeenCalledTimes(1);
-      });
-
-      it('it passes other props next to `data`', () => {
-        const dataWithMoreProps = { data, more: 'data', contexts: { ...data } };
-        segment.track(legacyEventName, { ...dataWithMoreProps });
-        expect(track).toHaveBeenCalledWith(schema.name, dataWithMoreProps, expect.any(Object));
-        expect(track).toHaveBeenCalledTimes(1);
-      });
-    });
-
-    it('tracks passed `data` directly for events not using `wrapPayloadInData` legacy option', () => {
-      const nonLegacyEventName = 'reference_editor_action:create';
-      const schema = getSegmentSchemaForEvent(nonLegacyEventName) as Schema;
-      expect(schema.wrapPayloadInData).toBeFalsy();
-
-      segment.track(nonLegacyEventName, { data });
-      expect(track).toHaveBeenCalledWith(schema.name, data, expect.any(Object));
+    it('tracks data against event schema with passed payload', () => {
+      segment.track(event, { payload: data });
+      expect(track).toHaveBeenCalledWith(eventSchema.name, data, expect.any(Object));
       expect(track).toHaveBeenCalledTimes(1);
     });
+  });
 
-    describe('Snowplow -> Segment new way of tracking experiment', () => {
-      const NO_INTEGRACTIONS = { integrations: { All: false } };
+  describe('transformSnowplowToSegmentData()', () => {
+    const simpleData: TransformedEventData = { data: { foo: 'bar' } };
+    const complexData: TransformedEventData = {
+      schema: 'iglu:com.contentful/foo-schema.json',
+      data: {
+        foo: 'bar',
+        nested: { foo: { bar: 'baz' } },
+        items: ['one', 'two'],
+        space_id: 'space-id-1',
+        organization_id: 'org-id-1',
+        executing_user_id: 'user-id-1',
+      },
+      contexts: [simpleData],
+    };
+    // Not a valid TransformedEventData as props aren't inside `data` but on the root level:
+    const nonsenseData = { foo: 'bar', data: { space_id: 'space-id-2' } };
 
-      it('transformed data against Snowplow schema ID instead of internal web app event ID', () => {
-        const eventData = {
-          data: {
-            action: 'open',
-            organization_id: 'org-id',
-            space_id: 'space-id',
-            executing_user_id: 'user-id',
-          },
-          schema: 'snowplow-schema',
-          contexts: {
+    describe('for normal events', () => {
+      it('returns `data` as `{payload: data}` and does not add env id as there is no space id', () => {
+        const result = transformSnowplowToSegmentData(event, simpleData, 'env-id-1');
+        expect(result).toStrictEqual({ payload: { ...simpleData.data } });
+      });
+
+      it('transforms passed `data`', () => {
+        const result = transformSnowplowToSegmentData(event, complexData, 'env-id-1');
+        expect(result).toStrictEqual({
+          payload: {
             foo: 'bar',
+            nested: '{"foo":{"bar":"baz"}}', // stringify objects
+            items: ['one', 'two'], // do not stringify arrays
+            space_key: 'space-id-1', // _id to _key
+            organization_key: 'org-id-1', // _id to _key
+            environment_key: 'env-id-1', // added because there's a space_key
+            contexts: '[{"data":{"foo":"bar"}}]', // stringified contexts
+            // Removes `executing_user_id` as it's redundant with Semgent's `user_id` which is automatically added.
+            // Does not include `schema` as it's Snowplow specific.
           },
-        } as TransformedEventData;
-        const expectedPayload = {
-          action: 'open',
-          organization_key: 'org-id', // id -> key
-          space_key: 'space-id', // id -> key
-          // removed `executing_user_id`
-          contexts: '{"foo":"bar"}', // serialized contexts JSON blob on main event data
-        };
-        const event = 'slide_in_editor:open';
+        });
+      });
 
-        segment.track(event, eventData);
-        expect(track).toHaveBeenCalledWith('slide_in_editor', expectedPayload, NO_INTEGRACTIONS);
+      it('preserves invalid transformed data incorrectly added to the object root', () => {
+        const result = transformSnowplowToSegmentData(event, nonsenseData, 'env-id-2');
+        expect(result).toEqual({
+          payload: { foo: 'bar', space_key: 'space-id-2', environment_key: 'env-id-2' },
+        });
+      });
+    });
 
-        // We still track "the old way" as well as this is just an experiment for a few events:
-        expect(track).toHaveBeenCalledTimes(2);
-        expect(track).toHaveBeenCalledWith('slide_in_editor:open', eventData, expect.any(Object));
+    describe('for `generic` Snowplow events', () => {
+      // Arbitrary generic event, replaced with another one if this gets removed or moved to typewriter tracking.
+      const genericEvent = 'entity_button:click';
+      const genericEventSchema = getSegmentSchemaForEvent(genericEvent) as Schema;
+      // Sanity check to ensure above event is a generic one:
+      expect(genericEventSchema.isLegacySnowplowGeneric).toBe(true);
+
+      it('returns passed `data` as `{payload: {data} } without environment ID', () => {
+        const result = transformSnowplowToSegmentData(genericEvent, simpleData, 'env-id-1');
+        expect(result).toStrictEqual({ payload: simpleData });
+      });
+
+      it('does no transformation on the data as for non-generic events', () => {
+        const result = transformSnowplowToSegmentData(genericEvent, complexData, 'env-id-1');
+        expect(result).toStrictEqual({ payload: complexData });
       });
     });
   });

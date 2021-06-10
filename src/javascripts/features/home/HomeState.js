@@ -30,20 +30,7 @@ export function EmptyHomeRouter() {
       const lastUsedOrgId = localStorage.get('lastUsedOrg');
       const lastUsedOrg = organizations.find((org) => org.sys.id === lastUsedOrgId);
 
-      let organization = lastUsedOrg ?? organizations[0];
-
-      if (organization?.pricingVersion === 'pricing_version_1') {
-        // If the last used org is pricing v1, find the first v2 org instead
-        const firstV2Org = organizations.find((org) => org.pricingVersion === 'pricing_version_2');
-
-        if (firstV2Org) {
-          organization = firstV2Org;
-        } else {
-          // If no pricing v2 org was able to be found, then unset the organization entirely.
-          // Compose + Launch cannot be purchased by these users
-          organization = null;
-        }
-      }
+      const organization = lastUsedOrg ?? organizations[0];
 
       if (organization) {
         router.navigate(

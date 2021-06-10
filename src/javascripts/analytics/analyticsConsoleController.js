@@ -5,14 +5,8 @@ import moment from 'moment';
 import { validateEvent } from 'analytics/Validator';
 import { captureWarning } from 'core/monitoring';
 
-import {
-  getSegmentSchemaForEvent,
-  getSegmentExperimentSchemaForEvent,
-  getSnowplowSchemaForEvent,
-} from 'analytics/transform';
-import * as Snowplow from 'analytics/snowplow';
+import { getSegmentSchemaForEvent, getSnowplowSchemaForEvent } from 'analytics/transform';
 import { render } from 'analytics/AnalyticsConsole';
-import { buildPayload, buildExperimentPayload } from './segment';
 
 /**
  * @description
@@ -26,8 +20,6 @@ import { buildPayload, buildExperimentPayload } from './segment';
  * 'Analytics' and use an event stream provided by the 'Analytics'
  * module.
  */
-
-const { buildUnstructEventData: buildSnowplowEvent } = Snowplow;
 
 let isEnabled = false;
 let scope = null;
@@ -69,13 +61,14 @@ function show(overrideScopeOptions) {
 }
 
 /**
- * @param {string} name
- * @param {TransformedEventData} transformedData Transformed event data.
- * @param {EventData} rawData Original untransformed analytics.track() event data.
+ * @param {string} name event name or Segment typewriter function name.
+ * @param {TransformedSegmentEventData} transformedSegmentData Transformed event data.
+ * @param {TransformedEventData?} transformedSnowplowData Transformed event data.
+ * @param {Object} data Original untransformed analytics.track() event data.
  * @description
  * Adds an event to the console.
  */
-export function add(name, transformedData, rawData) {
+export function add(name, { rawData, transformedSegmentData, transformedSnowplowData }) {
   const segmentSchema = getSegmentSchemaForEvent(name);
   // Segment schemas registration with transformers is no longer required for `Analytics.tracking.xxx()` calls.
   const isLegacyEventCall = !!segmentSchema;
@@ -91,32 +84,22 @@ export function add(name, transformedData, rawData) {
 
   const snowplowSchema = getSnowplowSchemaForEvent(name);
   if (snowplowSchema) {
-    const snowplowEvent = buildSnowplowEvent(name, transformedData);
-
     event.snowplow = {
       name: snowplowSchema.name,
       version: snowplowSchema.version,
-      data: snowplowEvent[1],
-      context: snowplowEvent[2],
+      data: transformedSnowplowData.data,
+      context: transformedSnowplowData.contexts,
     };
   }
 
   event.segment = isLegacyEventCall
     ? {
         name: segmentSchema.name,
-        data: buildPayload(segmentSchema, transformedData),
+        data: transformedSegmentData.payload,
       }
     : {
         data: rawData,
       };
-
-  const experimentSchema = getSegmentExperimentSchemaForEvent(name);
-  if (experimentSchema) {
-    event.segmentExperiment = {
-      name: experimentSchema.name,
-      data: buildExperimentPayload(transformedData),
-    };
-  }
 
   eventsBus.emit(event);
   throwOrLogInvalidEvent(event);

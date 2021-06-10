@@ -1,9 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import _ from 'lodash';
 import { LocalesListSkeleton } from '../skeletons/LocalesListSkeleton';
-import { LocalesListPricingOne } from '../LocalesListPricingOne';
 import { LocalesListPricingTwo } from '../LocalesListPricingTwo';
-import { isLegacyOrganization } from 'utils/ResourceUtils';
 import StateRedirect from 'app/common/StateRedirect';
 import createLegacyFeatureService from 'services/LegacyFeatureService';
 import { getSectionVisibility } from 'access_control/AccessChecker';
@@ -17,7 +15,6 @@ import * as PricingService from 'services/PricingService';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 import { createLocaleRepo } from 'data/CMA/LocaleRepo';
-import { generateMessage } from 'utils/ResourceUtils';
 import * as ChangeSpaceService from 'services/ChangeSpaceService';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import { getSpaceEntitlementSet } from 'features/space-usage';
@@ -31,7 +28,6 @@ const fetch = async ({
   isMasterEnvironment,
 }) => {
   const isOrgOwnerOrAdmin = OrganizationRoles.isOwnerOrAdmin(organization);
-  const orgIsLegacy = isLegacyOrganization(organization);
   const cma = getCMAClient({ spaceId, environmentId, organizationId });
   const localeRepo = createLocaleRepo(cma);
 
@@ -44,7 +40,7 @@ const fetch = async ({
     _.get(organization, ['subscriptionPlan', 'name']),
   ];
 
-  if (!orgIsLegacy && isOrgOwnerOrAdmin) {
+  if (isOrgOwnerOrAdmin) {
     // This fetch only works when user is an owner or admin.
     promisesArray.push(
       PricingService.nextSpacePlanForResource(
@@ -71,7 +67,6 @@ const fetch = async ({
 
   return {
     locales,
-    isLegacy: orgIsLegacy,
     localeResource,
     isMultipleLocalesFeatureEnabled,
     insideMasterEnv,
@@ -122,13 +117,10 @@ export const LocalesListRoute = () => {
   );
   const {
     locales,
-    isLegacy,
     localeResource,
-    isMultipleLocalesFeatureEnabled,
     isOrgOwnerOrAdmin,
     insideMasterEnv,
     allowedToEnforceLimits,
-    subscriptionPlanName,
     hasNextSpacePlan,
   } = data;
 
@@ -155,18 +147,6 @@ export const LocalesListRoute = () => {
     });
   }
 
-  function getComputeLocalesUsageForOrganization() {
-    /*
-    The expectation of this function is a bit strange as it returns either a string or null, as it is the
-    result of some legacy code. This should be refactored to be more clear in its intention.
-   */
-    if (generateMessage(localeResource).error) {
-      return generateMessage(localeResource).error;
-    } else {
-      return null;
-    }
-  }
-
   if (!getSectionVisibility()['locales']) {
     return <ForbiddenPage />;
   }
@@ -186,16 +166,6 @@ export const LocalesListRoute = () => {
 
       {isLoading ? (
         <LocalesListSkeleton />
-      ) : isLegacy ? (
-        <LocalesListPricingOne
-          locales={locales}
-          canCreateMultipleLocales={isMultipleLocalesFeatureEnabled}
-          isOrgOwnerOrAdmin={isOrgOwnerOrAdmin}
-          localeResource={localeResource}
-          insideMasterEnv={insideMasterEnv}
-          subscriptionPlanName={subscriptionPlanName}
-          getComputeLocalesUsageForOrganization={getComputeLocalesUsageForOrganization}
-        />
       ) : (
         <LocalesListPricingTwo
           locales={locales}

@@ -231,7 +231,7 @@ export default class OrganizationNavigationBar extends React.Component<Props, St
 
   render() {
     return (
-      <>
+      <div className="app-top-bar">
         <SidepanelContainer />
         <div className="app-top-bar__outer-wrapper">
           <NavBar
@@ -241,7 +241,7 @@ export default class OrganizationNavigationBar extends React.Component<Props, St
             organizationId={this.props.orgId}
           />
         </div>
-      </>
+      </div>
     );
   }
 }

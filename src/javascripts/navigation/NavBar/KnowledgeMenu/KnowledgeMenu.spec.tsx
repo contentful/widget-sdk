@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import React from 'react';
-import KnowledgeMenu from './KnowledgeMenu';
+import { KnowledgeMenu } from './KnowledgeMenu';
 
 const localStorage = getBrowserStorage('local');
 

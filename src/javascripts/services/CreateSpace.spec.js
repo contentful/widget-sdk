@@ -3,12 +3,10 @@ import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { beginSpaceCreation } from './CreateSpace';
 import { canCreateSpaceInOrganization } from 'access_control/AccessChecker';
 import { isEnterprisePlan, isSelfServicePlan } from 'account/pricing/PricingDataProvider';
-import { getOrganization } from 'services/TokenStore';
 import { getVariation, FLAGS } from 'LaunchDarkly';
 import { getSpaceProductRatePlans, getBasePlan } from 'features/pricing-entities';
 import { router } from 'core/react-routing';
 
-const mockV1Org = { sys: { id: 'v1' }, pricingVersion: 'pricing_version_1' };
 const mockV2Org = { sys: { id: 'v2' }, pricingVersion: 'pricing_version_2' };
 
 const mockRatePlans = {
@@ -23,7 +21,7 @@ const mockRatePlans = {
 };
 
 jest.mock('services/TokenStore', () => ({
-  getOrganization: jest.fn(async () => mockV1Org),
+  getOrganization: jest.fn(async () => mockV2Org),
 }));
 jest.mock('access_control/AccessChecker', () => ({
   canCreateSpaceInOrganization: jest.fn().mockReturnValue(true),
@@ -66,14 +64,8 @@ describe('CreateSpace', () => {
   });
 
   describe('#beginSpaceCreation', () => {
-    it('opens old dialog with v1 org id', async function () {
-      await beginSpaceCreation('v1');
-      expect(ModalLauncher.open).toHaveBeenCalledTimes(1);
-    });
-
     it('opens wizard with v2 org id', async function () {
       await beginSpaceCreation('v2');
-      getOrganization.mockResolvedValueOnce(mockV2Org);
       expect(ModalLauncher.open).toHaveBeenCalledTimes(1);
     });
 
@@ -88,12 +80,11 @@ describe('CreateSpace', () => {
 
     it('checks for creation permission', async function () {
       canCreateSpaceInOrganization.mockReturnValueOnce(false);
-      await beginSpaceCreation('v1');
-      expect(canCreateSpaceInOrganization).toHaveBeenCalledWith('v1');
+      await beginSpaceCreation('v2');
+      expect(canCreateSpaceInOrganization).toHaveBeenCalledWith('v2');
     });
 
     it('sends user to the new_space page for self_service and free orgs', async function () {
-      getOrganization.mockResolvedValueOnce(mockV2Org);
       getBasePlan.mockResolvedValueOnce({ customerType: 'Self-service' });
       isSelfServicePlan.mockResolvedValueOnce(true);
       await beginSpaceCreation('v2');
@@ -106,7 +97,6 @@ describe('CreateSpace', () => {
     });
 
     it('sends user to the new_space page with a custom route param', async function () {
-      getOrganization.mockResolvedValueOnce(mockV2Org);
       getBasePlan.mockResolvedValueOnce({ customerType: 'Self-service' });
       isSelfServicePlan.mockResolvedValueOnce(true);
       await beginSpaceCreation('v2', { customParam: 'foo' });
@@ -120,12 +110,12 @@ describe('CreateSpace', () => {
       });
     });
 
-    it('opens the enterprise dialog for enterprise orgs', async function () {
+    it('opens the enterprise dialog for enterprise orgs when feature flag enabled is disabled', async function () {
+      getVariation.mockReturnValue(false);
       getSpaceProductRatePlans.mockResolvedValueOnce([mockRatePlans.enterprise]);
       getBasePlan.mockResolvedValueOnce({ customerType: 'Enterprise' });
       isEnterprisePlan.mockReturnValueOnce(true);
       await beginSpaceCreation('v2');
-      getOrganization.mockResolvedValueOnce(mockV2Org);
       expect(ModalLauncher.open).toHaveBeenCalledTimes(1);
     });
 

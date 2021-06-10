@@ -18,6 +18,7 @@ import {
   isCurrentEnvironmentMaster,
 } from 'core/services/SpaceEnvContext/utils';
 import { hasEnvironmentSectionInUrl } from 'core/react-routing/hasEnvironmentSectionInUrl';
+import { NavigationItemType } from './NavBar/NavigationItem';
 
 // We don't want to display the following sections within the context of
 // a sandbox space environment.
@@ -34,7 +35,8 @@ const SPACE_SETTINGS_SECTIONS = [
 type Props = {
   navVersion: number;
 };
-type State = { items: unknown[] };
+
+type State = { items: NavigationItemType[] };
 
 export default class SpaceNavigationBar extends React.Component<Props, State> {
   static contextType = SpaceEnvContext;
@@ -108,7 +110,7 @@ export default class SpaceNavigationBar extends React.Component<Props, State> {
 
   render() {
     return (
-      <>
+      <div className="app-top-bar">
         <SidepanelContainer />
         <div className="app-top-bar__outer-wrapper">
           <NavBar
@@ -117,7 +119,7 @@ export default class SpaceNavigationBar extends React.Component<Props, State> {
             showModernStackOnboardingRelaunch
           />
         </div>
-      </>
+      </div>
     );
   }
 }

@@ -1217,28 +1217,6 @@ pre,
     overflow-x: hidden;
   }
   
-  
-  /* ContentModel/Editor apps/management AppDetails */
-  .workbench-header__actions {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-align-self: center;
-    align-self: center;
-    -ms-flex-item-align: center;
-    -ms-flex-align: center;
-    -webkit-box-align: center;
-            align-items: center;
-    margin-left: auto;
-  }
-  .workbench-header__actions-text {
-    -webkit-align-self: center;
-    align-self: center;
-    -ms-flex-item-align: center;
-  }
-  .workbench-header__actions > * {
-    margin-left: 1em;
-  }
   /* api keys managemenet */
   .workbench-nav {
     display: -webkit-box;
@@ -4600,13 +4578,6 @@ pre,
   }
   table .x--small-cell {
     width: 12%;
-  }
-  /* apps/management/events/TopicEventTable.js */
-  table .x--highlight {
-    background-color: var(--color-blue-lightest);
-  }
-  table .x--success {
-    background-color: var(--color-white);
   }
   /* features/user-invitations/UserInvitation.js */
   .user-invitation--wrapper {

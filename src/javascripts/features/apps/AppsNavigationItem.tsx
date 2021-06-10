@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import NavigationItem from 'navigation/NavBar/NavigationItem';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
-import NavigationDropdown from 'navigation/NavBar/NavigationDropdown';
+import { NavigationDropdown } from 'navigation/NavBar/NavigationDropdown';
 import { NavigationAppIcon } from 'features/apps/AppIcon';
 import {
   SkeletonContainer,
@@ -192,7 +191,7 @@ export const AppsNavigationItem = ({ item, context }: AppsNavigationItemProps) =
 };
 
 AppsNavigationItem.propTypes = {
-  item: NavigationItem.propTypes.item,
+  item: PropTypes.any,
   context: PropTypes.shape({
     canManageSpace: PropTypes.bool.isRequired,
     isUnscopedRoute: PropTypes.bool.isRequired,

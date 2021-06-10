@@ -1,6 +1,7 @@
 jest.mock('analytics/segment', () => {
   return {
     __esModule: true,
+    ...jest.requireActual('analytics/segment'),
     default: ['enable', 'disable', 'identify', 'track', 'page'].reduce(
       (acc, key) => ({
         ...acc,
@@ -31,8 +32,11 @@ jest.mock('analytics/analyticsConsoleController', () => {
 });
 
 jest.mock('analytics/transform', () => ({
-  transformEvent: jest.fn().mockImplementation((_, data) => data),
+  transformEventForSnowplow: jest.fn().mockImplementation((_, data) => ({ data })),
   eventExists: jest.fn().mockReturnValue(true),
+  getSegmentSchemaForEvent: jest
+    .fn()
+    .mockReturnValue({ name: 'event', isLegacySnowplowGeneric: false }),
 }));
 
 describe('Analytics', () => {
@@ -75,40 +79,60 @@ describe('Analytics', () => {
   });
 
   describe('#trackContextChange', function () {
+    it('should set the environment in the session if given', function () {
+      const { analytics } = getAllDeps();
+      const environment = { sys: { id: 'env_1234' } };
+      analytics.trackContextChange({ environment });
+      expect(analytics.getSessionData('environment')).toEqual(environment);
+    });
     it('should set the space in the session if given', function () {
       const { analytics } = getAllDeps();
       const space = { sys: { id: 'space_1234' } };
-      analytics.trackContextChange(space);
+      analytics.trackContextChange({ space });
       expect(analytics.getSessionData('space')).toEqual(space);
     });
     it('should set the organization in the session if given', function () {
       const { analytics } = getAllDeps();
-      const org = { sys: { id: 'org_1234' } };
-      analytics.trackContextChange(null, org);
-      expect(analytics.getSessionData('organization')).toEqual(org);
+      const organization = { sys: { id: 'org_1234' } };
+      analytics.trackContextChange({ organization, space: null, environment: null });
+      expect(analytics.getSessionData('organization')).toEqual(organization);
     });
     it('should set both space and org if given', function () {
       const { analytics } = getAllDeps();
       const space = { sys: { id: 'space_4567' } };
-      const org = { sys: { id: 'org_4567' } };
-      analytics.trackContextChange(space, org);
+      const organization = { sys: { id: 'org_4567' } };
+      analytics.trackContextChange({ organization, space });
       expect(analytics.getSessionData('space')).toEqual(space);
-      expect(analytics.getSessionData('organization')).toEqual(org);
+      expect(analytics.getSessionData('organization')).toEqual(organization);
+      expect(analytics.getSessionData('environment')).toBeUndefined();
+    });
+    it('should set all of org, space and environment if given', function () {
+      const { analytics } = getAllDeps();
+      const organization = { sys: { id: 'org_5' } };
+      const space = { sys: { id: 'space_5' } };
+      const environment = { sys: { id: 'env_5' } };
+      analytics.trackContextChange({ organization, space, environment });
+      expect(analytics.getSessionData('organization')).toEqual(organization);
+      expect(analytics.getSessionData('space')).toEqual(space);
+      expect(analytics.getSessionData('environment')).toEqual(environment);
     });
     it('should unset if explicitly called with null value for given param', function () {
       const { analytics } = getAllDeps();
+      const organization = { sys: { id: 'org_4567' } };
       const space = { sys: { id: 'space_4567' } };
-      const org = { sys: { id: 'org_4567' } };
-      analytics.trackContextChange(space, org);
+      const environment = { sys: { id: 'env_4567' } };
+      analytics.trackContextChange({ organization, space, environment });
       expect(analytics.getSessionData('space')).toEqual(space);
-      expect(analytics.getSessionData('organization')).toEqual(org);
-      analytics.trackContextChange(null);
+      expect(analytics.getSessionData('organization')).toEqual(organization);
+      expect(analytics.getSessionData('environment')).toEqual(environment);
+      analytics.trackContextChange({ space: null, environment: null });
+      expect(analytics.getSessionData('environment')).toBeNull();
       expect(analytics.getSessionData('space')).toBeNull();
-      expect(analytics.getSessionData('organization')).toEqual(org);
-      analytics.trackContextChange(space, null);
+      expect(analytics.getSessionData('organization')).toEqual(organization);
+      analytics.trackContextChange({ organization: null, space });
       expect(analytics.getSessionData('space')).toEqual(space);
       expect(analytics.getSessionData('organization')).toBeNull();
-      analytics.trackContextChange(undefined);
+      analytics.trackContextChange({ space: undefined });
       expect(analytics.getSessionData('space')).toEqual(space);
     });
   });
@@ -138,14 +162,18 @@ describe('Analytics', () => {
     it('calls analytics services if event is valid', function () {
       const { analytics, segment, Snowplow } = getAllDeps();
       analytics.enable(userData);
-      analytics.track('Event', { data: 'foobar' });
+      analytics.track('Event', { foo: 'bar' });
       expect(segment.track).toHaveBeenCalledWith('Event', {
-        data: 'foobar',
-        userId: userData.sys.id,
+        payload: {
+          foo: 'bar',
+          userId: userData.sys.id,
+        },
       });
       expect(Snowplow.track).toHaveBeenCalledWith('Event', {
-        data: 'foobar',
-        userId: userData.sys.id,
+        data: {
+          foo: 'bar',
+          userId: userData.sys.id,
+        },
       });
     });
 
@@ -166,12 +194,16 @@ describe('Analytics', () => {
       analytics.track('Event', { data: 'foobar' });
 
       expect(segment.track).toHaveBeenCalledWith('tracking:invalid_event', {
-        event: 'Event',
-        userId: 'userid',
+        payload: {
+          event: 'Event',
+          userId: 'userid',
+        },
       });
       expect(Snowplow.track).toHaveBeenCalledWith('tracking:invalid_event', {
-        event: 'Event',
-        userId: 'userid',
+        data: {
+          event: 'Event',
+          userId: 'userid',
+        },
       });
 
       expect(segment.track).not.toHaveBeenCalledWith('Event', {
@@ -189,7 +221,7 @@ describe('Analytics', () => {
 
       analytics.enable(userData);
       analytics.track('EventName', { data: 'some data' });
-      expect(transform.transformEvent).toHaveBeenCalledWith('EventName', {
+      expect(transform.transformEventForSnowplow).toHaveBeenCalledWith('EventName', {
         data: 'some data',
         userId: userData.sys.id,
       });

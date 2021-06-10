@@ -4,6 +4,7 @@ import {
   organizationSettingsRoutes,
   contentTypesRoutes,
   spacesRoutes,
+  assetsRoutes,
 } from './routes/';
 import type {
   SpaceSettingsRouteType,
@@ -13,6 +14,7 @@ import type {
   OrganizationSettingsRouteType,
   ContentTypesRouteType,
   SpacesRouteType,
+  AssetsRouteType,
 } from './routes/';
 
 const routes = {
@@ -21,6 +23,7 @@ const routes = {
   ...organizationSettingsRoutes,
   ...contentTypesRoutes,
   ...spacesRoutes,
+  ...assetsRoutes,
 };
 
 type RouteType =
@@ -28,7 +31,8 @@ type RouteType =
   | AccountSettingsRouteType
   | OrganizationSettingsRouteType
   | ContentTypesRouteType
-  | SpacesRouteType;
+  | SpacesRouteType
+  | AssetsRouteType;
 
 export { routes };
 

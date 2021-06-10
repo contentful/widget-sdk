@@ -29,7 +29,6 @@ import { MarketplaceApp } from 'features/apps-core';
 import { createPageWidgetSDK } from '@contentful/experience-sdk';
 import { useCurrentSpaceAPIClient } from '../../core/services/APIClient/useCurrentSpaceAPIClient';
 import LocaleStore from 'services/localeStore';
-import { getUserSync } from '../../services/TokenStore';
 import { FLAGS } from '../../LaunchDarkly';
 import { PageExtensionSDK } from '@contentful/app-sdk';
 import {
@@ -37,9 +36,9 @@ import {
   createNavigatorCallbacks,
   createSpaceCallbacks,
 } from 'app/widgets/ExtensionSDKs/callbacks';
-import { createPublicContentType } from 'app/widgets/ExtensionSDKs/createPublicContentType';
-import { InternalContentType } from '../../app/widgets/ExtensionSDKs/createContentTypeApi';
 import { useVariation } from 'core/hooks/useVariation';
+import * as PublicContentType from 'widgets/PublicContentType';
+import { getUserWithMinifiedSys } from 'app/widgets/ExtensionSDKs/utils';
 
 interface PageWidgetRendererProps {
   path: string;
@@ -124,9 +123,6 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
     )
       return null;
 
-    const { sys, ...restOfUser } = getUserSync();
-    const { id, type } = sys;
-
     return useExperienceSDK
       ? (createPageWidgetSDK({
           cma: customWidgetPlainClient,
@@ -135,13 +131,8 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
           widgetParameters: widget.parameters,
           space: currentSpaceData,
           widgetLoader,
-          user: {
-            sys: { id, type },
-            ...restOfUser,
-          },
-          contentTypes: currentSpaceContentTypes.map((ct) =>
-            createPublicContentType(ct as InternalContentType)
-          ),
+          user: getUserWithMinifiedSys(),
+          contentTypes: currentSpaceContentTypes.map(PublicContentType.fromInternal),
           environment: currentEnvironment,
           locales: {
             activeLocaleCode: LocaleStore.getFocusedLocale().code,

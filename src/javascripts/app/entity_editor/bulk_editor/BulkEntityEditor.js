@@ -6,7 +6,7 @@ import BulkEntityEditorStatusDropdown from './BulkEntityEditorStatusDropdown';
 import CustomEditorExtensionRenderer from 'app/entry_editor/CustomEditorExtensionRenderer';
 import * as K from 'core/utils/kefir';
 import * as Navigator from 'states/Navigator';
-import { localFieldChanges } from '@contentful/editorial-primitives';
+import { localFieldChanges, Validator } from '@contentful/editorial-primitives';
 import { captureError } from 'core/monitoring';
 import { filterWidgets } from 'app/entry_editor/formWidgetsController';
 import Loader from 'ui/Loader';
@@ -21,6 +21,9 @@ import { trackEntryView } from '../Tracking';
 import { EntityField } from '../EntityField/EntityField';
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
+import LocaleStore from 'services/localeStore';
+import * as PublicContentType from 'widgets/PublicContentType';
+import { createCmaDocumentWithApiNames } from 'app/widgets/ExtensionSDKs/createCmaDocumentWithApiNames';
 
 const styles = {
   workbench: css({
@@ -132,6 +135,31 @@ export const BulkEntityEditor = ({
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const { privateLocales, defaultLocale } = localeData;
+
+  const validator = useMemo(() => {
+    if (!editorState) {
+      return null;
+    }
+    const { editorContext, doc } = editorState;
+    const contentTypeProps = currentSpaceContentTypes.find(
+      (contentType) => contentType.sys.id === editorContext.entityInfo.contentType?.sys.id
+    );
+
+    if (contentTypeProps) {
+      return Validator.createForEntry({
+        contentType: PublicContentType.fromInternal(contentTypeProps),
+        doc: createCmaDocumentWithApiNames(doc, contentTypeProps),
+        locales: LocaleStore.getLocales(),
+        getContentType: (id) => {
+          const foundContentType = currentSpaceContentTypes.find(
+            (contentType) => contentType.sys.id === id
+          );
+          return PublicContentType.fromInternal(foundContentType);
+        },
+      });
+    }
+  }, [currentSpaceContentTypes, editorState]);
+
   const fieldLocaleListeners = useMemo(() => {
     if (!editorState) {
       return null;
@@ -154,7 +182,7 @@ export const BulkEntityEditor = ({
     );
   }
 
-  if (!editorState) {
+  if (!editorState || !validator) {
     return null;
   }
 
@@ -227,7 +255,11 @@ export const BulkEntityEditor = ({
         {isExpanded && (
           <Workbench.Content type="text">
             {customEditor ? (
-              <CustomEditorExtensionRenderer extension={customEditor} scope={scope} />
+              <CustomEditorExtensionRenderer
+                validator={validator}
+                extension={customEditor}
+                scope={scope}
+              />
             ) : (
               widgets.map((widget, index) => (
                 <EntityField

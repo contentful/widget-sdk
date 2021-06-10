@@ -1,12 +1,21 @@
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { getModule } from 'core/NgRegistry';
 import * as React from 'react';
+import { useRef } from 'react';
 
 function SyncState({ splitter }: { splitter: string }) {
   const location = useLocation();
   const path = location.pathname + location.search;
+  const ref = useRef(false);
 
   React.useEffect(() => {
+    // Prevent syncing on page load, which interferes with angular
+    // when there are query params in the URL and redirecting to the URL without params.
+    if (!ref.current) {
+      ref.current = true;
+      return;
+    }
+
     const $state = getModule('$state');
     const $stateParams = getModule('$stateParams');
 

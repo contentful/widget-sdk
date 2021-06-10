@@ -43,9 +43,11 @@ export const FlexibleOnboardingDialog = ({
   };
 
   const handleGatsbyChoice = async (spaceId) => {
-    !replaceSpace && markExploreOnboardingSeen();
+    if (!replaceSpace) {
+      markExploreOnboardingSeen();
+      renameSpace(MODERN_STACK_ONBOARDING_SPACE_NAME, spaceId);
+    }
     markSpace(spaceId);
-    renameSpace(MODERN_STACK_ONBOARDING_SPACE_NAME, spaceId);
     router.navigate({
       path: 'spaces.detail.onboarding.getStarted',
       spaceId,

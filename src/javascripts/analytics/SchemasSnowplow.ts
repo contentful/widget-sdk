@@ -1,10 +1,5 @@
-import { get as getAtPath } from 'lodash';
+import { SnowplowSchema as Schema } from './types';
 
-type Schema = {
-  name: string;
-  version: string;
-  path: string;
-};
 /**
  * Maps analytics event names and schema names to Snowplow schema paths
  */
@@ -16,48 +11,13 @@ registerSchema({
 });
 
 registerSchema({
-  name: 'entry',
-  version: '1-0-0',
-});
-
-registerSchema({
-  name: 'asset',
-  version: '1-0-0',
-});
-
-registerSchema({
-  name: 'content_type',
-  version: '1-0-0',
-});
-
-registerSchema({
-  name: 'api_key',
-  version: '2-0-0',
-});
-
-registerSchema({
   name: 'entry_create',
-  version: '2-0-0',
+  version: '2-0-2',
 });
 
 registerSchema({
   name: 'entry_publish',
-  version: '2-0-0',
-});
-
-registerSchema({
-  name: 'asset_create',
-  version: '1-0-0',
-});
-
-registerSchema({
-  name: 'content_type_create',
-  version: '1-0-0',
-});
-
-registerSchema({
-  name: 'api_key_create',
-  version: '1-0-0',
+  version: '2-0-2',
 });
 
 registerSchema({
@@ -101,13 +61,8 @@ registerSchema({
 });
 
 registerSchema({
-  name: 'app',
-  version: '1-0-0',
-});
-
-registerSchema({
   name: 'app_open',
-  version: '1-0-0',
+  version: '1-0-1',
 });
 
 registerSchema({
@@ -310,5 +265,5 @@ function buildPath(schema: Pick<Schema, 'name' | 'version'>) {
  * Returns schema for the provided schema name
  */
 export function getSnowplowSchema(schemaName: string) {
-  return getAtPath(_schemas, schemaName);
+  return _schemas[schemaName];
 }

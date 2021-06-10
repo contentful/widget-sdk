@@ -46,7 +46,6 @@ import { isOwnerOrAdmin, isDeveloper } from 'services/OrganizationRoles';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 import { createAppExtensionSDK as localCreateAppConfigWidgetSDK } from 'app/widgets/ExtensionSDKs';
 import { getUserWithMinifiedSys } from 'app/widgets/ExtensionSDKs/utils';
-import { createPublicContentType } from 'app/widgets/ExtensionSDKs/createPublicContentType';
 import { useCurrentSpaceAPIClient } from 'core/services/APIClient/useCurrentSpaceAPIClient';
 import { usePubSubClient } from 'core/hooks';
 import LocaleStore from 'services/localeStore';
@@ -65,6 +64,7 @@ import {
   createSpaceCallbacks,
 } from 'app/widgets/ExtensionSDKs/callbacks';
 import { GlobalEventBus, GlobalEvents } from 'core/services/GlobalEventsBus';
+import * as PublicContentType from 'widgets/PublicContentType';
 
 enum InstallationState {
   Installation = 'installation',
@@ -182,7 +182,7 @@ export function AppRoute(props: Props) {
             defaultLocaleCode: LocaleStore.getDefaultLocale().code,
             list: LocaleStore.getLocales(),
           },
-          contentTypes: currentSpaceContentTypes.map(createPublicContentType),
+          contentTypes: currentSpaceContentTypes.map(PublicContentType.fromInternal),
           cma: customWidgetPlainClient,
           user: getUserWithMinifiedSys(),
           environment: currentEnvironment,

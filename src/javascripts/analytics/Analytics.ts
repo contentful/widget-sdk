@@ -1,10 +1,14 @@
 import * as Config from 'Config';
-import segment, { Plan } from 'analytics/segment';
+import segment, { Plan, transformSnowplowToSegmentData } from 'analytics/segment';
 import * as snowplow from 'analytics/snowplow';
 import stringifySafe from 'json-stringify-safe';
 import { prepareUserData } from 'analytics/UserData';
 import _ from 'lodash';
-import { eventExists, getSnowplowSchemaForEvent, transformEvent } from 'analytics/transform';
+import {
+  eventExists,
+  getSnowplowSchemaForEvent,
+  transformEventForSnowplow,
+} from 'analytics/transform';
 import { TransformedEventData, EventData } from './types';
 import { captureError, captureWarning } from 'core/monitoring';
 import * as analyticsConsole from 'analytics/analyticsConsoleController';
@@ -104,12 +108,19 @@ export function track(event: string, data?: EventData): void {
     data = _.isObject(data) ? _.cloneDeep(data) : {};
     data = removeCircularRefs(Object.assign({}, getBasicPayload(), data));
 
-    const transformedData = transformEvent(event, data);
+    const transformedSnowplowData = transformEventForSnowplow(event, data);
+    const transformedSegmentData = transformSnowplowToSegmentData(
+      event,
+      transformedSnowplowData,
+      getEnvironmentId()
+    );
 
-    segment.track(event, transformedData);
-    snowplow.track(event, transformedData);
-    analyticsConsole.add(event, transformedData, data);
-    logEventPayloadSize(event, transformedData);
+    segment.track(event, transformedSegmentData);
+    snowplow.track(event, transformedSnowplowData);
+
+    analyticsConsole.add(event, { rawData: data, transformedSegmentData, transformedSnowplowData });
+
+    logEventPayloadSize(event, transformedSnowplowData);
   } catch (error) {
     // ensure no errors caused by analytics will break business logic
     captureError(error, {
@@ -157,7 +168,7 @@ export const tracking: Plan = _.mapValues(segment.plan, (planFn, planKey) => (pr
     }
 
     // TODO: Catch errors via `onViolation` Segment TypeWriter option and display in analytics console.
-    analyticsConsole.add(planKey, likeTransformedData, props);
+    analyticsConsole.add(planKey, { rawData: props, transformedSnowplowData: likeTransformedData });
   } catch (error) {
     // ensure no errors caused by analytics will break business logic
     captureError(error, {
@@ -263,15 +274,28 @@ function identify(extension?: object): void {
   sendSessionDataToConsole();
 }
 
-/**
- * Sets or replaces session space and organization
- * data. Pass `null` when leaving context.
- *
- * `null` must be explicitly passed to unset the current
- * space/org contexts.
- */
+// TODO: Get rid of `session` data usage and narrow down bare minimum types, ideally pass only IDs.
+interface MaybeSys extends Record<string, any> {
+  id: string;
+}
+interface MaybeEntity extends Record<string, any> {
+  sys: MaybeSys;
+}
+type TrackingContext = Partial<
+  Record<'organization' | 'space' | 'environment', MaybeEntity | null>
+>;
 
-export function trackContextChange(space: null | object, organization: null | object): void {
+/**
+ * Sets or replaces session space and organization data. Pass `null` when leaving context.
+ * `null` must be explicitly passed to unset the current space/organization/environment contexts.
+ */
+export function trackContextChange({ organization, space, environment }: TrackingContext): void {
+  if (environment) {
+    session.environment = removeCircularRefs(environment);
+  } else if (environment === null) {
+    session.environment = null;
+  }
+
   if (space) {
     session.space = removeCircularRefs(space);
   } else if (space === null) {
@@ -285,6 +309,7 @@ export function trackContextChange(space: null | object, organization: null | ob
   }
 
   sendSessionDataToConsole();
+  // TODO: This might cause unnecessary events if space didn't really change!
   track(space ? 'global:space_changed' : 'global:space_left');
 }
 
@@ -348,6 +373,10 @@ function getBasicPayload(): BasicEventData {
     },
     (val) => val !== VALUE_UNKNOWN
   );
+}
+
+function getEnvironmentId() {
+  return getSessionData('environment.sys.id', undefined) as string | undefined;
 }
 
 function sendSessionDataToConsole() {

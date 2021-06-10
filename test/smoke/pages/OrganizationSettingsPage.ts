@@ -27,6 +27,7 @@ class SpaceTableRow {
 
   private get row() {
     return cy
+      .findByTestId('subscription-page.table')
       .findByText(this.spaceName)
       .parents('[data-test-id="subscription-page.spaces-list.table-row"]');
   }

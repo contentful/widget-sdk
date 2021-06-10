@@ -6,7 +6,10 @@ import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { getUser } from 'services/TokenStore';
 import { router } from 'core/react-routing';
 import { showReplaceSpaceWarning } from '../components/ReplaceSpaceDialog';
-import { markSpace } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
+import {
+  markSpace,
+  MODERN_STACK_ONBOARDING_SPACE_NAME,
+} from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 
 const store = getBrowserStorage();
 
@@ -23,17 +26,6 @@ export const markExploreOnboardingSeen = async () => {
 export const hasSeenExploreOnboarding = async () => {
   const prefix = await getStoragePrefix();
   return store.get(prefix);
-};
-
-export const handleReplaceSpace = (currentSpaceId) => {
-  router.navigate({ path: 'spaces.detail.home' });
-  showReplaceSpaceWarning(currentSpaceId, (spaceId) => {
-    markSpace(spaceId);
-    router.navigate({
-      path: 'spaces.detail.onboarding.copy',
-      spaceId,
-    });
-  });
 };
 
 export const BLANK_SPACE_NAME = 'Blank';
@@ -60,4 +52,15 @@ export const renameSpace = async (newName, spaceId) => {
   await spaceContext.resetWithSpace(newSpace);
 
   return newSpace;
+};
+
+export const handleReplaceSpace = (currentSpaceId) => {
+  showReplaceSpaceWarning(currentSpaceId, (spaceId) => {
+    markSpace(spaceId);
+    renameSpace(MODERN_STACK_ONBOARDING_SPACE_NAME, spaceId);
+    router.navigate({
+      path: 'spaces.detail.onboarding.copy',
+      spaceId,
+    });
+  });
 };

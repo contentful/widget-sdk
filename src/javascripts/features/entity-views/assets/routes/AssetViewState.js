@@ -1,15 +1,9 @@
 import { assetDetail } from 'app/entity_editor/cfSlideInEditor';
-import { AssetView } from '../AssetView';
-
-const list = {
-  name: 'list',
-  url: '',
-  component: AssetView,
-};
+import { assetListState } from './AssetListRouter';
 
 export const assetViewState = {
   name: 'assets',
   url: '/assets',
   abstract: true,
-  children: [list, assetDetail()],
+  children: [assetListState, assetDetail()],
 };

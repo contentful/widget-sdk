@@ -1,36 +1,7 @@
 import transformer from './EntryActionV2';
-import EntityActionStub from './EntityAction';
-import { when } from 'jest-when';
-
-jest.mock('./EntityAction', () => jest.fn());
 
 describe('analytics/snowplow/transformers/EntryActionV2', () => {
-  const BASE_EVENT = {
-    data: {},
-    contexts: [{ data: 1 }, { bar: 2 }],
-  };
-
-  let transform;
-
-  beforeEach(async function () {
-    transform = (eventData) => {
-      when(EntityActionStub)
-        .calledWith('entry:create', {
-          ...eventData,
-          actionData: {
-            entity: 'Entry',
-            action: 'create',
-          },
-        })
-        .mockReturnValue(BASE_EVENT);
-      return transformer('entry:create', eventData);
-    };
-  });
-
-  it("adds `EntityAction`'s `contexts`", function () {
-    const transformed = transform({});
-    expect(transformed.contexts).toEqual(BASE_EVENT.contexts);
-  });
+  const transform = (eventData) => transformer('entry:create', eventData);
 
   it('contains the base tracking data', function () {
     const eventData = {
@@ -38,24 +9,31 @@ describe('analytics/snowplow/transformers/EntryActionV2', () => {
       organizationId: 'ORGANIZATION_ID',
       spaceId: 'SPACE_ID',
     };
-    const transformed = transform(eventData);
+    const { data } = transform(eventData);
 
-    expect(transformed.data).toEqual({
+    expect(data).toEqual({
       executing_user_id: eventData.userId,
       organization_id: eventData.organizationId,
       space_id: eventData.spaceId,
     });
   });
 
-  it('adds the eventOrigin to the tracking data', function () {
-    const transformed = transform({ response: { sys: { id: 'ENTRY_ID' } } });
-    expect(transformed.data.entry_id).toEqual('ENTRY_ID');
+  describe('when an entry is given', () => {
+    it('adds the `entry_id` to the tracking data', function () {
+      const { data } = transform({ response: { sys: { id: 'ENTRY_ID', version: 42 } } });
+      expect(data.entry_id).toEqual('ENTRY_ID');
+    });
+
+    it('adds the `entry_version` to the tracking data', function () {
+      const { data } = transform({ response: { sys: { id: 'ENTRY_ID', version: 42 } } });
+      expect(data.entry_version).toEqual(42);
+    });
   });
 
   describe('when there is an eventOrigin', () => {
     it('adds the `event_origin` to the tracking data', function () {
-      const transformed = transform({ eventOrigin: 'entry-editor' });
-      expect(transformed.data.event_origin).toEqual('entry-editor');
+      const { data } = transform({ eventOrigin: 'entry-editor' });
+      expect(data.event_origin).toEqual('entry-editor');
     });
   });
 
@@ -75,12 +53,27 @@ describe('analytics/snowplow/transformers/EntryActionV2', () => {
       { type: 'Array', items: { type: 'Link', linkType: 'Entry' } },
     ];
 
+    const newCT = (fields = nonEntryReferenceFields) => ({ sys: { id: 'CT-ID' }, fields });
+
+    it('adds a `content_type_id` to the tracking data', () => {
+      const { data } = transform({
+        contentType: newCT(),
+      });
+      expect(data.content_type_id).toEqual('CT-ID');
+    });
+
+    it('adds a `entry_ct_fields_count` to the tracking data', () => {
+      const { data } = transform({
+        contentType: newCT([...nonEntryReferenceFields, ...entryReferenceFields]),
+      });
+      expect(data.entry_ct_fields_count).toEqual(9);
+    });
+
     it('adds the number of entry reference fields to the tracking data', function () {
-      const getEntryReferenceFieldCountWithFields = (fields) => {
-        return transform({
-          contentType: { fields },
+      const getEntryReferenceFieldCountWithFields = (fields = []) =>
+        transform({
+          contentType: newCT(fields),
         }).data.entry_ct_entry_reference_fields_count;
-      };
 
       expect(getEntryReferenceFieldCountWithFields(nonEntryReferenceFields)).toEqual(0);
 

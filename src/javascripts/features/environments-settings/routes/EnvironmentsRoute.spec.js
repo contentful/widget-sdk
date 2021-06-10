@@ -16,7 +16,6 @@ import * as trackCTA from 'analytics/trackCTA';
 import * as PricingService from 'services/PricingService';
 import { go } from 'states/Navigator';
 import { getEnvironmentAliasesIds } from 'core/services/SpaceEnvContext/utils';
-import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { useSpaceEnvEndpoint } from 'core/hooks/useSpaceEnvEndpoint';
 
@@ -38,7 +37,6 @@ jest.mock('data/CMA/ProductCatalog', () => ({
 
 jest.mock('utils/ResourceUtils', () => ({
   canCreate: jest.fn().mockReturnValue(true),
-  isLegacyOrganization: jest.fn(),
 }));
 
 jest.mock('services/ChangeSpaceService', () => ({
@@ -237,8 +235,6 @@ describe('EnvironmentsRoute', () => {
   describe('shows usage info in the sidebar', () => {
     describe('on v2 pricing', () => {
       beforeEach(() => {
-        isLegacyOrganization.mockReturnValueOnce(false);
-
         createResourceService.mockImplementation(() => ({
           get: jest.fn().mockResolvedValue({ usage: 1, limits: { maximum: 1 } }),
         }));
@@ -280,63 +276,10 @@ describe('EnvironmentsRoute', () => {
         expect(envUsage.querySelector('[data-test-id="environments-usage-tooltip"]')).toBeVisible();
       });
     });
-
-    describe('on v1 pricing', () => {
-      beforeEach(() => {
-        isLegacyOrganization.mockReturnValueOnce(true);
-      });
-
-      it('shows usage without limits', async () => {
-        getSpaceFeature.mockImplementation((_, feature) =>
-          feature === 'custom_environment_aliases' ? false : true
-        );
-        const { getByTestId } = await renderEnvironmentsComponent(
-          {
-            id: 'e1',
-            status: 'ready',
-            aliases: ['master'],
-            spaceId: defaultSpaceId,
-          },
-          {
-            id: 'master',
-            status: 'ready',
-            spaceId: defaultSpaceId,
-            aliasedEnvironment: {
-              sys: {
-                id: 'e1',
-                status: 'ready',
-                spaceId: defaultSpaceId,
-              },
-            },
-          }
-        );
-        getSpaceFeature.mockResolvedValue(true);
-
-        expect(getByTestId('environmentsUsage').textContent).toContain(
-          'You are using 1 environment'
-        );
-
-        expect(getByTestId('environmentsAliasUsage').textContent).toContain(
-          'You have one environment alias'
-        );
-      });
-
-      it('does not show tooltip ', async () => {
-        const { getByTestId } = await renderEnvironmentsComponent({
-          id: 'e1',
-          status: 'ready',
-          spaceId: defaultSpaceId,
-        });
-        const envUsage = getByTestId('environmentsUsage');
-        expect(envUsage.querySelector('[data-test-id="environments-usage-tooltip"]')).toBeNull();
-      });
-    });
   });
 
   describe('when limit is reached on v2 pricing', () => {
     beforeEach(() => {
-      isLegacyOrganization.mockReturnValueOnce(false);
-
       canCreate.mockReturnValueOnce(false);
       createResourceService.mockImplementation(() => ({
         get: jest.fn().mockResolvedValue({ usage: 1, limits: { maximum: 1 } }),

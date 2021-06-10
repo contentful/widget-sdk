@@ -12,8 +12,6 @@ import { unmarkSpace } from 'components/shared/auto_create_new_space/CreateModer
 import {
   handleReplaceSpace,
   FlexibleOnboardingDialog,
-  renameSpace,
-  BLANK_SPACE_NAME,
   hasSeenExploreOnboarding,
 } from 'features/onboarding';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
@@ -104,7 +102,6 @@ const GetStarted = () => {
               onClick={() => {
                 track('onboarding_gatsby_blog:back');
                 unmarkSpace();
-                renameSpace(BLANK_SPACE_NAME, spaceContext.currentSpaceId);
                 router.navigate({ path: 'spaces.detail.home' });
                 ModalLauncher.open(({ isShown, onClose }) => {
                   return (
@@ -112,6 +109,7 @@ const GetStarted = () => {
                       isShown={isShown}
                       onClose={onClose}
                       spaceId={spaceContext.currentSpaceId}
+                      replaceSpace={data.recoverableOnboardingEnabled}
                     />
                   );
                 });

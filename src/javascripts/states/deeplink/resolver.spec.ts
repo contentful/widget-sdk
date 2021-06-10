@@ -229,7 +229,10 @@ describe('states/deeplink/resolver', () => {
 
   describe('#media', () => {
     it('should redirect the user to the assets list page', async function () {
-      await testSpaceScopedPathDeeplinks('media', { path: ['spaces', 'detail', 'assets', 'list'] });
+      await testSpaceScopedPathDeeplinks(
+        'media',
+        routes['assets.list']({ withEnvironment: false })
+      );
     });
   });
 

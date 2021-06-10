@@ -17,3 +17,9 @@ export const copyButton = css({
     }),
   }),
 });
+
+export const headerActions = css({
+  ['> *']: {
+    marginLeft: '1em',
+  },
+});

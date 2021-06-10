@@ -47,7 +47,6 @@ export enum FLAGS {
   PATCH_ENTRY_UPDATES = 'feature-penguin-12-2020-patch-entry-updates',
   COMPOSE_APP_LISTING_EAP = 'feature-ext-12-2020-contentful-apps-compose-eap',
   LAUNCH_APP_LISTING_EAP = 'feature-ext-12-2020-contentful-apps-launch-eap',
-  REFERENCE_TREE_BULK_ACTIONS_SUPPORT = 'feature-pulitzer-01-2021-reference-tree-bulk-actions',
   REACT_MIGRATION_CT = 'react-migration-10-2020-content-type-editor',
   APP_HOSTING_UI = 'feature-extensibility-03-2021-app-hosting-ui',
   HIGH_VALUE_LABEL = 'feature-hejo-03-2021-high-value-label',
@@ -62,6 +61,7 @@ export enum FLAGS {
   EXPERIENCE_SDK_PAGE_LOCATION = 'feature-ext-05-2021-experience-sdk-page-location',
   RICH_TEXT_TABLES = 'feature-shelley-05-2021-rich-text-tables',
   CUSTOM_TRACKING_FIELD_FOR_SLUGS = 'dante-2021-05-custom-slug-field',
+  EXPERIENCE_SDK_ENTRY_EDITOR_LOCATION = 'feature-ext-05-2021-experience-sdk-entry-editor-location',
   EXPERIENCE_SDK_APP_CONFIG_LOCATION = 'feature-ext-05-2021-experience-sdk-app-config-location',
   INITIAL_FIELD_VALUES = 'dante-06-2021-initial-field-values',
 
@@ -99,10 +99,8 @@ const FALLBACK_VALUES = {
   [FLAGS.EXPERIMENT_ONBOARDING_MODAL]: null,
   [FLAGS.CUSTOM_TRACKING_FIELD_FOR_SLUGS]: false,
   [FLAGS.EXPERIENCE_SDK_APP_CONFIG_LOCATION]: false,
+  [FLAGS.EXPERIENCE_SDK_ENTRY_EDITOR_LOCATION]: false,
   [FLAGS.INITIAL_FIELD_VALUES]: false,
-
-  // TODO: remove or flip this flag to `true` once it's fully rolled out
-  [FLAGS.REFERENCE_TREE_BULK_ACTIONS_SUPPORT]: false,
 
   [FLAGS.REACT_MIGRATION_CT]: false,
 
@@ -143,7 +141,7 @@ interface CustomData {
   currentOrgSubscriptionStatus?: string; // one of free, paid, free_paid, trial (works for V1 only)
   currentOrgHasSpace?: boolean; // true if the current org has a space
 
-  currentOrgPricingVersion?: 'pricing_version_1' | 'pricing_version_2'; //the current organization pricing version, currently either `pricing_version_1` or `pricing_version_2`
+  currentOrgPricingVersion?: 'pricing_version_2'; //the current organization pricing version, currently only `pricing_version_2` is valid
   currentOrgHasPaymentMethod?: boolean; //  the organizations that have no payment method added, regardless of their pricing version
 
   currentUserOrgRole?: string; //user's role in current org

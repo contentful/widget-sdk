@@ -7,9 +7,9 @@ import tokens from '@contentful/forma-36-tokens';
 import AccountDropdown from './AccountDropdown';
 import { QuickNavigation } from 'features/quick-navigation';
 import OnboardingRelaunch from 'navigation/modernStackOnboardingRelaunch';
-import NavigationItem from './NavigationItem';
-import NavigationDropdown from './NavigationDropdown';
-import KnowledgeMenu from './KnowledgeMenu/KnowledgeMenu';
+import { NavigationItem, NavigationItemType } from './NavigationItem';
+import { NavigationDropdown } from './NavigationDropdown';
+import { KnowledgeMenu } from './KnowledgeMenu/KnowledgeMenu';
 import { TrialTag } from 'features/trials';
 
 const styles = {
@@ -48,7 +48,18 @@ NavigationList.propTypes = {
   items: PropTypes.array.isRequired,
 };
 
-export default class NavBar extends React.Component {
+export default class NavBar extends React.Component<{
+  listItems: NavigationItemType[];
+  showQuickNavigation?: boolean;
+  showModernStackOnboardingRelaunch?: boolean;
+  organizationId?: string;
+}> {
+  static defaultProps = {
+    listItems: [],
+    showQuickNavigation: false,
+    showModernStackOnboardingRelaunch: false,
+  };
+
   render() {
     return (
       <div className="app-top-bar__child app-top-bar__child-wide" data-test-id="navbar-top">
@@ -62,7 +73,9 @@ export default class NavBar extends React.Component {
                     <OnboardingRelaunch />
                   </div>
                 )}
-                <TrialTag organizationId={this.props.organizationId} />
+                {this.props.organizationId && (
+                  <TrialTag organizationId={this.props.organizationId} />
+                )}
                 {this.props.showQuickNavigation && <QuickNavigation />}
                 <KnowledgeMenu />
               </div>
@@ -74,16 +87,3 @@ export default class NavBar extends React.Component {
     );
   }
 }
-
-NavBar.defaultProps = {
-  listItems: [],
-  showQuickNavigation: false,
-  showModernStackOnboardingRelaunch: false,
-};
-
-NavBar.propTypes = {
-  listItems: PropTypes.array.isRequired,
-  showQuickNavigation: PropTypes.bool.isRequired,
-  showModernStackOnboardingRelaunch: PropTypes.bool.isRequired,
-  organizationId: PropTypes.string,
-};

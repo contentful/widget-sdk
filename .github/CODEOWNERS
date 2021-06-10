@@ -1,8 +1,8 @@
 # By default, everything is owned by the frontend chapter
-docs/ @contentful/frontend
+docs/ @contentful/chapter-frontend
 
 # Team Extensibility
-src/javascripts/features/page-widgets/           @contentful/team-extensibility
+src/javascripts/features/page-widgets/          @contentful/team-extensibility
 src/javascripts/features/apps/                  @contentful/team-extensibility
 src/javascripts/features/apps-core/             @contentful/team-extensibility
 src/javascripts/features/extensions-management/ @contentful/team-extensibility

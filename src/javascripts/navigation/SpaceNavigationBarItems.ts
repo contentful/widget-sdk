@@ -200,11 +200,10 @@ export function getSpaceNavigationItems({
     },
     {
       if: canNavigateTo('asset'),
-      sref: makeRef('assets.list', isUnscopedRoute),
-      rootSref: makeRef('assets', isUnscopedRoute),
       dataViewType: 'asset-list',
       navIcon: 'Media',
       title: 'Media',
+      ...makeReactRouterRef('assets.list', withEnvironment),
     },
     {
       if: canNavigateTo('apps'),
