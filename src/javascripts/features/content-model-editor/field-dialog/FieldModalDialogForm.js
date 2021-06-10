@@ -135,7 +135,7 @@ const FieldModalDialogForm = ({
   const iconId = getIconId(ctField) + '-small';
 
   return (
-    <>
+    <div data-test-id="field-dialog">
       <div className={styles.modalHeader}>
         <div className={styles.modalTitle}>
           <Icon name={iconId} />
@@ -262,7 +262,7 @@ const FieldModalDialogForm = ({
           Cancel
         </Button>
       </Modal.Controls>
-    </>
+    </div>
   );
 };
 
