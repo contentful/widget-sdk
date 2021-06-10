@@ -43,6 +43,7 @@ const styles = {
       display: 'flex',
       padding: tokens.spacingM,
       alignItems: 'center',
+      fontWeight: tokens.fontWeightNormal,
       '&:hover': {
         backgroundColor: tokens.colorElementLight,
         textDecoration: 'none',
