@@ -1,7 +1,8 @@
 import React from 'react';
 import { CustomRouter, Route, RouteErrorBoundary, Routes } from 'core/react-routing';
 import StateRedirect from 'app/common/StateRedirect';
-import ProfileNavigationBar from 'navigation/ProfileNavigationBar';
+import { ProfileNavigationBar } from 'navigation/ProfileNavigationBar';
+import { AppContainer } from 'navigation/AppContainer';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import OrganizationMembershipsRoute from 'app/UserSettings/OrganizationsRoute';
 
@@ -16,45 +17,47 @@ function AccountProfileRouter() {
   return (
     <CustomRouter splitter="profile">
       <RouteErrorBoundary>
-        <Routes basename={basename + 'profile'}>
-          <Route name="account.profile.user" path="/user" element={<UserProfilePage />} />
-          <Route
-            name="account.profile.cma_tokens"
-            path="/cma_tokens"
-            element={<UserCMATokensRoute />}
-          />
-          <Route
-            name="account.profile.space_memberships"
-            path="/space_memberships"
-            element={<SpaceMembershipsPage />}
-          />
-          <Route
-            name="account.profile.organization_memberships"
-            path="/organization_memberships"
-            element={<OrganizationMembershipsRoute />}
-          />
-          <Route
-            name="account.profile.access_grants"
-            path="/access_grants*"
-            element={
-              <GatekeeperView
-                title="OAuth tokens"
-                icon={<ProductIcon size="large" icon="Token" />}
-              />
-            }
-          />
-          <Route
-            name="account.profile.applications"
-            path="/developers/applications*"
-            element={
-              <GatekeeperView
-                title="OAuth applications"
-                icon={<ProductIcon size="large" icon="Oauth" />}
-              />
-            }
-          />
-          <Route name={null} path="*" element={<StateRedirect path="home" />} />
-        </Routes>
+        <AppContainer navigation={<ProfileNavigationBar />}>
+          <Routes basename={basename + 'profile'}>
+            <Route name="account.profile.user" path="/user" element={<UserProfilePage />} />
+            <Route
+              name="account.profile.cma_tokens"
+              path="/cma_tokens"
+              element={<UserCMATokensRoute />}
+            />
+            <Route
+              name="account.profile.space_memberships"
+              path="/space_memberships"
+              element={<SpaceMembershipsPage />}
+            />
+            <Route
+              name="account.profile.organization_memberships"
+              path="/organization_memberships"
+              element={<OrganizationMembershipsRoute />}
+            />
+            <Route
+              name="account.profile.access_grants"
+              path="/access_grants*"
+              element={
+                <GatekeeperView
+                  title="OAuth tokens"
+                  icon={<ProductIcon size="large" icon="Token" />}
+                />
+              }
+            />
+            <Route
+              name="account.profile.applications"
+              path="/developers/applications*"
+              element={
+                <GatekeeperView
+                  title="OAuth applications"
+                  icon={<ProductIcon size="large" icon="Oauth" />}
+                />
+              }
+            />
+            <Route name={null} path="*" element={<StateRedirect path="home" />} />
+          </Routes>
+        </AppContainer>
       </RouteErrorBoundary>
     </CustomRouter>
   );
@@ -63,7 +66,7 @@ function AccountProfileRouter() {
 const accountProfileState = {
   name: 'profile',
   url: '/profile{pathname:any}',
-  navComponent: ProfileNavigationBar,
+  navComponent: () => null,
   component: AccountProfileRouter,
 };
 

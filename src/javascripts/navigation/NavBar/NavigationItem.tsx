@@ -4,10 +4,9 @@ import React from 'react';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import cn from 'classnames';
-import PropTypes from 'prop-types';
 import { Tooltip, Icon, ModalLauncher } from '@contentful/forma-36-react-components';
 import * as Navigator from 'states/Navigator';
-import NavigationItemTag from './NavigationItemTag';
+import { NavigationItemTag } from './NavigationItemTag';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
 import keycodes from 'utils/keycodes';
@@ -97,16 +96,30 @@ const styles = {
   }),
 };
 
-function Label({ hasTooptip, children, highValueLabel, isOrganizationOnTrial, ...rest }) {
+function Label({
+  hasTooptip,
+  children,
+  highValueLabel,
+  isOrganizationOnTrial,
+  ...rest
+}: {
+  hasTooptip: boolean;
+  highValueLabel?: boolean;
+  isOrganizationOnTrial?: boolean;
+  content?: string;
+  placement?: string;
+  children: React.ReactNode | React.ReactNodeArray;
+}) {
   if (hasTooptip) {
     return (
       <Tooltip
         {...rest}
         targetWrapperClassName={cn(styles.navBarListLabel, 'border-bottom--active')}
         onMouseOver={
-          highValueLabel &&
-          (() =>
-            handleHighValueLabelTracking('hover', TEAMS_TRACKING_NAME, !!isOrganizationOnTrial))
+          highValueLabel
+            ? () =>
+                handleHighValueLabelTracking('hover', TEAMS_TRACKING_NAME, !!isOrganizationOnTrial)
+            : undefined
         }>
         {children}
       </Tooltip>
@@ -115,13 +128,7 @@ function Label({ hasTooptip, children, highValueLabel, isOrganizationOnTrial, ..
   return <span className={cn(styles.navBarListLabel, 'border-bottom--active')}>{children}</span>;
 }
 
-Label.propTypes = {
-  hasTooptip: PropTypes.bool.isRequired,
-  highValueLabel: PropTypes.bool,
-  isOrganizationOnTrial: PropTypes.bool,
-};
-
-function getNavigationProps(item) {
+function getNavigationProps(item: NavigationItemType) {
   return {
     path: item.sref,
     params: item.srefParams || {},
@@ -147,7 +154,39 @@ const openDialog = (modalData) => {
 
 const initialFetch = async () => await fetchWebappContentByEntryID(TEAMS_CONTENT_ENTRY_ID);
 
-export default function NavigationItem(props) {
+export type NavigationSubitemType = {
+  separator?: boolean;
+  isTitle?: boolean;
+  tooltip?: string;
+  rootSref?: string;
+  sref?: string;
+  title?: string;
+  label?: string;
+  dataViewType?: string;
+  reload?: boolean;
+  render?: (item: NavigationSubitemType) => React.ReactNode;
+  formatUrl?: (item: string) => string;
+  tagLabel?: string;
+};
+
+export type NavigationItemType = {
+  title: string;
+  icon?: string;
+  tagLabel?: string;
+  navIcon?: string;
+  rootSref?: string;
+  sref?: string;
+  srefParams?: { [key: string]: unknown };
+  srefOptions?: { [key: string]: unknown };
+  dataViewType?: string;
+  disabled?: boolean;
+  tooltip?: string;
+  highValueLabel?: boolean;
+  isOrganizationOnTrial?: boolean;
+  children?: NavigationSubitemType[];
+};
+
+export function NavigationItem(props: { item: NavigationItemType }) {
   const { item } = props;
   const fetchData = async () => {
     try {
@@ -206,7 +245,7 @@ export default function NavigationItem(props) {
           }
         }}
         {...{
-          tabIndex: item.disabled ? undefined : '0',
+          tabIndex: item.disabled ? undefined : 0,
         }}>
         <Label
           hasTooptip={Boolean(item.tooltip)}
@@ -216,7 +255,7 @@ export default function NavigationItem(props) {
           isOrganizationOnTrial={item.isOrganizationOnTrial}>
           {item.navIcon && (
             <ProductIcon
-              icon={item.navIcon}
+              icon={item.navIcon as any}
               size="medium"
               color="white"
               className={styles.navIcon}
@@ -238,21 +277,3 @@ export default function NavigationItem(props) {
     </li>
   );
 }
-
-NavigationItem.propTypes = {
-  item: PropTypes.shape({
-    title: PropTypes.string.isRequired,
-    icon: PropTypes.string,
-    tagLabel: PropTypes.string,
-    navIcon: PropTypes.string,
-    rootSref: PropTypes.string,
-    sref: PropTypes.string,
-    srefParams: PropTypes.object,
-    srefOptions: PropTypes.object,
-    dataViewType: PropTypes.string,
-    disabled: PropTypes.bool,
-    tooltip: PropTypes.string,
-    highValueLabel: PropTypes.bool,
-    isOrganizationOnTrial: PropTypes.bool,
-  }).isRequired,
-};

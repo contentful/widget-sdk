@@ -12,11 +12,11 @@ import {
   Tag,
   Icon,
 } from '@contentful/forma-36-react-components';
-import PropTypes from 'prop-types';
 import * as Navigator from 'states/Navigator';
-import NavigationItemTag from './NavigationItemTag';
+import { NavigationItemTag } from './NavigationItemTag';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { noop } from 'lodash';
+import { NavigationItemType } from './NavigationItem';
 
 const styles = {
   dropdown: css({
@@ -128,7 +128,15 @@ function getNavigationProps(item) {
   };
 }
 
-export default function NavigationDropdown({ item, onOpen: onDropdownOpen = noop }) {
+type NavigationDropdownProps = {
+  onOpen?: () => void;
+  item: NavigationItemType;
+};
+
+export function NavigationDropdown({
+  item,
+  onOpen: onDropdownOpen = noop,
+}: NavigationDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const onOpen = () => {
@@ -150,11 +158,11 @@ export default function NavigationDropdown({ item, onOpen: onDropdownOpen = noop
         position="bottom-left"
         toggleElement={
           <a
-            className={cx(styles.navBarLink, styles.appTopBarMenuTrigger, {
+            className={cx(styles.navBarLink, {
               'is-active': Navigator.includes({ path: item.rootSref || item.sref }),
             })}
             role="button"
-            tabIndex="0"
+            tabIndex={0}
             data-view-type={item.dataViewType}
             onClick={onOpen}
             onKeyDown={(e) => {
@@ -165,7 +173,7 @@ export default function NavigationDropdown({ item, onOpen: onDropdownOpen = noop
             <span className={styles.navBarListLabel}>
               {item.navIcon && (
                 <ProductIcon
-                  icon={item.navIcon}
+                  icon={item.navIcon as any}
                   size="medium"
                   color="white"
                   className={styles.navBarProductIcon}
@@ -178,7 +186,7 @@ export default function NavigationDropdown({ item, onOpen: onDropdownOpen = noop
           </a>
         }>
         <DropdownList className={styles.dropdownList} testId="navbar-dropdown-menu">
-          {item.children.map((subitem, index) => {
+          {item.children?.map((subitem, index) => {
             if (subitem.separator) {
               return (
                 <DropdownListItem
@@ -231,33 +239,3 @@ export default function NavigationDropdown({ item, onOpen: onDropdownOpen = noop
     </li>
   );
 }
-
-NavigationDropdown.propTypes = {
-  onOpen: PropTypes.func,
-  item: PropTypes.shape({
-    title: PropTypes.string.isRequired,
-    icon: PropTypes.string,
-    tagLabel: PropTypes.string,
-    navIcon: PropTypes.string,
-    rootSref: PropTypes.string,
-    sref: PropTypes.string,
-    srefParams: PropTypes.object,
-    srefOptions: PropTypes.object,
-    dataViewType: PropTypes.string,
-    disabled: PropTypes.bool,
-    children: PropTypes.arrayOf(
-      PropTypes.shape({
-        separator: PropTypes.bool,
-        isTitle: PropTypes.bool,
-        tooltip: PropTypes.string,
-        rootSref: PropTypes.string,
-        sref: PropTypes.string,
-        title: PropTypes.string,
-        label: PropTypes.string,
-        dataViewType: PropTypes.string,
-        reload: PropTypes.bool,
-        render: PropTypes.func,
-      })
-    ).isRequired,
-  }).isRequired,
-};

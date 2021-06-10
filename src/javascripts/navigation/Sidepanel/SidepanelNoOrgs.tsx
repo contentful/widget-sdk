@@ -1,8 +1,7 @@
 import React, { Fragment } from 'react';
-import PropTypes from 'prop-types';
 import Icon from 'ui/Components/Icon';
 
-export default function SidepanelNoOrgs(props) {
+export default function SidepanelNoOrgs(props: { createNewOrg: () => void }) {
   const { createNewOrg } = props;
 
   return (
@@ -20,7 +19,3 @@ export default function SidepanelNoOrgs(props) {
     </div>
   );
 }
-
-SidepanelNoOrgs.propTypes = {
-  createNewOrg: PropTypes.func.isRequired,
-};

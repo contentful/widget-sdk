@@ -3,7 +3,7 @@ import React from 'react';
 import NavBar from './NavBar/NavBar';
 import { SidepanelContainer } from './Sidepanel/SidepanelContainer';
 
-export default function ProfileNavigationBar() {
+export function ProfileNavigationBar() {
   const user = routes['account.profile.user']();
   const cmaTokens = routes['account.profile.cma_tokens']();
   const oauthTokens = routes['account.profile.oauth_tokens']();
@@ -35,7 +35,7 @@ export default function ProfileNavigationBar() {
   ];
 
   return (
-    <>
+    <div className="app-top-bar">
       <SidepanelContainer />
       <div className="app-top-bar__outer-wrapper">
         <NavBar
@@ -94,6 +94,6 @@ export default function ProfileNavigationBar() {
           ]}
         />
       </div>
-    </>
+    </div>
   );
 }

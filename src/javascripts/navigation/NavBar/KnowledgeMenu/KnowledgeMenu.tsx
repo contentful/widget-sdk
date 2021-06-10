@@ -25,7 +25,7 @@ const urlWithUtm = buildUrlWithUtmParams({
   campaign: 'in-app-help',
 });
 
-function KnowledgeMenu() {
+export function KnowledgeMenu() {
   const [isOpen, setIsOpen] = useState(false);
 
   function handleDropdownToggle() {
@@ -52,6 +52,7 @@ function KnowledgeMenu() {
         <DropdownListItem
           testId="help-menu-help-center"
           href={urlWithUtm(Config.helpCenterUrl)}
+          // @ts-expect-error missing target=_blank
           target="_blank"
           rel="noopener noreferrer">
           Help center
@@ -60,6 +61,7 @@ function KnowledgeMenu() {
         <DropdownListItem
           testId="help-menu-docs"
           href={urlWithUtm(Config.developerDocsUrl)}
+          // @ts-expect-error missing target=_blank
           target="_blank"
           rel="noopener noreferrer">
           Developer docs
@@ -68,6 +70,7 @@ function KnowledgeMenu() {
         <DropdownListItem
           testId="help-menu-traning-center"
           href={`https://public.learningcenter.contentful.com/catalog`}
+          // @ts-expect-error missing target=_blank
           target="_blank"
           rel="noopener noreferrer">
           Training courses
@@ -76,5 +79,3 @@ function KnowledgeMenu() {
     </Dropdown>
   );
 }
-
-export default KnowledgeMenu;
