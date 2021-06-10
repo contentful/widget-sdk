@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import {
   Button,
   Flex,
@@ -11,8 +11,7 @@ import localeStore from 'services/localeStore';
 import { InitialValueField } from './InitialValueField';
 import { ContentType, ContentTypeField } from 'core/typings';
 import type { FieldValueChangedHandler } from '../../types';
-import { useInitialValueDocument } from './useInitialValueDocument';
-import { useInitialValueDocumentErrors } from './useInitialValueDocumentErrors';
+import { InitialValueUsageNote } from './InitialValueUsageNote';
 
 export const SUPPORTED_FIELD_TYPES = ['Boolean', 'Date', 'Integer', 'Number', 'Symbol', 'Text'];
 const MANAGABLE_NUMBER_OF_LOCALES = 4;
@@ -35,7 +34,16 @@ export interface InitialValueTabComponentProps {
   onChange: FieldValueChangedHandler;
 }
 
-const InitialValueTabComponent = ({
+const UnsupportedFieldTypeNote = () => (
+  <Flex marginBottom="spacingXl" marginTop="spacingS">
+    <Note title="The initial value is not available for this field type.">
+      Currently, you can only add initial value for the text, boolean, date and time, and number
+      fields.
+    </Note>
+  </Flex>
+);
+
+export const InitialValueTabComponent = ({
   contentType,
   editorInterface,
   ctField,
@@ -47,36 +55,11 @@ const InitialValueTabComponent = ({
   const locales = localeStore.getLocales();
   const defaultLocale = localeStore.getDefaultLocale();
 
-  const { doc, validator } = useInitialValueDocument(ctField, fields, contentType, locales);
-  const onFieldChange = useCallback(
-    (fieldName: string, value: unknown) => {
-      void doc.setValueAt(['fields', ctField.id], value);
-      onChange(fieldName, value);
-    },
-    [onChange, ctField, fields]
-  );
-  const { errors } = useInitialValueDocumentErrors(validator);
-
   if (!isFieldTypeSupported) {
-    return (
-      <Flex marginBottom="spacingXl" marginTop="spacingS">
-        <Note title="The initial value is not available for this field type.">
-          Currently, you can only add initial value for the text, boolean, date and time, and number
-          fields.
-        </Note>
-      </Flex>
-    );
+    return <UnsupportedFieldTypeNote />;
   }
 
   const otherLocales = locales.filter((locale) => locale.code !== defaultLocale.code);
-  const ErrorNote = () => (
-    <Flex marginBottom="spacingS" marginTop="spacingS">
-      <Note title="Entry may not be publishable" noteType="warning">
-        The values you have chosen fail one or more validations and therefore newly created entries
-        for this content type can not be published.
-      </Note>
-    </Flex>
-  );
 
   const DefaultLocaleField = () => (
     <>
@@ -88,7 +71,7 @@ const InitialValueTabComponent = ({
         isLocalized={ctField.localized}
         locale={defaultLocale}
         locales={locales}
-        onChange={onFieldChange}
+        onChange={onChange}
       />
     </>
   );
@@ -164,7 +147,7 @@ const InitialValueTabComponent = ({
           key={locale.code}
           locale={locale}
           locales={locales}
-          onChange={onFieldChange}
+          onChange={onChange}
         />
       ))}
     </>
@@ -190,17 +173,15 @@ const InitialValueTabComponent = ({
       payload[locale.code] = value;
     }
 
-    onFieldChange('initialValue', payload);
+    onChange('initialValue', payload);
   };
 
   return (
     <Flex flexDirection="column">
-      {errors.length > 0 && <ErrorNote />}
+      <InitialValueUsageNote />
       <StyleTagHidingMarkdownEditorAssetButton />
       <DefaultLocaleField />
       {ctField.localized && <OtherLocaleFields />}
     </Flex>
   );
 };
-
-export { InitialValueTabComponent };
