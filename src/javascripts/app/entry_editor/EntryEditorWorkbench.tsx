@@ -41,7 +41,7 @@ import NoEditorsWarning from './NoEditorsWarning';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { getModule } from 'core/NgRegistry';
 import { ReleasesLoadingOverlay } from '../Releases/ReleasesLoadingOverlay';
-import { DocumentStatus } from '@contentful/editorial-primitives';
+import { DocumentStatus, Validator } from '@contentful/editorial-primitives';
 import {
   REFERENCES_ENTRY_ID,
   FeatureModal,
@@ -50,6 +50,11 @@ import {
 } from 'features/high-value-modal';
 import { fetchWebappContentByEntryID } from 'core/services/ContentfulCDA';
 import { isOrganizationOnTrial } from 'features/trials';
+import LocaleStore from 'services/localeStore';
+import { ContentType } from '@contentful/app-sdk';
+import { useSpaceEnvContentTypes } from 'core/services/SpaceEnvContext';
+import * as PublicContentType from 'widgets/PublicContentType';
+import { createCmaDocumentWithApiNames } from 'app/widgets/ExtensionSDKs/createCmaDocumentWithApiNames';
 
 const trackTabOpen = (tab, isOrgOnTrial) => {
   isOrgOnTrial && handleHighValueLabelTracking('click', REFERENCES_TRACKING_NAME, true);
@@ -245,6 +250,27 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
 
   const { tagsEnabled } = useTagsFeatureEnabled();
 
+  const { currentSpaceContentTypes } = useSpaceEnvContentTypes();
+
+  const validator = React.useMemo(() => {
+    const contentTypeProps = currentSpaceContentTypes.find(
+      (contentType) => contentType.sys.id === editorContext.entityInfo.contentType?.sys.id
+    );
+    if (contentTypeProps) {
+      return Validator.createForEntry({
+        contentType: PublicContentType.fromInternal(contentTypeProps),
+        doc: createCmaDocumentWithApiNames(otDoc, contentTypeProps),
+        locales: LocaleStore.getLocales(),
+        getContentType: (id) => {
+          const foundContentType = currentSpaceContentTypes.find(
+            (contentType: ContentType) => contentType.sys.id === id
+          ) as ContentType;
+          return PublicContentType.fromInternal(foundContentType);
+        },
+      });
+    }
+  }, [currentSpaceContentTypes, editorContext.entityInfo.contentType, otDoc]);
+
   const tabs = availableTabs.map((currentTab) => {
     let isTabVisible = true;
     let isTabEnabled = true;
@@ -330,7 +356,17 @@ const EntryEditorWorkbench = (props: EntryEditorWorkbenchProps) => {
             fieldLocaleListeners,
           };
 
-          return <CustomEditorExtensionRenderer extension={currentTab} scope={scope} />;
+          if (!validator) {
+            return null;
+          }
+
+          return (
+            <CustomEditorExtensionRenderer
+              extension={currentTab}
+              scope={scope}
+              validator={validator}
+            />
+          );
         }
       },
       onClick(selectedTab) {

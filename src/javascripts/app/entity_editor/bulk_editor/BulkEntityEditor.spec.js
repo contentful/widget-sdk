@@ -32,12 +32,30 @@ jest.mock('app/entity_editor/EntityField/EntityField', () => ({
 jest.mock('../stateController', () => ({
   initStateController: jest.fn(),
 }));
+
 jest.mock('app/entity_editor/DocumentErrorHandler', () => ({
   initDocErrorHandler: jest.fn(),
+}));
+jest.mock('../../widgets/ExtensionSDKs/createCmaDocumentWithApiNames', () => ({
+  createCmaDocumentWithApiNames: jest.fn(),
+}));
+jest.mock('services/localeStore', () => ({
+  getLocales: jest.fn(),
+  getPrivateLocales: jest.fn(),
+}));
+
+jest.mock('core/services/SpaceEnvContext', () => ({
+  ...jest.requireActual('core/services/SpaceEnvContext'),
+  useSpaceEnvContentTypes: jest.fn().mockReturnValue({
+    currentSpaceContentTypes: [{ sys: { id: 'CT-1' } }],
+  }),
 }));
 jest.mock('@contentful/editorial-primitives', () => ({
   localFieldChanges: jest.fn(),
   valuePropertyAt: jest.fn(),
+  Validator: {
+    createForEntry: jest.fn().mockReturnValue({ id: 'test' }),
+  },
 }));
 jest.mock('app/widgets/ExtensionSDKs', () => ({
   createEditorExtensionSDK: jest.fn(),
@@ -73,7 +91,7 @@ const renderComponent = (extraProps = {}) => {
   };
 
   const editorData = {
-    entityInfo: { contentType: { id: 'CT-1' } },
+    entityInfo: { contentType: { sys: { id: 'CT-1' } } },
     fieldControls: {
       form: [],
       all: [],
