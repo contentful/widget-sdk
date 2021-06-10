@@ -106,6 +106,17 @@ const useFieldAPI = ({
   return sdk;
 };
 
+const styles = {
+  fieldWrapper: css({
+    marginLeft: 0,
+    marginRight: 0,
+
+    '& + &': {
+      marginTop: 0,
+    },
+  }),
+};
+
 export interface InitialValueFieldProps {
   contentType: UseFieldApi['contentType'];
   editorInterface: any;
@@ -158,7 +169,7 @@ const InitialValueField = ({
   );
 
   return isLocalized ? (
-    <FieldWrapper className={css({ marginLeft: 0, marginRight: 0 })} sdk={sdk} name={locale.name}>
+    <FieldWrapper className={styles.fieldWrapper} sdk={sdk} name={locale.name}>
       {customfield}
     </FieldWrapper>
   ) : (
