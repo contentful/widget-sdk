@@ -30,8 +30,8 @@ import { NonEnterpriseSubscriptionPage } from '../components/NonEnterpriseSubscr
 import { EnterpriseSubscriptionPage } from '../components/EnterpriseSubscriptionPage';
 import { actions, OrgSubscriptionContext } from '../context';
 
-async function fetchNumMemberships(organizationId) {
-  const resources = createResourceService(organizationId, 'organization');
+async function fetchNumMemberships(orgEndpoint) {
+  const resources = createResourceService(orgEndpoint);
   const membershipsResource = await resources.get('organization_membership');
   return membershipsResource.usage;
 }
@@ -55,7 +55,7 @@ async function fetch(organizationId, dispatch) {
   const [plansWithSpaces, productRatePlans, numMemberships] = await Promise.all([
     getPlansWithSpaces(endpoint),
     getAllProductRatePlans(endpoint),
-    fetchNumMemberships(organizationId),
+    fetchNumMemberships(endpoint),
   ]);
 
   if (!plansWithSpaces || !productRatePlans) {

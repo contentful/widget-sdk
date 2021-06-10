@@ -12,7 +12,7 @@ import { getPeriods, loadPeriodData } from './services/UsageService';
 import { UsageProvider, useUsageState, useUsageDispatch } from './hooks/usageContext';
 
 import * as TokenStore from 'services/TokenStore';
-import * as EndpointFactory from 'data/EndpointFactory';
+import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import * as OrganizationMembershipRepository from 'access_control/OrganizationMembershipRepository';
 import * as PricingDataProvider from 'account/pricing/PricingDataProvider';
 import { getBasePlan } from 'features/pricing-entities';
@@ -83,8 +83,8 @@ const OrganizationUsage = () => {
           return;
         }
 
-        const endpoint = EndpointFactory.createOrganizationEndpoint(orgId as string);
-        const service = createResourceService(orgId, 'organization');
+        const endpoint = createOrganizationEndpoint(orgId as string);
+        const service = createResourceService(endpoint);
         const basePlan = await getBasePlan(endpoint);
 
         const isTeamOrEnterpriseCustomer =

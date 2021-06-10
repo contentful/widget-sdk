@@ -3,7 +3,6 @@ import { sortBy } from 'lodash';
 import StateRedirect from 'app/common/StateRedirect';
 import { RolesWorkbenchSkeleton } from '../skeletons/RolesWorkbenchSkeleton';
 import createFetcherComponent from 'app/common/createFetcherComponent';
-import createResourceService from 'services/ResourceService';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as RoleListHandler from '../components/RoleListHandler';
 import { RolesList } from '../roles_list/RolesList';
@@ -14,12 +13,12 @@ import { getSpaceEntitlementSet } from 'features/space-usage';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import { isOrganizationOnTrial } from 'features/trials';
 
-const RolesFetcher = createFetcherComponent(async ({ spaceId, environmentId }) => {
+const RolesFetcher = createFetcherComponent(async ({ spaceId, environmentId, resources }) => {
   const listHandler = RoleListHandler.create(spaceId, environmentId);
 
   const hasCustomRolesFeature = await accessChecker.canModifyRoles();
   const data = await listHandler.reset();
-  const rolesResource = await createResourceService(spaceId).get('role');
+  const rolesResource = await resources.get('role');
 
   const roleCounts = listHandler.getRoleCounts();
 
@@ -42,6 +41,7 @@ export function RolesListRoute() {
     currentOrganization,
     currentSpaceId: spaceId,
     currentEnvironmentId: environmentId,
+    resources,
   } = useSpaceEnvContext();
   const canUpgradeOrganization = isOwnerOrAdmin(currentOrganization);
   const [entitlementsAPIEnabled, setEntitlementsAPIEnabled] = useState();
@@ -77,7 +77,7 @@ export function RolesListRoute() {
   return (
     <>
       <DocumentTitle title="Roles" />
-      <RolesFetcher spaceId={spaceId} environmentId={environmentId}>
+      <RolesFetcher spaceId={spaceId} environmentId={environmentId} resources={resources}>
         {({ isLoading, isError, data, fetch }) => {
           if (isLoading) {
             return <RolesWorkbenchSkeleton title="Roles" />;

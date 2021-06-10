@@ -14,6 +14,7 @@ import { openDeleteEnvironmentDialog } from '../components/DeleteDialog';
 import * as PricingService from 'services/PricingService';
 import { getEnvironmentAliasesIds, isMasterEnvironment } from 'core/services/SpaceEnvContext/utils';
 import { useSpaceEnvEndpoint } from 'core/hooks/useSpaceEnvEndpoint';
+import { createSpaceEndpoint } from 'data/EndpointFactory';
 
 /**
  * Actions
@@ -81,9 +82,12 @@ export const useEnvironmentsRouteState = (props) => {
   const [state, dispatch] = React.useReducer(createEnvReducer, initialState);
 
   const endpoint = useSpaceEnvEndpoint();
+  const spaceEndpoint = createSpaceEndpoint(spaceId);
+
   const resourceEndpoint = SpaceEnvironmentsRepo.create(endpoint);
   const aliasEndpoint = SpaceAliasesRepo.create(endpoint);
-  const resourceService = createResourceService(spaceId, 'space');
+  // The 'environment' resource is a SpaceResource. The endpoint should not use the environment-scoped route.
+  const resourceService = createResourceService(spaceEndpoint);
 
   const FetchPermissions = async () => {
     const { spaceId, organizationId, goToSpaceDetail } = props;

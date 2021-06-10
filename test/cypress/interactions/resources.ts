@@ -88,15 +88,15 @@ export const getResourcesWithEnvironment = {
   },
 };
 
-export const getResourcesForEnvironmentWithLocale = {
+export const geLocaleResource = {
   willReturnSeveral() {
     cy.addInteraction({
       provider: 'resources',
       state: States.SEVERAL,
-      uponReceiving: `a request to get resources for environment with locales of space "${defaultSpaceId}"`,
+      uponReceiving: `a request to get locale resource of space "${defaultSpaceId}"`,
       withRequest: {
         method: 'GET',
-        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/resources/locale`,
+        path: `/spaces/${defaultSpaceId}/resources/locale`,
         headers: {
           Accept: 'application/json, text/plain, */*',
         },

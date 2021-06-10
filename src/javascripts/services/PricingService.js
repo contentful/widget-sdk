@@ -1,5 +1,5 @@
 import { getSpaceProductRatePlans, getSpacePlanForSpace } from 'features/pricing-entities';
-import { createOrganizationEndpoint } from 'data/EndpointFactory';
+import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
 import createResourceService from './ResourceService';
 import { resourceHumanNameMap, getResourceLimits } from 'utils/ResourceUtils';
 import { joinWithAnd } from 'utils/StringUtils';
@@ -143,7 +143,8 @@ function shouldRecommendPlan(resources) {
  * @return {ProductRatePlan?}         Recommended product rate plan, or null
  */
 export async function recommendedSpacePlan(orgId, spaceId) {
-  const spaceResources = await createResourceService(spaceId, 'space').getAll();
+  const spaceEndpoint = createSpaceEndpoint(spaceId);
+  const spaceResources = await createResourceService(spaceEndpoint).getAll();
 
   if (!shouldRecommendPlan(spaceResources)) {
     return null;
@@ -227,7 +228,9 @@ export function recommendationReasonText(resources) {
  * @return {ProductRatePlan?}   Next product rate plan, or null
  */
 export async function nextSpacePlanForResource(orgId, spaceId, resourceType) {
-  const spaceResources = await createResourceService(spaceId, 'space').getAll();
+  const spaceEndpoint = createSpaceEndpoint(spaceId);
+  const spaceResources = await createResourceService(spaceEndpoint).getAll();
+
   const validSpaceRatePlans = await getValidSpacePlans(orgId, spaceId, spaceResources);
 
   if (validSpaceRatePlans.length === 0) {

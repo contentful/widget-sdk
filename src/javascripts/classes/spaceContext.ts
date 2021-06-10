@@ -37,6 +37,7 @@ import {
   ContentTypeProps,
 } from 'contentful-management/types';
 import { SpaceContextType } from './spaceContextTypes';
+import createResourceService from 'services/ResourceService';
 
 const MASTER_ENVIRONMENT_ID = 'master';
 
@@ -77,6 +78,7 @@ function initSpaceContext(): SpaceContextType {
     environments: [],
     docPool: null,
     users: null,
+    resources: null as unknown as SpaceContextType['resources'],
     uiConfig: null,
     space: null as unknown as SpaceContextType['space'],
     resettingSpace: false,
@@ -173,6 +175,9 @@ function initSpaceContext(): SpaceContextType {
           cmaPlainClient,
           spaceContext.endpoint
         );
+        // This should be initialized after `setupEnvironments`, so that
+        // the environment is properly set on spaceContext.space
+        spaceContext.resources = createResourceService(spaceContext.endpoint);
 
         await TheLocaleStore.init(localeRepo);
 
@@ -307,6 +312,7 @@ function initSpaceContext(): SpaceContextType {
     // @ts-expect-error can be nullable
     spaceContext.space = null;
     spaceContext.users = null;
+    spaceContext.resources = null;
 
     purgeContentPreviewCache();
     purgeApiKeyRepoCache();

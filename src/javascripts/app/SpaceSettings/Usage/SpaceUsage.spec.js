@@ -12,15 +12,6 @@ const environmentMetaMock = {
   isMasterEnvironment: true,
 };
 
-jest.mock('core/services/SpaceEnvContext/useSpaceEnvContext', () => ({
-  useSpaceEnvContext: jest.fn().mockReturnValue({
-    currentSpaceId: spaceId,
-    currentSpace: {
-      environmentMeta: environmentMetaMock,
-    },
-  }),
-}));
-
 const mockedResponse = {
   features: {},
   quotas: {
@@ -167,6 +158,10 @@ const mockResourcesResponse = [
   },
 ];
 
+const mockEnvResourcesResponse = mockResourcesResponse.filter((resource) =>
+  ['Content type', 'Entry', 'Asset', 'Role', 'Locale', 'Record'].includes(resource.name)
+);
+
 function getAllRenderedResources() {
   const displayedResources = ['Content type', 'Entry', 'Asset', 'Role', 'Locale'];
 
@@ -180,6 +175,18 @@ jest.mock('services/ResourceService', () => ({
   __esModule: true,
   default: () => ({
     getAll: jest.fn(async () => mockResourcesResponse),
+  }),
+}));
+
+jest.mock('core/services/SpaceEnvContext/useSpaceEnvContext', () => ({
+  useSpaceEnvContext: jest.fn().mockReturnValue({
+    currentSpaceId: spaceId,
+    currentSpace: {
+      environmentMeta: environmentMetaMock,
+    },
+    resources: {
+      getAll: jest.fn(async () => mockEnvResourcesResponse),
+    },
   }),
 }));
 

@@ -9,6 +9,7 @@ import { getTemplate } from 'services/SpaceTemplateLoader';
 import * as spaceTemplateCreator from 'services/SpaceTemplateCreator';
 import { captureWarning } from 'core/monitoring';
 import { Notification } from '@contentful/forma-36-react-components';
+import { createOrganizationEndpoint } from 'data/EndpointFactory';
 
 const DEFAULT_ERROR_MESSAGE =
   'Could not create Space. If the problem persists please get in contact with us.';
@@ -168,7 +169,8 @@ export const requestSpaceCreation = (
   setTemplateProgress,
   setCreationFinished
 ) => {
-  const resources = createResourceService(organization.sys.id, 'organization');
+  const orgEndpoint = createOrganizationEndpoint(organization.sys.id);
+  const resources = createResourceService(orgEndpoint);
 
   // First check that there are resources available
   // to create the space

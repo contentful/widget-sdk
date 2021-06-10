@@ -1,9 +1,6 @@
 import { defaultSpaceId } from '../../../util/requests';
 import { defaultRequestsMock } from '../../../util/factories';
-import {
-  getResourcesForEnvironmentWithLocale,
-  getResources,
-} from '../../../interactions/resources';
+import { geLocaleResource, getResources } from '../../../interactions/resources';
 import { getFeaturesWithCustomRoles } from '../../../interactions/features';
 import {
   deleteLocaleForSpace,
@@ -40,7 +37,7 @@ describe('Locales Management', () => {
     beforeEach(() => {
       interactions = [
         ...defaultRequestsMock(),
-        getResourcesForEnvironmentWithLocale.willReturnSeveral(),
+        geLocaleResource.willReturnSeveral(),
         getFeaturesWithCustomRoles.willReturnSeveral(),
         getProductRatePlansWithSpace.willReturnDefault(),
         getResources.willReturnSeveral(),
@@ -93,7 +90,7 @@ describe('Locales Management', () => {
         ...defaultRequestsMock({
           localeResponse: queryFirst100LocalesOfDefaultSpace.willFindSeveral,
         }),
-        getResourcesForEnvironmentWithLocale.willReturnSeveral(),
+        geLocaleResource.willReturnSeveral(),
         getFeaturesWithCustomRoles.willReturnSeveral(),
         getProductRatePlansWithSpace.willReturnDefault(),
         getResources.willReturnSeveral(),

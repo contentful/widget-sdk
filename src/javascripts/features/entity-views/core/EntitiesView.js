@@ -7,7 +7,7 @@ import KnowledgeBase from 'components/shared/knowledge_base_icon/KnowledgeBase';
 import { Sidebar as SavedViewsSidebar } from './SavedViews/Sidebar';
 import { css } from 'emotion';
 import { Paginator } from 'core/components/Paginator';
-import RecordsResourceUsage from 'components/RecordsResourceUsage';
+import { RecordsResourceUsage } from './RecordsResourceUsage';
 import tokens from '@contentful/forma-36-tokens';
 import { noop } from 'lodash';
 import { NoSearchResultsAdvice } from 'core/components/NoSearchResultsAdvice';

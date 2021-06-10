@@ -6,8 +6,6 @@ import { MemoryRouter } from 'core/react-routing';
 import * as spaceContextMocked from 'ng/spaceContext';
 import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
-let mockedResource;
-
 const mockApiKeyRepo = {
   getAll: jest.fn().mockResolvedValue([]),
   create: jest.fn().mockResolvedValue(),
@@ -34,10 +32,6 @@ jest.mock('../services/ApiKeyRepoInstance', () => ({
   getApiKeyRepo: () => mockApiKeyRepo,
 }));
 
-jest.mock('services/ResourceService', () => () => ({
-  get: jest.fn().mockResolvedValue(mockedResource),
-}));
-
 describe('ApiKeyListRoute', () => {
   beforeEach(() => {
     mockApiKeyRepo.create.mockReset();
@@ -49,13 +43,13 @@ describe('ApiKeyListRoute', () => {
         return 'currentSpaceName';
       }
     });
-    mockedResource = {
+    spaceContextMocked.resources.get.mockResolvedValue({
       usage: 0,
       limits: {
         included: 0,
         maximum: 10,
       },
-    };
+    });
   });
 
   afterEach(() => {
@@ -84,13 +78,13 @@ describe('ApiKeyListRoute', () => {
 
   describe('when limit is reached', () => {
     beforeEach(() => {
-      mockedResource = {
+      spaceContextMocked.resources.get.mockResolvedValue({
         usage: 2,
         limits: {
           included: 0,
           maximum: 2,
         },
-      };
+      });
     });
 
     it('should render non-empty list', async () => {

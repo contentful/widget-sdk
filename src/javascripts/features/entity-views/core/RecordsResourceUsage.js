@@ -4,10 +4,11 @@ import classnames from 'classnames';
 import { HelpText, TextLink } from '@contentful/forma-36-react-components';
 
 import { beginSpaceChange } from 'services/ChangeSpaceService';
-import createResourceService from 'services/ResourceService';
 import { getResourceLimits } from 'utils/ResourceUtils';
+import { WARNING_THRESHOLD } from 'services/PricingService';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 
-const WARN_THRESHOLD = 0.9;
 const ERROR_THRESHOLD = 0.95;
 
 const openUpgradeModal = (space, onSubmit) =>
@@ -17,19 +18,17 @@ const openUpgradeModal = (space, onSubmit) =>
     onSubmit,
   });
 
-const fetchRecordsResource = (spaceId, environmentId) => {
-  const resourceService = createResourceService(spaceId);
-  return resourceService.get('record', environmentId);
-};
-
-function RecordsResourceUsage({ className, space, environmentId, isMasterEnvironment }) {
+export function RecordsResourceUsage({ className }) {
+  const { currentSpace, spaceData, resources } = useSpaceEnvContext();
   const [resource, setResource] = useState();
 
+  const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
+
   const updateResource = useCallback(async () => {
-    const recordResource = await fetchRecordsResource(space.sys.id, environmentId);
+    const recordResource = await resources.get('record');
 
     setResource(recordResource);
-  }, [space, environmentId]);
+  }, [resources]);
 
   useEffect(() => {
     updateResource();
@@ -48,7 +47,7 @@ function RecordsResourceUsage({ className, space, environmentId, isMasterEnviron
       data-test-id="container"
       className={classnames('resource-usage', className, {
         'resource-usage--warn':
-          usagePercentage >= WARN_THRESHOLD && usagePercentage < ERROR_THRESHOLD,
+          usagePercentage >= WARNING_THRESHOLD && usagePercentage < ERROR_THRESHOLD,
         'resource-usage--danger': usagePercentage >= ERROR_THRESHOLD,
       })}>
       {usagePercentage >= 1 ? (
@@ -59,8 +58,10 @@ function RecordsResourceUsage({ className, space, environmentId, isMasterEnviron
         </HelpText>
       )}
 
-      {usagePercentage >= WARN_THRESHOLD && isMasterEnvironment && (
-        <TextLink onClick={() => openUpgradeModal(space, updateResource)}>Upgrade space</TextLink>
+      {usagePercentage >= WARNING_THRESHOLD && isMasterEnvironment && (
+        <TextLink onClick={() => openUpgradeModal(spaceData, updateResource)}>
+          Upgrade space
+        </TextLink>
       )}
     </div>
   );
@@ -68,9 +69,4 @@ function RecordsResourceUsage({ className, space, environmentId, isMasterEnviron
 
 RecordsResourceUsage.propTypes = {
   className: PropTypes.string,
-  space: PropTypes.object,
-  environmentId: PropTypes.string,
-  isMasterEnvironment: PropTypes.bool,
 };
-
-export default RecordsResourceUsage;

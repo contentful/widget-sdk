@@ -84,5 +84,10 @@ export const memberships = {
   invite: jest.fn().mockResolvedValue({}),
 };
 
+export const resources = {
+  getAll: jest.fn().mockResolvedValue({ items: [] }),
+  get: jest.fn().mockResolvedValue({}),
+};
+
 export const isMasterEnvironment = jest.fn().mockReturnValue(true);
 export const isMasterEnvironmentById = jest.fn().mockReturnValue(true);

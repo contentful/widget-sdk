@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react';
 import ReloadNotification from 'app/common/ReloadNotification';
-import createResourceService from 'services/ResourceService';
 import * as ResourceUtils from 'utils/ResourceUtils';
 import * as accessChecker from 'access_control/AccessChecker';
 import { getApiKeyRepo } from '../services/ApiKeyRepoInstance';
 
-async function getData({ spaceId, organization }) {
-  const resources = createResourceService(spaceId);
+async function getData({ organization, resources }) {
   const [apiKeys, resource] = await Promise.all([
     getApiKeyRepo().getAll(),
     resources.get('apiKey'),
@@ -27,7 +25,7 @@ async function getData({ spaceId, organization }) {
   };
 }
 
-export function useApiKeysState({ spaceId, spaceName, organization }) {
+export function useApiKeysState({ spaceName, organization, resources }) {
   const [loaded, setLoaded] = useState(false);
   const [data, setData] = useState({
     canCreate: false,
@@ -43,7 +41,7 @@ export function useApiKeysState({ spaceId, spaceName, organization }) {
   }
 
   useEffect(() => {
-    getData({ spaceId, organization })
+    getData({ organization, resources })
       .then((data) => {
         setData(data);
         setLoaded(true);
@@ -52,7 +50,7 @@ export function useApiKeysState({ spaceId, spaceName, organization }) {
         setLoaded(true);
         ReloadNotification.apiErrorHandler(error);
       });
-  }, [spaceId, organization]);
+  }, [organization, resources]);
 
   return { ...data, loaded, createAPIKey };
 }

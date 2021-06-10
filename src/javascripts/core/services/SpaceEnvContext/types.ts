@@ -22,6 +22,7 @@ export interface SpaceEnvContextValue {
   currentSpaceId?: string;
   currentSpaceName?: string;
   documentPool?: any;
+  resources?: any;
 }
 
 export interface ContentTypeField {

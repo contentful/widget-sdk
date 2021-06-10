@@ -26,6 +26,7 @@ const fakeResources = [
   { sys: { id: 'content_delivery_api_request' }, usage: REQUEST_COUNT },
 ];
 const mockOrganization = fake.Organization();
+const mockEndpoint = jest.fn();
 
 jest.mock('access_control/OrganizationMembershipRepository', () => ({
   getAllSpaces: jest.fn(),
@@ -111,7 +112,9 @@ describe('SpacesRoute', () => {
     });
 
     it('should render an error if fetching the resource data fails', async () => {
-      (createResourceService().getAll as jest.Mock).mockReset().mockRejectedValue(new Error());
+      (createResourceService(mockEndpoint).getAll as unknown as jest.Mock)
+        .mockReset()
+        .mockRejectedValue(new Error());
 
       await build();
 
@@ -129,7 +132,7 @@ describe('SpacesRoute', () => {
       await build();
 
       expect(getAllSpaces).toHaveBeenCalled();
-      expect(createResourceService().getAll).not.toHaveBeenCalled();
+      expect(createResourceService(mockEndpoint).getAll).not.toHaveBeenCalled();
     });
 
     it('should render empty space home when there are no spaces', async () => {
@@ -145,7 +148,9 @@ describe('SpacesRoute', () => {
     beforeEach(() => {
       (getAllSpaces as jest.Mock).mockReset().mockReturnValue([fakeSpace1, fakeSpace2]);
 
-      (createResourceService().getAll as jest.Mock).mockReset().mockReturnValue(fakeResources);
+      (createResourceService(mockEndpoint).getAll as unknown as jest.Mock)
+        .mockReset()
+        .mockReturnValue(fakeResources);
 
       (getSpaces as jest.Mock).mockReset().mockResolvedValue([fakeSpace1, fakeSpace2]);
     });
@@ -155,7 +160,7 @@ describe('SpacesRoute', () => {
 
       expect(getAllSpaces).toHaveBeenCalled();
       expect(getSpaces).toBeCalled();
-      expect(createResourceService().getAll).toHaveBeenCalled();
+      expect(createResourceService(mockEndpoint).getAll).toHaveBeenCalled();
     });
 
     it('should not break', async () => {
