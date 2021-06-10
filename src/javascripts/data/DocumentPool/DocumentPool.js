@@ -35,7 +35,7 @@ export async function create(
   const patchEntryUpdates = await getVariation(FLAGS.PATCH_ENTRY_UPDATES, {
     organizationId,
     spaceId,
-    environmentId: environment.sys.id,
+    environmentId: environment?.sys.id,
   });
   return { get, destroy, getById };
 
