@@ -68,23 +68,16 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
     dispatch({ type: SET_REFERENCE_TREE_KEY, value: uniqueId('id_') });
   };
 
-  // This is linked to ReferencesTree.js:L56
-  const displayValidation = (validationResponse) => {
-    dispatch({ type: SET_VALIDATIONS, value: validationResponse });
-
-    validationResponse.errored.length
-      ? Notification.error('Some references did not pass validation')
-      : Notification.success('All references passed validation');
-  };
-
-  const handleError = (error) => {
+  const handleError = (error, action = 'published') => {
     if (error.statusCode && error.statusCode === 429) {
       return Notification.error(BulkActionErrorMessage.RateLimitExceededError);
     }
 
     if (error.statusCode && error.data && error.data.details) {
       const errored = convertBulkActionErrors(error.data.details.errors);
-      return displayValidation({ errored });
+
+      // Expected shape on ReferenceTree.js:L56
+      dispatch({ type: SET_VALIDATIONS, value: errored });
     }
 
     Notification.error(
@@ -92,7 +85,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
         selectedEntities,
         root: references[0],
         entityTitle,
-        action: 'publish',
+        action,
       })
     );
   };
@@ -107,10 +100,20 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
     try {
       await createValidateBulkAction(selectedEntities);
       dispatch({ type: SET_PROCESSING_ACTION, value: null });
-      displayValidation({ errored: [] });
+      // Expected shape on ReferenceTree.js:L56
+      dispatch({ type: SET_VALIDATIONS, value: { errored: [] } });
+
+      Notification.success(
+        createSuccessMessage({
+          selectedEntities,
+          root: references[0],
+          entityTitle,
+          action: 'validated',
+        })
+      );
     } catch (error) {
       dispatch({ type: SET_PROCESSING_ACTION, value: null });
-      handleError(error);
+      handleError(error, 'validated');
     }
   };
 
@@ -133,7 +136,7 @@ const ReferencesSideBar = ({ entityTitle, entity }) => {
       );
     } catch (error) {
       dispatch({ type: SET_PROCESSING_ACTION, value: null });
-      handleError(error);
+      handleError(error, 'published');
     }
   };
 
