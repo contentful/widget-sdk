@@ -12,7 +12,6 @@ import { InitialValueField } from './InitialValueField';
 import type { ContentType, ContentTypeField } from 'core/typings';
 import type { FieldValueChangedHandler } from '../../types';
 import { InitialValueUsageNote } from './InitialValueUsageNote';
-import type { EditorInterfaceProps } from 'contentful-management/types';
 
 export const SUPPORTED_FIELD_TYPES = ['Boolean', 'Date', 'Integer', 'Number', 'Symbol', 'Text'];
 const MANAGABLE_NUMBER_OF_LOCALES = 4;
@@ -30,8 +29,7 @@ const StyleTagHidingMarkdownEditorAssetButton = () => {
 export interface InitialValueTabComponentProps {
   contentType: ContentType;
   ctField: ContentTypeField;
-  editorInterface: EditorInterfaceProps;
-  fields: { initialValue?: { value: Record<'string', unknown> } };
+  fields: { initialValue?: { value: Partial<Record<'string', unknown>> } };
   onChange: FieldValueChangedHandler;
 }
 
@@ -46,7 +44,6 @@ const UnsupportedFieldTypeNote = () => (
 
 export const InitialValueTabComponent = ({
   contentType,
-  editorInterface,
   ctField,
   fields,
   onChange,
@@ -67,7 +64,6 @@ export const InitialValueTabComponent = ({
       <StyleTagHidingMarkdownEditorAssetButton />
       <InitialValueField
         contentType={contentType}
-        editorInterface={editorInterface}
         fields={fields}
         isLocalized={ctField.localized}
         key={defaultLocale.code}
@@ -90,8 +86,8 @@ export const InitialValueTabComponent = ({
       .some((localeCode) => fields.initialValue?.value[localeCode] !== undefined);
 
   const applyValueToOtherLocales = (value: unknown) => {
-    // Our form value objects prevent manually adding keys so we have to create
-    // a clone before we can add locales
+    // Our form value objects prevent adding new keys so we have to create a
+    // clone before we can add locales
     const payload = fields.initialValue?.value ? { ...fields.initialValue.value } : {};
 
     for (const locale of otherLocales) {
@@ -166,7 +162,6 @@ export const InitialValueTabComponent = ({
       {otherLocales.map((locale) => (
         <InitialValueField
           contentType={contentType}
-          editorInterface={editorInterface}
           fields={fields}
           isLocalized
           key={locale.code}
