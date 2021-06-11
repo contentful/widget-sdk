@@ -7,20 +7,22 @@ import { createLocalesApi } from '@contentful/experience-sdk';
 import { css } from 'emotion';
 import keyBy from 'lodash/keyBy';
 
-import type { ContentType } from 'core/typings';
+import type { ContentType, ContentTypeField, Locale } from 'core/typings';
 import localeStore from 'services/localeStore';
 import { useFieldDialogContext } from './FieldDialogContext';
 import type { FieldValueChangedHandler } from '../../types';
 
+import type { EditorInterfaceProps } from 'contentful-management/types';
+
 interface UseFieldApi {
   contentType: ContentType;
-  editorInterface: any;
-  field: any;
-  fields: any;
-  locale: any;
-  locales: any;
+  editorInterface: EditorInterfaceProps;
+  field: ContentTypeField;
+  fields: { initialValue?: { value: Partial<Record<'string', unknown>> } };
+  locale: Locale;
+  locales: Locale[];
   onChange: FieldValueChangedHandler;
-  setInvalid: any;
+  setInvalid: (localeCode: string, isInvalid: boolean) => void;
 }
 
 const useFieldAPI = ({
@@ -41,6 +43,10 @@ const useFieldAPI = ({
       defaultLocaleCode: localeStore.getDefaultLocale().code,
       list: locales,
     });
+
+    if (typeof field.apiName === 'undefined') {
+      throw new Error('Field did not contain the necessary apiName');
+    }
 
     const instance = keyBy(editorInterface.controls, 'fieldId')[field.apiName];
 
@@ -72,7 +78,7 @@ const useFieldAPI = ({
         },
         removeValue: async () => {
           const payload = {
-            ...fields.initialValue.value,
+            ...fields.initialValue?.value,
             [locale.code]: undefined,
           };
 
@@ -87,7 +93,7 @@ const useFieldAPI = ({
           };
 
           if (typeof fields.initialValue === 'undefined') {
-            fields.initialValue = {};
+            fields.initialValue = { value: {} };
           }
 
           onChange('initialValue', payload);
