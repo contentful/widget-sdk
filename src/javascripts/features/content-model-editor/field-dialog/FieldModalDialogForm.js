@@ -100,7 +100,7 @@ const FieldModalDialogForm = ({
 
   useEffect(() => {
     const getInitialFieldValuesFeatureFlagVariation = async () => {
-      const featureFlagVariation = getVariation(FLAGS.INITIAL_FIELD_VALUES, {
+      const featureFlagVariation = await getVariation(FLAGS.INITIAL_FIELD_VALUES, {
         organizationId: currentOrganizationId,
         spaceId: currentSpaceId,
       });
