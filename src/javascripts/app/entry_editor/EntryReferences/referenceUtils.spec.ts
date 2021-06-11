@@ -14,7 +14,7 @@ describe('isLinkableEntity', () => {
   });
 
   it('should return false for another type of entity', () => {
-    const entity = test.generator.entity() as any;
+    const entity = test.generator.entity({ type: 'ContentType' }) as any;
     expect(isLinkableEntity(entity)).toBe(false);
   });
 
@@ -29,13 +29,13 @@ describe('isLinkableEntity', () => {
 
 describe('createTreeNode', () => {
   it('should create unresolved node for non linkable entity', () => {
-    const entity = test.generator.entity() as any;
+    const entity = test.generator.entity({ type: 'ContentType' }) as any;
     const node = createTreeNode(entity, 'key', 1);
 
     expect(node.key).toBe('key');
     expect(node.entity).toEqual(entity);
     expect(node.level).toBe(1);
-    expect(node.type).toBeUndefined();
+    expect(node.type).toBe('ContentType');
     expect(node.isResolved).toBe(false);
     expect(node.children).toEqual([]);
   });
