@@ -57,18 +57,7 @@ const useFieldAPI = ({
       field: {
         ...field,
         locale: locale.code,
-        getValue: () => {
-          try {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            const [, value] = Object.entries(fields.initialValue.value).find(
-              ([key]) => key === locale.code
-            );
-            return value;
-          } catch {
-            return undefined;
-          }
-        },
+        getValue: () => fields.initialValue?.value?.[locale.code],
         onIsDisabledChanged: noop,
         onSchemaErrorsChanged: noop,
         onValueChanged: (callback) => {
