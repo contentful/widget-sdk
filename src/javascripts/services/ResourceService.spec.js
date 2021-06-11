@@ -1,11 +1,17 @@
 import createResourceService from './ResourceService';
 import { mockEndpoint } from 'data/EndpointFactory';
-import { canCreate, canCreateResources, generateMessage } from 'utils/ResourceUtils';
+import {
+  canCreate,
+  canCreateResources,
+  generateMessage,
+  getEnvironmentResources,
+} from 'utils/ResourceUtils';
 
 jest.mock('utils/ResourceUtils', () => ({
   canCreate: jest.fn(),
   canCreateResources: jest.fn(),
   generateMessage: jest.fn(),
+  getEnvironmentResources: jest.fn(),
 }));
 
 describe('ResourceService', () => {
@@ -130,6 +136,12 @@ describe('ResourceService', () => {
     });
 
     describe('canCreateEnvironmentResources', () => {
+      it('should get environment resources', async () => {
+        await service.canCreateEnvironmentResources();
+
+        expect(getEnvironmentResources).toBeCalledTimes(1);
+      });
+
       it('should get all resources and then return the result of the canCreateResources utility', async () => {
         mockEndpoint.mockResolvedValue({ items: [] });
 

@@ -63,6 +63,20 @@ describe('ResourceUtils', () => {
     };
   });
 
+  describe('#getEnvironmentResources', () => {
+    it('should only return environment resources', () => {
+      const envResourceFirst = { sys: { id: ResourceUtils.environmentResources[0] } };
+      const envResourceSecond = { sys: { id: ResourceUtils.environmentResources[1] } };
+      const result = ResourceUtils.getEnvironmentResources([
+        { sys: { id: 'not_env_resource' } },
+        envResourceFirst,
+        envResourceSecond,
+      ]);
+      expect(result[0]).toEqual(envResourceFirst);
+      expect(result[1]).toEqual(envResourceSecond);
+    });
+  });
+
   describe('#canCreate', () => {
     it('should return true if the maximum limit is not reached', function () {
       expect(ResourceUtils.canCreate(resources.entries.notReachedAnyLimit)).toBe(true);

@@ -22,6 +22,11 @@ export const resourceHumanNameMap = {
   pending_invitation: 'Pending invitations',
 };
 
+export const environmentResources = ['entry', 'asset', 'content_type', 'record', 'locale'];
+
+export const getEnvironmentResources = (resources) =>
+  resources.filter((resource) => environmentResources.includes(resource.sys.id));
+
 export const canCreate = (resource) => !resourceMaximumLimitReached(resource);
 
 /**

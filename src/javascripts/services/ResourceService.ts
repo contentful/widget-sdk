@@ -1,5 +1,10 @@
 import type { SpaceEndpoint, OrganizationEndpoint, CollectionResponse } from 'data/CMA/types';
-import { canCreate, canCreateResources, generateMessage } from 'utils/ResourceUtils';
+import {
+  canCreate,
+  canCreateResources,
+  generateMessage,
+  getEnvironmentResources,
+} from 'utils/ResourceUtils';
 import { snakeCase, camelCase, memoize } from 'lodash';
 import { SUBSCRIPTIONS_API, getAlphaHeader } from 'alphaHeaders.js';
 
@@ -53,7 +58,8 @@ export default function createResourceService(endpoint: SpaceEndpoint | Organiza
     get,
     getAll,
     canCreate: (resourceType) => get(resourceType).then(canCreate),
-    canCreateEnvironmentResources: () => getAll().then(canCreateResources),
+    canCreateEnvironmentResources: () =>
+      getAll().then(getEnvironmentResources).then(canCreateResources),
     messagesFor: (resourceType) => get(resourceType).then(generateMessage),
     async messages() {
       const resources = await getAll();
