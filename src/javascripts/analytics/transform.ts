@@ -341,12 +341,11 @@ registerSnowplowEvent('search:view_edited', 'view_edit', SearchAndViews);
 registerSnowplowEvent('search:view_deleted', 'view_delete', SearchAndViews);
 registerSnowplowEvent('search:view_loaded', 'view_load', SearchAndViewsWithSequence);
 
-// TODO Remove ":" from Segment schema names.
-registerSegmentEvent('search:entry_clicked', 'search:entry_clicked', SearchAndViewsWithSequence);
-registerSegmentEvent('search:filter_added', 'search:filter_added', SearchAndViewsWithSequence);
-registerSegmentEvent('search:filter_removed', 'search:filter_removed', SearchAndViewsWithSequence);
+registerSegmentEvent('search:entry_clicked', 'search_entry_clicked', SearchAndViewsWithSequence);
+registerSegmentEvent('search:filter_added', 'search_filter_added', SearchAndViewsWithSequence);
+registerSegmentEvent('search:filter_removed', 'search_filter_removed', SearchAndViewsWithSequence);
 // TODO: Re-implement tracking or remove:
-registerSegmentEvent('search:query_changed', 'search:query_changed', SearchAndViewsWithSequence);
+registerSegmentEvent('search:query_changed', 'search_query_changed', SearchAndViewsWithSequence);
 
 registerSnowplowEvent('entry_editor:view', 'entry_view', EntryViewTransform);
 registerGenericEvent('entry_editor:disabled_fields_visibility_toggled');
