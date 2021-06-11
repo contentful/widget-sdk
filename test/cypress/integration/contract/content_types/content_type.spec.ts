@@ -66,7 +66,7 @@ describe('Content type page', () => {
       cy.findByLabelText('Minimum size').type(validations[0].size.min.toString());
       cy.findByLabelText('Maximum size').type(validations[0].size.max.toString());
       cy.findByLabelText('Custom error message').type(validations[0].message);
-      cy.findByTestId('field-dialog').findByTestId('confirm-field-dialog-form').click();
+      cy.findByTestId('confirm-field-dialog-form').click();
       cy.findByTestId('save-content-type').should('be.enabled');
 
       cy.findByTestId('save-content-type').click();
@@ -112,7 +112,7 @@ describe('Content type page', () => {
       cy.findByText('Validation').click();
       cy.findByLabelText('Accept only specified values').check();
       cy.findByLabelText('addPredefinedValue').type('1{enter}2{enter}3{enter}');
-      cy.findByTestId('field-dialog').findByTestId('confirm-field-dialog-form').click();
+      cy.findByTestId('confirm-field-dialog-form').click();
       cy.findByTestId('save-content-type').should('be.enabled');
 
       cy.findByTestId('save-content-type').click();
@@ -226,7 +226,7 @@ describe('Content type page', () => {
       cy.findByText('Validation').click();
       cy.findByLabelText('Accept only specified file types').check();
       cy.findByLabelText('Attachment').check();
-      cy.findByTestId('field-dialog').findByTestId('confirm-field-dialog-form').click();
+      cy.findByTestId('confirm-field-dialog-form').click();
       cy.findByTestId('save-content-type').should('be.enabled');
 
       cy.findByTestId('save-content-type').click();
@@ -410,7 +410,7 @@ describe('Content type page', () => {
         .check();
       cy.findByLabelText('Minimum size').type('1');
       cy.findByLabelText('Maximum size').type('5');
-      cy.findByTestId('field-dialog').findByTestId('confirm-field-dialog-form').click();
+      cy.findByTestId('confirm-field-dialog-form').click();
       cy.findByTestId('save-content-type').should('be.enabled');
 
       cy.findByTestId('save-content-type').click();

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { Fragment, useEffect, useState, useMemo } from 'react';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
@@ -135,7 +135,7 @@ const FieldModalDialogForm = ({
   const iconId = getIconId(ctField) + '-small';
 
   return (
-    <div data-test-id="field-dialog">
+    <Fragment>
       <div className={styles.modalHeader}>
         <div className={styles.modalTitle}>
           <Icon name={iconId} />
@@ -189,7 +189,6 @@ const FieldModalDialogForm = ({
           />
         </div>
       </div>
-
       <Modal.Content>
         {selectedTab === formTabs.SETTINGS && (
           <TabPanel id="settings-tab-panel">
@@ -262,7 +261,7 @@ const FieldModalDialogForm = ({
           Cancel
         </Button>
       </Modal.Controls>
-    </div>
+    </Fragment>
   );
 };
 
