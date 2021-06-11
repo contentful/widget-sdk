@@ -6,7 +6,6 @@ import noop from 'lodash/noop';
 import StateRedirect from 'app/common/StateRedirect';
 import { RolesWorkbenchSkeleton } from '../skeletons/RolesWorkbenchSkeleton';
 import createFetcherComponent from 'app/common/createFetcherComponent';
-import createResourceService from 'services/ResourceService';
 import { Notification } from '@contentful/forma-36-react-components';
 import * as accessChecker from 'access_control/AccessChecker';
 import * as ResourceUtils from 'utils/ResourceUtils';
@@ -48,7 +47,7 @@ export const RoleEditRoutes = {
 };
 
 const RoleEditorFetcher = createFetcherComponent(
-  async ({ spaceId, getContentTypes, getEntities, isNew }) => {
+  async ({ spaceId, getContentTypes, getEntities, isNew, resources }) => {
     const [
       contentTypes,
       hasEnvironmentAliasesEnabled,
@@ -60,7 +59,7 @@ const RoleEditorFetcher = createFetcherComponent(
       getSpaceFeature(spaceId, SpaceFeatures.ENVIRONMENT_ALIASING),
       accessChecker.canModifyRoles(),
       getSpaceFeature(spaceId, SpaceFeatures.PC_CONTENT_TAGS, false),
-      createResourceService(spaceId).get('role'),
+      resources.get('role'),
       getEntities(),
     ]);
 
@@ -103,7 +102,7 @@ export function RoleEditorRoute(props: { isNew: boolean }) {
   const { registerSaveAction, setDirty } = useUnsavedChangesModal();
 
   const entitySelectorSdk = useEntitySelectorSdk();
-  const { currentEnvironmentId, currentSpaceId } = useSpaceEnvContext();
+  const { currentEnvironmentId, currentSpaceId, resources } = useSpaceEnvContext();
 
   const { currentSpaceContentTypes } = useSpaceEnvContentTypes();
   const { spaceEnvCMAClient: cmaClient } = useSpaceEnvCMAClient();
@@ -204,7 +203,8 @@ export function RoleEditorRoute(props: { isNew: boolean }) {
                         spaceId={currentSpaceId}
                         getContentTypes={() => currentSpaceContentTypes}
                         getEntities={fetchEntities}
-                        isNew={props.isNew}>
+                        isNew={props.isNew}
+                        resources={resources}>
                         {({ isLoading, isError, data }) => {
                           if (isLoading || tagsContext?.isLoading) {
                             return <RolesWorkbenchSkeleton onBack={noop} />;
