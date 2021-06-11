@@ -15,7 +15,6 @@ import {
   TableRow,
   TextLink,
   Tooltip,
-  Tag,
 } from '@contentful/forma-36-react-components';
 import c from 'classnames';
 import { noop } from 'lodash';
