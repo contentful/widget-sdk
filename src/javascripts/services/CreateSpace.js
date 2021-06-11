@@ -3,12 +3,9 @@ import { Notification } from '@contentful/forma-36-react-components';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 
 import { canCreateSpaceInOrganization } from 'access_control/AccessChecker';
-import { getSpaceContext } from 'classes/spaceContext';
 import { getOrganization } from 'services/TokenStore';
 import { router } from 'core/react-routing';
 
-import { isLegacyOrganization } from 'utils/ResourceUtils';
-import LegacyNewSpaceModal from './CreateSpace/LegacyNewSpaceModal';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import {
   isEnterprisePlan,
@@ -48,23 +45,6 @@ export async function beginSpaceCreation(organizationId, customRouteParams = {})
     Notification.error(
       'You don’t have rights to create a space, plase contact your organization’s administrator.'
     );
-    return;
-  }
-
-  // if user is in a Legacy Org, they should go to LegacyWizard
-  if (isLegacyOrganization(organization)) {
-    const spaceContext = getSpaceContext();
-
-    ModalLauncher.open(({ isShown, onClose }) => {
-      return (
-        <LegacyNewSpaceModal
-          isShown={isShown}
-          onClose={onClose}
-          organization={organization}
-          spaceContext={spaceContext}
-        />
-      );
-    });
     return;
   }
 
