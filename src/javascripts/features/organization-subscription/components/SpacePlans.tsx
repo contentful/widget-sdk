@@ -24,7 +24,6 @@ async function fetchFeatureFlags(isEnterprisePlan: boolean, organizationId: stri
   // we only need these flags for organizations with Enterprise basePlan
   if (isEnterprisePlan) {
     enterpriseFeatureFlags = await Promise.all([
-      getVariation(FLAGS.SPACE_PLAN_ASSIGNMENT, { organizationId }),
       getVariation(FLAGS.CREATE_SPACE_FOR_SPACE_PLAN),
       getVariation(FLAGS.SPACE_PLAN_ASSIGNMENT_EXPERIMENT, { organizationId }),
     ]);
@@ -33,7 +32,6 @@ async function fetchFeatureFlags(isEnterprisePlan: boolean, organizationId: stri
   return {
     isSpaceSectionRebrandingEnabled,
     ...(enterpriseFeatureFlags && {
-      isSpacePlanAssignmentEnabled: enterpriseFeatureFlags[0],
       isCreateSpaceForSpacePlanEnabled: enterpriseFeatureFlags[1],
       isSpacePlanAssignmentExperimentEnabled: enterpriseFeatureFlags[2],
     }),
@@ -72,8 +70,7 @@ export function SpacePlans({
   );
 
   // Enterprise admin or owners can manage used and unused spaces
-  const userCanManageSpaces =
-    data?.isSpacePlanAssignmentEnabled && enterprisePlan && isOwnerOrAdmin;
+  const userCanManageSpaces = enterprisePlan && isOwnerOrAdmin;
 
   // Space CRUD functions
   const onChangeSpace = changeSpace(
