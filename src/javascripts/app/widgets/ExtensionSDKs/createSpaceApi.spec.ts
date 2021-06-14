@@ -5,6 +5,8 @@ import { InternalContentType } from './createContentTypeApi';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 import { ContentType } from '@contentful/app-sdk';
 import * as jwt from 'jsonwebtoken';
+import APIClient from 'data/APIClient';
+import { SpaceContextType } from 'classes/spaceContextTypes';
 
 jest.mock('Config', () => ({
   uploadApiUrl: jest.fn(() => 'example_url'),
@@ -94,7 +96,7 @@ const buildSpaceApi = (
     pubSubClient,
     environmentIds,
     readOnly,
-  });
+  } as any);
 
   // onEntityChanged is built internally, so we need to monkey patch to mock it
   return onEntityChanged ? { ...api, onEntityChanged } : api;

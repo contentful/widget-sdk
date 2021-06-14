@@ -24,11 +24,12 @@ import { createSharedEditorSDK } from '../createSharedEditorSDK';
 import { proxify } from 'core/services/proxy';
 import { EditorInterfaceProps, EnvironmentProps } from 'contentful-management/types';
 import TheLocaleStore from 'services/localeStore';
+import { ClientAPI, PlainClientAPI } from 'contentful-management';
 
 interface CreateReadOnlyFieldWidgetSDKOptions {
-  cma: any;
+  cma: ClientAPI;
   editorInterface: EditorInterfaceProps;
-  plainCmaClient: any;
+  plainCmaClient: PlainClientAPI;
   entry: Entity;
   publicFieldId: Field['id'] | Field['apiName'];
   fieldValue: any;
