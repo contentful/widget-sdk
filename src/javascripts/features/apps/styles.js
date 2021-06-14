@@ -83,9 +83,6 @@ export const styles = {
     marginTop: `-${tokens.spacingM}`,
     lineHeight: tokens.lineHeightL,
   }),
-  promotionTag: css({
-    marginRight: tokens.spacingXs,
-  }),
   listItemDropdown: css({
     width: '160px',
   }),
