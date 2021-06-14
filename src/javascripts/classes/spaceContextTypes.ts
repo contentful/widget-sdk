@@ -2,6 +2,7 @@ import { SpaceEndpoint } from 'data/CMA/types';
 import APIClient from 'data/APIClient';
 import createSpaceMembersRepo from 'data/CMA/SpaceMembersRepo';
 import * as MembershipRepo from 'access_control/SpaceMembershipRepository';
+import createResourceService from 'services/ResourceService';
 import { PubSubClient } from 'services/PubSubService';
 import createUiConfigStore from 'data/UiConfig/Store';
 import {
@@ -63,6 +64,7 @@ export interface SpaceObject {
   environmentMeta: EnvironmentMeta;
   persistenceContext: any;
   enforcements: any;
+  resources: any[];
 
   getId(): string;
 
@@ -76,6 +78,8 @@ export interface SpaceObject {
 }
 
 export type Enforcements = unknown; // TODO: Confirm type
+
+export type Resources = ReturnType<typeof createResourceService>;
 
 export type SpaceContextType = {
   cma: APIClient;
@@ -98,8 +102,8 @@ export type SpaceContextType = {
   environments: Environment[];
   memberships: ReturnType<typeof MembershipRepo.create>;
   members: ReturnType<typeof createSpaceMembersRepo>;
+  resources: Resources | null;
   pubsubClient: PubSubClient;
-
   publishedCTs: {
     items$: any;
     refresh: () => Promise<void>;

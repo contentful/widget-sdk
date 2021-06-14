@@ -101,7 +101,7 @@ export default function register() {
           );
 
           if (allowNewUsageCheck) {
-            newEnforcement = await EnforcementsService.newUsageChecker(spaceId, environmentId);
+            newEnforcement = await EnforcementsService.newUsageChecker(spaceContext.resources);
           }
         }
 
@@ -161,7 +161,7 @@ export default function register() {
       // on pages specific to entities
       function shouldCheckUsageForCurrentLocation() {
         const relevantPages = ['content_types', 'entries', 'assets'];
-        const splitPathName = window.location.pathname.split('/');
+        const splitPathName = window.location.pathname.replace(/\/+$/, '').split('/'); // strip trailing slashes
         const currentPage = splitPathName[splitPathName.length - 1];
 
         return relevantPages.includes(currentPage);

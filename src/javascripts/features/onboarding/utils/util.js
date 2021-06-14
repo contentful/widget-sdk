@@ -64,3 +64,8 @@ export const handleReplaceSpace = (currentSpaceId) => {
     });
   });
 };
+
+export const handleGetStarted = (currentSpaceId) => {
+  markExploreOnboardingSeen();
+  renameSpace(MODERN_STACK_ONBOARDING_SPACE_NAME, currentSpaceId);
+};

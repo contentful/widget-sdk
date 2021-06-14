@@ -11,6 +11,13 @@ import { mediumSpace, largeSpace } from 'app/SpaceWizards/__tests__/fixtures/pla
 
 import * as PricingService from './PricingService';
 
+import * as spaceContext from 'classes/spaceContext';
+import createResourceService from './ResourceService';
+
+jest.spyOn(spaceContext, 'getSpaceContext').mockImplementation(() => ({
+  resources: createResourceService(),
+}));
+
 // Space rate plans are quite similar to product rate plans, except the key name is a little different
 const mockCurrentSpaceSubscriptionPlan = Object.assign({}, mediumSpace, {
   ratePlanCharges: mediumSpace.productRatePlanCharges,

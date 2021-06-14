@@ -1,15 +1,13 @@
 import { defaultRequestsMock } from '../../../util/factories';
 import { defaultSpaceId } from '../../../util/requests';
 import { getFirst1000ContentTypesInDefaultSpaceOrderedByName } from '../../../interactions/content_types';
-import { getResources, getContentTypeResource } from '../../../interactions/resources';
-import { getProductRatePlansWithSpace, getSpacePlan } from '../../../interactions/plans';
 const severalContentTypes = require('../../../fixtures/responses/content-types-several.json');
 
 describe('Content types list page', () => {
   beforeEach(() => {
     cy.startFakeServers({
       consumer: 'user_interface',
-      providers: ['users', 'resources', 'plans', 'content_types'],
+      providers: ['users', 'resources', 'plans', 'content_types', 'product_catalog_features'],
       cors: true,
       pactfileWriteMode: 'merge',
       dir: Cypress.env('pactDir'),
@@ -21,12 +19,8 @@ describe('Content types list page', () => {
   context('with no content types', () => {
     beforeEach(() => {
       const interactions = [
-        ...defaultRequestsMock(),
+        ...defaultRequestsMock({}),
         getFirst1000ContentTypesInDefaultSpaceOrderedByName.willReturnNone(),
-        getProductRatePlansWithSpace.willReturnDefault(),
-        getResources.willReturnSeveral(),
-        getContentTypeResource.willReturnDefault(),
-        getSpacePlan.willReturnDefault(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/content_types`);
@@ -53,10 +47,6 @@ describe('Content types list page', () => {
       const interactions = [
         ...defaultRequestsMock(),
         getFirst1000ContentTypesInDefaultSpaceOrderedByName.willReturnSeveral(),
-        getProductRatePlansWithSpace.willReturnDefault(),
-        getResources.willReturnSeveral(),
-        getContentTypeResource.willReturnDefault(),
-        getSpacePlan.willReturnDefault(),
       ];
 
       cy.visit(`/spaces/${defaultSpaceId}/content_types`);

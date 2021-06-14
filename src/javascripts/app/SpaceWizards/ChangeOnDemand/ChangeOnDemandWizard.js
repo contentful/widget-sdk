@@ -18,7 +18,7 @@ import { calculateTotalPrice } from 'account/pricing/PricingDataProvider';
 import createResourceService from 'services/ResourceService';
 import { getAllPlans, getSpaceProductRatePlans } from 'features/pricing-entities';
 
-import { createOrganizationEndpoint } from 'data/EndpointFactory';
+import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
 import { useAsyncFn, useAsync } from 'core/hooks/useAsync';
 import {
   changeSpacePlan,
@@ -49,8 +49,10 @@ const styles = {
 const initialFetch = (organization, space) => async () => {
   const organizationId = organization.sys.id;
   const orgEndpoint = createOrganizationEndpoint(organizationId);
-  const orgResources = createResourceService(organizationId, 'organization');
-  const spaceResourceService = createResourceService(space.sys.id);
+  const spaceEndpoint = createSpaceEndpoint(space.sys.id);
+
+  const orgResources = createResourceService(orgEndpoint);
+  const spaceResourceService = createResourceService(spaceEndpoint);
 
   const [spaceResources, freeSpaceResource, plans, rawSpaceProductRatePlans, recommendedPlan] =
     await Promise.all([

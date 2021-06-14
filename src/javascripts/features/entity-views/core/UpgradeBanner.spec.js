@@ -4,7 +4,6 @@ import userEvent from '@testing-library/user-event';
 import { getResourceLimits } from 'utils/ResourceUtils';
 import { beginSpaceChange } from 'services/ChangeSpaceService';
 import { isEnterprisePlan } from 'account/pricing/PricingDataProvider';
-import createResourceService from 'services/ResourceService';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import * as trackCTA from 'analytics/trackCTA';
 import * as spaceContextMocked from 'ng/spaceContext';
@@ -43,14 +42,6 @@ jest.mock('services/OrganizationRoles', () => ({
   isOwnerOrAdmin: jest.fn(),
 }));
 
-jest.mock('services/ResourceService', () => {
-  const resourceService = {
-    get: jest.fn(),
-  };
-
-  return () => resourceService;
-});
-
 jest.mock('data/EndpointFactory', () => ({
   createOrganizationEndpoint: jest.fn(),
 }));
@@ -75,7 +66,7 @@ describe('UpgradeBanner', () => {
   const mockLimits = { maximum: mockMaximum };
 
   beforeEach(() => {
-    createResourceService().get.mockResolvedValue({ usage: mockUsage, limits: mockLimits });
+    spaceContextMocked.resources.get.mockReturnValue({ usage: mockUsage, limits: mockLimits });
     getResourceLimits.mockReturnValue(mockLimits);
 
     isOwnerOrAdmin.mockReturnValue(true);
@@ -189,7 +180,7 @@ describe('UpgradeBanner', () => {
 
     it('when not past the 90% threshold', async () => {
       const nonThresholdLimits = { maximum: 48 };
-      createResourceService().get.mockResolvedValue({ usage: 43, limits: nonThresholdLimits });
+      spaceContextMocked.resources.get.mockResolvedValue({ usage: 43, limits: nonThresholdLimits });
       getResourceLimits.mockReturnValue(nonThresholdLimits);
 
       await build();

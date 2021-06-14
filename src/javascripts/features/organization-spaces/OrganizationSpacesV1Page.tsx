@@ -24,7 +24,7 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import ErrorState from 'app/common/ErrorState';
 import { openDeleteSpaceDialog } from 'features/space-settings';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
-import { createOrganizationEndpoint } from 'data/EndpointFactory';
+import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
 import createResourceService from 'services/ResourceService';
 import * as TokenStore from 'services/TokenStore';
 import { SpaceProps } from 'contentful-management/types';
@@ -86,7 +86,7 @@ const OrganizationSpacesV1Page = ({ orgId }: OrganizationSpacesV1PageProps) => {
     const allSpaces = await getAllSpaces(endpoint);
     const accessibleSpaces = await TokenStore.getSpaces();
     const allResources = await Promise.all(
-      allSpaces.map((space) => createResourceService(space.sys.id).getAll())
+      allSpaces.map((space) => createResourceService(createSpaceEndpoint(space.sys.id)).getAll())
     );
 
     // Set space.isAccessible to check if current user can go to space details

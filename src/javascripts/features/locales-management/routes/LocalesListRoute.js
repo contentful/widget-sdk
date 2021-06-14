@@ -10,7 +10,6 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import { getSpaceFeature, SpaceFeatures } from 'data/CMA/ProductCatalog';
 import { useAsync } from 'core/hooks';
 import * as OrganizationRoles from 'services/OrganizationRoles';
-import createResourceService from 'services/ResourceService';
 import * as PricingService from 'services/PricingService';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
@@ -26,6 +25,7 @@ const fetch = async ({
   spaceId,
   environmentId,
   isMasterEnvironment,
+  resources,
 }) => {
   const isOrgOwnerOrAdmin = OrganizationRoles.isOwnerOrAdmin(organization);
   const cma = getCMAClient({ spaceId, environmentId, organizationId });
@@ -33,7 +33,7 @@ const fetch = async ({
 
   const promisesArray = [
     localeRepo.getAll(),
-    createResourceService(spaceId).get('locale', environmentId),
+    resources.get('locale'),
     createLegacyFeatureService(spaceId).get('multipleLocales'),
     isMasterEnvironment,
     getSpaceFeature(spaceId, SpaceFeatures.ENVIRONMENT_USAGE_ENFORCEMENT),
@@ -86,6 +86,7 @@ export const LocalesListRoute = () => {
     currentEnvironmentAliasId,
     currentSpace,
     currentSpaceData,
+    resources,
   } = useSpaceEnvContext();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
   const [entitlementsAPIEnabled, setEntitlementsAPIEnabled] = useState();
@@ -104,6 +105,7 @@ export const LocalesListRoute = () => {
           spaceId: currentSpaceId,
           environmentId: currentEnvironmentAliasId || currentEnvironmentId,
           isMasterEnvironment,
+          resources,
         }),
       [
         currentOrganization,
@@ -112,6 +114,7 @@ export const LocalesListRoute = () => {
         currentEnvironmentId,
         currentEnvironmentAliasId,
         isMasterEnvironment,
+        resources,
       ]
     )
   );

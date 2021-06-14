@@ -10,7 +10,7 @@ export function getPlansData(orgId: string) {
   return async function getPlansDataInner() {
     const DEFAULT_ROLE_SET = { roles: ['Editor'] };
     const orgEndpoint = createOrganizationEndpoint(orgId);
-    const orgResources = createResourceService(orgId, 'organization');
+    const orgResources = createResourceService(orgEndpoint);
 
     const [plans, productRatePlans, freeSpaceResource] = await Promise.all([
       getSpacePlans(orgEndpoint),

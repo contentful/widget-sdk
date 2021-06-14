@@ -7,7 +7,7 @@ import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import { Breadcrumbs } from 'core/components/Breadcrumbs';
 import { useAsync } from 'core/hooks';
 import { getSpacePlans, getAllProductRatePlans } from 'features/pricing-entities';
-import { createOrganizationEndpoint } from 'data/EndpointFactory';
+import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
 import { SpaceSelection } from './SpaceSelection';
 import { SpacePlanAssignmentConfirmation } from './SpacePlanAssignmentConfirmation';
@@ -51,7 +51,7 @@ export function PlanSpaceAssignment({ orgId, planId }) {
       const planToBeAssigned = plans.items.find((plan) => plan.sys.id === planId);
 
       const allResources = await Promise.all(
-        spaces.map((space) => createResourceService(space.sys.id, 'space').getAll())
+        spaces.map((space) => createResourceService(createSpaceEndpoint(space.sys.id)).getAll())
       );
       // Create an object with resource id and resource details as (key, value) and map it to space id
       const spaceResourcesBySpace = {};

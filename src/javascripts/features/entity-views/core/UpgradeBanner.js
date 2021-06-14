@@ -10,7 +10,6 @@ import { getBasePlan } from 'features/pricing-entities';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 
-import createResourceService from 'services/ResourceService';
 import { Note, Paragraph, TextLink } from '@contentful/forma-36-react-components';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { trackTargetedCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
@@ -19,8 +18,6 @@ import TrackTargetedCTAImpression from 'app/common/TrackTargetedCTAImpression';
 import * as PricingService from 'services/PricingService';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
-
-const WARNING_THRESHOLD = 0.9;
 
 const styles = {
   banner: css({
@@ -57,6 +54,7 @@ export function UpgradeBanner() {
     currentOrganization,
     currentSpace,
     currentOrganizationId,
+    resources,
   } = useSpaceEnvContext();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
 
@@ -80,37 +78,42 @@ export function UpgradeBanner() {
       };
     }
 
-    const [resource, nextSpacePlan] = await Promise.all([
-      createResourceService(currentSpaceId).get('record'),
-      PricingService.nextSpacePlanForResource(
+    const resource = await resources.get('record');
+    const usage = get(resource, 'usage');
+    const limit = getResourceLimits(resource).maximum;
+    const shouldRenderBanner = usage / limit >= PricingService.WARNING_THRESHOLD;
+
+    let nextSpacePlan;
+
+    if (shouldRenderBanner) {
+      nextSpacePlan = await PricingService.nextSpacePlanForResource(
         currentOrganizationId,
         currentSpaceId,
         PricingService.SPACE_PLAN_RESOURCE_TYPES.RECORD
-      ),
-    ]);
+      );
+    }
 
-    const hasNextSpacePlan = !!nextSpacePlan;
+    return {
+      shouldShow: true,
+      usage,
+      limit,
+      shouldRenderBanner,
+      hasNextSpacePlan: !!nextSpacePlan,
+    };
+  }, [currentOrganization, isMasterEnvironment, currentOrganizationId, resources, currentSpaceId]);
 
-    return { shouldShow: true, resource, hasNextSpacePlan, basePlanIsEnterprise };
-  }, [currentSpaceId, currentOrganizationId, isMasterEnvironment, currentOrganization]);
-
-  const { isLoading, error, data } = useAsync(updateResource);
+  const { isLoading, error, data = {} } = useAsync(updateResource);
 
   if (isLoading) {
     return <div data-test-id="upgrade-banner.is-loading" />;
   }
 
+  const { shouldShow, usage, limit, shouldRenderBanner, hasNextSpacePlan } = data;
+
   // This is only rendered for non-enterprise customers
-  if (error || !data?.shouldShow) {
+  if (error || !shouldShow) {
     return null;
   }
-
-  const { resource, hasNextSpacePlan } = data;
-
-  const usage = get(resource, 'usage');
-  const limit = getResourceLimits(resource).maximum;
-
-  const shouldRenderBanner = usage / limit >= WARNING_THRESHOLD;
 
   if (!shouldRenderBanner) {
     return null;

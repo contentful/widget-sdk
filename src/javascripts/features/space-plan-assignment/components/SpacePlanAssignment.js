@@ -66,7 +66,7 @@ export function SpacePlanAssignment({ orgId, spaceId }) {
     useCallback(async () => {
       const orgEndpoint = createOrganizationEndpoint(orgId);
       const spaceEndpoint = createSpaceEndpoint(spaceId);
-      const resourceService = createResourceService(spaceId, 'space');
+      const resourceService = createResourceService(spaceEndpoint);
 
       const [plans, productRatePlans, space, spaceResources] = await Promise.all([
         getSpacePlans(orgEndpoint),

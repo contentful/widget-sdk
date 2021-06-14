@@ -96,9 +96,7 @@ export const initialFetch =
       spaceId ? getSpacePlanForSpace(endpoint, spaceId) : undefined,
       getSpaceProductRatePlans(endpoint, spaceId),
       getSpacePlans(endpoint),
-      createResourceService(organizationId, 'organization').get(
-        FREE_SPACE_IDENTIFIER
-      ) as Promise<FreeSpaceResource>,
+      createResourceService(endpoint).get(FREE_SPACE_IDENTIFIER) as Promise<FreeSpaceResource>,
       getTemplatesList(),
       purchasingApps ? fetchPlatformPurchaseContent() : fetchSpacePurchaseContent(),
     ]);

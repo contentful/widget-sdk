@@ -1,132 +1,118 @@
 import createResourceService from './ResourceService';
+import { mockEndpoint } from 'data/EndpointFactory';
 import {
-  createSpaceEndpoint,
-  createOrganizationEndpoint,
-  mockEndpoint,
-} from 'data/EndpointFactory';
-import { canCreate, canCreateResources, generateMessage } from 'utils/ResourceUtils';
+  canCreate,
+  canCreateResources,
+  generateMessage,
+  getEnvironmentResources,
+} from 'utils/ResourceUtils';
 
 jest.mock('utils/ResourceUtils', () => ({
   canCreate: jest.fn(),
   canCreateResources: jest.fn(),
   generateMessage: jest.fn(),
+  getEnvironmentResources: jest.fn(),
 }));
 
 describe('ResourceService', () => {
-  describe('instantiation', () => {
-    it('should by default use the space endpoint for instantiation', () => {
-      createResourceService('space_1234');
+  const service = createResourceService(mockEndpoint);
 
-      expect(createSpaceEndpoint).toHaveBeenCalledTimes(1);
+  describe('get', () => {
+    beforeEach(() => {
+      mockEndpoint.mockResolvedValue({});
+      service.getAll.cache.clear();
     });
 
-    it('should optionally allow instantiation using the "organization" type parameter value', () => {
-      createResourceService('org_1234', 'organization');
+    it('should reject if not supplied with any arguments', async () => {
+      let err;
 
-      expect(createOrganizationEndpoint).toHaveBeenCalledTimes(1);
+      try {
+        await service.get();
+      } catch (e) {
+        err = e;
+      }
+
+      expect(err).toBeDefined();
     });
 
-    it('should optionally take and use the environment ID', () => {
-      createResourceService('space_1234', 'space', 'env_1234');
+    it('should make a GET request with a path and the alpha header', async () => {
+      await service.get('specialResource');
 
-      expect(createSpaceEndpoint).toHaveBeenCalledWith('space_1234', 'env_1234');
+      expect(mockEndpoint).toHaveBeenNthCalledWith(
+        1,
+        {
+          method: 'GET',
+          path: ['resources', 'special_resource'],
+        },
+        {
+          'x-contentful-enable-alpha-feature': 'subscriptions-api',
+        }
+      );
+    });
+
+    it('should reuse the cached response if possible', async () => {
+      mockEndpoint.mockResolvedValueOnce({
+        items: [
+          {
+            usage: 100,
+            sys: { id: 'special_resource' },
+          },
+          {
+            usage: 0,
+            sys: { id: 'normal_resource' },
+          },
+        ],
+      });
+
+      // setting the cache
+      await service.getAll();
+
+      const resource = await service.get('specialResource');
+
+      expect(mockEndpoint).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({
+          path: ['resources'],
+        }),
+        expect.anything()
+      );
+
+      expect(resource.usage).toBe(100);
+    });
+
+    it('should throw an error if the resource is not found in the cached response', async () => {
+      await service.get('specialResource');
+
+      expect(await service.get('specialResource')).toBeDefined();
     });
   });
 
-  describe('instantiated', () => {
-    let service;
-
+  describe('getAll', () => {
     beforeEach(() => {
-      service = createResourceService('space_1234');
+      mockEndpoint.mockResolvedValue({ items: [] });
+      service.getAll.cache.clear();
     });
 
-    describe('get', () => {
-      it('should reject if not supplied with any arguments', async () => {
-        let err;
+    it('should make a GET request with a path and alpha header by default', async () => {
+      await service.getAll();
 
-        try {
-          await service.get();
-        } catch (e) {
-          err = e;
+      expect(mockEndpoint).toHaveBeenNthCalledWith(
+        1,
+        {
+          method: 'GET',
+          path: ['resources'],
+        },
+        {
+          'x-contentful-enable-alpha-feature': 'subscriptions-api',
         }
-
-        expect(err).toBeDefined();
-      });
-
-      it('should make a GET request with a path and the alpha header', async () => {
-        await service.get('specialResource');
-
-        expect(mockEndpoint).toHaveBeenNthCalledWith(
-          1,
-          {
-            method: 'GET',
-            path: ['resources', 'special_resource'],
-          },
-          {
-            'x-contentful-enable-alpha-feature': 'subscriptions-api',
-          }
-        );
-      });
-
-      it('should call the space scoped resource endpoint by default', async () => {
-        await service.get('specialResource');
-
-        expect(mockEndpoint).toHaveBeenNthCalledWith(
-          1,
-          expect.objectContaining({
-            path: ['resources', 'special_resource'],
-          }),
-          expect.anything()
-        );
-      });
-
-      it('should call the environment scoped endpoint if called with an environmentId', async () => {
-        await service.get('specialResource', 'env_1234');
-
-        expect(mockEndpoint).toHaveBeenNthCalledWith(
-          1,
-          expect.objectContaining({
-            path: ['environments', 'env_1234', 'resources', 'special_resource'],
-          }),
-          expect.anything()
-        );
-      });
+      );
     });
 
-    describe('getAll', () => {
-      beforeEach(() => {
-        mockEndpoint.mockReset().mockResolvedValueOnce({ items: [] });
-      });
+    it('should cache the response', async () => {
+      await service.getAll();
+      await service.getAll();
 
-      it('should make a GET request with a path and alpha header by default', async () => {
-        await service.getAll();
-
-        expect(mockEndpoint).toHaveBeenNthCalledWith(
-          1,
-          {
-            method: 'GET',
-            path: ['resources'],
-          },
-          {
-            'x-contentful-enable-alpha-feature': 'subscriptions-api',
-          }
-        );
-      });
-
-      it('should call the environment scoepd endpoint if called with an environmentId', async () => {
-        await service.getAll('env_1234');
-
-        expect(mockEndpoint).toHaveBeenNthCalledWith(
-          1,
-          {
-            method: 'GET',
-            path: ['environments', 'env_1234', 'resources'],
-          },
-          {
-            'x-contentful-enable-alpha-feature': 'subscriptions-api',
-          }
-        );
-      });
+      expect(mockEndpoint).toHaveBeenCalledTimes(1);
     });
 
     describe('canCreate', () => {
@@ -150,8 +136,14 @@ describe('ResourceService', () => {
     });
 
     describe('canCreateEnvironmentResources', () => {
+      it('should get environment resources', async () => {
+        await service.canCreateEnvironmentResources();
+
+        expect(getEnvironmentResources).toBeCalledTimes(1);
+      });
+
       it('should get all resources and then return the result of the canCreateResources utility', async () => {
-        mockEndpoint.mockReset().mockResolvedValueOnce({ items: [] });
+        mockEndpoint.mockResolvedValue({ items: [] });
 
         canCreateResources.mockReturnValue('something');
 
@@ -161,7 +153,7 @@ describe('ResourceService', () => {
           1,
           {
             method: 'GET',
-            path: ['environments', 'env_1234', 'resources'],
+            path: ['resources'],
           },
           expect.anything()
         );

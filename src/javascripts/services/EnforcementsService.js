@@ -1,6 +1,5 @@
 import { isArray, get } from 'lodash';
 import { createSpaceEndpoint } from 'data/EndpointFactory';
-import createResourceService from 'services/ResourceService';
 
 // 30 seconds
 // This is the Varnish caching time for this endpoint
@@ -107,9 +106,13 @@ export async function refresh(spaceId) {
  * Worf's usage checking ability is ignored and this method is invoked.
  * This is because Worf doesn't check usages on non master environments.
  */
-export async function newUsageChecker(spaceId, environmentId) {
-  const service = createResourceService(spaceId);
-  const result = await service.canCreateEnvironmentResources(environmentId);
+export async function newUsageChecker(resources) {
+  if (!resources) {
+    // the environment is not set up and we are not ready to check the environment resources
+    return {};
+  }
+
+  const result = await resources.canCreateEnvironmentResources();
 
   delete result.Locale;
   delete result.Record;

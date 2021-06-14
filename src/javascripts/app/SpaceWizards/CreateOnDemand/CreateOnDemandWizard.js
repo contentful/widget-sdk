@@ -56,7 +56,7 @@ const styles = {
 const initialFetch = (organization) => async () => {
   const organizationId = organization.sys.id;
   const endpoint = createOrganizationEndpoint(organizationId);
-  const orgResources = createResourceService(organizationId, 'organization');
+  const orgResources = createResourceService(endpoint);
 
   const [freeSpaceResource, rawSpaceProductRatePlans, templates, plans] = await Promise.all([
     orgResources.get(FREE_SPACE_IDENTIFIER),

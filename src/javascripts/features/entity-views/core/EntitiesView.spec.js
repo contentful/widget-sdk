@@ -3,6 +3,7 @@ import React from 'react';
 import { render, waitFor } from '@testing-library/react';
 import { ListQuery } from 'core/services/ContentQuery';
 import * as fake from 'test/helpers/fakeFactory';
+import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
 const space = fake.Space();
 const organization = fake.Organization();
@@ -60,7 +61,11 @@ const renderComponent = (props = {}) => {
     ...props,
   };
 
-  return render(<EntitiesView {...defaultProps} />);
+  return render(
+    <SpaceEnvContextProvider>
+      <EntitiesView {...defaultProps} />
+    </SpaceEnvContextProvider>
+  );
 };
 
 describe('EntitiesView', () => {
@@ -85,6 +90,7 @@ describe('EntitiesView', () => {
     const { queryByTestId } = renderComponent({ fetchEntities });
     await waitFor(() => expect(queryByTestId('cf-ui-loading-state')).not.toBeInTheDocument());
     expect(queryByTestId('empty-state')).not.toBeInTheDocument();
+    expect(queryByTestId('container')).toHaveClass('resource-usage');
     expect(defaultProps.renderEntityList.mock.calls[0][0].entities).toBeDefined();
     expect(defaultProps.renderEntityList.mock.calls[0][0].updateEntities).toBeDefined();
     expect(defaultProps.renderEntityList.mock.calls[0][0].isLoading).toBe(false);
