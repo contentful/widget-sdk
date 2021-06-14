@@ -1,7 +1,7 @@
 import React from 'react';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { Tab, Tabs, Tag } from '@contentful/forma-36-react-components';
+import { Tab, Tabs } from '@contentful/forma-36-react-components';
 
 export const TABS = {
   fields: 'fields',
@@ -13,9 +13,6 @@ export const TABS = {
 const styles = {
   editorFieldTabs: css({
     marginBottom: tokens.spacingL,
-  }),
-  promotionTag: css({
-    marginLeft: tokens.spacingXs,
   }),
   tabWithTag: css({
     alignItems: 'center',
@@ -65,9 +62,6 @@ export function EditorFieldTabs(props: Props) {
             className={styles.tabWithTag}
             testId="entry-editor-config-tab">
             Entry editors
-            <Tag tagType="primary-filled" size="small" className={styles.promotionTag}>
-              new
-            </Tag>
           </Tab>
         )}
       </Tabs>

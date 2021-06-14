@@ -6,7 +6,6 @@ import {
   SkeletonContainer,
   SkeletonImage,
   SkeletonText,
-  Tag,
   TextLink,
 } from '@contentful/forma-36-react-components';
 import { styles } from './styles';
@@ -126,14 +125,11 @@ export const buildChildren = (
 const AppPromotion = ({ canManageSpace }: { canManageSpace: boolean }) => {
   return (
     <div className={styles.promotion}>
-      <Tag tagType="primary-filled" size="small" className={styles.promotionTag}>
-        new
-      </Tag>
-      Apps can now add pages to
+      Apps can add pages to the web app.
       <br />
-      the web app. After installation, they
+      After installation, they will show up
       <br />
-      will show up here.{' '}
+      here.{' '}
       {!!canManageSpace && (
         <TextLink
           href="https://www.contentful.com/developers/docs/extensibility/app-framework/locations/#page"
