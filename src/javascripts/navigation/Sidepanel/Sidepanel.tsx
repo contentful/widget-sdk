@@ -2,7 +2,7 @@ import React, { MouseEvent } from 'react';
 import { get } from 'lodash';
 import { css, cx } from 'emotion';
 import { getVariation, FLAGS } from 'LaunchDarkly';
-import { Icon, TextLink } from '@contentful/forma-36-react-components';
+import { Icon, Flex } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
 import * as accessChecker from 'access_control/AccessChecker/index';
@@ -10,11 +10,9 @@ import { trackCTAClick, CTA_EVENTS } from 'analytics/trackCTA';
 import type { Organization, SpaceData } from 'classes/spaceContextTypes';
 import * as K from 'core/utils/kefir';
 import { captureError } from 'core/monitoring';
-import { router } from 'core/react-routing';
-import { isOrganizationOnTrial } from 'features/trials';
+import { ReactRouterLink } from 'core/react-routing';
 import { navState$ } from 'navigation/NavState';
 import * as Navigator from 'states/Navigator';
-import * as OrgRoles from 'services/OrganizationRoles';
 import * as CreateSpace from 'services/CreateSpace';
 import * as TokenStore from 'services/TokenStore';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
@@ -36,18 +34,12 @@ const styles = {
     left: 0,
   }),
   orgSettingsButton: css({
-    display: 'flex',
     cursor: 'pointer',
     borderTop: `1px solid ${tokens.colorElementLight}`,
-    '&:link': {
-      display: 'flex',
-      padding: tokens.spacingM,
-      alignItems: 'center',
-      fontWeight: tokens.fontWeightNormal,
-      '&:hover': {
-        backgroundColor: tokens.colorElementLight,
-        textDecoration: 'none',
-      },
+    color: tokens.colorTextDark,
+    '&:hover': {
+      backgroundColor: tokens.colorElementLight,
+      textDecoration: 'none',
     },
   }),
 };
@@ -146,24 +138,6 @@ export class Sidepanel extends React.Component<SidepanelProps, SidepanelState> {
     }));
   };
 
-  getLinktoOrgSettings = () => {
-    if (this.state.currOrg) {
-      const orgId = this.state.currOrg.sys.id;
-      const isPricingV2 = this.state.currOrg.pricingVersion === 'pricing_version_2';
-
-      const isOwnerOrAdminOrOnTrial =
-        OrgRoles.isOwnerOrAdmin(this.state.currOrg) || isOrganizationOnTrial(this.state.currOrg);
-
-      if (isOwnerOrAdminOrOnTrial && isPricingV2) {
-        return router.href({ path: 'organizations.subscription.overview', orgId });
-      } else if (isOwnerOrAdminOrOnTrial && !isPricingV2) {
-        return router.href({ path: 'organizations.subscription_v1', orgId });
-      } else {
-        return router.href({ path: 'organizations.teams', orgId });
-      }
-    }
-  };
-
   goToSpace = async (spaceId, envId, isMaster) => {
     envId = isMaster ? undefined : envId;
     const path = ['spaces', envId ? 'environment' : 'detail'];
@@ -215,7 +189,7 @@ export class Sidepanel extends React.Component<SidepanelProps, SidepanelState> {
   render() {
     const { sidePanelIsShown, closeOrgsDropdown } = this.props;
 
-    const showSubscriptionSettings = isOwnerOrAdmin(this.state.currOrg);
+    const isOrgOwnerOrAdmin = isOwnerOrAdmin(this.state.currOrg);
 
     return (
       <div
@@ -250,19 +224,25 @@ export class Sidepanel extends React.Component<SidepanelProps, SidepanelState> {
             />
 
             {this.state.currOrg && (
-              <TextLink
-                className={styles.orgSettingsButton}
-                linkType="muted"
-                href={this.getLinktoOrgSettings()}
-                data-test-id="sidepanel-org-actions-settings">
-                <Icon
-                  className={css({ marginRight: tokens.spacingXs })}
-                  icon="Settings"
-                  color="muted"
-                />
-                Organization settings
-                {showSubscriptionSettings && ' & subscriptions'}
-              </TextLink>
+              <ReactRouterLink
+                route={{
+                  path: isOrgOwnerOrAdmin
+                    ? 'organizations.subscription.overview'
+                    : 'organizations.teams',
+                  orgId: this.state.currOrg.sys.id,
+                }}
+                onClick={this.props.closeSidePanel}
+                testId="sidepanel-org-actions-settings">
+                <Flex padding="spacingM" className={styles.orgSettingsButton}>
+                  <Icon
+                    className={css({ marginRight: tokens.spacingXs })}
+                    icon="Settings"
+                    color="muted"
+                  />
+                  Organization settings
+                  {isOrgOwnerOrAdmin && ' & subscriptions'}
+                </Flex>
+              </ReactRouterLink>
             )}
           </>
         )}
