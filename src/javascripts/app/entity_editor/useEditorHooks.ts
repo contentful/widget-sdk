@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import mitt from 'mitt';
-import createEntrySidebarProps from 'app/EntrySidebar/EntitySidebarBridge';
+import createEntrySidebarProps, { EntrySidebarProps } from 'app/EntrySidebar/EntitySidebarBridge';
 import initLocaleData, {
   assignLocaleData,
   getStatusNotificationPropsDefault,
@@ -20,13 +20,7 @@ export const useEmitter = () => {
   return emitter;
 };
 
-export const useEditorState = ({
-  currentSlideLevel,
-  editorData,
-  preferences,
-  editorType,
-  trackView,
-}) => {
+export const useEditorState = ({ editorData, preferences, trackView }) => {
   const { currentSpaceId, currentEnvironmentId } = useSpaceEnvContext();
   const { currentSpaceContentTypes } = useSpaceEnvContentTypes();
   const lifeline = K.useLifeline();
@@ -34,11 +28,9 @@ export const useEditorState = ({
   const [title, setTitle] = useState('');
   const [state, setState] = useState();
 
-  const { doc, editorContext } = useMemo(() => {
+  const editorState = useMemo(() => {
     return getEditorState({
-      currentSlideLevel,
       editorData,
-      editorType,
       environmentId: currentEnvironmentId,
       hasInitialFocus: preferences.hasInitialFocus,
       lifeline: lifeline.stream,
@@ -52,10 +44,16 @@ export const useEditorState = ({
   }, []);
 
   useEffect(() => {
-    installTracking(editorData.entityInfo, doc, lifeline.stream);
-  }, [doc, editorData.entityInfo, lifeline.stream]);
+    if (editorState) {
+      installTracking(editorData.entityInfo, editorState.doc, lifeline.stream);
+    }
+  }, [editorState, editorData.entityInfo, lifeline.stream]);
 
-  return { doc, editorContext, state, title };
+  if (editorState) {
+    return { doc: editorState.doc, editorContext: editorState.editorContext, state, title };
+  } else {
+    return { state, title };
+  }
 };
 
 export const useLocaleData = ({
@@ -93,6 +91,7 @@ export const useLocaleData = ({
 
   return { localeData, statusNotificationProps };
 };
+
 export const useEntrySidebarProps = ({
   editorContext,
   editorData,
@@ -103,16 +102,18 @@ export const useEntrySidebarProps = ({
   preferences,
   state,
 }) => {
-  const [entrySidebarProps, setEntrySidebarProps] = useState([]);
+  const [entrySidebarProps, setEntrySidebarProps] = useState<
+    [EntrySidebarProps, (args: any) => void] | []
+  >([]);
 
   const {
     currentSpace,
     currentSpaceId,
     currentEnvironmentAliasId,
     currentEnvironmentId,
-    currentSpaceContentTypes,
     currentEnvironment,
   } = useSpaceEnvContext();
+  const { currentSpaceContentTypes } = useSpaceEnvContentTypes();
 
   const spaceEndpoint = useSpaceEnvEndpoint();
   const { client: cma } = useCurrentSpaceAPIClient();

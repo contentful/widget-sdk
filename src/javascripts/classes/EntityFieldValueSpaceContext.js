@@ -54,7 +54,7 @@ export function entryTitle(entry, localeCode, modelValue) {
 
 /**
  * @param {Client.Entity} entity
- * @param {string} localeCode
+ * @param {string} [localeCode]
  * @return {string|null}
  * @description
  * Returns the title for a given entity and locale. Returns null if
