@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useRef, useState } from 'react';
 import {
   Button,
   Flex,
@@ -11,7 +11,9 @@ import localeStore from 'services/localeStore';
 import { InitialValueField } from './InitialValueField';
 import type { ContentType, ContentTypeField } from 'core/typings';
 import type { FieldValueChangedHandler } from '../../types';
+import mitt from 'mitt';
 import { InitialValueUsageNote } from './InitialValueUsageNote';
+import { Locale } from 'core/typings';
 
 export const SUPPORTED_FIELD_TYPES = ['Boolean', 'Date', 'Integer', 'Number', 'Symbol', 'Text'];
 const MANAGABLE_NUMBER_OF_LOCALES = 4;
@@ -50,20 +52,23 @@ export const InitialValueTabComponent = ({
 }: InitialValueTabComponentProps) => {
   const [isModalShown, setIsModalShown] = useState(false);
   const isFieldTypeSupported = SUPPORTED_FIELD_TYPES.includes(ctField.type);
-  const locales = localeStore.getLocales();
-  const defaultLocale = localeStore.getDefaultLocale();
+  const locales: Locale[] = localeStore.getLocales();
+  const defaultLocale: Locale = localeStore.getDefaultLocale();
+  const otherLocales = locales.filter((locale) => locale.code !== defaultLocale.code);
+  const eventEmitters = useRef<Record<string, mitt.Emitter>>(
+    Object.fromEntries(locales.map((locale) => [locale.code, mitt()]))
+  );
 
   if (!isFieldTypeSupported) {
     return <UnsupportedFieldTypeNote />;
   }
-
-  const otherLocales = locales.filter((locale) => locale.code !== defaultLocale.code);
 
   const defaultLocaleField = (
     <>
       <StyleTagHidingMarkdownEditorAssetButton />
       <InitialValueField
         contentType={contentType}
+        eventEmitter={eventEmitters.current[defaultLocale.code]}
         fields={fields}
         isLocalized={ctField.localized}
         key={defaultLocale.code}
@@ -92,6 +97,9 @@ export const InitialValueTabComponent = ({
 
     for (const locale of otherLocales) {
       payload[locale.code] = value;
+
+      const emitter = eventEmitters.current[locale.code];
+      emitter.emit('valueChanged', value);
     }
 
     onChange('initialValue', payload);
@@ -162,6 +170,7 @@ export const InitialValueTabComponent = ({
       {otherLocales.map((locale) => (
         <InitialValueField
           contentType={contentType}
+          eventEmitter={eventEmitters.current[locale.code]}
           fields={fields}
           isLocalized
           key={locale.code}

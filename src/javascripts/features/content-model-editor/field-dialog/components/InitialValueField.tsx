@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { Field, FieldWrapper } from '@contentful/default-field-editors';
 import noop from 'lodash/noop';
-import mitt from 'mitt';
+import type mitt from 'mitt';
 import type { FieldExtensionSDK } from '@contentful/app-sdk';
 import { createLocalesApi } from '@contentful/experience-sdk';
 import { css } from 'emotion';
@@ -13,6 +13,7 @@ import type { FieldValueChangedHandler } from '../../types';
 
 interface UseFieldApi {
   contentType: ContentType;
+  eventEmitter: mitt.Emitter;
   field: ContentTypeField;
   fields: { initialValue?: { value: Partial<Record<'string', unknown>> } };
   instance: EditorInterfaceControl | undefined;
@@ -24,6 +25,7 @@ interface UseFieldApi {
 
 const useFieldAPI = ({
   contentType,
+  eventEmitter,
   field,
   fields,
   instance,
@@ -32,8 +34,6 @@ const useFieldAPI = ({
   onChange,
   setInvalid,
 }: UseFieldApi) => {
-  const emitter = useMemo(() => mitt(), []);
-
   const sdk = useMemo(() => {
     const localesApi = createLocalesApi({
       activeLocaleCode: locale.code,
@@ -54,13 +54,15 @@ const useFieldAPI = ({
       field: {
         ...field,
         locale: locale.code,
-        getValue: () => fields.initialValue?.value?.[locale.code],
+        getValue: () => {
+          return fields.initialValue?.value?.[locale.code];
+        },
         onIsDisabledChanged: noop,
         onSchemaErrorsChanged: noop,
         onValueChanged: (callback) => {
-          emitter.on('valueChanged', callback);
+          eventEmitter.on('valueChanged', callback);
 
-          return () => emitter.off('valueChanged', callback);
+          return () => eventEmitter.off('valueChanged', callback);
         },
         removeValue: async () => {
           const payload = {
@@ -69,7 +71,7 @@ const useFieldAPI = ({
           };
 
           onChange('initialValue', payload);
-          emitter.emit('valueChanged', undefined);
+          eventEmitter.emit('valueChanged', undefined);
         },
         setInvalid,
         setValue: async (value: unknown) => {
@@ -83,7 +85,7 @@ const useFieldAPI = ({
           }
 
           onChange('initialValue', payload);
-          emitter.emit('valueChanged', value);
+          eventEmitter.emit('valueChanged', value);
         },
       },
       parameters: {
@@ -93,7 +95,17 @@ const useFieldAPI = ({
       contentType,
       locales: localesApi,
     } as unknown as FieldExtensionSDK;
-  }, [contentType, emitter, field, fields, instance, locale.code, locales, onChange, setInvalid]);
+  }, [
+    contentType,
+    eventEmitter,
+    field,
+    fields,
+    instance,
+    locale.code,
+    locales,
+    onChange,
+    setInvalid,
+  ]);
 
   return sdk;
 };
@@ -111,6 +123,7 @@ const styles = {
 
 export interface InitialValueFieldProps {
   contentType: UseFieldApi['contentType'];
+  eventEmitter: mitt.Emitter;
   fields: UseFieldApi['fields'];
   isLocalized?: boolean;
   locale: Locale;
@@ -120,6 +133,7 @@ export interface InitialValueFieldProps {
 
 const InitialValueField = ({
   contentType,
+  eventEmitter,
   fields,
   isLocalized,
   locale,
@@ -138,6 +152,7 @@ const InitialValueField = ({
   const sdk = useFieldAPI({
     ...fieldContext,
     contentType,
+    eventEmitter,
     fields,
     locale,
     locales,
