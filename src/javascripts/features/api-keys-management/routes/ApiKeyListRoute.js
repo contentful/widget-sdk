@@ -68,11 +68,7 @@ function Documentation() {
 }
 
 function UsageInformation(props) {
-  return props.isLegacyOrganization ? (
-    <Paragraph>
-      Your space is using {props.usedAPIKeys} out of {props.limits.maximum} API Keys.
-    </Paragraph>
-  ) : (
+  return (
     <Paragraph>
       Your space is using {props.usedAPIKeys} API {props.usedAPIKeys > 1 ? 'keys' : 'key'}.
     </Paragraph>
@@ -80,7 +76,6 @@ function UsageInformation(props) {
 }
 
 UsageInformation.propTypes = {
-  isLegacyOrganization: PropTypes.bool,
   limits: PropTypes.shape({
     maximum: PropTypes.number,
   }),
@@ -137,15 +132,7 @@ export function ApiKeyListRoute() {
     resources,
   });
 
-  const {
-    loaded,
-    apiKeys,
-    enableCreateApiKeyCreation,
-    reachedLimit,
-    limits,
-    isLegacyOrganization,
-    createAPIKey,
-  } = state;
+  const { loaded, apiKeys, enableCreateApiKeyCreation, reachedLimit, limits, createAPIKey } = state;
 
   const hasApiKeys = apiKeys.length > 0;
 
@@ -158,7 +145,6 @@ export function ApiKeyListRoute() {
             usedAPIKeys={apiKeys.length}
             reachedLimit={reachedLimit}
             limits={limits}
-            isLegacyOrganization={isLegacyOrganization}
             createAPIKey={createAPIKey}
           />
         ) : null

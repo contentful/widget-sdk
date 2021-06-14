@@ -52,10 +52,6 @@ jest.mock('services/TokenStore', () => ({
 }));
 const getOrganizationSpaces = _getOrganizationSpaces as jest.Mock;
 
-jest.mock('utils/ResourceUtils', () => ({
-  isLegacyOrganization: jest.fn().mockReturnValue(true),
-}));
-
 async function testSpaceScopedPathDeeplinks(
   link,
   expected: { path: string | string[]; params?: any }
@@ -456,9 +452,12 @@ describe('states/deeplink/resolver', () => {
         routes['organizations.edit']({}, { orgId: 'some' })
       );
 
-      expect(await resolveLink(LinkType.Subscription, {})).toEqual(
-        routes['organizations.subscription_v1']({}, { orgId: 'some' })
-      );
+      expect(await resolveLink(LinkType.Subscription, { orgId: 'some' })).toEqual({
+        path: ['account', 'organizations', 'subscription_new.overview'],
+        params: {
+          orgId: 'some',
+        },
+      });
     });
 
     it('should give generic error in case no access', async function () {
