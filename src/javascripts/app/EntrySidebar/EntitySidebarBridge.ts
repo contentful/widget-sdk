@@ -1,4 +1,4 @@
-import { once, memoize } from 'lodash';
+import { once, memoize, noop } from 'lodash';
 import * as K from 'core/utils/kefir';
 import { getSpaceContext } from 'classes/spaceContext';
 import { getCurrentStateName } from 'states/Navigator';
@@ -17,7 +17,38 @@ import {
 import { createAPIClient } from '../../core/services/APIClient/utils';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { Source } from '../../i13n/constants';
+import { User } from 'core/services/SpaceEnvContext/types';
+import { LocaleData } from 'app/entity_editor/EntityField/types';
+import { SidebarExtensionSDK } from '@contentful/app-sdk';
 
+export interface EntrySidebarProps {
+  legacySidebarExtensions?: {
+    makeSdk: any;
+    widget: any;
+    field: any;
+  }[];
+  localeData: LocaleData;
+  entityInfo: any;
+  sidebar?: { widgetId: string; widgetNamespace: WidgetNamespace; disabled?: boolean }[];
+  sidebarExtensions?: {
+    widgetId: string;
+    widgetNamespace: WidgetNamespace;
+    descriptor?: any;
+    problem?: string;
+  }[];
+  makeSidebarWidgetSDK: (
+    widgetNamespace: WidgetNamespace,
+    widgetId: string,
+    parameters: any
+  ) => SidebarExtensionSDK;
+  isEntry: boolean;
+  isMasterEnvironment: boolean;
+  emitter: {
+    on: (eventName: string, handler: mitt.Handler) => void;
+    off: (eventName: string, handler: mitt.Handler) => void;
+    emit: (eventName: string, data?: any) => void;
+  };
+}
 export default function EntitySidebarBridge({
   localeData,
   editorData,
@@ -36,16 +67,16 @@ export default function EntitySidebarBridge({
   contentTypes,
   pubSubClient,
   cma,
-}) {
+}): [EntrySidebarProps, (args: any) => void] {
   const spaceContext = getSpaceContext();
   const isMasterEnvironment = isMaster(getEnvironment(space));
 
   const { entityInfo } = editorData;
   const users = createUserCache(spaceEndpoint);
-  const user = K.getValue(user$);
+  const user = K.getValue<User>(user$);
   const isEntry = entityInfo.type === 'Entry';
 
-  let initializeIncomingLinks = () => {};
+  let initializeIncomingLinks = noop;
 
   const setIncomingLinks = (...args) => {
     //set the links now or register to be set once the sidebar widget
@@ -94,7 +125,7 @@ export default function EntitySidebarBridge({
       publishedVersion: sys.publishedVersion,
     }));
 
-    K.onValue(updateStream$, notifyUpdate);
+    K.onValue(updateStream$, notifyUpdate as any);
   });
 
   const initializePublication = once(() => {
@@ -102,7 +133,7 @@ export default function EntitySidebarBridge({
       const entity = K.getValue(otDoc.data$);
       emitter.emit(SidebarEventTypes.UPDATED_PUBLICATION_WIDGET, {
         ...update,
-        entity: entity && { ...entity }, // `undefined` after entity deletion.
+        entity: entity && { ...(entity as Record<string, unknown>) }, // `undefined` after entity deletion.
         spaceId,
         environmentId: aliasId || environmentId,
         isMasterEnvironment,
@@ -118,13 +149,13 @@ export default function EntitySidebarBridge({
 
     notifyUpdate({
       status: state.current,
-      updatedAt: K.getValue(otDoc.sysProperty).updatedAt,
+      updatedAt: K.getValue<{ updatedAt: string }>(otDoc.sysProperty).updatedAt,
     });
 
     K.onValue(otDoc.sysProperty, (sys) => {
       notifyUpdate({
         status: state.current,
-        updatedAt: sys.updatedAt,
+        updatedAt: (sys as { updatedAt: string }).updatedAt,
       });
     });
 
@@ -157,7 +188,7 @@ export default function EntitySidebarBridge({
     const entity = K.getValue(otDoc.data$);
     emitter.emit(SidebarEventTypes.UPDATED_RELEASES_WIDGET, {
       entityInfo: entityInfo,
-      entity: entity && { ...entity },
+      entity: entity && { ...(entity as Record<string, unknown>) },
       contentType: entityInfo.contentType,
     });
   });

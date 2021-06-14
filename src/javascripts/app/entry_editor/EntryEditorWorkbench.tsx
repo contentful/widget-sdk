@@ -55,6 +55,7 @@ import { ContentType } from '@contentful/app-sdk';
 import { useSpaceEnvContentTypes } from 'core/services/SpaceEnvContext';
 import * as PublicContentType from 'widgets/PublicContentType';
 import { createCmaDocumentWithApiNames } from 'app/widgets/ExtensionSDKs/createCmaDocumentWithApiNames';
+import { EntrySidebarProps } from 'app/EntrySidebar/EntitySidebarBridge';
 
 const trackTabOpen = (tab, isOrgOnTrial) => {
   isOrgOnTrial && handleHighValueLabelTracking('click', REFERENCES_TRACKING_NAME, true);
@@ -96,17 +97,7 @@ interface EntryEditorWorkbenchProps {
     };
   };
   editorContext: EditorContext;
-  entrySidebarProps: {
-    isMasterEnvironment: boolean;
-    isEntry: boolean;
-    emitter: Record<string, any>;
-    makeSidebarWidgetSDK: any;
-    localeData: LocaleData;
-    entityInfo: any;
-    sidebar?: any[];
-    sidebarExtensions?: any[];
-    legacySidebarExtensions?: any[];
-  };
+  entrySidebarProps: EntrySidebarProps;
   preferences: Record<string, any>;
   fields: Record<string, any>;
   incomingLinks: any[];

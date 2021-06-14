@@ -21,12 +21,23 @@ export const getEditorState = ({
   contentTypes,
   spaceId,
   trackView = noop,
+}: {
+  bulkEditorContext?: any;
+  editorData: any;
+  environmentId: string;
+  hasInitialFocus?: boolean;
+  lifeline: any;
+  onStateUpdate: any;
+  onTitleUpdate: any;
+  contentTypes: any;
+  spaceId?: string;
+  trackView?: (data: any) => void;
 }) => {
   if (editorData) {
     // Lifeline is required to destroy a document on e.g. slide-in editor close
     const doc = editorData.openDoc(lifeline);
 
-    const { entityInfo, entity } = editorData;
+    const { entityInfo } = editorData;
 
     const validator = Validator.createForEntity({
       doc,
@@ -40,7 +51,6 @@ export const getEditorState = ({
       bulkEditorContext,
       doc,
       editorData,
-      entity,
       entityInfo,
       environmentId,
       onUpdate: onStateUpdate,
