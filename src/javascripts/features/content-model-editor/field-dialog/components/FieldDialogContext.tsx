@@ -10,7 +10,6 @@ type FieldDialogProps = {
 
 const useFieldDialog = (props: FieldDialogProps) => {
   const { field, contentType, editorInterface } = props;
-  // const instance = editorInterface.controls?.find((c) => c.field.apiName === field.apiName);
   const instance = field.apiName
     ? keyBy(editorInterface.controls, 'fieldId')[field.apiName]
     : undefined;
