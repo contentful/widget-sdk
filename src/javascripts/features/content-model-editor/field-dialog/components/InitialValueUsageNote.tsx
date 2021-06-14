@@ -16,13 +16,14 @@ const styles = {
 export function InitialValueUsageNote() {
   return (
     <Flex marginBottom="spacing2Xs" marginTop="spacing2Xs">
-      <Note title="Heads up">
-        Initial values are currently in <b>EAP phase</b>, please be aware of the following
-        limitations:
+      <Note title="Initial value">
+        The new feature gives you the possibility to have a specific value for the field so that the
+        editors don&apos;t have to think about it. The feature is currently in EAP phase, so please
+        be aware of the following:
         <List element="ul" className={styles.list}>
           <ListItem>
-            Confirm and re-open the field settings modal in case you changed localisation,
-            validations or appearance settings.
+            You need to confirm and re-open the field settings modal in case you changed
+            localization, validations, or appearance settings.
           </ListItem>
           <ListItem>
             Initial values are not validated and will prevent users from publishing entries if not
