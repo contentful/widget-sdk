@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { Field, FieldWrapper } from '@contentful/default-field-editors';
 import noop from 'lodash/noop';
 import type mitt from 'mitt';
@@ -20,7 +20,6 @@ interface UseFieldApi {
   locale: Locale;
   locales: Locale[];
   onChange: FieldValueChangedHandler;
-  setInvalid: (localeCode: string, isInvalid: boolean) => void;
 }
 
 const useFieldAPI = ({
@@ -32,8 +31,8 @@ const useFieldAPI = ({
   locale,
   locales,
   onChange,
-  setInvalid,
-}: UseFieldApi) => {
+}: // setInvalid,
+UseFieldApi) => {
   const sdk = useMemo(() => {
     const localesApi = createLocalesApi({
       activeLocaleCode: locale.code,
@@ -73,7 +72,7 @@ const useFieldAPI = ({
           onChange('initialValue', payload);
           eventEmitter.emit('valueChanged', undefined);
         },
-        setInvalid,
+        setInvalid: noop,
         setValue: async (value: unknown) => {
           const payload = {
             ...fields.initialValue?.value,
@@ -95,17 +94,7 @@ const useFieldAPI = ({
       contentType,
       locales: localesApi,
     } as unknown as FieldExtensionSDK;
-  }, [
-    contentType,
-    eventEmitter,
-    field,
-    fields,
-    instance,
-    locale.code,
-    locales,
-    onChange,
-    setInvalid,
-  ]);
+  }, [contentType, eventEmitter, field, fields, instance, locale.code, locales, onChange]);
 
   return sdk;
 };
@@ -141,14 +130,6 @@ const InitialValueField = ({
   onChange,
 }: InitialValueFieldProps) => {
   const fieldContext = useFieldDialogContext();
-  const [, setInvalidControls] = useState({});
-  const setInvalidLocale = useCallback((localeId, isInvalid) => {
-    setInvalidControls((state) => ({
-      ...state,
-      [localeId]: isInvalid,
-    }));
-  }, []);
-
   const sdk = useFieldAPI({
     ...fieldContext,
     contentType,
@@ -156,7 +137,6 @@ const InitialValueField = ({
     fields,
     locale,
     locales,
-    setInvalid: setInvalidLocale,
     onChange,
   });
 
