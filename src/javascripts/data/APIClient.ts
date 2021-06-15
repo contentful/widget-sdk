@@ -15,6 +15,7 @@ import {
 } from '@contentful/types';
 import { AppInstallationProps, EditorInterfaceProps } from 'contentful-management/types';
 import type { EmbargoedAssetApi } from 'features/embargoed-assets';
+import { CollectionResponse, Team } from '@contentful/app-sdk';
 
 const entryValidationAlphaHeader = getAlphaHeader(ENTRY_VALIDATION);
 
@@ -454,8 +455,9 @@ export default class APIClient {
     });
   };
 
-  getSpaceTeams = (query) => {
-    return this.getResources('teams', query);
+  getSpaceTeams = () => {
+    // The largest organization includes 29 teams, so the limit is sufficient and no pagination is required
+    return this.getResources<Team>('teams', { query: { limit: 100 } });
   };
 
   getExtensions = (query) => {
@@ -555,7 +557,7 @@ export default class APIClient {
   };
 
   private getResources = <T extends Entity>(name, query?) => {
-    return this.get<Collection<T>>([name], query);
+    return this.get<CollectionResponse<T>>([name], query);
   };
 
   private getResource = <T>(path, id?) => {

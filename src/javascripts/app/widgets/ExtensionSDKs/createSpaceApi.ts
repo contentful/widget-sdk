@@ -121,7 +121,7 @@ export function createSpaceApi({
     deleteTag: makeReadOnlyGuardedMethod(readOnly, tagsRepo.deleteTag),
     updateTag: makeReadOnlyGuardedMethod(readOnly, tagsRepo.updateTag),
 
-    getTeams: makeReadOnlyGuardedMethod(readOnly, getTeams),
+    getTeams: cma.getSpaceTeams,
 
     // Implementation in this module:
     getCachedContentTypes,
@@ -180,32 +180,6 @@ export function createSpaceApi({
     });
 
     return response.json();
-  }
-
-  async function getTeams() {
-    // TODO: Replace with teams from space instead of organization
-    const uiClientResult = await cma.getSpaceTeams({});
-    console.log('uiClientResult', uiClientResult);
-
-    const plainCmaClient = getCMAClient();
-    const plainCmaClientResult = await plainCmaClient.spaceTeam.getMany({
-      spaceId,
-      query: { limit: 100 },
-    });
-    console.log('plainCmaClientResult', plainCmaClientResult);
-
-    const cmaClient = getDefaultCMAClient();
-    const cmaClientResult = await cmaClient.getSpaceTeams(spaceId);
-    console.log('cmaClientResult', cmaClientResult);
-
-    const space = await plainCmaClient.space.get({ spaceId });
-    const currentOrganizationId = space.sys.organization.sys.id;
-    const result = await plainCmaClient.team.getMany({
-      organizationId: currentOrganizationId,
-      query: { limit: 100 },
-    });
-    console.log('orgTeams', result);
-    return result;
   }
 
   async function getUsers() {
