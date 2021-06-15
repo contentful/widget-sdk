@@ -7,7 +7,10 @@ import { SpaceAPI, User } from '@contentful/app-sdk';
 import { InternalContentType, createContentTypeApi } from './createContentTypeApi';
 import { get, noop } from 'lodash';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
-import { getCMAClient } from 'core/services/usePlainCMAClient/usePlainCMAClient';
+import {
+  getCMAClient,
+  getDefaultCMAClient,
+} from 'core/services/usePlainCMAClient/usePlainCMAClient';
 
 import {
   generateSignedAssetUrl,
@@ -16,8 +19,6 @@ import {
 import APIClient from 'data/APIClient';
 import { Asset, Entry, AssetFile } from '@contentful/types';
 import { SpaceContextType } from 'classes/spaceContextTypes';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
-import { getOrganizationId } from 'core/services/SpaceEnvContext/utils';
 
 const ASSET_PROCESSING_POLL_MS = 500;
 const GET_WAIT_ON_ENTITY_UPDATE = 500;
@@ -183,13 +184,27 @@ export function createSpaceApi({
 
   async function getTeams() {
     // TODO: Replace with teams from space instead of organization
+    const uiClientResult = await cma.getSpaceTeams({});
+    console.log('uiClientResult', uiClientResult);
+
     const plainCmaClient = getCMAClient();
+    const plainCmaClientResult = await plainCmaClient.spaceTeam.getMany({
+      spaceId,
+      query: { limit: 100 },
+    });
+    console.log('plainCmaClientResult', plainCmaClientResult);
+
+    const cmaClient = getDefaultCMAClient();
+    const cmaClientResult = await cmaClient.getSpaceTeams(spaceId);
+    console.log('cmaClientResult', cmaClientResult);
+
     const space = await plainCmaClient.space.get({ spaceId });
     const currentOrganizationId = space.sys.organization.sys.id;
     const result = await plainCmaClient.team.getMany({
       organizationId: currentOrganizationId,
       query: { limit: 100 },
     });
+    console.log('orgTeams', result);
     return result;
   }
 

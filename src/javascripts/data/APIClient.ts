@@ -454,6 +454,10 @@ export default class APIClient {
     });
   };
 
+  getSpaceTeams = (query) => {
+    return this.getResources('teams', query);
+  };
+
   getExtensions = (query) => {
     return this.getResources('extensions', query);
   };
