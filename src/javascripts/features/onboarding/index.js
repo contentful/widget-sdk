@@ -7,5 +7,7 @@ export {
   BLANK_SPACE_NAME,
   hasSeenExploreOnboarding,
   handleReplaceSpace,
+  isDeveloper,
+  goToDeveloperOnboarding,
   handleGetStarted,
 } from './utils/util';

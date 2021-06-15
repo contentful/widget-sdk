@@ -18,7 +18,7 @@ import {
 } from 'features/onboarding';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { FLAGS, getVariation } from 'LaunchDarkly';
-import { tracking } from 'analytics/Analytics';
+import { defaultEventProps, tracking } from 'analytics/Analytics';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getOrganization } from 'services/TokenStore';
 
@@ -60,7 +60,8 @@ export const AdminSpaceHome = ({
       );
 
       if (newOnboardingExperimentVariation !== null) {
-        tracking.experimentStart({
+        tracking.experimentStarted({
+          ...defaultEventProps(),
           experiment_id: FLAGS.EXPERIMENT_ONBOARDING_MODAL,
           experiment_variation: newOnboardingExperimentVariation
             ? 'flexible-onboarding'

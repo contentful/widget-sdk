@@ -8,8 +8,12 @@ import { router } from 'core/react-routing';
 import { showReplaceSpaceWarning } from '../components/ReplaceSpaceDialog';
 import {
   markSpace,
+  getStoragePrefix as getOnboardingStoragePrefix,
   MODERN_STACK_ONBOARDING_SPACE_NAME,
+  DEFAULT_LOCALE,
 } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
+import { getQueryString } from 'utils/location';
+import { fetchUserData } from 'features/user-profile';
 
 const store = getBrowserStorage();
 
@@ -68,4 +72,45 @@ export const handleReplaceSpace = (currentSpaceId) => {
 export const handleGetStarted = (currentSpaceId) => {
   markExploreOnboardingSeen();
   renameSpace(MODERN_STACK_ONBOARDING_SPACE_NAME, currentSpaceId);
+};
+
+export const isDeveloper = async () => {
+  const user = await fetchUserData();
+  const hasGithubIdentityConnected =
+    user?.identities?.filter((i) => i.provider === 'github').length >= 1;
+
+  const { persona } = getQueryString();
+
+  return persona === 'developer' || hasGithubIdentityConnected;
+};
+
+export const goToDeveloperOnboarding = async ({ org, markOnboarding }) => {
+  const orgId = org.sys.id;
+  const client = getCMAClient();
+  const newSpace = await client.space.create(
+    {
+      organizationId: orgId,
+    },
+    {
+      name: MODERN_STACK_ONBOARDING_SPACE_NAME,
+      defaultLocale: DEFAULT_LOCALE,
+    }
+  );
+
+  markOnboarding();
+  markSpace(newSpace.sys.id);
+
+  store.set(`${getOnboardingStoragePrefix()}:currentStep`, {
+    path: 'spaces.detail.onboarding.getStarted',
+    params: {
+      spaceId: newSpace.sys.id,
+    },
+  });
+
+  await TokenStore.refresh();
+
+  router.navigate({
+    path: 'spaces.detail.onboarding.getStarted',
+    spaceId: newSpace.sys.id,
+  });
 };

@@ -5,95 +5,6 @@
   "rules": {
     "events": [
       {
-        "name": "Page Viewed",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "accepted_permissions": {},
-                "add_to_context": {
-                  "type": ["boolean"]
-                },
-                "api_key_id": {
-                  "type": ["string"]
-                },
-                "app_id": {},
-                "asset_id": {
-                  "type": ["string"]
-                },
-                "content_type_id": {
-                  "type": ["string"]
-                },
-                "definition_id": {
-                  "type": ["string"]
-                },
-                "entry_id": {
-                  "type": ["string"]
-                },
-                "environment_id": {
-                  "type": ["string"]
-                },
-                "ignore_leave_confirmation": {
-                  "type": ["boolean"]
-                },
-                "jump_to_role": {
-                  "type": ["string"]
-                },
-                "locale_id": {
-                  "type": ["string"]
-                },
-                "name": {
-                  "type": ["string"]
-                },
-                "org_id": {
-                  "type": ["string"]
-                },
-                "org_owner_or_admin": {},
-                "path": {
-                  "type": ["string"]
-                },
-                "path_suffix": {
-                  "type": ["string"]
-                },
-                "previous_entries": {
-                  "type": ["string"]
-                },
-                "referrer": {
-                  "type": ["string"]
-                },
-                "search": {
-                  "type": ["string"]
-                },
-                "space_id": {
-                  "type": ["string"]
-                },
-                "tab": {
-                  "type": ["string"]
-                },
-                "template_id": {},
-                "title": {
-                  "type": ["string"]
-                },
-                "url": {
-                  "type": ["string"]
-                },
-                "user_id": {
-                  "type": ["string"]
-                },
-                "webhook_id": {
-                  "type": ["string"]
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
         "name": "account_dropdown:pending_tasks_fetched",
         "rules": {
           "properties": {
@@ -105,21 +16,21 @@
                     "action": {
                       "type": ["string"]
                     },
-                    "executingUserId": {
+                    "environment_key": {
                       "type": ["string"]
                     },
-                    "organizationId": {
+                    "organization_key": {
                       "type": ["string"]
                     },
                     "payload": {
                       "properties": {
-                        "hasInaccessibleTasks": {
+                        "has_inaccessible_tasks": {
                           "type": ["boolean"]
                         },
-                        "numPendingTasks": {
+                        "num_pending_tasks": {
                           "type": ["integer"]
                         },
-                        "numVisiblePendingTasks": {
+                        "num_visible_pending_tasks": {
                           "type": ["integer"]
                         }
                       },
@@ -128,7 +39,7 @@
                     "scope": {
                       "type": ["string"]
                     },
-                    "spaceId": {
+                    "space_key": {
                       "type": ["string"]
                     }
                   },
@@ -144,35 +55,201 @@
         "version": 1
       },
       {
-        "name": "api_key:clipboard_copy",
+        "description": "ApiKey schema",
+        "name": "api_key",
         "rules": {
           "properties": {
             "context": {},
             "properties": {
               "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "spaceId": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
+                "action": {
+                  "type": ["string"]
+                },
+                "api_key_id": {
+                  "type": ["string"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": ["string", "null"]
+                },
+                "space_key": {
+                  "type": ["string"]
+                },
+                "version": {
+                  "type": ["integer", "null"]
                 }
               },
-              "type": "object"
+              "required": ["space_key", "action", "api_key_id"]
             },
             "traits": {}
-          },
-          "type": "object"
+          }
+        },
+        "version": 1
+      },
+      {
+        "description": "Records an app definition lifecycle event",
+        "name": "app_definition",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "action": {
+                  "description": "Type of action event",
+                  "type": "string"
+                },
+                "app_definition_id": {
+                  "description": "Refers to app definition id",
+                  "type": "string"
+                },
+                "created_at": {
+                  "description": "App definition creation timestamp",
+                  "type": "string"
+                },
+                "deleted_at": {
+                  "description": "App definition delete timestamp",
+                  "type": "string"
+                },
+                "has_config": {
+                  "description": "Whether the app has configuration screen",
+                  "type": "boolean"
+                },
+                "is_public": {
+                  "description": "Public or private app",
+                  "type": "boolean"
+                },
+                "locations": {
+                  "description": "Locations enabled for the app",
+                  "type": "array"
+                },
+                "name": {
+                  "description": "Name of the app",
+                  "type": "string"
+                },
+                "organization_key": {
+                  "description": "Refers to organization key",
+                  "type": "string"
+                },
+                "src": {
+                  "description": "Host domain for the app",
+                  "type": "string"
+                },
+                "updated_at": {
+                  "description": "App definition update timestamp",
+                  "type": "string"
+                },
+                "user_agent": {
+                  "description": "Refers to the original request user-agent",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "action",
+                "organization_key",
+                "app_definition_id",
+                "name",
+                "src",
+                "locations",
+                "is_public",
+                "has_config"
+              ]
+            },
+            "traits": {}
+          }
+        },
+        "version": 1
+      },
+      {
+        "description": "Records an app installation lifecycle event",
+        "name": "app_installation",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "action": {
+                  "description": "Type of action event",
+                  "type": "string"
+                },
+                "app_definition_id": {
+                  "description": "Refers to app_id",
+                  "type": "string"
+                },
+                "created_at": {
+                  "description": "App creation timestamp",
+                  "type": ["string", "null"]
+                },
+                "deleted_at": {
+                  "description": "App delete timestamp",
+                  "type": ["string", "null"]
+                },
+                "environment_key": {
+                  "description": "Refers to environment_key",
+                  "type": "string"
+                },
+                "space_key": {
+                  "description": "Refers to space_key",
+                  "type": "string"
+                },
+                "updated_at": {
+                  "description": "App update timestamp",
+                  "type": ["string", "null"]
+                },
+                "user_agent": {
+                  "description": "Refers to the original request user-agent",
+                  "type": "string"
+                }
+              },
+              "required": ["space_key", "environment_key", "app_definition_id"]
+            },
+            "traits": {}
+          }
+        },
+        "version": 1
+      },
+      {
+        "description": "Records an event in App lifecycle",
+        "name": "app_lifecycle_event",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "app_event_name": {
+                  "description": "Name of lifecycle event",
+                  "type": "string"
+                },
+                "contentful_app_id": {
+                  "description": "ID of Contentful App",
+                  "type": "string"
+                },
+                "contentful_event_id": {
+                  "description": "Web App generated correlation ID",
+                  "type": "string"
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "description": "Refers to organization_key",
+                  "type": ["string", "null"]
+                },
+                "space_key": {
+                  "description": "Refers to space_key",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "space_key",
+                "contentful_event_id",
+                "contentful_app_id",
+                "app_event_name"
+              ]
+            },
+            "traits": {}
+          }
         },
         "version": 1
       },
@@ -188,15 +265,15 @@
                     "action": {
                       "type": ["string"]
                     },
-                    "executingUserId": {
+                    "environment_key": {
                       "type": ["string"]
                     },
-                    "organizationId": {
+                    "organization_key": {
                       "type": ["string"]
                     },
                     "payload": {
                       "properties": {
-                        "definitionId": {
+                        "definition_id": {
                           "type": ["string"]
                         }
                       },
@@ -229,15 +306,15 @@
                     "action": {
                       "type": ["string"]
                     },
-                    "executingUserId": {
+                    "environment_key": {
                       "type": ["string"]
                     },
-                    "organizationId": {
+                    "organization_key": {
                       "type": ["string"]
                     },
                     "payload": {
                       "properties": {
-                        "definitionId": {
+                        "definition_id": {
                           "type": ["string"]
                         }
                       },
@@ -259,6 +336,107 @@
         "version": 1
       },
       {
+        "description": "Web app opened by visiting app.contentful.com",
+        "name": "app_open",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "environment_key": {
+                  "type": "string"
+                },
+                "organization_key": {
+                  "type": "string"
+                },
+                "space_key": {
+                  "type": "string"
+                }
+              }
+            },
+            "traits": {}
+          }
+        },
+        "version": 1
+      },
+      {
+        "description": "Event fired when the example app opens",
+        "name": "app_the_example_app_open",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "app_framework": {
+                  "type": ["string"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "sdk_language_used": {
+                  "type": ["string"]
+                },
+                "space_key": {
+                  "type": ["string"]
+                }
+              },
+              "required": ["space_key", "sdk_language_used", "app_framework"]
+            },
+            "traits": {}
+          }
+        },
+        "version": 1
+      },
+      {
+        "description": "Records a reason for App uninstallation",
+        "name": "app_uninstallation_reason",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "contentful_app_id": {
+                  "description": "ID of Contentful App",
+                  "type": "string"
+                },
+                "contentful_event_id": {
+                  "description": "Web App generated correlation ID",
+                  "type": "string"
+                },
+                "custom": {
+                  "description": "Is reason custom or not",
+                  "type": "boolean"
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "description": "Refers to organization_key",
+                  "type": ["string", "null"]
+                },
+                "reason": {
+                  "description": "Reason for uninstalling",
+                  "type": "string"
+                },
+                "space_key": {
+                  "description": "Refers to space_key",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "space_key",
+                "contentful_event_id",
+                "contentful_app_id",
+                "custom",
+                "reason"
+              ]
+            },
+            "traits": {}
+          }
+        },
+        "version": 1
+      },
+      {
         "name": "apps:lifecycle_event",
         "rules": {
           "properties": {
@@ -267,22 +445,22 @@
               "properties": {
                 "data": {
                   "properties": {
-                    "appEventName": {
+                    "app_event_name": {
                       "type": ["string"]
                     },
-                    "contentfulAppId": {
+                    "contentful_app_id": {
                       "type": ["string"]
                     },
-                    "contentfulEventId": {
+                    "contentful_event_id": {
                       "type": ["string"]
                     },
-                    "executingUserId": {
+                    "environment_key": {
                       "type": ["string"]
                     },
-                    "organizationId": {
+                    "organization_key": {
                       "type": ["string"]
                     },
-                    "spaceId": {
+                    "space_key": {
                       "type": ["string"]
                     }
                   },
@@ -310,7 +488,7 @@
                 "environment": {
                   "type": ["string"]
                 },
-                "space_id": {
+                "space_key": {
                   "type": ["string"]
                 },
                 "version": {
@@ -337,10 +515,10 @@
                     "action": {
                       "type": ["string"]
                     },
-                    "executingUserId": {
+                    "environment_key": {
                       "type": ["string"]
                     },
-                    "organizationId": {
+                    "organization_key": {
                       "type": ["string"]
                     },
                     "payload": {
@@ -349,7 +527,7 @@
                     "scope": {
                       "type": ["string"]
                     },
-                    "spaceId": {
+                    "space_key": {
                       "type": ["string"]
                     }
                   },
@@ -376,10 +554,10 @@
                     "action": {
                       "type": ["string"]
                     },
-                    "executingUserId": {
+                    "environment_key": {
                       "type": ["string"]
                     },
-                    "organizationId": {
+                    "organization_key": {
                       "type": ["string"]
                     },
                     "payload": {
@@ -388,7 +566,7 @@
                     "scope": {
                       "type": ["string"]
                     },
-                    "spaceId": {
+                    "space_key": {
                       "type": ["string"]
                     }
                   },
@@ -416,7 +594,7 @@
                 "environment": {
                   "type": ["string"]
                 },
-                "space_id": {
+                "space_key": {
                   "type": ["string"]
                 },
                 "version": {
@@ -432,6 +610,37 @@
         "version": 1
       },
       {
+        "description": "Tracks usage of boilerplate projects",
+        "name": "boilerplate",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "action": {
+                  "type": ["string"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "platform": {
+                  "type": ["string"]
+                },
+                "space_key": {
+                  "type": ["string"]
+                }
+              },
+              "required": ["organization_key", "space_key", "action", "platform"]
+            },
+            "traits": {}
+          }
+        },
+        "version": 1
+      },
+      {
         "name": "bulk_editor:close",
         "rules": {
           "properties": {
@@ -443,25 +652,25 @@
                     "action": {
                       "type": ["string"]
                     },
-                    "executingUserId": {
+                    "environment_key": {
                       "type": ["string"]
                     },
-                    "numEditedEntries": {
+                    "num_edited_entries": {
                       "type": ["integer"]
                     },
-                    "numPublishedEntries": {
+                    "num_published_entries": {
                       "type": ["integer"]
                     },
-                    "organizationId": {
+                    "organization_key": {
                       "type": ["string"]
                     },
-                    "parentEntryId": {
+                    "parent_entry_id": {
                       "type": ["string"]
                     },
-                    "refCount": {
+                    "ref_count": {
                       "type": ["integer"]
                     },
-                    "spaceId": {
+                    "space_key": {
                       "type": ["string"]
                     }
                   },
@@ -488,22 +697,22 @@
                     "action": {
                       "type": ["string"]
                     },
-                    "entryId": {
+                    "entry_id": {
                       "type": ["string"]
                     },
-                    "executingUserId": {
+                    "environment_key": {
                       "type": ["string"]
                     },
-                    "organizationId": {
+                    "organization_key": {
                       "type": ["string"]
                     },
-                    "parentEntryId": {
+                    "parent_entry_id": {
                       "type": ["string"]
                     },
-                    "refCount": {
+                    "ref_count": {
                       "type": ["integer"]
                     },
-                    "spaceId": {
+                    "space_key": {
                       "type": ["string"]
                     }
                   },
@@ -530,19 +739,19 @@
                     "action": {
                       "type": ["string"]
                     },
-                    "executingUserId": {
+                    "environment_key": {
                       "type": ["string"]
                     },
-                    "organizationId": {
+                    "organization_key": {
                       "type": ["string"]
                     },
-                    "parentEntryId": {
+                    "parent_entry_id": {
                       "type": ["string"]
                     },
-                    "refCount": {
+                    "ref_count": {
                       "type": ["integer"]
                     },
-                    "spaceId": {
+                    "space_key": {
                       "type": ["string"]
                     }
                   },
@@ -569,19 +778,19 @@
                     "action": {
                       "type": ["string"]
                     },
-                    "executingUserId": {
+                    "environment_key": {
                       "type": ["string"]
                     },
-                    "organizationId": {
+                    "organization_key": {
                       "type": ["string"]
                     },
-                    "parentEntryId": {
+                    "parent_entry_id": {
                       "type": ["string"]
                     },
-                    "refCount": {
+                    "ref_count": {
                       "type": ["integer"]
                     },
-                    "spaceId": {
+                    "space_key": {
                       "type": ["string"]
                     }
                   },
@@ -597,157 +806,119 @@
         "version": 1
       },
       {
-        "name": "editor_loaded",
+        "description": "Schema for any event that has to do with content preview in our webapp",
+        "name": "content_preview",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "content_type_id": {
+                  "type": ["string"]
+                },
+                "content_type_name": {
+                  "type": ["string"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "preview_id": {
+                  "type": ["string"]
+                },
+                "preview_name": {
+                  "type": ["string"]
+                },
+                "space_key": {
+                  "type": ["string"]
+                }
+              },
+              "required": ["organization_key", "space_key", "preview_name", "preview_id"]
+            },
+            "traits": {}
+          }
+        },
+        "version": 1
+      },
+      {
+        "description": "ContentTyppe schema",
+        "name": "content_type",
         "rules": {
           "properties": {
             "context": {},
             "properties": {
               "properties": {
                 "action": {
-                  "description": "`init` is triggered every time a slide is loaded. `entity_loaded` is triggered when the editor's main entity is loaded. `sharejs_connected` is triggered when a connection with ShareJS has been established while in case ShareJS is not used for the editor, the more generic `doc_connected` is triggered. `links_rendered` is triggered when all the links (references, media, and rich text embeds / entry hyperlinks) in a slide have been fetched and rendered. `fully_interactive` is trigger when both the links have rendered and the entry has become editable (i.e. ShareJS has connected).",
-                  "enum": [
-                    "init",
-                    "entity_loaded",
-                    "sharejs_connected",
-                    "doc_connected",
-                    "links_rendered",
-                    "fully_interactive"
-                  ],
                   "type": ["string"]
                 },
-                "executing_user_id": {
+                "content_type_id": {
                   "type": ["string"]
                 },
-                "link_count": {
-                  "description": "The total number of links (reference links, media field assets, rich text embedded block and inline entries, rich text embedded block assets, and rich text hyperlinked entries) in the entry on initial load",
-                  "type": ["integer"]
-                },
-                "link_field_editor_instance_count": {
-                  "description": "The overall number of reference and media field instances in an individual entry (1 locale field = 1 instance)",
-                  "type": ["integer"]
-                },
-                "load_ms": {
-                  "description": "Number of milliseconds since the initial load of the entry",
-                  "type": ["integer"]
-                },
-                "organization_id": {
+                "environment_key": {
                   "type": ["string"]
                 },
-                "rich_text_editor_instance_count": {
-                  "description": "The overall number of rich text editor instances in an individual entry (1 locale field editor = 1 instance)",
-                  "type": ["integer"]
+                "organization_key": {
+                  "type": ["string", "null"]
                 },
-                "slide_level": {
-                  "description": "Level of the entry editor within the slides (zero-indexed, -1 if the slide was closed at the time the event is triggered)",
-                  "type": ["integer"]
+                "revision": {
+                  "type": ["integer", "null"]
                 },
-                "slide_uuid": {
-                  "description": "ID uniquely identifying the slide instance - does NOT uniquely identify the entry",
+                "space_key": {
                   "type": ["string"]
                 },
-                "slides_controller_uuid": {
-                  "description": "ID uniquely identifying the overall session and therefore all slides loaded around the same time within the same browser tab",
-                  "type": ["string"]
-                },
-                "space_id": {
-                  "type": ["string"]
-                },
-                "total_slide_count": {
-                  "description": "The total number of slides open when the entry is initially loaded, default = 0 if there are no slides",
-                  "type": ["integer"]
+                "version": {
+                  "type": ["integer", "null"]
                 }
               },
-              "type": "object"
+              "required": ["space_key", "content_type_id", "action"]
             },
             "traits": {}
-          },
-          "type": "object"
+          }
         },
         "version": 1
       },
       {
-        "name": "editor_workbench:tab_open",
+        "description": "Emitted when a job is triggered",
+        "name": "dialog",
         "rules": {
           "properties": {
             "context": {},
             "properties": {
               "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "payload": {
-                      "properties": {
-                        "tabName": {
-                          "type": ["string"]
-                        }
-                      },
-                      "type": "object"
-                    },
-                    "scope": {
-                      "type": ["string"]
-                    },
-                    "spaceId": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "element:click",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "contexts": {
-                  "type": ["array"]
+                "action": {
+                  "description": "action performed in relationship with the dialog. Example: (dialog) open",
+                  "type": ["string"]
                 },
-                "data": {
-                  "properties": {
-                    "elementId": {
-                      "type": ["string"]
-                    },
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "fromState": {
-                      "type": ["string"]
-                    },
-                    "groupId": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "spaceId": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "funnel_id": {
+                  "description": "unique id generated, to make funnel analytics way simpler",
+                  "type": ["string", "null"]
+                },
+                "name": {
+                  "description": "name identifying the current dialog name. Example: jobs_create",
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "description": "refers to GK organization key",
+                  "type": ["string"]
+                },
+                "purpose": {
+                  "description": "if known, identifies what the dialog is intended to fulfill. Example: Entry.publish",
+                  "type": ["string", "null"]
+                },
+                "space_key": {
+                  "description": "refers to GK space key",
+                  "type": ["string"]
                 }
               },
-              "type": "object"
+              "required": ["organization_key", "space_key", "name", "action"]
             },
             "traits": {}
-          },
-          "type": "object"
+          }
         },
         "version": 1
       },
@@ -802,7 +973,76 @@
         "version": 1
       },
       {
-        "name": "entity_editor:edit_conflict",
+        "name": "editor_loaded",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "action": {
+                  "description": "`init` is triggered every time a slide is loaded. `entity_loaded` is triggered when the editor's main entity is loaded. `sharejs_connected` is triggered when a connection with ShareJS has been established while in case ShareJS is not used for the editor, the more generic `doc_connected` is triggered. `links_rendered` is triggered when all the links (references, media, and rich text embeds / entry hyperlinks) in a slide have been fetched and rendered. `fully_interactive` is trigger when both the links have rendered and the entry has become editable (i.e. ShareJS has connected).",
+                  "enum": [
+                    "doc_connected",
+                    "entity_loaded",
+                    "fully_interactive",
+                    "init",
+                    "links_rendered",
+                    "sharejs_connected"
+                  ],
+                  "type": ["string"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "link_count": {
+                  "description": "The total number of links (reference links, media field assets, rich text embedded block and inline entries, rich text embedded block assets, and rich text hyperlinked entries) in the entry on initial load",
+                  "type": ["integer"]
+                },
+                "link_field_editor_instance_count": {
+                  "description": "The overall number of reference and media field instances in an individual entry (1 locale field = 1 instance)",
+                  "type": ["integer"]
+                },
+                "load_ms": {
+                  "description": "Number of milliseconds since the initial load of the entry",
+                  "type": ["integer"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "rich_text_editor_instance_count": {
+                  "description": "The overall number of rich text editor instances in an individual entry (1 locale field editor = 1 instance)",
+                  "type": ["integer"]
+                },
+                "slide_level": {
+                  "description": "Level of the entry editor within the slides (zero-indexed, -1 if the slide was closed at the time the event is triggered)",
+                  "type": ["integer"]
+                },
+                "slide_uuid": {
+                  "description": "ID uniquely identifying the slide instance - does NOT uniquely identify the entry",
+                  "type": ["string"]
+                },
+                "slides_controller_uuid": {
+                  "description": "ID uniquely identifying the overall session and therefore all slides loaded around the same time within the same browser tab",
+                  "type": ["string"]
+                },
+                "space_key": {
+                  "type": ["string"]
+                },
+                "total_slide_count": {
+                  "description": "The total number of slides open when the entry is initially loaded, default = 0 if there are no slides",
+                  "type": ["integer"]
+                }
+              },
+              "type": "object"
+            },
+            "traits": {}
+          },
+          "type": "object"
+        },
+        "version": 1
+      },
+      {
+        "name": "editor_workbench:tab_open",
         "rules": {
           "properties": {
             "context": {},
@@ -810,61 +1050,67 @@
               "properties": {
                 "data": {
                   "properties": {
-                    "autoConflictResolutionVersion": {
-                      "type": ["integer"]
-                    },
-                    "entityId": {
+                    "action": {
                       "type": ["string"]
                     },
-                    "entityType": {
+                    "environment_key": {
                       "type": ["string"]
                     },
-                    "executingUserId": {
+                    "organization_key": {
                       "type": ["string"]
                     },
-                    "isConflictAutoResolvable": {
-                      "type": ["boolean"]
-                    },
-                    "localChangesFieldPaths": {
-                      "items": {
-                        "type": "string"
+                    "payload": {
+                      "properties": {
+                        "tab_name": {
+                          "type": ["string"]
+                        }
                       },
-                      "type": "array"
+                      "type": "object"
                     },
-                    "localEntityLastFetchedAtTstamp": {
+                    "scope": {
                       "type": ["string"]
                     },
-                    "localEntityUpdatedAtTstamp": {
-                      "type": ["string"]
-                    },
-                    "localEntityVersion": {
-                      "type": ["integer"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "remoteChangesSinceLocalEntityFieldPaths": {
-                      "items": {
-                        "type": "string"
-                      },
-                      "type": "array"
-                    },
-                    "remoteEntityUpdatedAtTstamp": {
-                      "type": ["string"]
-                    },
-                    "remoteEntityUpdatedByUserId": {
-                      "type": ["string"]
-                    },
-                    "remoteEntityVersion": {
-                      "type": ["integer"]
-                    },
-                    "spaceId": {
+                    "space_key": {
                       "type": ["string"]
                     }
                   },
                   "type": "object"
+                }
+              },
+              "type": "object"
+            },
+            "traits": {}
+          },
+          "type": "object"
+        },
+        "version": 1
+      },
+      {
+        "name": "element:click",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "contexts": {
+                  "type": ["string"]
                 },
-                "schema": {
+                "element_id": {
+                  "type": ["string"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "from_state": {
+                  "type": ["string"]
+                },
+                "group_id": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "space_key": {
                   "type": ["string"]
                 }
               },
@@ -877,78 +1123,281 @@
         "version": 1
       },
       {
-        "name": "entry:create",
+        "description": "ShareJS removal, CMA-only entity editor edit conflicts tracking. This event is tracked when persisting local editor changes fails due to a CMA version mismatch error. `local_entity` refers to the last CMA version of the entity known to the entity editor without local changes and before the conflict. All pending local changes are based on this entity version. `remote_entity` refers to the most recent version of the entity which has caused the version mismatch and thus might have conflicts with the local changes on top of `local_entity`.",
+        "name": "entity_editor_edit_conflict",
         "rules": {
           "properties": {
             "context": {},
             "properties": {
               "properties": {
-                "contexts": {
-                  "items": {
-                    "properties": {
-                      "data": {
-                        "properties": {
-                          "action": {
-                            "type": ["string"]
-                          },
-                          "contentTypeId": {
-                            "type": ["string"]
-                          },
-                          "entryId": {
-                            "type": ["string"]
-                          },
-                          "executingUserId": {
-                            "type": ["string"]
-                          },
-                          "organizationId": {
-                            "type": ["string"]
-                          },
-                          "spaceId": {
-                            "type": ["string"]
-                          },
-                          "version": {
-                            "type": ["integer"]
-                          }
-                        },
-                        "type": "object"
-                      },
-                      "schema": {
-                        "type": ["string"]
-                      }
-                    },
-                    "type": "object"
-                  },
-                  "type": "array"
+                "auto_conflict_resolution_version": {
+                  "description": "Version of our editor's auto conflict resolution version. Should bump this whenever we fit to be able to only compare events of the same implemented version.",
+                  "type": "integer"
                 },
-                "data": {
+                "entity_id": {
+                  "type": "string"
+                },
+                "entity_type": {
+                  "enum": ["Entry", "Asset"],
+                  "type": "string"
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "is_conflict_auto_resolvable": {
+                  "description": "Whether or not the current editor implementation is able to resolve the conflict without the user's input.",
+                  "type": "boolean"
+                },
+                "local_changes_paths": {
+                  "description": "Comma separated paths `path,...` where `path` can be either `fields:${FIELD_ID}:${LOCALE_CODE}` for pending fields changes or `metadata:${NAME}` for pending metadata changes not persisted yet and on top of the `local_entity`. ID/code are public CMA identifiers, not internal CF IDs. Should only be `null` if there are too many paths to be tracked due to `maxLength` constraint.",
+                  "type": ["string", "null"]
+                },
+                "local_entity_last_fetched_at_tstamp": {
+                  "description": "Point in time when the most-up-to-date local in-memory `local_entity` was received by the editor.",
+                  "type": "string"
+                },
+                "local_entity_state": {
+                  "description": "The `local_entity` state before any local changes.",
+                  "enum": ["draft", "published", "archived", "inaccessible"],
+                  "type": "string"
+                },
+                "local_entity_updated_at_tstamp": {
+                  "description": "entity.sys.updatedAt of the `local_entity`.",
+                  "type": "string"
+                },
+                "local_entity_version": {
+                  "description": "`entity.sys.version` of the `local_entity`.",
+                  "type": "integer"
+                },
+                "local_state_change": {
+                  "description": "Local pending state update that was not successful due to the conflict. `null` if there was no local state update.",
+                  "enum": ["draft", "published", "archived", "inaccessible", null],
+                  "type": ["string", "null"]
+                },
+                "organization_key": {
+                  "type": "string"
+                },
+                "precomputed": {
                   "properties": {
-                    "entryCtEntryReferenceFieldsCount": {
-                      "type": ["integer"]
+                    "local_field_locale_changes_count": {
+                      "description": "Total number of locally changed field locales on top of the `local_entity`: `count(onlyFieldPaths(local_changes_paths))`",
+                      "type": "integer"
                     },
-                    "entryId": {
-                      "type": ["string"]
+                    "local_metadata_changes_count": {
+                      "description": "Total number of locally changed metadata properties on top of the `local_entity`: `count(onlyMetadataPaths(local_changes_paths))`",
+                      "type": "integer"
                     },
-                    "eventOrigin": {
-                      "type": ["string"]
+                    "remote_field_locale_changes_count": {
+                      "description": "Total number of field locales changed in `remote_entity` compared to `local_entity`: `count(onlyFieldPaths(remote_changes_paths))`",
+                      "type": "integer"
                     },
-                    "executingUserId": {
-                      "type": ["string"]
+                    "remote_metadata_changes_count": {
+                      "description": "Total number of metadata properties changed in `remote_entity` compared to `local_entity`: `count(onlyMetadataPaths(remote_changes_paths))`",
+                      "type": "integer"
                     },
-                    "organizationId": {
-                      "type": ["string"]
+                    "same_field_locale_conflicts_count": {
+                      "description": "Pre-computed number of conflicts on same field locales: `count(intersection(onlyFieldPaths(local_changes_paths), onlyFieldPaths(remote_changes_paths)))`",
+                      "type": "integer"
                     },
-                    "spaceId": {
-                      "type": ["string"]
+                    "same_metadata_conflicts_count": {
+                      "description": "Pre-computed number of conflicts on same metadata property: `count(intersection(onlyMetadataPaths(local_changes_paths), onlyMetadataPaths(remote_changes_paths)))`",
+                      "type": "integer"
                     }
                   },
-                  "type": "object"
+                  "type": ["object"]
+                },
+                "remote_changes_paths": {
+                  "description": "Comma separated paths as in `local_changes_paths` but for `remote_entity` fields or metadata with different values from `local_entity`. See `local_changes_paths` description for specifics and `null` case explanation.",
+                  "type": ["string", "null"]
+                },
+                "remote_entity_state": {
+                  "description": "The state of the `remote_entity` after the edit conflict.",
+                  "enum": ["draft", "published", "archived", "inaccessible"],
+                  "type": "string"
+                },
+                "remote_entity_updated_at_tstamp": {
+                  "description": "entity.sys.updatedAt of the `remote_entity`.",
+                  "type": "string"
+                },
+                "remote_entity_updated_by_user_id": {
+                  "description": "entity.sys.updatedBy.sys.id of the `remote_entity`.",
+                  "type": "string"
+                },
+                "remote_entity_version": {
+                  "description": "`entity.sys.version` of the `remote_entity`.",
+                  "type": "integer"
+                },
+                "space_key": {
+                  "type": "string"
                 }
               },
-              "type": "object"
+              "required": [
+                "organization_key",
+                "space_key",
+                "entity_id",
+                "entity_type",
+                "local_changes_paths",
+                "remote_changes_paths",
+                "local_state_change",
+                "local_entity_state",
+                "remote_entity_state",
+                "local_entity_version",
+                "remote_entity_version",
+                "local_entity_last_fetched_at_tstamp",
+                "local_entity_updated_at_tstamp",
+                "remote_entity_updated_at_tstamp",
+                "remote_entity_updated_by_user_id",
+                "is_conflict_auto_resolvable",
+                "auto_conflict_resolution_version"
+              ]
             },
             "traits": {}
-          },
-          "type": "object"
+          }
+        },
+        "version": 1
+      },
+      {
+        "description": "EXPERIMENT for Snowplow -> Segment migration (hence \"_2\" suffix) | ShareJS removal, CMA-only entity editor edit conflicts tracking. This event is tracked when persisting local editor changes fails due to a CMA version mismatch error. `local_entity` refers to the last CMA version of the entity known to the entity editor without local changes and before the conflict. All pending local changes are based on this entity version. `remote_entity` refers to the most recent version of the entity which has caused the version mismatch and thus might have conflicts with the local changes on top of `local_entity`.",
+        "name": "entity_editor_edit_conflict_2",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "auto_conflict_resolution_version": {
+                  "description": "Version of our editor's auto conflict resolution version. Should bump this whenever we fit to be able to only compare events of the same implemented version.",
+                  "type": "integer"
+                },
+                "entity_id": {
+                  "type": "string"
+                },
+                "entity_type": {
+                  "enum": ["Entry", "Asset"],
+                  "type": "string"
+                },
+                "is_conflict_auto_resolvable": {
+                  "description": "Whether or not the current editor implementation is able to resolve the conflict without the user's input.",
+                  "type": "boolean"
+                },
+                "local_changes_paths": {
+                  "description": "Comma separated paths `path,...` where `path` can be either `fields:${FIELD_ID}:${LOCALE_CODE}` for pending fields changes or `metadata:${NAME}` for pending metadata changes not persisted yet and on top of the `local_entity`. ID/code are public CMA identifiers, not internal CF IDs. Should only be `null` if there are too many paths to be tracked due to `maxLength` constraint.",
+                  "type": ["string", "null"]
+                },
+                "local_entity_last_fetched_at_tstamp": {
+                  "description": "Point in time when the most-up-to-date local in-memory `local_entity` was received by the editor.",
+                  "type": "string"
+                },
+                "local_entity_state": {
+                  "description": "The `local_entity` state before any local changes.",
+                  "enum": ["draft", "published", "archived", "inaccessible"],
+                  "type": "string"
+                },
+                "local_entity_updated_at_tstamp": {
+                  "description": "entity.sys.updatedAt of the `local_entity`.",
+                  "type": "string"
+                },
+                "local_entity_version": {
+                  "description": "`entity.sys.version` of the `local_entity`.",
+                  "type": "integer"
+                },
+                "local_state_change": {
+                  "description": "Local pending state update that was not successful due to the conflict. `null` if there was no local state update.",
+                  "enum": ["draft", "published", "archived", "inaccessible", null],
+                  "type": ["string", "null"]
+                },
+                "organization_key": {
+                  "type": "string"
+                },
+                "precomputed": {
+                  "type": ["object"]
+                },
+                "remote_changes_paths": {
+                  "description": "Comma separated paths as in `local_changes_paths` but for `remote_entity` fields or metadata with different values from `local_entity`. See `local_changes_paths` description for specifics and `null` case explanation.",
+                  "type": ["string", "null"]
+                },
+                "remote_entity_state": {
+                  "description": "The state of the `remote_entity` after the edit conflict.",
+                  "enum": ["draft", "published", "archived", "inaccessible"],
+                  "type": "string"
+                },
+                "remote_entity_updated_at_tstamp": {
+                  "description": "entity.sys.updatedAt of the `remote_entity`.",
+                  "type": "string"
+                },
+                "remote_entity_updated_by_user_id": {
+                  "description": "entity.sys.updatedBy.sys.id of the `remote_entity`.",
+                  "type": "string"
+                },
+                "remote_entity_version": {
+                  "description": "`entity.sys.version` of the `remote_entity`.",
+                  "type": "integer"
+                },
+                "space_key": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "organization_key",
+                "space_key",
+                "entity_id",
+                "entity_type",
+                "local_changes_paths",
+                "remote_changes_paths",
+                "local_state_change",
+                "local_entity_state",
+                "remote_entity_state",
+                "local_entity_version",
+                "remote_entity_version",
+                "local_entity_last_fetched_at_tstamp",
+                "local_entity_updated_at_tstamp",
+                "remote_entity_updated_at_tstamp",
+                "remote_entity_updated_by_user_id",
+                "is_conflict_auto_resolvable",
+                "auto_conflict_resolution_version"
+              ]
+            },
+            "traits": {}
+          }
+        },
+        "version": 1
+      },
+      {
+        "description": "Entry schema",
+        "name": "entry",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "action": {
+                  "type": ["string"]
+                },
+                "content_type_id": {
+                  "type": ["string"]
+                },
+                "entry_id": {
+                  "type": ["string"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": ["string", "null"]
+                },
+                "revision": {
+                  "type": ["integer", "null"]
+                },
+                "space_key": {
+                  "type": ["string"]
+                },
+                "version": {
+                  "type": ["integer", "null"]
+                }
+              },
+              "required": ["space_key", "content_type_id", "entry_id", "action"]
+            },
+            "traits": {}
+          }
         },
         "version": 1
       },
@@ -959,72 +1408,38 @@
             "context": {},
             "properties": {
               "properties": {
-                "contexts": {
-                  "items": {
-                    "properties": {
-                      "data": {
-                        "properties": {
-                          "action": {
-                            "type": ["string"]
-                          },
-                          "contentTypeId": {
-                            "type": ["string"]
-                          },
-                          "entryId": {
-                            "type": ["string"]
-                          },
-                          "executingUserId": {
-                            "type": ["string"]
-                          },
-                          "hasLegacyExtensions": {
-                            "type": ["boolean"]
-                          },
-                          "isDefault": {
-                            "type": ["boolean"]
-                          },
-                          "organizationId": {
-                            "type": ["string"]
-                          },
-                          "spaceId": {
-                            "type": ["string"]
-                          },
-                          "version": {
-                            "type": ["integer"]
-                          },
-                          "widgets": {}
-                        },
-                        "type": "object"
-                      },
-                      "schema": {
-                        "type": ["string"]
-                      }
-                    },
-                    "type": "object"
-                  },
-                  "type": "array"
+                "action": {
+                  "type": ["string"]
                 },
-                "data": {
-                  "properties": {
-                    "entryCtEntryReferenceFieldsCount": {
-                      "type": ["integer"]
-                    },
-                    "entryId": {
-                      "type": ["string"]
-                    },
-                    "eventOrigin": {
-                      "type": ["string"]
-                    },
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "spaceId": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
+                "content_type_id": {
+                  "type": ["string"]
+                },
+                "contexts": {
+                  "type": ["string"]
+                },
+                "entry_ct_entry_reference_fields_count": {
+                  "type": ["integer"]
+                },
+                "entry_id": {
+                  "type": ["string"]
+                },
+                "event_origin": {
+                  "type": ["string"]
+                },
+                "has_legacy_extensions": {
+                  "type": ["boolean"]
+                },
+                "is_default": {
+                  "type": ["boolean"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "space_key": {
+                  "type": ["string"]
+                },
+                "version": {
+                  "type": ["integer"]
                 }
               },
               "type": "object"
@@ -1036,93 +1451,158 @@
         "version": 1
       },
       {
-        "name": "entry_editor:view",
+        "description": "Schema of creating an entry in the webapp",
+        "name": "entry_create",
         "rules": {
           "properties": {
             "context": {},
             "properties": {
               "properties": {
-                "contexts": {
-                  "items": {
-                    "properties": {
-                      "data": {
-                        "properties": {
-                          "contentTypeId": {
-                            "type": ["string"]
-                          },
-                          "contentTypeName": {
-                            "type": ["string"]
-                          },
-                          "extensionDefinitionId": {},
-                          "extensionId": {
-                            "type": ["string"]
-                          },
-                          "extensionName": {
-                            "type": ["string"]
-                          },
-                          "hasLegacyExtensions": {
-                            "type": ["boolean"]
-                          },
-                          "installationParams": {
-                            "type": ["array"]
-                          },
-                          "instanceParams": {
-                            "type": ["array"]
-                          },
-                          "isDefault": {
-                            "type": ["boolean"]
-                          },
-                          "location": {
-                            "type": ["string"]
-                          },
-                          "parentEntryId": {
-                            "type": ["string"]
-                          },
-                          "src": {},
-                          "widgets": {}
-                        },
-                        "type": "object"
-                      },
-                      "schema": {
-                        "type": ["string"]
-                      }
-                    },
-                    "type": "object"
-                  },
-                  "type": "array"
+                "entry_ct_entry_reference_fields_count": {
+                  "type": "integer"
                 },
-                "data": {
-                  "properties": {
-                    "contentTypeId": {
-                      "type": ["string"]
-                    },
-                    "contentTypeName": {
-                      "type": ["string"]
-                    },
-                    "editorType": {
-                      "type": ["string"]
-                    },
-                    "entryId": {
-                      "type": ["string"]
-                    },
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "spaceId": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
+                "entry_id": {
+                  "type": "string"
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "event_origin": {
+                  "type": "string"
+                },
+                "organization_key": {
+                  "type": "string"
+                },
+                "space_key": {
+                  "type": "string"
                 }
               },
-              "type": "object"
+              "required": ["organization_key", "space_key"]
             },
             "traits": {}
-          },
-          "type": "object"
+          }
+        },
+        "version": 1
+      },
+      {
+        "name": "entry_created",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "content_type_id": {
+                  "type": "string"
+                },
+                "entry_ct_entry_reference_fields_count": {
+                  "type": "integer"
+                },
+                "entry_ct_fields_count": {
+                  "type": ["integer", "null"]
+                },
+                "entry_id": {
+                  "type": "string"
+                },
+                "entry_version": {
+                  "type": "integer"
+                },
+                "environment_key": {
+                  "type": "string"
+                },
+                "event_origin": {
+                  "type": "string"
+                },
+                "organization_key": {
+                  "type": "string"
+                },
+                "space_key": {
+                  "type": "string"
+                }
+              },
+              "required": ["organization_key", "space_key"]
+            },
+            "traits": {}
+          }
+        },
+        "version": 1
+      },
+      {
+        "description": "Schema of publishing an entry in the webapp",
+        "name": "entry_publish",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "content_type_id": {
+                  "type": "string"
+                },
+                "entry_ct_entry_reference_fields_count": {
+                  "type": "integer"
+                },
+                "entry_ct_fields_count": {
+                  "type": ["integer", "null"]
+                },
+                "entry_id": {
+                  "type": "string"
+                },
+                "entry_version": {
+                  "type": "integer"
+                },
+                "environment_key": {
+                  "type": "string"
+                },
+                "event_origin": {
+                  "type": "string"
+                },
+                "organization_key": {
+                  "type": "string"
+                },
+                "space_key": {
+                  "type": "string"
+                }
+              },
+              "required": ["organization_key", "space_key"]
+            },
+            "traits": {}
+          }
+        },
+        "version": 1
+      },
+      {
+        "description": "Schema of entry references",
+        "name": "entry_references",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "circular_references_count": {
+                  "type": "number"
+                },
+                "entry_id": {
+                  "type": "string"
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": "string"
+                },
+                "references_depth": {
+                  "type": "number"
+                },
+                "references_per_level": {
+                  "type": ["number"]
+                },
+                "space_key": {
+                  "type": "string"
+                }
+              },
+              "required": ["organization_key", "space_key", "entry_id"]
+            },
+            "traits": {}
+          }
         },
         "version": 1
       },
@@ -1138,24 +1618,24 @@
                     "action": {
                       "type": ["string"]
                     },
-                    "executingUserId": {
+                    "environment_key": {
                       "type": ["string"]
                     },
-                    "organizationId": {
+                    "organization_key": {
                       "type": ["string"]
                     },
                     "payload": {
                       "properties": {
-                        "circularReferencesCount": {
+                        "circular_references_count": {
                           "type": ["integer"]
                         },
-                        "entityId": {
+                        "entity_id": {
                           "type": ["string"]
                         },
-                        "referencesDepth": {
+                        "references_depth": {
                           "type": ["integer"]
                         },
-                        "referencesPerLevel": {
+                        "references_per_level": {
                           "items": {
                             "type": "integer"
                           },
@@ -1167,7 +1647,7 @@
                     "scope": {
                       "type": ["string"]
                     },
-                    "spaceId": {
+                    "space_key": {
                       "type": ["string"]
                     }
                   },
@@ -1194,18 +1674,18 @@
                     "action": {
                       "type": ["string"]
                     },
-                    "executingUserId": {
+                    "environment_key": {
                       "type": ["string"]
                     },
-                    "organizationId": {
+                    "organization_key": {
                       "type": ["string"]
                     },
                     "payload": {
                       "properties": {
-                        "entityId": {
+                        "entity_id": {
                           "type": ["string"]
                         },
-                        "referencesCount": {
+                        "references_count": {
                           "type": ["integer"]
                         }
                       },
@@ -1214,7 +1694,7 @@
                     "scope": {
                       "type": ["string"]
                     },
-                    "spaceId": {
+                    "space_key": {
                       "type": ["string"]
                     }
                   },
@@ -1241,18 +1721,18 @@
                     "action": {
                       "type": ["string"]
                     },
-                    "executingUserId": {
+                    "environment_key": {
                       "type": ["string"]
                     },
-                    "organizationId": {
+                    "organization_key": {
                       "type": ["string"]
                     },
                     "payload": {
                       "properties": {
-                        "entityId": {
+                        "entity_id": {
                           "type": ["string"]
                         },
-                        "referencesCount": {
+                        "references_count": {
                           "type": ["integer"]
                         }
                       },
@@ -1261,7 +1741,7 @@
                     "scope": {
                       "type": ["string"]
                     },
-                    "spaceId": {
+                    "space_key": {
                       "type": ["string"]
                     }
                   },
@@ -1277,13 +1757,248 @@
         "version": 1
       },
       {
-        "name": "experiment_start",
+        "description": "Schema for tracking entry page views",
+        "name": "entry_view",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "content_type_id": {
+                  "type": ["string"]
+                },
+                "content_type_name": {
+                  "type": ["string"]
+                },
+                "contexts": {
+                  "type": ["string"]
+                },
+                "editor_type": {
+                  "enum": ["bulk_editor", "slide_in_editor", "entry_editor"],
+                  "type": "string"
+                },
+                "entry_id": {
+                  "type": ["string"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "slide_in_level": {
+                  "type": "integer"
+                },
+                "space_key": {
+                  "type": ["string"]
+                }
+              },
+              "required": [
+                "contexts",
+                "organization_key",
+                "space_key",
+                "entry_id",
+                "content_type_id",
+                "content_type_name",
+                "editor_type"
+              ]
+            },
+            "traits": {}
+          }
+        },
+        "version": 1
+      },
+      {
+        "description": "Environment aliases tracking",
+        "name": "environment_aliases",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "action": {
+                  "description": "refers to the action performed",
+                  "type": ["string", "null"]
+                },
+                "environment_alias_id": {
+                  "description": "refers to the internal id of the environment alias",
+                  "type": ["integer"]
+                },
+                "environment_alias_key": {
+                  "description": "refers to the key of the environment alias",
+                  "type": ["string", "null"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "from_environment_id": {
+                  "description": "refers to the key of the previously aliased environment",
+                  "type": ["string", "null"]
+                },
+                "from_environment_uuid": {
+                  "description": "refers to the UUID of the previously aliased environment",
+                  "type": ["string", "null"]
+                },
+                "inferred_intent": {
+                  "description": "This field will contain the X-Contentful-Header sent by sdks and the webapp, allowing us to track the intent of the creation.",
+                  "type": ["string", "null"]
+                },
+                "organization_key": {
+                  "description": "refers to organization key",
+                  "type": ["string", "null"]
+                },
+                "platform": {
+                  "description": "this will be `web-app` if the webapp sent the request, or anything else the x-contentful-header contains in the platform field, if existing. Null otherwise.",
+                  "type": ["string", "null"]
+                },
+                "space_key": {
+                  "description": "refers to space key",
+                  "type": ["string"]
+                },
+                "to_environment_id": {
+                  "description": "refers to the key of the newly aliased environment",
+                  "type": ["string", "null"]
+                },
+                "to_environment_uuid": {
+                  "description": "refers to the UUID of the newly aliased environment",
+                  "type": ["string", "null"]
+                },
+                "user_agent": {
+                  "description": "refers to the http user agent header sent",
+                  "type": ["string", "null"]
+                }
+              },
+              "required": [
+                "organization_key",
+                "space_key",
+                "action",
+                "environment_alias_id",
+                "environment_alias_key",
+                "to_environment_id"
+              ]
+            },
+            "traits": {}
+          }
+        },
+        "version": 1
+      },
+      {
+        "description": "Environment branching tracking",
+        "name": "environment_branching",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "action": {
+                  "type": ["string", "null"]
+                },
+                "count_assets": {
+                  "description": "refers to number of assets in the source environment",
+                  "type": ["integer", "null"]
+                },
+                "count_content_types": {
+                  "description": "refers to number of content types in the source environment",
+                  "type": ["integer", "null"]
+                },
+                "count_entries": {
+                  "description": "refers to number of entries in the source environment",
+                  "type": ["integer", "null"]
+                },
+                "count_locales": {
+                  "description": "refers to number of locales in the source environment",
+                  "type": ["integer", "null"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "environment_uuid": {
+                  "type": ["string", "null"]
+                },
+                "inferred_intent": {
+                  "description": "This field will contain the X-Contentful-Header send by sdks and the webapp, allowing us to track the intent of the creation.",
+                  "type": ["string", "null"]
+                },
+                "organization_key": {
+                  "description": "refers to organization key",
+                  "type": ["string", "null"]
+                },
+                "platform": {
+                  "description": "this will be `web-app` if the webapp sent the request, or anything else the x-contentful-header contains in the platform field, if existing. Null otherwise.",
+                  "type": ["string", "null"]
+                },
+                "source_environment_id": {
+                  "description": "refers to environment key",
+                  "type": ["string", "null"]
+                },
+                "source_environment_uuid": {
+                  "type": ["string", "null"]
+                },
+                "space_key": {
+                  "description": "refers to space key",
+                  "type": ["string"]
+                },
+                "user_agent": {
+                  "description": "refers to the http user agent header sent",
+                  "type": ["string", "null"]
+                }
+              },
+              "required": ["organization_key", "space_key", "action"]
+            },
+            "traits": {}
+          }
+        },
+        "version": 1
+      },
+      {
+        "description": "Schema for A/B tests, inside of the user_interface",
+        "name": "experiment",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "action": {
+                  "type": ["string"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "experiment_id": {
+                  "type": ["string"]
+                },
+                "interaction_context": {
+                  "type": ["string", "null"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "space_key": {
+                  "type": ["string"]
+                },
+                "variation": {
+                  "type": ["boolean", "null"]
+                }
+              },
+              "required": ["experiment_id", "variation", "action"]
+            },
+            "traits": {}
+          }
+        },
+        "version": 1
+      },
+      {
+        "description": "Allows to track which user is part of a UI experiment or a particular A/B test variation, e.g. controlled through `LaunchDarkly` or another kind of feature flag.",
+        "name": "experiment_started",
         "rules": {
           "labels": {},
           "properties": {
             "context": {},
             "properties": {
               "properties": {
+                "environment_key": {
+                  "type": ["string"]
+                },
                 "experiment_id": {
                   "description": "The experiment name the current user is part of",
                   "type": "string"
@@ -1292,16 +2007,12 @@
                   "description": "The experiment variation the current user is assigned to",
                   "type": "string"
                 },
-                "organization_id": {
+                "organization_key": {
                   "description": "Current organization key",
                   "type": "string"
                 },
-                "space_id": {
+                "space_key": {
                   "description": "Current space key",
-                  "type": "string"
-                },
-                "user_id": {
-                  "description": "Curent user key",
                   "type": "string"
                 }
               },
@@ -1318,6 +2029,329 @@
         "version": 1
       },
       {
+        "description": "Extension was activated",
+        "name": "extension_activate",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "extension_definition_id": {
+                  "description": "Extenstion Indentifyer",
+                  "type": ["string", "null"]
+                },
+                "extension_id": {
+                  "description": "Extenstion Indentifyer",
+                  "type": "string"
+                },
+                "location": {
+                  "description": "Dunno",
+                  "type": "string"
+                },
+                "organization_key": {
+                  "description": "Refers to organization_key",
+                  "type": ["string", "null"]
+                },
+                "space_key": {
+                  "description": "Refers to space_key",
+                  "type": "string"
+                }
+              },
+              "required": ["space_key", "extension_id", "location"]
+            },
+            "traits": {}
+          }
+        },
+        "version": 1
+      },
+      {
+        "description": "Extension rendered",
+        "name": "extension_render",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "contexts": {
+                  "type": ["string"]
+                },
+                "environment_key": {
+                  "description": "Refers to environment_key",
+                  "type": "string"
+                },
+                "extension_definition_id": {
+                  "type": ["string", "null"]
+                },
+                "extension_id": {
+                  "type": "string"
+                },
+                "extension_name": {
+                  "type": "string"
+                },
+                "installation_params": {
+                  "type": "array"
+                },
+                "instance_params": {
+                  "type": "array"
+                },
+                "location": {
+                  "type": "string"
+                },
+                "src": {
+                  "type": ["string", "null"]
+                }
+              },
+              "required": [
+                "contexts",
+                "location",
+                "extension_id",
+                "extension_name",
+                "src",
+                "installation_params",
+                "instance_params"
+              ]
+            },
+            "traits": {}
+          }
+        },
+        "version": 1
+      },
+      {
+        "description": "Extension set a value of a field",
+        "name": "extension_set_value",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "content_type_id": {
+                  "type": "string"
+                },
+                "entry_id": {
+                  "type": "string"
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "extension_definition_id": {
+                  "type": ["string", "null"]
+                },
+                "extension_id": {
+                  "type": "string"
+                },
+                "field_id": {
+                  "type": "string"
+                },
+                "locale_code": {
+                  "type": "string"
+                },
+                "organization_key": {
+                  "description": "Refers to organization_key",
+                  "type": ["string", "null"]
+                },
+                "space_key": {
+                  "description": "Refers to space_key",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "space_key",
+                "entry_id",
+                "content_type_id",
+                "field_id",
+                "locale_code",
+                "extension_id"
+              ]
+            },
+            "traits": {}
+          }
+        },
+        "version": 1
+      },
+      {
+        "description": "Bulk references editor feature tracking",
+        "name": "feature_bulk_editor",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "action": {
+                  "type": ["string"]
+                },
+                "content_type_id": {
+                  "type": ["string", "null"]
+                },
+                "entry_id": {
+                  "type": ["string", "null"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "num_edited_entries": {
+                  "type": ["integer", "null"]
+                },
+                "num_published_entries": {
+                  "type": ["integer", "null"]
+                },
+                "option_added": {
+                  "type": ["boolean", "null"]
+                },
+                "option_existing": {
+                  "type": ["boolean", "null"]
+                },
+                "organization_key": {
+                  "type": ["string", "null"]
+                },
+                "parent_entry_id": {
+                  "type": ["string", "null"]
+                },
+                "ref_count": {
+                  "type": ["integer", "null"]
+                },
+                "space_key": {
+                  "type": ["string"]
+                },
+                "status": {
+                  "type": ["string", "null"]
+                }
+              },
+              "required": ["space_key", "action"]
+            },
+            "traits": {}
+          }
+        },
+        "version": 1
+      },
+      {
+        "description": "Events for the comments endpoint, emitted on CUD actions. Note: The Tasks feature is using the comments endpoint behind the scenes.",
+        "name": "feature_comments_and_tasks",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "action": {
+                  "description": "The action that is performed on the comment or task",
+                  "type": ["string"]
+                },
+                "comment_id": {
+                  "description": "The comment's (or tasks) ID",
+                  "type": ["string"]
+                },
+                "comment_type": {
+                  "description": "The kind of comment that this event is about (can be a Task or normal Comment)",
+                  "type": ["string"]
+                },
+                "entity_id": {
+                  "description": "The ID of the entity containing the comment",
+                  "type": ["string"]
+                },
+                "entity_type": {
+                  "description": "The type of the entity containing the comment",
+                  "type": ["string"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "environment_uuid": {
+                  "description": "Environment internally used ID",
+                  "type": ["string"]
+                },
+                "has_body_changed": {
+                  "description": "Whether the comment's message or task's title was touched by the performed action. Only relevant for `update` action (omitted otherwise)",
+                  "type": ["boolean", "null"]
+                },
+                "new_assignee_id": {
+                  "description": "ID of the assigned user after the action. Skip in case of `delete` action action and for non-task comments.",
+                  "type": ["string", "null"]
+                },
+                "new_body_length": {
+                  "description": "Total length of the comment's message or task's title after the action. Skip in case of a `delete` action.",
+                  "type": ["integer", "null"]
+                },
+                "new_status": {
+                  "description": "Status (\"resolved\" or \"open\") of a task after the action. Skip in case of a `delete` action and for non-task comments.",
+                  "type": ["string", "null"]
+                },
+                "old_assignee_id": {
+                  "description": "ID of the assigned user before the action. Skip in case of a `create` action and for non-task comments.",
+                  "type": ["string", "null"]
+                },
+                "old_body_length": {
+                  "description": "Total length of the comment's message or task's title before the action. Skip in case of a `create` action.",
+                  "type": ["integer", "null"]
+                },
+                "old_status": {
+                  "description": "Status (\"resolved\" or \"open\") of a task before the action. Skip in case of a `create` action and for non-task comments.",
+                  "type": ["string", "null"]
+                },
+                "organization_key": {
+                  "description": "Gatekeeper organization key",
+                  "type": ["string"]
+                },
+                "parent_comment_id": {
+                  "description": "ID of the parent comment (discussion thread), `null` if the comment has no parent (and therefore is a parent itself)",
+                  "type": ["string", "null"]
+                },
+                "space_key": {
+                  "description": "Gatekeeper space key",
+                  "type": ["string"]
+                }
+              },
+              "required": [
+                "organization_key",
+                "space_key",
+                "environment_key",
+                "environment_uuid",
+                "entity_id",
+                "entity_type",
+                "action",
+                "comment_type",
+                "comment_id"
+              ]
+            },
+            "traits": {}
+          }
+        },
+        "version": 1
+      },
+      {
+        "description": "Generated empty schema for feature_playground",
+        "name": "feature_playground",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "action": {
+                  "type": ["string"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "integration_environment": {
+                  "type": ["string", "null"]
+                },
+                "mocked_device": {
+                  "type": ["string", "null"]
+                },
+                "organization_key": {
+                  "type": ["string", "null"]
+                }
+              },
+              "required": ["action"]
+            },
+            "traits": {}
+          }
+        },
+        "version": 1
+      },
+      {
+        "description": "Schema of interacting with a reference entry",
         "name": "feature_reference_action",
         "rules": {
           "properties": {
@@ -1325,56 +2359,214 @@
             "properties": {
               "properties": {
                 "content_type_id": {
-                  "description": "Content type ID of the linked entity the action was performed on. `null` in case of an asset.",
-                  "type": ["string"]
+                  "type": "string"
                 },
-                "entity_id": {
-                  "description": "ID of the linked entity the action was performed on.",
-                  "type": ["string"]
-                },
-                "entity_type": {
-                  "description": "Type of the linked entity the action was performed on.",
+                "environment_key": {
                   "type": ["string"]
                 },
                 "event_type": {
-                  "description": "The action performed on the linked entity.",
-                  "type": ["string"]
+                  "type": "string"
                 },
-                "executing_user_id": {
-                  "type": ["string"]
-                },
-                "organization_id": {
-                  "type": ["string"]
+                "organization_key": {
+                  "type": "string"
                 },
                 "parent_entry_id": {
-                  "description": "Entry ID of the entry with the field containing the linked entity which the event is about.",
-                  "type": ["string"]
+                  "type": "string"
                 },
-                "parent_field_path": {
-                  "description": "`${FIELD_ID}:${LOCALE_CODE}` on the `parent_entry_id` that contains the linked  entity which the event is about. ID/code are public CMA identifiers, not internal CF IDs.",
-                  "type": ["string"]
-                },
-                "space_id": {
-                  "type": ["string"]
+                "space_key": {
+                  "type": "string"
                 }
               },
               "required": [
+                "organization_key",
+                "space_key",
                 "content_type_id",
-                "entity_id",
-                "entity_type",
                 "event_type",
-                "executing_user_id",
-                "organization_id",
-                "parent_entry_id",
-                "parent_field_path",
-                "space_id"
-              ],
-              "type": "object"
+                "parent_entry_id"
+              ]
             },
             "traits": {}
           }
         },
-        "version": 3
+        "version": 1
+      },
+      {
+        "description": "Snapshot tracking feature",
+        "name": "feature_snapshot",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "action": {
+                  "type": ["string"]
+                },
+                "entry_fields_count": {
+                  "type": ["integer", "null"]
+                },
+                "entry_id": {
+                  "type": ["string"]
+                },
+                "entry_version": {
+                  "type": ["integer", "null"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "option_changes_discarded": {
+                  "type": ["boolean", "null"]
+                },
+                "option_full_restore": {
+                  "type": ["boolean", "null"]
+                },
+                "option_show_diffs_only": {
+                  "type": ["boolean", "null"]
+                },
+                "organization_key": {
+                  "type": ["string", "null"]
+                },
+                "restore_fields_count": {
+                  "type": ["integer", "null"]
+                },
+                "snapshot_id": {
+                  "type": ["string", "null"]
+                },
+                "snapshot_version": {
+                  "type": ["integer", "null"]
+                },
+                "source": {
+                  "type": ["string", "null"]
+                },
+                "space_key": {
+                  "type": ["string"]
+                }
+              },
+              "required": ["space_key", "entry_id", "action"]
+            },
+            "traits": {}
+          }
+        },
+        "version": 1
+      },
+      {
+        "description": "Action tracking for Single Sign-On (SSO) Self Configuration via the webapp",
+        "name": "feature_sso_self_configuration",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "action": {
+                  "description": "The action being performed",
+                  "type": "string"
+                },
+                "connection_test_result_errors": {
+                  "description": "If the action is `connection_test_result`, the errors that occurred if the status is failure",
+                  "type": ["array", "null"]
+                },
+                "connection_test_result_status": {
+                  "description": "If the action is `connection_test_result`, the status of the latest test result",
+                  "type": ["string", "null"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "description": "The organization that this is happening in",
+                  "type": ["string", "null"]
+                }
+              },
+              "required": ["organization_key", "action"]
+            },
+            "traits": {}
+          }
+        },
+        "version": 1
+      },
+      {
+        "description": "Generic event for tracking text editor widgets (e.g. StructuredText or Markdown).",
+        "name": "feature_text_editor",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "action": {
+                  "description": "The action the user has triggered within the text editor",
+                  "type": ["string"]
+                },
+                "action_origin": {
+                  "description": "Where the action was triggered, e.g. toolbar icon or shortcut (`null` means we don't know)",
+                  "type": ["string", "null"]
+                },
+                "additional_data": {
+                  "description": "Allows to add additional action specific data",
+                  "type": ["object", "null"]
+                },
+                "character_count_after": {
+                  "description": "Character count after the action was applied",
+                  "type": ["integer", "null"]
+                },
+                "character_count_before": {
+                  "description": "Character count before the action was applied (useful for paste action)",
+                  "type": ["integer", "null"]
+                },
+                "character_count_selection": {
+                  "description": "The number of characters selected when the action was triggered (e.g. useful to know whether a hyperlink is mostly applied to a selection or not)",
+                  "type": ["integer", "null"]
+                },
+                "content_type_id": {
+                  "description": "content_api content_type ID of the entry with the text editor",
+                  "type": ["string"]
+                },
+                "editor_name": {
+                  "description": "The editor widget name (use front-end widget ID)",
+                  "type": "string"
+                },
+                "entry_id": {
+                  "description": "content_api entry ID with the text editor widget",
+                  "type": ["string"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "field_id": {
+                  "description": "ID of field with the text editor widget",
+                  "type": ["string"]
+                },
+                "field_locale": {
+                  "description": "Locale ID complementing the `field_id`, null if the action is not for one particular locale only.",
+                  "type": ["string", "null"]
+                },
+                "is_fullscreen": {
+                  "description": "Whether the action was triggered while full-screen mode was active",
+                  "type": ["boolean"]
+                },
+                "organization_key": {
+                  "description": "Gatekeeper organization KEY",
+                  "type": ["string"]
+                },
+                "space_key": {
+                  "description": "Gatekeeper space KEY",
+                  "type": ["string"]
+                }
+              },
+              "required": [
+                "organization_key",
+                "space_key",
+                "content_type_id",
+                "entry_id",
+                "field_id",
+                "field_locale",
+                "editor_name",
+                "action",
+                "is_fullscreen"
+              ]
+            },
+            "traits": {}
+          }
+        },
+        "version": 1
       },
       {
         "name": "global:app_loaded",
@@ -1383,36 +2575,17 @@
             "context": {},
             "properties": {
               "properties": {
-                "contexts": {
-                  "items": {
-                    "properties": {
-                      "data": {
-                        "properties": {
-                          "action": {
-                            "type": ["string"]
-                          },
-                          "executingUserId": {
-                            "type": ["string"]
-                          },
-                          "organizationId": {
-                            "type": ["string"]
-                          },
-                          "spaceId": {
-                            "type": ["string"]
-                          }
-                        },
-                        "type": "object"
-                      },
-                      "schema": {
-                        "type": ["string"]
-                      }
-                    },
-                    "type": "object"
-                  },
-                  "type": "array"
+                "action": {
+                  "type": ["string"]
                 },
-                "data": {
-                  "type": ["object"]
+                "contexts": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "space_key": {
+                  "type": ["string"]
                 }
               },
               "type": "object"
@@ -1435,19 +2608,19 @@
                     "action": {
                       "type": ["string"]
                     },
-                    "executingUserId": {
+                    "environment_key": {
                       "type": ["string"]
                     },
                     "name": {
                       "type": ["string"]
                     },
-                    "organizationId": {
+                    "organization_key": {
                       "type": ["string"]
                     },
                     "purpose": {
                       "type": ["string"]
                     },
-                    "spaceId": {
+                    "space_key": {
                       "type": ["string"]
                     }
                   },
@@ -1472,28 +2645,23 @@
             "context": {},
             "properties": {
               "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "payload": {
-                      "type": ["object"]
-                    },
-                    "scope": {
-                      "type": ["string"]
-                    },
-                    "spaceId": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
+                "action": {
+                  "type": ["string"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "payload": {
+                  "type": ["object"]
+                },
+                "scope": {
+                  "type": ["string"]
+                },
+                "space_key": {
+                  "type": ["string"]
                 }
               },
               "type": "object"
@@ -1511,25 +2679,20 @@
             "context": {},
             "properties": {
               "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "payload": {
-                      "type": ["object"]
-                    },
-                    "scope": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
+                "action": {
+                  "type": ["string"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "payload": {
+                  "type": ["object"]
+                },
+                "scope": {
+                  "type": ["string"]
                 }
               },
               "type": "object"
@@ -1549,133 +2712,130 @@
               "properties": {
                 "data": {
                   "properties": {
-                    "executingUserId": {
+                    "from_state": {
                       "type": ["string"]
                     },
-                    "fromState": {
-                      "type": ["string"]
-                    },
-                    "fromStateParams": {
+                    "from_state_params": {
                       "properties": {
-                        "acceptedPermissions": {},
-                        "addToContext": {
+                        "accepted_permissions": {},
+                        "add_to_context": {
                           "type": ["boolean"]
                         },
-                        "apiKeyId": {
+                        "api_key_id": {
                           "type": ["string"]
                         },
-                        "appId": {},
-                        "assetId": {
+                        "app_id": {},
+                        "asset_id": {
                           "type": ["string"]
                         },
-                        "contentTypeId": {
+                        "content_type_id": {
                           "type": ["string"]
                         },
-                        "definitionId": {
+                        "definition_id": {
                           "type": ["string"]
                         },
-                        "entryId": {
+                        "entry_id": {
                           "type": ["string"]
                         },
-                        "environmentId": {
+                        "environment_key": {
                           "type": ["string"]
                         },
-                        "ignoreLeaveConfirmation": {
+                        "ignore_leave_confirmation": {
                           "type": ["boolean"]
                         },
-                        "invitationId": {
+                        "invitation_id": {
                           "type": ["string"]
                         },
-                        "jumpToRole": {
+                        "jump_to_role": {
                           "type": ["string"]
                         },
-                        "localeId": {
+                        "locale_id": {
                           "type": ["string"]
                         },
-                        "orgId": {},
-                        "orgOwnerOrAdmin": {},
-                        "pathSuffix": {
+                        "org_id": {},
+                        "org_owner_or_admin": {},
+                        "path_suffix": {
                           "type": ["string"]
                         },
                         "referrer": {},
-                        "spaceId": {
+                        "space_key": {
                           "type": ["string"]
                         },
                         "tab": {
                           "type": ["string"]
                         },
-                        "templateId": {},
-                        "userId": {
+                        "template_id": {},
+                        "user_id": {
                           "type": ["string"]
                         },
-                        "webhookId": {
+                        "webhook_id": {
                           "type": ["string"]
                         }
                       },
                       "type": "object"
                     },
-                    "organizationId": {
+                    "organization_key": {
                       "type": ["string"]
                     },
-                    "spaceId": {
+                    "space_key": {
                       "type": ["string"]
                     },
-                    "toState": {
+                    "to_state": {
                       "type": ["string"]
                     },
-                    "toStateParams": {
+                    "to_state_params": {
                       "properties": {
-                        "acceptedPermissions": {},
-                        "addToContext": {
+                        "accepted_permissions": {},
+                        "add_to_context": {
                           "type": ["boolean"]
                         },
-                        "apiKeyId": {
+                        "api_key_id": {
                           "type": ["string"]
                         },
-                        "appId": {},
-                        "assetId": {
+                        "app_id": {},
+                        "asset_id": {
                           "type": ["string"]
                         },
-                        "contentTypeId": {
+                        "content_type_id": {
                           "type": ["string"]
                         },
-                        "definitionId": {
+                        "definition_id": {
                           "type": ["string"]
                         },
-                        "entryId": {
+                        "entry_id": {
                           "type": ["string"]
                         },
-                        "environmentId": {
+                        "environment_key": {
                           "type": ["string"]
                         },
-                        "ignoreLeaveConfirmation": {
+                        "ignore_leave_confirmation": {
                           "type": ["boolean"]
                         },
-                        "jumpToRole": {
+                        "jump_to_role": {
                           "type": ["string"]
                         },
-                        "localeId": {
+                        "locale_id": {
                           "type": ["string"]
                         },
-                        "orgId": {
+                        "org_id": {
                           "type": ["string"]
                         },
-                        "orgOwnerOrAdmin": {},
-                        "pathSuffix": {
+                        "org_owner_or_admin": {},
+                        "path_suffix": {
                           "type": ["string"]
                         },
                         "referrer": {},
-                        "spaceId": {
+                        "space_key": {
                           "type": ["string"]
                         },
                         "tab": {
                           "type": ["string"]
                         },
-                        "templateId": {},
-                        "userId": {
+                        "template_id": {},
+                        "user_id": {
                           "type": ["string"]
                         },
-                        "webhookId": {
+                        "webhook_id": {
                           "type": ["string"]
                         }
                       },
@@ -1705,27 +2865,27 @@
                     "action": {
                       "type": ["string"]
                     },
-                    "executingUserId": {
+                    "environment_key": {
                       "type": ["string"]
                     },
-                    "organizationId": {
+                    "organization_key": {
                       "type": ["string"]
                     },
                     "payload": {
                       "properties": {
-                        "dialogAction": {
+                        "dialog_action": {
                           "type": ["string"]
                         },
-                        "dialogSessionId": {
+                        "dialog_session_id": {
                           "type": ["string"]
                         },
-                        "entityId": {
+                        "entity_id": {
                           "type": ["string"]
                         },
-                        "entityType": {
+                        "entity_type": {
                           "type": ["string"]
                         },
-                        "incomingLinksCount": {
+                        "incoming_links_count": {
                           "type": ["integer"]
                         }
                       },
@@ -1734,7 +2894,7 @@
                     "scope": {
                       "type": ["string"]
                     },
-                    "spaceId": {
+                    "space_key": {
                       "type": ["string"]
                     }
                   },
@@ -1761,27 +2921,27 @@
                     "action": {
                       "type": ["string"]
                     },
-                    "executingUserId": {
+                    "environment_key": {
                       "type": ["string"]
                     },
-                    "organizationId": {
+                    "organization_key": {
                       "type": ["string"]
                     },
                     "payload": {
                       "properties": {
-                        "dialogAction": {
+                        "dialog_action": {
                           "type": ["string"]
                         },
-                        "dialogSessionId": {
+                        "dialog_session_id": {
                           "type": ["string"]
                         },
-                        "entityId": {
+                        "entity_id": {
                           "type": ["string"]
                         },
-                        "entityType": {
+                        "entity_type": {
                           "type": ["string"]
                         },
-                        "incomingLinksCount": {
+                        "incoming_links_count": {
                           "type": ["integer"]
                         }
                       },
@@ -1790,7 +2950,7 @@
                     "scope": {
                       "type": ["string"]
                     },
-                    "spaceId": {
+                    "space_key": {
                       "type": ["string"]
                     }
                   },
@@ -1817,27 +2977,27 @@
                     "action": {
                       "type": ["string"]
                     },
-                    "executingUserId": {
+                    "environment_key": {
                       "type": ["string"]
                     },
-                    "organizationId": {
+                    "organization_key": {
                       "type": ["string"]
                     },
                     "payload": {
                       "properties": {
-                        "entityId": {
+                        "entity_id": {
                           "type": ["string"]
                         },
-                        "entityType": {
+                        "entity_type": {
                           "type": ["string"]
                         },
-                        "incomingLinkIds": {
+                        "incoming_link_ids": {
                           "items": {
                             "type": "string"
                           },
                           "type": "array"
                         },
-                        "incomingLinksCount": {
+                        "incoming_links_count": {
                           "type": ["integer"]
                         }
                       },
@@ -1846,7 +3006,7 @@
                     "scope": {
                       "type": ["string"]
                     },
-                    "spaceId": {
+                    "space_key": {
                       "type": ["string"]
                     }
                   },
@@ -1862,95 +3022,140 @@
         "version": 1
       },
       {
-        "name": "jobs:cancel",
+        "description": "Emitted when the user cancels the job",
+        "name": "jobs_cancel",
         "rules": {
           "properties": {
             "context": {},
             "properties": {
               "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "jobId": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "spaceId": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
+                "action": {
+                  "type": ["string"]
                 },
-                "schema": {
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "job_id": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "space_key": {
                   "type": ["string"]
                 }
               },
-              "type": "object"
+              "required": ["organization_key", "space_key", "job_id", "action"]
             },
             "traits": {}
-          },
-          "type": "object"
+          }
         },
         "version": 1
       },
       {
-        "name": "jobs:create",
+        "description": "Emitted when a user creates a job",
+        "name": "jobs_create",
         "rules": {
           "properties": {
             "context": {},
             "properties": {
               "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "entityId": {
-                      "type": ["string"]
-                    },
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "jobId": {
-                      "type": ["string"]
-                    },
-                    "localTimezone": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "scheduledFor": {
-                      "type": ["string"]
-                    },
-                    "scheduledForTimezone": {
-                      "type": ["string"]
-                    },
-                    "spaceId": {
-                      "type": ["string"]
-                    },
-                    "timezoneOffset": {
-                      "type": ["integer"]
-                    }
-                  },
-                  "type": "object"
+                "action": {
+                  "type": ["string"]
                 },
-                "schema": {
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "job_id": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "scheduled_for": {
+                  "type": ["string"]
+                },
+                "space_key": {
+                  "type": ["string"]
+                },
+                "timezone_offset": {
+                  "type": ["integer"]
+                }
+              },
+              "required": [
+                "organization_key",
+                "space_key",
+                "action",
+                "job_id",
+                "scheduled_for",
+                "timezone_offset"
+              ]
+            },
+            "traits": {}
+          }
+        },
+        "version": 1
+      },
+      {
+        "description": "Emitted when a job is triggered",
+        "name": "jobs_processing",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "action": {
+                  "type": ["string"]
+                },
+                "job_id": {
+                  "type": ["string"]
+                },
+                "status_code": {
+                  "description": "code of the status of the current job process. Example: 200 for success",
+                  "type": ["integer"]
+                }
+              },
+              "required": ["job_id", "action", "status_code"]
+            },
+            "traits": {}
+          }
+        },
+        "version": 1
+      },
+      {
+        "description": "Schema for tracking every state transition in the user interface",
+        "name": "page_view",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "from_state": {
+                  "type": ["string"]
+                },
+                "from_state_params": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "space_key": {
+                  "type": ["string"]
+                },
+                "to_state": {
+                  "type": ["string"]
+                },
+                "to_state_params": {
                   "type": ["string"]
                 }
               },
-              "type": "object"
+              "required": ["to_state"]
             },
             "traits": {}
-          },
-          "type": "object"
+          }
         },
         "version": 1
       },
@@ -1966,15 +3171,15 @@
                     "action": {
                       "type": ["string"]
                     },
-                    "executingUserId": {
+                    "environment_key": {
                       "type": ["string"]
                     },
-                    "organizationId": {
+                    "organization_key": {
                       "type": ["string"]
                     },
                     "payload": {
                       "properties": {
-                        "stateName": {
+                        "state_name": {
                           "type": ["string"]
                         },
                         "value": {
@@ -1986,7 +3191,7 @@
                     "scope": {
                       "type": ["string"]
                     },
-                    "spaceId": {
+                    "space_key": {
                       "type": ["string"]
                     }
                   },
@@ -2013,15 +3218,15 @@
                     "action": {
                       "type": ["string"]
                     },
-                    "executingUserId": {
+                    "environment_key": {
                       "type": ["string"]
                     },
-                    "organizationId": {
+                    "organization_key": {
                       "type": ["string"]
                     },
                     "payload": {
                       "properties": {
-                        "stateName": {
+                        "state_name": {
                           "type": ["string"]
                         },
                         "value": {
@@ -2033,7 +3238,7 @@
                     "scope": {
                       "type": ["string"]
                     },
-                    "spaceId": {
+                    "space_key": {
                       "type": ["string"]
                     }
                   },
@@ -2060,15 +3265,15 @@
                     "action": {
                       "type": ["string"]
                     },
-                    "executingUserId": {
+                    "environment_key": {
                       "type": ["string"]
                     },
-                    "organizationId": {
+                    "organization_key": {
                       "type": ["string"]
                     },
                     "payload": {
                       "properties": {
-                        "stateName": {
+                        "state_name": {
                           "type": ["string"]
                         },
                         "value": {
@@ -2080,7 +3285,7 @@
                     "scope": {
                       "type": ["string"]
                     },
-                    "spaceId": {
+                    "space_key": {
                       "type": ["string"]
                     }
                   },
@@ -2107,10 +3312,7 @@
                     "action": {
                       "type": ["string"]
                     },
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "personalAccessTokenId": {
+                    "personal_access_token_id": {
                       "type": ["string"]
                     }
                   },
@@ -2122,6 +3324,37 @@
             "traits": {}
           },
           "type": "object"
+        },
+        "version": 1
+      },
+      {
+        "description": "PrevieApiKey schema",
+        "name": "preview_api_key",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "action": {
+                  "type": ["string"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": ["string", "null"]
+                },
+                "space_key": {
+                  "type": ["string"]
+                },
+                "version": {
+                  "type": ["integer", "null"]
+                }
+              },
+              "required": ["space_key", "action"]
+            },
+            "traits": {}
+          }
         },
         "version": 1
       },
@@ -2521,40 +3754,35 @@
             "context": {},
             "properties": {
               "properties": {
-                "data": {
-                  "properties": {
-                    "entityType": {
-                      "type": ["string"]
-                    },
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "index": {
-                      "type": ["integer"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "resultCount": {
-                      "type": ["integer"]
-                    },
-                    "searchFilters": {
-                      "items": {
-                        "type": "string"
-                      },
-                      "type": "array"
-                    },
-                    "searchQuery": {
-                      "type": ["string"]
-                    },
-                    "sequenceKey": {
-                      "type": ["string"]
-                    },
-                    "spaceId": {
-                      "type": ["string"]
-                    }
+                "entity_type": {
+                  "type": ["string"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "index": {
+                  "type": ["integer"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "result_count": {
+                  "type": ["integer"]
+                },
+                "search_filters": {
+                  "items": {
+                    "type": "string"
                   },
-                  "type": "object"
+                  "type": "array"
+                },
+                "search_query": {
+                  "type": ["string"]
+                },
+                "sequence_key": {
+                  "type": ["string"]
+                },
+                "space_key": {
+                  "type": ["string"]
                 }
               },
               "type": "object"
@@ -2572,40 +3800,35 @@
             "context": {},
             "properties": {
               "properties": {
-                "data": {
-                  "properties": {
-                    "entityType": {
-                      "type": ["string"]
-                    },
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "filter": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "resultCount": {
-                      "type": ["integer"]
-                    },
-                    "searchFilters": {
-                      "items": {
-                        "type": "string"
-                      },
-                      "type": "array"
-                    },
-                    "searchQuery": {
-                      "type": ["string"]
-                    },
-                    "sequenceKey": {
-                      "type": ["string"]
-                    },
-                    "spaceId": {
-                      "type": ["string"]
-                    }
+                "entity_type": {
+                  "type": ["string"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "filter": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "result_count": {
+                  "type": ["integer"]
+                },
+                "search_filters": {
+                  "items": {
+                    "type": "string"
                   },
-                  "type": "object"
+                  "type": "array"
+                },
+                "search_query": {
+                  "type": ["string"]
+                },
+                "sequence_key": {
+                  "type": ["string"]
+                },
+                "space_key": {
+                  "type": ["string"]
                 }
               },
               "type": "object"
@@ -2623,40 +3846,35 @@
             "context": {},
             "properties": {
               "properties": {
-                "data": {
-                  "properties": {
-                    "entityType": {
-                      "type": ["string"]
-                    },
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "filter": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "resultCount": {
-                      "type": ["integer"]
-                    },
-                    "searchFilters": {
-                      "items": {
-                        "type": "string"
-                      },
-                      "type": "array"
-                    },
-                    "searchQuery": {
-                      "type": ["string"]
-                    },
-                    "sequenceKey": {
-                      "type": ["string"]
-                    },
-                    "spaceId": {
-                      "type": ["string"]
-                    }
+                "entity_type": {
+                  "type": ["string"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "filter": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "result_count": {
+                  "type": ["integer"]
+                },
+                "search_filters": {
+                  "items": {
+                    "type": "string"
                   },
-                  "type": "object"
+                  "type": "array"
+                },
+                "search_query": {
+                  "type": ["string"]
+                },
+                "sequence_key": {
+                  "type": ["string"]
+                },
+                "space_key": {
+                  "type": ["string"]
                 }
               },
               "type": "object"
@@ -2674,37 +3892,32 @@
             "context": {},
             "properties": {
               "properties": {
-                "data": {
-                  "properties": {
-                    "entityType": {
-                      "type": ["string"]
-                    },
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "resultCount": {
-                      "type": ["integer"]
-                    },
-                    "searchFilters": {
-                      "items": {
-                        "type": "string"
-                      },
-                      "type": "array"
-                    },
-                    "searchQuery": {
-                      "type": ["string"]
-                    },
-                    "sequenceKey": {
-                      "type": ["string"]
-                    },
-                    "spaceId": {
-                      "type": ["string"]
-                    }
+                "entity_type": {
+                  "type": ["string"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "result_count": {
+                  "type": ["integer"]
+                },
+                "search_filters": {
+                  "items": {
+                    "type": "string"
                   },
-                  "type": "object"
+                  "type": "array"
+                },
+                "search_query": {
+                  "type": ["string"]
+                },
+                "sequence_key": {
+                  "type": ["string"]
+                },
+                "space_key": {
+                  "type": ["string"]
                 }
               },
               "type": "object"
@@ -2722,38 +3935,33 @@
             "context": {},
             "properties": {
               "properties": {
-                "data": {
-                  "properties": {
-                    "contentTypeId": {},
-                    "entityType": {
-                      "type": ["string"]
-                    },
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "resultCount": {
-                      "type": ["integer"]
-                    },
-                    "searchFilters": {
-                      "items": {
-                        "type": "string"
-                      },
-                      "type": "array"
-                    },
-                    "searchQuery": {
-                      "type": ["string"]
-                    },
-                    "sequenceKey": {
-                      "type": ["string"]
-                    },
-                    "spaceId": {
-                      "type": ["string"]
-                    }
+                "content_type_id": {},
+                "entity_type": {
+                  "type": ["string"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "result_count": {
+                  "type": ["integer"]
+                },
+                "search_filters": {
+                  "items": {
+                    "type": "string"
                   },
-                  "type": "object"
+                  "type": "array"
+                },
+                "search_query": {
+                  "type": ["string"]
+                },
+                "sequence_key": {
+                  "type": ["string"]
+                },
+                "space_key": {
+                  "type": ["string"]
                 }
               },
               "type": "object"
@@ -2771,44 +3979,39 @@
             "context": {},
             "properties": {
               "properties": {
-                "data": {
-                  "properties": {
-                    "contentTypeId": {},
-                    "entityType": {
-                      "type": ["string"]
-                    },
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "folderId": {
-                      "type": ["string"]
-                    },
-                    "folderTitle": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "searchFilters": {
-                      "items": {
-                        "type": "string"
-                      },
-                      "type": "array"
-                    },
-                    "searchQuery": {
-                      "type": ["string"]
-                    },
-                    "spaceId": {
-                      "type": ["string"]
-                    },
-                    "viewId": {
-                      "type": ["string"]
-                    },
-                    "viewType": {
-                      "type": ["string"]
-                    }
+                "content_type_id": {},
+                "entity_type": {
+                  "type": ["string"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "folder_id": {
+                  "type": ["string"]
+                },
+                "folder_title": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "search_filters": {
+                  "items": {
+                    "type": "string"
                   },
-                  "type": "object"
+                  "type": "array"
+                },
+                "search_query": {
+                  "type": ["string"]
+                },
+                "space_key": {
+                  "type": ["string"]
+                },
+                "view_id": {
+                  "type": ["string"]
+                },
+                "view_type": {
+                  "type": ["string"]
                 }
               },
               "type": "object"
@@ -2826,28 +4029,23 @@
             "context": {},
             "properties": {
               "properties": {
-                "data": {
-                  "properties": {
-                    "entityType": {
-                      "type": ["string"]
-                    },
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "spaceId": {
-                      "type": ["string"]
-                    },
-                    "viewId": {
-                      "type": ["string"]
-                    },
-                    "viewType": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
+                "entity_type": {
+                  "type": ["string"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "space_key": {
+                  "type": ["string"]
+                },
+                "view_id": {
+                  "type": ["string"]
+                },
+                "view_type": {
+                  "type": ["string"]
                 }
               },
               "type": "object"
@@ -2865,48 +4063,43 @@
             "context": {},
             "properties": {
               "properties": {
-                "data": {
-                  "properties": {
-                    "contentTypeId": {},
-                    "entityType": {
-                      "type": ["string"]
-                    },
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "resultCount": {
-                      "type": ["integer"]
-                    },
-                    "searchFilters": {
-                      "items": {
-                        "type": "string"
-                      },
-                      "type": "array"
-                    },
-                    "searchQuery": {
-                      "type": ["string"]
-                    },
-                    "sequenceKey": {
-                      "type": ["string"]
-                    },
-                    "spaceId": {
-                      "type": ["string"]
-                    },
-                    "viewId": {
-                      "type": ["string"]
-                    },
-                    "viewRoles": {},
-                    "viewTitle": {
-                      "type": ["string"]
-                    },
-                    "viewType": {
-                      "type": ["string"]
-                    }
+                "content_type_id": {},
+                "entity_type": {
+                  "type": ["string"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "result_count": {
+                  "type": ["integer"]
+                },
+                "search_filters": {
+                  "items": {
+                    "type": "string"
                   },
-                  "type": "object"
+                  "type": "array"
+                },
+                "search_query": {
+                  "type": ["string"]
+                },
+                "sequence_key": {
+                  "type": ["string"]
+                },
+                "space_key": {
+                  "type": ["string"]
+                },
+                "view_id": {
+                  "type": ["string"]
+                },
+                "view_roles": {},
+                "view_title": {
+                  "type": ["string"]
+                },
+                "view_type": {
+                  "type": ["string"]
                 }
               },
               "type": "object"
@@ -2914,6 +4107,58 @@
             "traits": {}
           },
           "type": "object"
+        },
+        "version": 1
+      },
+      {
+        "description": "Schema for a search performed in the top bar of the webapp",
+        "name": "search_perform",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "content_type_id": {
+                  "type": ["string", "null"]
+                },
+                "entity_type": {
+                  "type": "string"
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "result_count": {
+                  "type": ["integer"]
+                },
+                "search_filters": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "search_query": {
+                  "type": ["string", "null"]
+                },
+                "sequence_key": {
+                  "type": ["string", "null"]
+                },
+                "space_key": {
+                  "type": ["string"]
+                }
+              },
+              "required": [
+                "organization_key",
+                "space_key",
+                "entity_type",
+                "search_query",
+                "result_count"
+              ]
+            },
+            "traits": {}
+          }
         },
         "version": 1
       },
@@ -2924,45 +4169,40 @@
             "context": {},
             "properties": {
               "properties": {
-                "data": {
+                "action": {
+                  "type": ["string"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "payload": {
                   "properties": {
-                    "action": {
+                    "cma_entity_version": {
+                      "type": ["integer"]
+                    },
+                    "entity_id": {
                       "type": ["string"]
                     },
-                    "executingUserId": {
+                    "entity_type": {
                       "type": ["string"]
                     },
-                    "organizationId": {
-                      "type": ["string"]
+                    "share_js_doc_compressed_version": {
+                      "type": ["integer"]
                     },
-                    "payload": {
-                      "properties": {
-                        "cmaEntityVersion": {
-                          "type": ["integer"]
-                        },
-                        "entityId": {
-                          "type": ["string"]
-                        },
-                        "entityType": {
-                          "type": ["string"]
-                        },
-                        "shareJsDocCompressedVersion": {
-                          "type": ["integer"]
-                        },
-                        "shareJsDocVersion": {
-                          "type": ["integer"]
-                        }
-                      },
-                      "type": "object"
-                    },
-                    "scope": {
-                      "type": ["string"]
-                    },
-                    "spaceId": {
-                      "type": ["string"]
+                    "share_js_doc_version": {
+                      "type": ["integer"]
                     }
                   },
                   "type": "object"
+                },
+                "scope": {
+                  "type": ["string"]
+                },
+                "space_key": {
+                  "type": ["string"]
                 }
               },
               "type": "object"
@@ -2974,216 +4214,44 @@
         "version": 1
       },
       {
-        "name": "slide_in_editor:arrow_back",
+        "description": "Schema to track slide in editor usage",
+        "name": "slide_in_editor",
         "rules": {
           "properties": {
             "context": {},
             "properties": {
               "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "currentSlideLevel": {
-                      "type": ["integer"]
-                    },
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "peekHoverTimeMs": {
-                      "type": ["integer"]
-                    },
-                    "spaceId": {
-                      "type": ["string"]
-                    },
-                    "targetSlideLevel": {
-                      "type": ["integer"]
-                    }
-                  },
-                  "type": "object"
+                "action": {
+                  "type": "string"
+                },
+                "current_slide_level": {
+                  "type": ["integer"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": "string"
+                },
+                "peek_hover_time_ms": {
+                  "type": ["integer"]
+                },
+                "space_key": {
+                  "type": "string"
+                },
+                "target_slide_level": {
+                  "type": ["integer"]
                 }
               },
-              "type": "object"
+              "required": ["organization_key", "space_key", "current_slide_level"]
             },
             "traits": {}
-          },
-          "type": "object"
+          }
         },
         "version": 1
       },
       {
-        "name": "slide_in_editor:delete",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "currentSlideLevel": {
-                      "type": ["integer"]
-                    },
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "peekHoverTimeMs": {
-                      "type": ["integer"]
-                    },
-                    "spaceId": {
-                      "type": ["string"]
-                    },
-                    "targetSlideLevel": {
-                      "type": ["integer"]
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "slide_in_editor:open",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "currentSlideLevel": {
-                      "type": ["integer"]
-                    },
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "peekHoverTimeMs": {
-                      "type": ["integer"]
-                    },
-                    "spaceId": {
-                      "type": ["string"]
-                    },
-                    "targetSlideLevel": {
-                      "type": ["integer"]
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "slide_in_editor:open_create",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "currentSlideLevel": {
-                      "type": ["integer"]
-                    },
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "peekHoverTimeMs": {
-                      "type": ["integer"]
-                    },
-                    "spaceId": {
-                      "type": ["string"]
-                    },
-                    "targetSlideLevel": {
-                      "type": ["integer"]
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "slide_in_editor:peek_click",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "currentSlideLevel": {
-                      "type": ["integer"]
-                    },
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "peekHoverTimeMs": {
-                      "type": ["integer"]
-                    },
-                    "spaceId": {
-                      "type": ["string"]
-                    },
-                    "targetSlideLevel": {
-                      "type": ["integer"]
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
+        "description": "Legacy Snowplow schema (originally `space_create`) for tracking space creation. Heavily relies on Snowplow contexts. Numbers tracked went down to almost 0 since Nov 2020 presumably due to the new space creation flow which doesn't track space creation with this schema anymore.",
         "name": "space:create",
         "rules": {
           "properties": {
@@ -3191,436 +4259,7 @@
             "properties": {
               "properties": {
                 "contexts": {
-                  "items": {
-                    "properties": {
-                      "data": {
-                        "properties": {
-                          "action": {
-                            "type": ["string"]
-                          },
-                          "executingUserId": {
-                            "type": ["string"]
-                          },
-                          "name": {
-                            "type": ["string"]
-                          },
-                          "organizationId": {
-                            "type": ["string"]
-                          },
-                          "spaceId": {
-                            "type": ["string"]
-                          }
-                        },
-                        "type": "object"
-                      },
-                      "schema": {
-                        "type": ["string"]
-                      }
-                    },
-                    "type": "object"
-                  },
-                  "type": "array"
-                },
-                "data": {
-                  "type": ["object"]
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "space_wizard:cancel",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "currentProductType": {},
-                    "currentSpaceType": {},
-                    "currentStep": {},
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "intendedAction": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "paymentDetailsExist": {},
-                    "recommendedProductType": {},
-                    "recommendedSpaceType": {},
-                    "spaceId": {
-                      "type": ["string"]
-                    },
-                    "targetProductType": {},
-                    "targetSpaceName": {},
-                    "targetSpaceTemplateId": {},
-                    "targetSpaceType": {},
-                    "targetStep": {}
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "space_wizard:confirm",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "currentProductType": {},
-                    "currentSpaceType": {},
-                    "currentStep": {},
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "intendedAction": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "paymentDetailsExist": {},
-                    "recommendedProductType": {},
-                    "recommendedSpaceType": {},
-                    "spaceId": {
-                      "type": ["string"]
-                    },
-                    "targetProductType": {},
-                    "targetSpaceName": {},
-                    "targetSpaceTemplateId": {},
-                    "targetSpaceType": {},
-                    "targetStep": {}
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "space_wizard:entered_details",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "currentProductType": {},
-                    "currentSpaceType": {},
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "intendedAction": {
-                      "type": ["string"]
-                    },
-                    "paymentDetailsExist": {},
-                    "recommendedProductType": {},
-                    "targetProductType": {},
-                    "targetSpaceName": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "space_wizard:link_click",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "currentProductType": {},
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "intendedAction": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "paymentDetailsExist": {},
-                    "targetProductType": {},
-                    "targetSpaceName": {},
-                    "targetSpaceType": {},
-                    "targetStep": {}
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "space_wizard:navigate",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "currentProductType": {},
-                    "currentSpaceType": {},
-                    "currentStep": {},
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "intendedAction": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "paymentDetailsExist": {},
-                    "recommendedProductType": {},
-                    "recommendedSpaceType": {},
-                    "spaceId": {
-                      "type": ["string"]
-                    },
-                    "targetProductType": {},
-                    "targetSpaceName": {},
-                    "targetSpaceTemplateId": {},
-                    "targetSpaceType": {},
-                    "targetStep": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "space_wizard:open",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "currentProductType": {},
-                    "currentSpaceType": {},
-                    "currentStep": {},
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "intendedAction": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "paymentDetailsExist": {
-                      "type": ["boolean"]
-                    },
-                    "recommendedProductType": {},
-                    "recommendedSpaceType": {},
-                    "spaceId": {
-                      "type": ["string"]
-                    },
-                    "targetProductType": {},
-                    "targetSpaceName": {},
-                    "targetSpaceTemplateId": {},
-                    "targetSpaceType": {},
-                    "targetStep": {}
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "space_wizard:select_plan",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "currentProductType": {},
-                    "currentSpaceType": {},
-                    "currentStep": {},
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "intendedAction": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "paymentDetailsExist": {},
-                    "recommendedProductType": {},
-                    "recommendedSpaceType": {},
-                    "spaceId": {
-                      "type": ["string"]
-                    },
-                    "targetProductType": {
-                      "type": ["string"]
-                    },
-                    "targetSpaceName": {},
-                    "targetSpaceTemplateId": {},
-                    "targetSpaceType": {
-                      "type": ["string"]
-                    },
-                    "targetStep": {}
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "space_wizard:space_create",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "currentProductType": {},
-                    "currentStep": {},
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "recommendedProductType": {},
-                    "recommendedSpaceType": {},
-                    "targetSpaceName": {},
-                    "targetSpaceTemplateId": {},
-                    "targetSpaceType": {}
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "space_wizard:space_type_change",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "currentProductType": {},
-                    "currentSpaceType": {},
-                    "currentStep": {},
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "intendedAction": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "paymentDetailsExist": {},
-                    "recommendedProductType": {},
-                    "recommendedSpaceType": {},
-                    "spaceId": {
-                      "type": ["string"]
-                    },
-                    "targetProductType": {},
-                    "targetSpaceName": {},
-                    "targetSpaceTemplateId": {},
-                    "targetSpaceType": {},
-                    "targetStep": {}
-                  },
-                  "type": "object"
+                  "type": "string"
                 }
               },
               "type": "object"
@@ -3643,18 +4282,18 @@
                     "action": {
                       "type": ["string"]
                     },
-                    "executingUserId": {
+                    "environment_key": {
                       "type": ["string"]
                     },
-                    "organizationId": {
+                    "organization_key": {
                       "type": ["string"]
                     },
                     "payload": {
                       "properties": {
-                        "numErr": {
+                        "num_err": {
                           "type": ["integer"]
                         },
-                        "numSuccess": {
+                        "num_success": {
                           "type": ["integer"]
                         }
                       },
@@ -3663,7 +4302,7 @@
                     "scope": {
                       "type": ["string"]
                     },
-                    "spaceId": {
+                    "space_key": {
                       "type": ["string"]
                     }
                   },
@@ -3690,62 +4329,62 @@
                     "action": {
                       "type": ["string"]
                     },
-                    "actionOrigin": {
+                    "action_origin": {
                       "type": ["string"]
                     },
-                    "additionalData": {
+                    "additional_data": {
                       "properties": {
-                        "characterCountAfter": {
+                        "character_count_after": {
                           "type": ["integer"]
                         },
-                        "characterCountBefore": {
+                        "character_count_before": {
                           "type": ["integer"]
                         },
-                        "characterCountSelection": {
+                        "character_count_selection": {
                           "type": ["integer"]
                         },
-                        "linkType": {
+                        "link_type": {
                           "type": ["string"]
                         },
-                        "markType": {
+                        "mark_type": {
                           "type": ["string"]
                         },
-                        "nodeType": {
+                        "node_type": {
                           "type": ["string"]
                         }
                       },
                       "type": "object"
                     },
-                    "characterCountAfter": {
+                    "character_count_after": {
                       "type": ["integer"]
                     },
-                    "characterCountBefore": {},
-                    "characterCountSelection": {},
-                    "contentTypeId": {
+                    "character_count_before": {},
+                    "character_count_selection": {},
+                    "content_type_id": {
                       "type": ["string"]
                     },
-                    "editorName": {
+                    "editor_name": {
                       "type": ["string"]
                     },
-                    "entryId": {
+                    "entry_id": {
                       "type": ["string"]
                     },
-                    "executingUserId": {
+                    "environment_key": {
                       "type": ["string"]
                     },
-                    "fieldId": {
+                    "field_id": {
                       "type": ["string"]
                     },
-                    "fieldLocale": {
+                    "field_locale": {
                       "type": ["string"]
                     },
-                    "isFullscreen": {
+                    "is_fullscreen": {
                       "type": ["boolean"]
                     },
-                    "organizationId": {
+                    "organization_key": {
                       "type": ["string"]
                     },
-                    "spaceId": {
+                    "space_key": {
                       "type": ["string"]
                     }
                   },
@@ -3775,10 +4414,10 @@
                     "action": {
                       "type": ["string"]
                     },
-                    "executingUserId": {
+                    "environment_key": {
                       "type": ["string"]
                     },
-                    "organizationId": {
+                    "organization_key": {
                       "type": ["string"]
                     },
                     "payload": {
@@ -3792,7 +4431,7 @@
                     "scope": {
                       "type": ["string"]
                     },
-                    "spaceId": {
+                    "space_key": {
                       "type": ["string"]
                     }
                   },
@@ -3808,158 +4447,435 @@
         "version": 1
       },
       {
-        "name": "translation_sidebar:change_focused_locale",
+        "description": "Schema to track the translation sidebar widgets",
+        "name": "translation_sidebar",
         "rules": {
           "properties": {
             "context": {},
             "properties": {
               "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "currentMode": {
-                      "type": ["string"]
-                    },
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "spaceId": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
+                "action": {
+                  "description": "`toggle_widget_mode` is triggered every time the translation sidebar mode is toggled from single to multiple locales (or vice versa). `deselect_active_locale` is triggered when an editor is using the multiple locale mode and deselects one of the active locales using the pills in the sidebar widget. `update_active_locales` is triggered when an editor is using the multiple locale mode and updates the active locales using the locale update modal. `change_focused_locale` is triggered when an editor is using the single locale mode and changes the focused locale using the sidebar locale dropdown.",
+                  "enum": [
+                    "toggle_widget_mode",
+                    "deselect_active_locale",
+                    "update_active_locales",
+                    "change_focused_locale"
+                  ],
+                  "type": "string"
+                },
+                "current_active_locale_count": {
+                  "description": "The total number of locales activated by the editor as a consequence of an `update_active_locales` or `deselect_active_locale` action.",
+                  "type": ["integer", "null"]
+                },
+                "current_mode": {
+                  "description": "The widget mode from which the action is executed. When the action is `toggle_widget_mode`, this refers to the mode to which the editor has toggled. Will always be `single` for `change_focused_locale`. Will always be `multiple` for `deselect_active_locale` or `update_active_locales`.",
+                  "enum": ["single", "multiple"],
+                  "type": "string"
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": "string"
+                },
+                "previous_active_locale_count": {
+                  "description": "The total number of active locales prior to the triggering of an `update_active_locales` or `deselect_active_locale` action.",
+                  "type": ["integer", "null"]
+                },
+                "space_key": {
+                  "type": "string"
                 }
               },
-              "type": "object"
+              "required": ["organization_key", "space_key", "action", "current_mode"]
             },
             "traits": {}
-          },
-          "type": "object"
+          }
         },
         "version": 1
       },
       {
-        "name": "translation_sidebar:deselect_active_locale",
+        "description": "Track the view migration in `ui_config` endpoint per space",
+        "name": "ui_config_migrate",
         "rules": {
           "properties": {
             "context": {},
             "properties": {
               "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "currentActiveLocaleCount": {
-                      "type": ["integer"]
-                    },
-                    "currentMode": {
-                      "type": ["string"]
-                    },
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "previousActiveLocaleCount": {
-                      "type": ["integer"]
-                    },
-                    "spaceId": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
+                "endpoint": {
+                  "type": ["string"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "space_key": {
+                  "type": ["string"]
+                },
+                "view_count_migrated": {
+                  "type": ["integer"]
+                },
+                "view_count_migration_failed": {
+                  "type": ["integer"]
                 }
               },
-              "type": "object"
+              "required": [
+                "organization_key",
+                "space_key",
+                "view_count_migrated",
+                "view_count_migration_failed",
+                "endpoint"
+              ]
             },
             "traits": {}
-          },
-          "type": "object"
+          }
         },
         "version": 1
       },
       {
-        "name": "translation_sidebar:toggle_widget_mode",
+        "description": "UI Extension Install Schema",
+        "name": "ui_extension_install",
         "rules": {
           "properties": {
             "context": {},
             "properties": {
               "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "currentMode": {
-                      "type": ["string"]
-                    },
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "spaceId": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "field_types": {
+                  "type": ["array", "null"]
+                },
+                "installation_params": {
+                  "type": ["array", "null"]
+                },
+                "instance_params": {
+                  "type": ["array", "null"]
+                },
+                "name": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "space_key": {
+                  "type": ["string"]
+                },
+                "src": {
+                  "type": ["string", "null"]
+                },
+                "type": {
+                  "type": ["string", "null"]
+                },
+                "url": {
+                  "type": ["string", "null"]
                 }
               },
-              "type": "object"
+              "required": ["organization_key", "space_key", "name"]
             },
             "traits": {}
-          },
-          "type": "object"
+          }
         },
         "version": 1
       },
       {
-        "name": "translation_sidebar:update_active_locales",
+        "description": "UI Extension Save Schema",
+        "name": "ui_extension_save",
         "rules": {
           "properties": {
             "context": {},
             "properties": {
               "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "currentActiveLocaleCount": {
-                      "type": ["integer"]
-                    },
-                    "currentMode": {
-                      "type": ["string"]
-                    },
-                    "executingUserId": {
-                      "type": ["string"]
-                    },
-                    "organizationId": {
-                      "type": ["string"]
-                    },
-                    "previousActiveLocaleCount": {
-                      "type": ["integer"]
-                    },
-                    "spaceId": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
+                "fieldTypes": {
+                  "type": ["string", "null"]
+                },
+                "installationParams": {
+                  "type": ["string", "null"]
+                },
+                "instanceParams": {
+                  "type": ["string", "null"]
+                },
+                "name": {
+                  "type": ["string"]
+                },
+                "src": {
+                  "type": ["string", "null"]
+                },
+                "ui_extension_id": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": ["string", "null"]
                 }
               },
-              "type": "object"
+              "required": ["ui_extension_id", "name", "src"]
             },
             "traits": {}
-          },
-          "type": "object"
+          }
+        },
+        "version": 1
+      },
+      {
+        "description": "Saving webhook in the UI",
+        "name": "ui_webhook_editor_save",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "body_transformation": {
+                  "type": ["string", "null"]
+                },
+                "content_type_header": {
+                  "type": ["string", "null"]
+                },
+                "custom_headers": {
+                  "type": ["array", "null"]
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "filters": {
+                  "type": ["string", "null"]
+                },
+                "method": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "space_key": {
+                  "type": ["string"]
+                },
+                "template_id": {
+                  "type": ["string", "null"]
+                },
+                "topics": {
+                  "type": ["array", "null"]
+                },
+                "url": {
+                  "type": ["string"]
+                },
+                "uses_http_basic": {
+                  "type": ["boolean"]
+                },
+                "version": {
+                  "type": ["integer"]
+                },
+                "webhook_id": {
+                  "type": ["string"]
+                },
+                "webhook_name": {
+                  "type": ["string"]
+                }
+              },
+              "required": [
+                "organization_key",
+                "space_key",
+                "webhook_id",
+                "version",
+                "webhook_name",
+                "url",
+                "uses_http_basic"
+              ]
+            },
+            "traits": {}
+          }
+        },
+        "version": 1
+      },
+      {
+        "description": "Schema of creating a view in the webapp",
+        "name": "view_create",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "content_type_id": {
+                  "type": ["string", "null"]
+                },
+                "entity_type": {
+                  "type": "string"
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "folder_id": {
+                  "type": ["string"]
+                },
+                "folder_title": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "search_query": {
+                  "type": ["string", "null"]
+                },
+                "space_key": {
+                  "type": ["string"]
+                },
+                "view_id": {
+                  "type": ["string"]
+                }
+              },
+              "required": [
+                "organization_key",
+                "space_key",
+                "entity_type",
+                "search_query",
+                "content_type_id",
+                "folder_id",
+                "folder_title",
+                "view_id"
+              ]
+            },
+            "traits": {}
+          }
+        },
+        "version": 1
+      },
+      {
+        "description": "Schema of delete a view in the webapp",
+        "name": "view_delete",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "entity_type": {
+                  "type": "string"
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "space_key": {
+                  "type": ["string"]
+                },
+                "view_id": {
+                  "type": ["string"]
+                },
+                "view_type": {
+                  "type": "string"
+                }
+              },
+              "required": ["organization_key", "space_key", "entity_type", "view_id", "view_type"]
+            },
+            "traits": {}
+          }
+        },
+        "version": 1
+      },
+      {
+        "description": "Schema of editing a view in the webapp",
+        "name": "view_edit",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "change_property": {
+                  "type": ["string"]
+                },
+                "entity_type": {
+                  "type": "string"
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "space_key": {
+                  "type": ["string"]
+                },
+                "view_id": {
+                  "type": ["string"]
+                },
+                "view_roles": {
+                  "type": ["string", "null"]
+                },
+                "view_title": {
+                  "type": ["string"]
+                }
+              },
+              "required": [
+                "organization_key",
+                "space_key",
+                "entity_type",
+                "view_id",
+                "view_title",
+                "view_roles",
+                "change_property"
+              ]
+            },
+            "traits": {}
+          }
+        },
+        "version": 1
+      },
+      {
+        "description": "Schema of loading a view in the webapp",
+        "name": "view_load",
+        "rules": {
+          "properties": {
+            "context": {},
+            "properties": {
+              "properties": {
+                "content_type_id": {
+                  "type": ["string", "null"]
+                },
+                "entity_type": {
+                  "type": "string"
+                },
+                "environment_key": {
+                  "type": ["string"]
+                },
+                "organization_key": {
+                  "type": ["string"]
+                },
+                "search_query": {
+                  "type": ["string", "null"]
+                },
+                "sequence_key": {
+                  "type": ["string", "null"]
+                },
+                "space_key": {
+                  "type": ["string"]
+                },
+                "view_id": {
+                  "type": ["string"]
+                },
+                "view_roles": {
+                  "type": ["string", "null"]
+                },
+                "view_title": {
+                  "type": ["string"]
+                },
+                "view_type": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "organization_key",
+                "space_key",
+                "entity_type",
+                "search_query",
+                "content_type_id",
+                "view_id",
+                "view_type",
+                "view_title",
+                "view_roles"
+              ]
+            },
+            "traits": {}
+          }
         },
         "version": 1
       },
@@ -3974,7 +4890,7 @@
                 "data": {
                   "description": "",
                   "properties": {
-                    "appDefinitionId": {
+                    "app_definition_id": {
                       "description": "",
                       "type": "string"
                     },
@@ -3982,15 +4898,18 @@
                       "description": "",
                       "type": "string"
                     },
-                    "organizationId": {
+                    "environment_key": {
+                      "type": ["string"]
+                    },
+                    "organization_key": {
                       "description": "",
                       "type": "string"
                     },
-                    "spaceId": {
+                    "space_key": {
                       "description": "",
                       "type": "string"
                     },
-                    "userId": {
+                    "user_id": {
                       "description": "",
                       "type": "string"
                     }
@@ -4020,7 +4939,7 @@
                 "data": {
                   "description": "",
                   "properties": {
-                    "appDefinitionId": {
+                    "app_definition_id": {
                       "description": "",
                       "type": "string"
                     },
@@ -4028,15 +4947,18 @@
                       "description": "",
                       "type": "string"
                     },
-                    "organizationId": {
+                    "environment_key": {
+                      "type": ["string"]
+                    },
+                    "organization_key": {
                       "description": "",
                       "type": "string"
                     },
-                    "spaceId": {
+                    "space_key": {
                       "description": "",
                       "type": "string"
                     },
-                    "userId": {
+                    "user_id": {
                       "description": "",
                       "type": "string"
                     }
@@ -4074,5 +4996,5 @@
     "group_traits": [],
     "identify_traits": []
   },
-  "update_time": "2021-05-03T13:00:18.000Z"
+  "update_time": "2021-06-14T14:58:46.000Z"
 }

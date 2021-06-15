@@ -184,6 +184,7 @@ export type NavigationItemType = {
   highValueLabel?: boolean;
   isOrganizationOnTrial?: boolean;
   children?: NavigationSubitemType[];
+  render?: (item: NavigationItemType) => React.ReactNode;
 };
 
 export function NavigationItem(props: { item: NavigationItemType }) {

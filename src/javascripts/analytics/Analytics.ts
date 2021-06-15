@@ -181,16 +181,20 @@ export const tracking: Plan = _.mapValues(segment.plan, (planFn, planKey) => (pr
 });
 
 /**
- * Returns props used by all legacy Snowplow events to be used with `Analytics.tracking.` as they have
- * to be passed manually as there's no more transformers adding them automatically.
+ * Returns props that should be used by all new Segment events tracked via typewriter.
+ *
+ * TODO: Add these automatically inside `Analytics.typewriter.` functions so that tracking
+ *  calls don't have to call this function.
  */
-export function legacyEventProps() {
-  const { userId, organizationId, spaceId } = getBasicPayload();
-  return {
-    executing_user_id: userId,
-    organization_id: organizationId,
-    space_id: spaceId,
-  };
+export function defaultEventProps() {
+  return _.pickBy(
+    {
+      space_key: getSessionData('space.sys.id', VALUE_UNKNOWN),
+      organization_key: getSessionData('organization.sys.id', VALUE_UNKNOWN),
+      environment_key: getSessionData('environment.sys.id', VALUE_UNKNOWN),
+    },
+    (val) => val !== VALUE_UNKNOWN
+  );
 }
 
 /**

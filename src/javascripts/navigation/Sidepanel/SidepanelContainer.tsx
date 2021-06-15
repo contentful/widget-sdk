@@ -7,7 +7,7 @@ import * as Config from 'Config';
 import keycodes from 'utils/keycodes';
 import { buildUrlWithUtmParams } from 'utils/utmBuilder';
 import { useAppsList } from './useAppsList';
-import SidePanelTrigger from './SidePanelTrigger';
+import { SidePanelTrigger } from './SidePanelTrigger/SidePanelTrigger';
 import { Sidepanel } from './Sidepanel';
 import { SidepanelAppSwitcher } from './SidepanelAppSwitcher';
 
@@ -37,7 +37,19 @@ const urlWithUtm = buildUrlWithUtmParams({
   campaign: 'in-app-help',
 });
 
-export function SidepanelContainer() {
+export function SidepanelContainer({
+  triggerText,
+  currentAliasId,
+  currentEnvId,
+  currentOrgId,
+  currentSpaceId,
+}: {
+  triggerText?: React.ReactNode;
+  currentSpaceId?: string;
+  currentEnvId?: string;
+  currentAliasId?: string;
+  currentOrgId?: string;
+}) {
   const [sidePanelIsShown, setSidePanelIsShown] = useState(false);
   const [orgDropdownIsShown, setOrgDropdownIsShown] = useState(false);
   const [appSwitcherIsShown, setAppSwitcherIsShown] = useState(false);
@@ -69,44 +81,51 @@ export function SidepanelContainer() {
   const changelogUrl = urlWithUtm(Config.developersChangelogUrl);
 
   return (
-    <WhatsNewContextProvider changelogUrl={changelogUrl}>
-      <>
-        <div className={styles.sidepanelContainer}>
-          <div
-            data-test-id="close-sidepanel-bg"
-            className={cx(styles.sidepanelBG, { [styles.isVisible]: sidePanelIsShown })}
-            onClick={closeDropdownOrPanel}
-          />
-
-          <Sidepanel
-            sidePanelIsShown={sidePanelIsShown}
-            orgDropdownIsShown={orgDropdownIsShown}
-            openOrgsDropdown={(event: MouseEvent) => {
-              if (orgDropdownIsShown === false) {
-                setOrgDropdownIsShown(true);
-                // Don't bubble click event to container that would close the dropdown
-                event.stopPropagation();
-              }
-            }}
-            closeOrgsDropdown={() => {
-              setOrgDropdownIsShown(false);
-            }}
-            closeSidePanel={() => {
-              setSidePanelIsShown(false);
-            }}
-          />
-        </div>
-
-        <SidepanelAppSwitcher
-          appsList={appsList}
-          isVisible={appSwitcherIsShown}
-          onClose={() => setAppSwitcherIsShown(false)}
+    <>
+      <div className={styles.sidepanelContainer}>
+        <div
+          data-test-id="close-sidepanel-bg"
+          className={cx(styles.sidepanelBG, { [styles.isVisible]: sidePanelIsShown })}
+          onClick={closeDropdownOrPanel}
         />
-        <SidePanelTrigger
-          onClickOrganization={() => setSidePanelIsShown(true)}
-          openAppSwitcher={() => setAppSwitcherIsShown(true)}
+
+        <Sidepanel
+          currentAliasId={currentAliasId}
+          currentEnvId={currentEnvId}
+          currentOrgId={currentOrgId}
+          currentSpaceId={currentSpaceId}
+          sidePanelIsShown={sidePanelIsShown}
+          orgDropdownIsShown={orgDropdownIsShown}
+          openOrgsDropdown={(event: MouseEvent) => {
+            if (orgDropdownIsShown === false) {
+              setOrgDropdownIsShown(true);
+              // Don't bubble click event to container that would close the dropdown
+              event.stopPropagation();
+            }
+          }}
+          closeOrgsDropdown={() => {
+            setOrgDropdownIsShown(false);
+          }}
+          closeSidePanel={() => {
+            setSidePanelIsShown(false);
+          }}
         />
-      </>
-    </WhatsNewContextProvider>
+      </div>
+
+      <WhatsNewContextProvider changelogUrl={changelogUrl}>
+        <>
+          <SidepanelAppSwitcher
+            appsList={appsList}
+            isVisible={appSwitcherIsShown}
+            onClose={() => setAppSwitcherIsShown(false)}
+          />
+          <SidePanelTrigger
+            triggerText={triggerText}
+            onClickOrganization={() => setSidePanelIsShown(true)}
+            openAppSwitcher={() => setAppSwitcherIsShown(true)}
+          />
+        </>
+      </WhatsNewContextProvider>
+    </>
   );
 }

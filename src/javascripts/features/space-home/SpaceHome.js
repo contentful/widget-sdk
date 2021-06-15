@@ -29,7 +29,7 @@ import {
 import { getModule } from 'core/NgRegistry';
 import { ExpiredTrialSpaceHome } from './ExpiredTrialSpaceHome';
 import { getVariation, FLAGS } from 'LaunchDarkly';
-import * as Analytics from 'analytics/Analytics';
+import { tracking, defaultEventProps } from 'analytics/Analytics';
 import { useTrialSpace } from 'features/trials';
 
 const isTEASpace = (contentTypes, currentSpace) => {
@@ -65,11 +65,10 @@ const fetchData =
       organizationId: currentOrganizationId,
     });
     if (testExperimentVariation !== null) {
-      Analytics.tracking.experimentStart({
+      tracking.experimentStarted({
+        ...defaultEventProps(),
         experiment_id: FLAGS.EXPERIMENT_A_A,
         experiment_variation: testExperimentVariation ? 'treatment' : 'control',
-        space_id: currentSpaceId,
-        organization_id: currentOrganizationId,
       });
     }
 
@@ -81,11 +80,10 @@ const fetchData =
     );
 
     if (inviteCardExperimentEnabled !== null) {
-      Analytics.tracking.experimentStart({
+      tracking.experimentStarted({
+        ...defaultEventProps(),
         experiment_id: FLAGS.EXPERIMENT_NEW_COWORKER_INVITE_CARD,
         experiment_variation: inviteCardExperimentEnabled ? 'treatment' : 'control',
-        space_id: currentSpaceId,
-        organization_id: currentOrganizationId,
       });
     }
 

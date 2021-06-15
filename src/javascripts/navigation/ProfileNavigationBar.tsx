@@ -2,6 +2,10 @@ import { routes } from 'core/react-routing';
 import React from 'react';
 import NavBar from './NavBar/NavBar';
 import { SidepanelContainer } from './Sidepanel/SidepanelContainer';
+import { StateTitle } from './Sidepanel/SidePanelTrigger/SidePanelTrigger';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
+
+const store = getBrowserStorage();
 
 export function ProfileNavigationBar() {
   const user = routes['account.profile.user']();
@@ -34,13 +38,16 @@ export function ProfileNavigationBar() {
     },
   ];
 
+  const lastUsedOrgId = store.get('lastUsedOrg');
+
   return (
     <div className="app-top-bar">
-      <SidepanelContainer />
+      <SidepanelContainer
+        triggerText={<StateTitle title="Account settings" />}
+        currentOrgId={lastUsedOrgId}
+      />
       <div className="app-top-bar__outer-wrapper">
         <NavBar
-          showQuickNavigation={false}
-          showModernStackOnboardingRelaunch={false}
           listItems={[
             {
               title: 'User profile',
