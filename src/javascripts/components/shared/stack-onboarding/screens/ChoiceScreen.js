@@ -4,7 +4,7 @@ import FullScreen from 'components/shared/stack-onboarding/components/FullScreen
 import Button from '../components/Button';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
-import { updateUserInSegment, tracking } from 'analytics/Analytics';
+import { updateUserInSegment, tracking, defaultEventProps } from 'analytics/Analytics';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { FlexibleOnboardingDialog } from 'features/onboarding';
@@ -51,7 +51,8 @@ class ChoiceScreen extends React.Component {
       isDevPathPending: true,
     });
     if (this.state.growthExperimentVariant !== null) {
-      tracking.experimentStart({
+      tracking.experimentStarted({
+        ...defaultEventProps(),
         experiment_id: FLAGS.EXPERIMENT_ONBOARDING_MODAL,
         experiment_variation: this.state.growthExperimentVariant
           ? 'flexible-onboarding'

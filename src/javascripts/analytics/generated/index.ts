@@ -13,184 +13,156 @@
 import Ajv from 'ajv';
 import * as Segment from './segment';
 
-export interface PageViewed {
-  accepted_permissions?: any | null;
-  add_to_context?: boolean;
-  api_key_id?: string;
-  app_id?: any | null;
-  asset_id?: string;
-  content_type_id?: string;
-  definition_id?: string;
-  entry_id?: string;
-  environment_id?: string;
-  ignore_leave_confirmation?: boolean;
-  jump_to_role?: string;
-  locale_id?: string;
-  name?: string;
-  org_id?: string;
-  org_owner_or_admin?: any | null;
-  path?: string;
-  path_suffix?: string;
-  previous_entries?: string;
-  referrer?: string;
-  search?: string;
-  space_id?: string;
-  tab?: string;
-  template_id?: any | null;
-  title?: string;
-  url?: string;
-  user_id?: string;
-  webhook_id?: string;
-}
 export interface Payload {
-  hasInaccessibleTasks?: boolean;
-  numPendingTasks?: number;
-  numVisiblePendingTasks?: number;
+  has_inaccessible_tasks?: boolean;
+  num_pending_tasks?: number;
+  num_visible_pending_tasks?: number;
 }
 export interface Data {
   action?: string;
-  executingUserId?: string;
-  organizationId?: string;
+  environment_key?: string;
+  organization_key?: string;
   payload?: Payload;
   scope?: string;
-  spaceId?: string;
+  space_key?: string;
 }
 export interface AccountDropdownPendingTasksFetched {
   data?: Data;
 }
+export interface Payload1 {
+  definition_id?: string;
+}
 export interface Data1 {
   action?: string;
-  executingUserId?: string;
-  organizationId?: string;
-  spaceId?: string;
-}
-export interface ApiKeyClipboardCopy {
-  data?: Data1;
-}
-export interface Payload1 {
-  definitionId?: string;
-}
-export interface Data2 {
-  action?: string;
-  executingUserId?: string;
-  organizationId?: string;
+  environment_key?: string;
+  organization_key?: string;
   payload?: Payload1;
   scope?: string;
 }
 export interface AppManagementCreated {
-  data?: Data2;
+  data?: Data1;
 }
 export interface Payload2 {
-  definitionId?: string;
+  definition_id?: string;
 }
-export interface Data3 {
+export interface Data2 {
   action?: string;
-  executingUserId?: string;
-  organizationId?: string;
+  environment_key?: string;
+  organization_key?: string;
   payload?: Payload2;
   scope?: string;
 }
 export interface AppManagementUpdated {
-  data?: Data3;
+  data?: Data2;
 }
-export interface Data4 {
-  appEventName?: string;
-  contentfulAppId?: string;
-  contentfulEventId?: string;
-  executingUserId?: string;
-  organizationId?: string;
-  spaceId?: string;
+export interface Data3 {
+  app_event_name?: string;
+  contentful_app_id?: string;
+  contentful_event_id?: string;
+  environment_key?: string;
+  organization_key?: string;
+  space_key?: string;
 }
 export interface AppsLifecycleEvent {
-  data?: Data4;
+  data?: Data3;
 }
 export interface AssetCreated {
   asset_id?: string;
   environment?: string;
-  space_id?: string;
+  space_key?: string;
   version?: string;
+}
+export interface Data4 {
+  action?: string;
+  environment_key?: string;
+  organization_key?: string;
+  payload?: Record<string, any>;
+  scope?: string;
+  space_key?: string;
+}
+export interface AssetListAddAssetMultiple {
+  data?: Data4;
 }
 export interface Data5 {
   action?: string;
-  executingUserId?: string;
-  organizationId?: string;
+  environment_key?: string;
+  organization_key?: string;
   payload?: Record<string, any>;
   scope?: string;
-  spaceId?: string;
-}
-export interface AssetListAddAssetMultiple {
-  data?: Data5;
-}
-export interface Data6 {
-  action?: string;
-  executingUserId?: string;
-  organizationId?: string;
-  payload?: Record<string, any>;
-  scope?: string;
-  spaceId?: string;
+  space_key?: string;
 }
 export interface AssetListAddAssetSingle {
-  data?: Data6;
+  data?: Data5;
 }
 export interface AssetPublished {
   asset_id?: string;
   environment?: string;
-  space_id?: string;
+  space_key?: string;
   version?: string;
+}
+export interface Data6 {
+  action?: string;
+  environment_key?: string;
+  num_edited_entries?: number;
+  num_published_entries?: number;
+  organization_key?: string;
+  parent_entry_id?: string;
+  ref_count?: number;
+  space_key?: string;
+}
+export interface BulkEditorClose {
+  data?: Data6;
 }
 export interface Data7 {
   action?: string;
-  executingUserId?: string;
-  numEditedEntries?: number;
-  numPublishedEntries?: number;
-  organizationId?: string;
-  parentEntryId?: string;
-  refCount?: number;
-  spaceId?: string;
+  entry_id?: string;
+  environment_key?: string;
+  organization_key?: string;
+  parent_entry_id?: string;
+  ref_count?: number;
+  space_key?: string;
 }
-export interface BulkEditorClose {
+export interface BulkEditorEditInEntryEditor {
   data?: Data7;
 }
 export interface Data8 {
   action?: string;
-  entryId?: string;
-  executingUserId?: string;
-  organizationId?: string;
-  parentEntryId?: string;
-  refCount?: number;
-  spaceId?: string;
+  environment_key?: string;
+  organization_key?: string;
+  parent_entry_id?: string;
+  ref_count?: number;
+  space_key?: string;
 }
-export interface BulkEditorEditInEntryEditor {
+export interface BulkEditorOpen {
   data?: Data8;
 }
 export interface Data9 {
   action?: string;
-  executingUserId?: string;
-  organizationId?: string;
-  parentEntryId?: string;
-  refCount?: number;
-  spaceId?: string;
-}
-export interface BulkEditorOpen {
-  data?: Data9;
-}
-export interface Data10 {
-  action?: string;
-  executingUserId?: string;
-  organizationId?: string;
-  parentEntryId?: string;
-  refCount?: number;
-  spaceId?: string;
+  environment_key?: string;
+  organization_key?: string;
+  parent_entry_id?: string;
+  ref_count?: number;
+  space_key?: string;
 }
 export interface BulkEditorOpenSlideIn {
-  data?: Data10;
+  data?: Data9;
+}
+export interface EditorInterfaceFieldUpdated {
+  content_type_id?: string;
+  environment_key?: string;
+  field_id?: string;
+  field_settings?: Record<string, any>;
+  field_type?: string;
+  organization_key?: string;
+  space_key?: string;
+  widget_id?: string;
 }
 export interface EditorLoaded {
   /**
    * `init` is triggered every time a slide is loaded. `entity_loaded` is triggered when the editor's main entity is loaded. `sharejs_connected` is triggered when a connection with ShareJS has been established while in case ShareJS is not used for the editor, the more generic `doc_connected` is triggered. `links_rendered` is triggered when all the links (references, media, and rich text embeds / entry hyperlinks) in a slide have been fetched and rendered. `fully_interactive` is trigger when both the links have rendered and the entry has become editable (i.e. ShareJS has connected).
    */
   action?: string;
-  executing_user_id?: string;
+  environment_key?: string;
   /**
    * The total number of links (reference links, media field assets, rich text embedded block and inline entries, rich text embedded block assets, and rich text hyperlinked entries) in the entry on initial load
    */
@@ -203,7 +175,7 @@ export interface EditorLoaded {
    * Number of milliseconds since the initial load of the entry
    */
   load_ms?: number;
-  organization_id?: string;
+  organization_key?: string;
   /**
    * The overall number of rich text editor instances in an individual entry (1 locale field editor = 1 instance)
    */
@@ -220,202 +192,97 @@ export interface EditorLoaded {
    * ID uniquely identifying the overall session and therefore all slides loaded around the same time within the same browser tab
    */
   slides_controller_uuid?: string;
-  space_id?: string;
+  space_key?: string;
   /**
    * The total number of slides open when the entry is initially loaded, default = 0 if there are no slides
    */
   total_slide_count?: number;
 }
 export interface Payload3 {
-  tabName?: string;
+  tab_name?: string;
+}
+export interface Data10 {
+  action?: string;
+  environment_key?: string;
+  organization_key?: string;
+  payload?: Payload3;
+  scope?: string;
+  space_key?: string;
+}
+export interface EditorWorkbenchTabOpen {
+  data?: Data10;
+}
+export interface ElementClick {
+  contexts?: string;
+  element_id?: string;
+  environment_key?: string;
+  from_state?: string;
+  group_id?: string;
+  organization_key?: string;
+  space_key?: string;
+}
+export interface EntryPublish {
+  action?: string;
+  content_type_id?: string;
+  contexts?: string;
+  entry_ct_entry_reference_fields_count?: number;
+  entry_id?: string;
+  event_origin?: string;
+  has_legacy_extensions?: boolean;
+  is_default?: boolean;
+  organization_key?: string;
+  space_key?: string;
+  version?: number;
+}
+export interface Payload4 {
+  circular_references_count?: number;
+  entity_id?: string;
+  references_depth?: number;
+  references_per_level?: number[];
 }
 export interface Data11 {
   action?: string;
-  executingUserId?: string;
-  organizationId?: string;
-  payload?: Payload3;
-  scope?: string;
-  spaceId?: string;
-}
-export interface EditorWorkbenchTabOpen {
-  data?: Data11;
-}
-export interface Data12 {
-  elementId?: string;
-  executingUserId?: string;
-  fromState?: string;
-  groupId?: string;
-  organizationId?: string;
-  spaceId?: string;
-}
-export interface ElementClick {
-  contexts?: any[];
-  data?: Data12;
-}
-export interface EditorInterfaceFieldUpdated {
-  content_type_id?: string;
   environment_key?: string;
-  field_id?: string;
-  field_settings?: Record<string, any>;
-  field_type?: string;
   organization_key?: string;
-  space_key?: string;
-  widget_id?: string;
-}
-export interface Data13 {
-  autoConflictResolutionVersion?: number;
-  entityId?: string;
-  entityType?: string;
-  executingUserId?: string;
-  isConflictAutoResolvable?: boolean;
-  localChangesFieldPaths?: string[];
-  localEntityLastFetchedAtTstamp?: string;
-  localEntityUpdatedAtTstamp?: string;
-  localEntityVersion?: number;
-  organizationId?: string;
-  remoteChangesSinceLocalEntityFieldPaths?: string[];
-  remoteEntityUpdatedAtTstamp?: string;
-  remoteEntityUpdatedByUserId?: string;
-  remoteEntityVersion?: number;
-  spaceId?: string;
-}
-export interface EntityEditorEditConflict {
-  data?: Data13;
-  schema?: string;
-}
-export interface Data14 {
-  action?: string;
-  contentTypeId?: string;
-  entryId?: string;
-  executingUserId?: string;
-  organizationId?: string;
-  spaceId?: string;
-  version?: number;
-}
-export interface ContextsItem {
-  data?: Data14;
-  schema?: string;
-}
-export interface Data15 {
-  entryCtEntryReferenceFieldsCount?: number;
-  entryId?: string;
-  eventOrigin?: string;
-  executingUserId?: string;
-  organizationId?: string;
-  spaceId?: string;
-}
-export interface EntryCreate {
-  contexts?: ContextsItem[];
-  data?: Data15;
-}
-export interface Data16 {
-  action?: string;
-  contentTypeId?: string;
-  entryId?: string;
-  executingUserId?: string;
-  hasLegacyExtensions?: boolean;
-  isDefault?: boolean;
-  organizationId?: string;
-  spaceId?: string;
-  version?: number;
-  widgets?: any | null;
-}
-export interface ContextsItem1 {
-  data?: Data16;
-  schema?: string;
-}
-export interface Data17 {
-  entryCtEntryReferenceFieldsCount?: number;
-  entryId?: string;
-  eventOrigin?: string;
-  executingUserId?: string;
-  organizationId?: string;
-  spaceId?: string;
-}
-export interface EntryPublish {
-  contexts?: ContextsItem1[];
-  data?: Data17;
-}
-export interface Data18 {
-  contentTypeId?: string;
-  contentTypeName?: string;
-  extensionDefinitionId?: any | null;
-  extensionId?: string;
-  extensionName?: string;
-  hasLegacyExtensions?: boolean;
-  installationParams?: any[];
-  instanceParams?: any[];
-  isDefault?: boolean;
-  location?: string;
-  parentEntryId?: string;
-  src?: any | null;
-  widgets?: any | null;
-}
-export interface ContextsItem2 {
-  data?: Data18;
-  schema?: string;
-}
-export interface Data19 {
-  contentTypeId?: string;
-  contentTypeName?: string;
-  editorType?: string;
-  entryId?: string;
-  executingUserId?: string;
-  organizationId?: string;
-  spaceId?: string;
-}
-export interface EntryEditorView {
-  contexts?: ContextsItem2[];
-  data?: Data19;
-}
-export interface Payload4 {
-  circularReferencesCount?: number;
-  entityId?: string;
-  referencesDepth?: number;
-  referencesPerLevel?: number[];
-}
-export interface Data20 {
-  action?: string;
-  executingUserId?: string;
-  organizationId?: string;
   payload?: Payload4;
   scope?: string;
-  spaceId?: string;
+  space_key?: string;
 }
 export interface EntryReferencesDialogOpen {
-  data?: Data20;
+  data?: Data11;
 }
 export interface Payload5 {
-  entityId?: string;
-  referencesCount?: number;
+  entity_id?: string;
+  references_count?: number;
 }
-export interface Data21 {
+export interface Data12 {
   action?: string;
-  executingUserId?: string;
-  organizationId?: string;
+  environment_key?: string;
+  organization_key?: string;
   payload?: Payload5;
   scope?: string;
-  spaceId?: string;
+  space_key?: string;
 }
 export interface EntryReferencesPublish {
-  data?: Data21;
+  data?: Data12;
 }
 export interface Payload6 {
-  entityId?: string;
-  referencesCount?: number;
+  entity_id?: string;
+  references_count?: number;
 }
-export interface Data22 {
+export interface Data13 {
   action?: string;
-  executingUserId?: string;
-  organizationId?: string;
+  environment_key?: string;
+  organization_key?: string;
   payload?: Payload6;
   scope?: string;
-  spaceId?: string;
+  space_key?: string;
 }
 export interface EntryReferencesValidate {
-  data?: Data22;
+  data?: Data13;
 }
-export interface ExperimentStart {
+export interface ExperimentStarted {
+  environment_key?: string;
   /**
    * The experiment name the current user is part of
    */
@@ -427,254 +294,207 @@ export interface ExperimentStart {
   /**
    * Current organization key
    */
-  organization_id?: string;
+  organization_key?: string;
   /**
    * Current space key
    */
-  space_id?: string;
-  /**
-   * Curent user key
-   */
-  user_id?: string;
-}
-export interface Data23 {
-  action?: string;
-  executingUserId?: string;
-  organizationId?: string;
-  spaceId?: string;
-}
-export interface ContextsItem3 {
-  data?: Data23;
-  schema?: string;
+  space_key?: string;
 }
 export interface GlobalAppLoaded {
-  contexts?: ContextsItem3[];
-  data?: Record<string, any>;
-}
-export interface Data24 {
   action?: string;
-  executingUserId?: string;
+  contexts?: string;
+  organization_key?: string;
+  space_key?: string;
+}
+export interface Data14 {
+  action?: string;
+  environment_key?: string;
   name?: string;
-  organizationId?: string;
+  organization_key?: string;
   purpose?: string;
-  spaceId?: string;
+  space_key?: string;
 }
 export interface GlobalDialog {
-  data?: Data24;
+  data?: Data14;
   schema?: string;
-}
-export interface Data25 {
-  action?: string;
-  executingUserId?: string;
-  organizationId?: string;
-  payload?: Record<string, any>;
-  scope?: string;
-  spaceId?: string;
 }
 export interface GlobalSpaceChanged {
-  data?: Data25;
-}
-export interface Data26 {
   action?: string;
-  executingUserId?: string;
-  organizationId?: string;
+  environment_key?: string;
+  organization_key?: string;
+  payload?: Record<string, any>;
+  scope?: string;
+  space_key?: string;
+}
+export interface GlobalSpaceLeft {
+  action?: string;
+  environment_key?: string;
+  organization_key?: string;
   payload?: Record<string, any>;
   scope?: string;
 }
-export interface GlobalSpaceLeft {
-  data?: Data26;
-}
 export interface FromStateParams {
-  acceptedPermissions?: any | null;
-  addToContext?: boolean;
-  apiKeyId?: string;
-  appId?: any | null;
-  assetId?: string;
-  contentTypeId?: string;
-  definitionId?: string;
-  entryId?: string;
-  environmentId?: string;
-  ignoreLeaveConfirmation?: boolean;
-  invitationId?: string;
-  jumpToRole?: string;
-  localeId?: string;
-  orgId?: any | null;
-  orgOwnerOrAdmin?: any | null;
-  pathSuffix?: string;
+  accepted_permissions?: any | null;
+  add_to_context?: boolean;
+  api_key_id?: string;
+  app_id?: any | null;
+  asset_id?: string;
+  content_type_id?: string;
+  definition_id?: string;
+  entry_id?: string;
+  environment_key?: string;
+  ignore_leave_confirmation?: boolean;
+  invitation_id?: string;
+  jump_to_role?: string;
+  locale_id?: string;
+  org_id?: any | null;
+  org_owner_or_admin?: any | null;
+  path_suffix?: string;
   referrer?: any | null;
-  spaceId?: string;
+  space_key?: string;
   tab?: string;
-  templateId?: any | null;
-  userId?: string;
-  webhookId?: string;
+  template_id?: any | null;
+  user_id?: string;
+  webhook_id?: string;
 }
 export interface ToStateParams {
-  acceptedPermissions?: any | null;
-  addToContext?: boolean;
-  apiKeyId?: string;
-  appId?: any | null;
-  assetId?: string;
-  contentTypeId?: string;
-  definitionId?: string;
-  entryId?: string;
-  environmentId?: string;
-  ignoreLeaveConfirmation?: boolean;
-  jumpToRole?: string;
-  localeId?: string;
-  orgId?: string;
-  orgOwnerOrAdmin?: any | null;
-  pathSuffix?: string;
+  accepted_permissions?: any | null;
+  add_to_context?: boolean;
+  api_key_id?: string;
+  app_id?: any | null;
+  asset_id?: string;
+  content_type_id?: string;
+  definition_id?: string;
+  entry_id?: string;
+  environment_key?: string;
+  ignore_leave_confirmation?: boolean;
+  jump_to_role?: string;
+  locale_id?: string;
+  org_id?: string;
+  org_owner_or_admin?: any | null;
+  path_suffix?: string;
   referrer?: any | null;
-  spaceId?: string;
+  space_key?: string;
   tab?: string;
-  templateId?: any | null;
-  userId?: string;
-  webhookId?: string;
+  template_id?: any | null;
+  user_id?: string;
+  webhook_id?: string;
 }
-export interface Data27 {
-  executingUserId?: string;
-  fromState?: string;
-  fromStateParams?: FromStateParams;
-  organizationId?: string;
-  spaceId?: string;
-  toState?: string;
-  toStateParams?: ToStateParams;
+export interface Data15 {
+  from_state?: string;
+  from_state_params?: FromStateParams;
+  organization_key?: string;
+  space_key?: string;
+  to_state?: string;
+  to_state_params?: ToStateParams;
 }
 export interface GlobalStateChanged {
-  data?: Data27;
+  data?: Data15;
 }
 export interface Payload7 {
-  dialogAction?: string;
-  dialogSessionId?: string;
-  entityId?: string;
-  entityType?: string;
-  incomingLinksCount?: number;
+  dialog_action?: string;
+  dialog_session_id?: string;
+  entity_id?: string;
+  entity_type?: string;
+  incoming_links_count?: number;
 }
-export interface Data28 {
+export interface Data16 {
   action?: string;
-  executingUserId?: string;
-  organizationId?: string;
+  environment_key?: string;
+  organization_key?: string;
   payload?: Payload7;
   scope?: string;
-  spaceId?: string;
+  space_key?: string;
 }
 export interface IncomingLinksDialogConfirm {
-  data?: Data28;
+  data?: Data16;
 }
 export interface Payload8 {
-  dialogAction?: string;
-  dialogSessionId?: string;
-  entityId?: string;
-  entityType?: string;
-  incomingLinksCount?: number;
+  dialog_action?: string;
+  dialog_session_id?: string;
+  entity_id?: string;
+  entity_type?: string;
+  incoming_links_count?: number;
 }
-export interface Data29 {
+export interface Data17 {
   action?: string;
-  executingUserId?: string;
-  organizationId?: string;
+  environment_key?: string;
+  organization_key?: string;
   payload?: Payload8;
   scope?: string;
-  spaceId?: string;
+  space_key?: string;
 }
 export interface IncomingLinksDialogOpen {
-  data?: Data29;
+  data?: Data17;
 }
 export interface Payload9 {
-  entityId?: string;
-  entityType?: string;
-  incomingLinkIds?: string[];
-  incomingLinksCount?: number;
+  entity_id?: string;
+  entity_type?: string;
+  incoming_link_ids?: string[];
+  incoming_links_count?: number;
 }
-export interface Data30 {
+export interface Data18 {
   action?: string;
-  executingUserId?: string;
-  organizationId?: string;
+  environment_key?: string;
+  organization_key?: string;
   payload?: Payload9;
   scope?: string;
-  spaceId?: string;
+  space_key?: string;
 }
 export interface IncomingLinksQuery {
-  data?: Data30;
-}
-export interface Data31 {
-  action?: string;
-  executingUserId?: string;
-  jobId?: string;
-  organizationId?: string;
-  spaceId?: string;
-}
-export interface JobsCancel {
-  data?: Data31;
-  schema?: string;
-}
-export interface Data32 {
-  action?: string;
-  entityId?: string;
-  executingUserId?: string;
-  jobId?: string;
-  localTimezone?: string;
-  organizationId?: string;
-  scheduledFor?: string;
-  scheduledForTimezone?: string;
-  spaceId?: string;
-  timezoneOffset?: number;
-}
-export interface JobsCreate {
-  data?: Data32;
-  schema?: string;
+  data?: Data18;
 }
 export interface Payload10 {
-  stateName?: string;
+  state_name?: string;
   value?: number;
 }
-export interface Data33 {
+export interface Data19 {
   action?: string;
-  executingUserId?: string;
-  organizationId?: string;
+  environment_key?: string;
+  organization_key?: string;
   payload?: Payload10;
   scope?: string;
-  spaceId?: string;
+  space_key?: string;
 }
 export interface PerfDomContentLoaded {
-  data?: Data33;
+  data?: Data19;
 }
 export interface Payload11 {
-  stateName?: string;
+  state_name?: string;
   value?: number;
 }
-export interface Data34 {
+export interface Data20 {
   action?: string;
-  executingUserId?: string;
-  organizationId?: string;
+  environment_key?: string;
+  organization_key?: string;
   payload?: Payload11;
   scope?: string;
-  spaceId?: string;
+  space_key?: string;
 }
 export interface PerfFirstContentfulPaint {
-  data?: Data34;
+  data?: Data20;
 }
 export interface Payload12 {
-  stateName?: string;
+  state_name?: string;
   value?: number;
 }
-export interface Data35 {
+export interface Data21 {
   action?: string;
-  executingUserId?: string;
-  organizationId?: string;
+  environment_key?: string;
+  organization_key?: string;
   payload?: Payload12;
   scope?: string;
-  spaceId?: string;
+  space_key?: string;
 }
 export interface PerfTimeToInteractive {
-  data?: Data35;
+  data?: Data21;
 }
-export interface Data36 {
+export interface Data22 {
   action?: string;
-  executingUserId?: string;
-  personalAccessTokenId?: string;
+  personal_access_token_id?: string;
 }
 export interface PersonalAccessTokenAction {
-  data?: Data36;
+  data?: Data22;
 }
 export interface ReleaseCreated {
   environment_key: string;
@@ -737,502 +557,193 @@ export interface ReleaseTrashed {
   release_id: string;
   space_key: string;
 }
-export interface Data37 {
-  entityType?: string;
-  executingUserId?: string;
-  index?: number;
-  organizationId?: string;
-  resultCount?: number;
-  searchFilters?: string[];
-  searchQuery?: string;
-  sequenceKey?: string;
-  spaceId?: string;
-}
 export interface SearchEntryClicked {
-  data?: Data37;
-}
-export interface Data38 {
-  entityType?: string;
-  executingUserId?: string;
-  filter?: string;
-  organizationId?: string;
-  resultCount?: number;
-  searchFilters?: string[];
-  searchQuery?: string;
-  sequenceKey?: string;
-  spaceId?: string;
+  entity_type?: string;
+  environment_key?: string;
+  index?: number;
+  organization_key?: string;
+  result_count?: number;
+  search_filters?: string[];
+  search_query?: string;
+  sequence_key?: string;
+  space_key?: string;
 }
 export interface SearchFilterAdded {
-  data?: Data38;
-}
-export interface Data39 {
-  entityType?: string;
-  executingUserId?: string;
+  entity_type?: string;
+  environment_key?: string;
   filter?: string;
-  organizationId?: string;
-  resultCount?: number;
-  searchFilters?: string[];
-  searchQuery?: string;
-  sequenceKey?: string;
-  spaceId?: string;
+  organization_key?: string;
+  result_count?: number;
+  search_filters?: string[];
+  search_query?: string;
+  sequence_key?: string;
+  space_key?: string;
 }
 export interface SearchFilterRemoved {
-  data?: Data39;
-}
-export interface Data40 {
-  entityType?: string;
-  executingUserId?: string;
-  organizationId?: string;
-  resultCount?: number;
-  searchFilters?: string[];
-  searchQuery?: string;
-  sequenceKey?: string;
-  spaceId?: string;
+  entity_type?: string;
+  environment_key?: string;
+  filter?: string;
+  organization_key?: string;
+  result_count?: number;
+  search_filters?: string[];
+  search_query?: string;
+  sequence_key?: string;
+  space_key?: string;
 }
 export interface SearchQueryChanged {
-  data?: Data40;
-}
-export interface Data41 {
-  contentTypeId?: any | null;
-  entityType?: string;
-  executingUserId?: string;
-  organizationId?: string;
-  resultCount?: number;
-  searchFilters?: string[];
-  searchQuery?: string;
-  sequenceKey?: string;
-  spaceId?: string;
+  entity_type?: string;
+  environment_key?: string;
+  organization_key?: string;
+  result_count?: number;
+  search_filters?: string[];
+  search_query?: string;
+  sequence_key?: string;
+  space_key?: string;
 }
 export interface SearchSearchPerformed {
-  data?: Data41;
-}
-export interface Data42 {
-  contentTypeId?: any | null;
-  entityType?: string;
-  executingUserId?: string;
-  folderId?: string;
-  folderTitle?: string;
-  organizationId?: string;
-  searchFilters?: string[];
-  searchQuery?: string;
-  spaceId?: string;
-  viewId?: string;
-  viewType?: string;
+  content_type_id?: any | null;
+  entity_type?: string;
+  environment_key?: string;
+  organization_key?: string;
+  result_count?: number;
+  search_filters?: string[];
+  search_query?: string;
+  sequence_key?: string;
+  space_key?: string;
 }
 export interface SearchViewCreated {
-  data?: Data42;
-}
-export interface Data43 {
-  entityType?: string;
-  executingUserId?: string;
-  organizationId?: string;
-  spaceId?: string;
-  viewId?: string;
-  viewType?: string;
+  content_type_id?: any | null;
+  entity_type?: string;
+  environment_key?: string;
+  folder_id?: string;
+  folder_title?: string;
+  organization_key?: string;
+  search_filters?: string[];
+  search_query?: string;
+  space_key?: string;
+  view_id?: string;
+  view_type?: string;
 }
 export interface SearchViewDeleted {
-  data?: Data43;
-}
-export interface Data44 {
-  contentTypeId?: any | null;
-  entityType?: string;
-  executingUserId?: string;
-  organizationId?: string;
-  resultCount?: number;
-  searchFilters?: string[];
-  searchQuery?: string;
-  sequenceKey?: string;
-  spaceId?: string;
-  viewId?: string;
-  viewRoles?: any | null;
-  viewTitle?: string;
-  viewType?: string;
+  entity_type?: string;
+  environment_key?: string;
+  organization_key?: string;
+  space_key?: string;
+  view_id?: string;
+  view_type?: string;
 }
 export interface SearchViewLoaded {
-  data?: Data44;
+  content_type_id?: any | null;
+  entity_type?: string;
+  environment_key?: string;
+  organization_key?: string;
+  result_count?: number;
+  search_filters?: string[];
+  search_query?: string;
+  sequence_key?: string;
+  space_key?: string;
+  view_id?: string;
+  view_roles?: any | null;
+  view_title?: string;
+  view_type?: string;
 }
 export interface Payload13 {
-  cmaEntityVersion?: number;
-  entityId?: string;
-  entityType?: string;
-  shareJsDocCompressedVersion?: number;
-  shareJsDocVersion?: number;
-}
-export interface Data45 {
-  action?: string;
-  executingUserId?: string;
-  organizationId?: string;
-  payload?: Payload13;
-  scope?: string;
-  spaceId?: string;
+  cma_entity_version?: number;
+  entity_id?: string;
+  entity_type?: string;
+  share_js_doc_compressed_version?: number;
+  share_js_doc_version?: number;
 }
 export interface SharejsCmaEntityVersionMismatch {
-  data?: Data45;
-}
-export interface Data46 {
   action?: string;
-  currentSlideLevel?: number;
-  executingUserId?: string;
-  organizationId?: string;
-  peekHoverTimeMs?: number;
-  spaceId?: string;
-  targetSlideLevel?: number;
-}
-export interface SlideInEditorArrowBack {
-  data?: Data46;
-}
-export interface Data47 {
-  action?: string;
-  currentSlideLevel?: number;
-  executingUserId?: string;
-  organizationId?: string;
-  peekHoverTimeMs?: number;
-  spaceId?: string;
-  targetSlideLevel?: number;
-}
-export interface SlideInEditorDelete {
-  data?: Data47;
-}
-export interface Data48 {
-  action?: string;
-  currentSlideLevel?: number;
-  executingUserId?: string;
-  organizationId?: string;
-  peekHoverTimeMs?: number;
-  spaceId?: string;
-  targetSlideLevel?: number;
-}
-export interface SlideInEditorOpen {
-  data?: Data48;
-}
-export interface Data49 {
-  action?: string;
-  currentSlideLevel?: number;
-  executingUserId?: string;
-  organizationId?: string;
-  peekHoverTimeMs?: number;
-  spaceId?: string;
-  targetSlideLevel?: number;
-}
-export interface SlideInEditorOpenCreate {
-  data?: Data49;
-}
-export interface Data50 {
-  action?: string;
-  currentSlideLevel?: number;
-  executingUserId?: string;
-  organizationId?: string;
-  peekHoverTimeMs?: number;
-  spaceId?: string;
-  targetSlideLevel?: number;
-}
-export interface SlideInEditorPeekClick {
-  data?: Data50;
-}
-export interface Data51 {
-  action?: string;
-  executingUserId?: string;
-  name?: string;
-  organizationId?: string;
-  spaceId?: string;
-}
-export interface ContextsItem4 {
-  data?: Data51;
-  schema?: string;
+  environment_key?: string;
+  organization_key?: string;
+  payload?: Payload13;
+  scope?: string;
+  space_key?: string;
 }
 export interface SpaceCreate {
-  contexts?: ContextsItem4[];
-  data?: Record<string, any>;
-}
-export interface Data52 {
-  action?: string;
-  currentProductType?: any | null;
-  currentSpaceType?: any | null;
-  currentStep?: any | null;
-  executingUserId?: string;
-  intendedAction?: string;
-  organizationId?: string;
-  paymentDetailsExist?: any | null;
-  recommendedProductType?: any | null;
-  recommendedSpaceType?: any | null;
-  spaceId?: string;
-  targetProductType?: any | null;
-  targetSpaceName?: any | null;
-  targetSpaceTemplateId?: any | null;
-  targetSpaceType?: any | null;
-  targetStep?: any | null;
-}
-export interface SpaceWizardCancel {
-  data?: Data52;
-}
-export interface Data53 {
-  action?: string;
-  currentProductType?: any | null;
-  currentSpaceType?: any | null;
-  currentStep?: any | null;
-  executingUserId?: string;
-  intendedAction?: string;
-  organizationId?: string;
-  paymentDetailsExist?: any | null;
-  recommendedProductType?: any | null;
-  recommendedSpaceType?: any | null;
-  spaceId?: string;
-  targetProductType?: any | null;
-  targetSpaceName?: any | null;
-  targetSpaceTemplateId?: any | null;
-  targetSpaceType?: any | null;
-  targetStep?: any | null;
-}
-export interface SpaceWizardConfirm {
-  data?: Data53;
-}
-export interface Data54 {
-  action?: string;
-  currentProductType?: any | null;
-  currentSpaceType?: any | null;
-  executingUserId?: string;
-  intendedAction?: string;
-  paymentDetailsExist?: any | null;
-  recommendedProductType?: any | null;
-  targetProductType?: any | null;
-  targetSpaceName?: string;
-}
-export interface SpaceWizardEnteredDetails {
-  data?: Data54;
-}
-export interface Data55 {
-  currentProductType?: any | null;
-  executingUserId?: string;
-  intendedAction?: string;
-  organizationId?: string;
-  paymentDetailsExist?: any | null;
-  targetProductType?: any | null;
-  targetSpaceName?: any | null;
-  targetSpaceType?: any | null;
-  targetStep?: any | null;
-}
-export interface SpaceWizardLinkClick {
-  data?: Data55;
-}
-export interface Data56 {
-  action?: string;
-  currentProductType?: any | null;
-  currentSpaceType?: any | null;
-  currentStep?: any | null;
-  executingUserId?: string;
-  intendedAction?: string;
-  organizationId?: string;
-  paymentDetailsExist?: any | null;
-  recommendedProductType?: any | null;
-  recommendedSpaceType?: any | null;
-  spaceId?: string;
-  targetProductType?: any | null;
-  targetSpaceName?: any | null;
-  targetSpaceTemplateId?: any | null;
-  targetSpaceType?: any | null;
-  targetStep?: string;
-}
-export interface SpaceWizardNavigate {
-  data?: Data56;
-}
-export interface Data57 {
-  action?: string;
-  currentProductType?: any | null;
-  currentSpaceType?: any | null;
-  currentStep?: any | null;
-  executingUserId?: string;
-  intendedAction?: string;
-  organizationId?: string;
-  paymentDetailsExist?: boolean;
-  recommendedProductType?: any | null;
-  recommendedSpaceType?: any | null;
-  spaceId?: string;
-  targetProductType?: any | null;
-  targetSpaceName?: any | null;
-  targetSpaceTemplateId?: any | null;
-  targetSpaceType?: any | null;
-  targetStep?: any | null;
-}
-export interface SpaceWizardOpen {
-  data?: Data57;
-}
-export interface Data58 {
-  action?: string;
-  currentProductType?: any | null;
-  currentSpaceType?: any | null;
-  currentStep?: any | null;
-  executingUserId?: string;
-  intendedAction?: string;
-  organizationId?: string;
-  paymentDetailsExist?: any | null;
-  recommendedProductType?: any | null;
-  recommendedSpaceType?: any | null;
-  spaceId?: string;
-  targetProductType?: string;
-  targetSpaceName?: any | null;
-  targetSpaceTemplateId?: any | null;
-  targetSpaceType?: string;
-  targetStep?: any | null;
-}
-export interface SpaceWizardSelectPlan {
-  data?: Data58;
-}
-export interface Data59 {
-  currentProductType?: any | null;
-  currentStep?: any | null;
-  executingUserId?: string;
-  organizationId?: string;
-  recommendedProductType?: any | null;
-  recommendedSpaceType?: any | null;
-  targetSpaceName?: any | null;
-  targetSpaceTemplateId?: any | null;
-  targetSpaceType?: any | null;
-}
-export interface SpaceWizardSpaceCreate {
-  data?: Data59;
-}
-export interface Data60 {
-  action?: string;
-  currentProductType?: any | null;
-  currentSpaceType?: any | null;
-  currentStep?: any | null;
-  executingUserId?: string;
-  intendedAction?: string;
-  organizationId?: string;
-  paymentDetailsExist?: any | null;
-  recommendedProductType?: any | null;
-  recommendedSpaceType?: any | null;
-  spaceId?: string;
-  targetProductType?: any | null;
-  targetSpaceName?: any | null;
-  targetSpaceTemplateId?: any | null;
-  targetSpaceType?: any | null;
-  targetStep?: any | null;
-}
-export interface SpaceWizardSpaceTypeChange {
-  data?: Data60;
+  contexts?: string;
 }
 export interface Payload14 {
-  numErr?: number;
-  numSuccess?: number;
+  num_err?: number;
+  num_success?: number;
 }
-export interface Data61 {
+export interface Data23 {
   action?: string;
-  executingUserId?: string;
-  organizationId?: string;
+  environment_key?: string;
+  organization_key?: string;
   payload?: Payload14;
   scope?: string;
-  spaceId?: string;
+  space_key?: string;
 }
 export interface TeamsInSpaceUsersAdded {
-  data?: Data61;
+  data?: Data23;
 }
 export interface AdditionalData {
-  characterCountAfter?: number;
-  characterCountBefore?: number;
-  characterCountSelection?: number;
-  linkType?: string;
-  markType?: string;
-  nodeType?: string;
+  character_count_after?: number;
+  character_count_before?: number;
+  character_count_selection?: number;
+  link_type?: string;
+  mark_type?: string;
+  node_type?: string;
 }
-export interface Data62 {
+export interface Data24 {
   action?: string;
-  actionOrigin?: string;
-  additionalData?: AdditionalData;
-  characterCountAfter?: number;
-  characterCountBefore?: any | null;
-  characterCountSelection?: any | null;
-  contentTypeId?: string;
-  editorName?: string;
-  entryId?: string;
-  executingUserId?: string;
-  fieldId?: string;
-  fieldLocale?: string;
-  isFullscreen?: boolean;
-  organizationId?: string;
-  spaceId?: string;
+  action_origin?: string;
+  additional_data?: AdditionalData;
+  character_count_after?: number;
+  character_count_before?: any | null;
+  character_count_selection?: any | null;
+  content_type_id?: string;
+  editor_name?: string;
+  entry_id?: string;
+  environment_key?: string;
+  field_id?: string;
+  field_locale?: string;
+  is_fullscreen?: boolean;
+  organization_key?: string;
+  space_key?: string;
 }
 export interface TextEditorAction {
-  data?: Data62;
+  data?: Data24;
   schema?: string;
 }
 export interface Payload15 {
   event?: string;
 }
-export interface Data63 {
+export interface Data25 {
   action?: string;
-  executingUserId?: string;
-  organizationId?: string;
+  environment_key?: string;
+  organization_key?: string;
   payload?: Payload15;
   scope?: string;
-  spaceId?: string;
+  space_key?: string;
 }
 export interface TrackingInvalidEvent {
-  data?: Data63;
+  data?: Data25;
 }
-export interface Data64 {
-  action?: string;
-  currentMode?: string;
-  executingUserId?: string;
-  organizationId?: string;
-  spaceId?: string;
-}
-export interface TranslationSidebarChangeFocusedLocale {
-  data?: Data64;
-}
-export interface Data65 {
-  action?: string;
-  currentActiveLocaleCount?: number;
-  currentMode?: string;
-  executingUserId?: string;
-  organizationId?: string;
-  previousActiveLocaleCount?: number;
-  spaceId?: string;
-}
-export interface TranslationSidebarDeselectActiveLocale {
-  data?: Data65;
-}
-export interface Data66 {
-  action?: string;
-  currentMode?: string;
-  executingUserId?: string;
-  organizationId?: string;
-  spaceId?: string;
-}
-export interface TranslationSidebarToggleWidgetMode {
-  data?: Data66;
-}
-export interface Data67 {
-  action?: string;
-  currentActiveLocaleCount?: number;
-  currentMode?: string;
-  executingUserId?: string;
-  organizationId?: string;
-  previousActiveLocaleCount?: number;
-  spaceId?: string;
-}
-export interface TranslationSidebarUpdateActiveLocales {
-  data?: Data67;
-}
-export interface Data68 {
-  appDefinitionId?: string;
+export interface Data26 {
+  app_definition_id?: string;
   environment?: string;
-  organizationId?: string;
-  spaceId?: string;
-  userId?: string;
+  environment_key?: string;
+  organization_key?: string;
+  space_key?: string;
+  user_id?: string;
 }
 export interface WidgetRendererFallbackRendered {
-  data?: Data68;
+  data?: Data26;
 }
-export interface Data69 {
-  appDefinitionId?: string;
+export interface Data27 {
+  app_definition_id?: string;
   environment?: string;
-  organizationId?: string;
-  spaceId?: string;
-  userId?: string;
+  environment_key?: string;
+  organization_key?: string;
+  space_key?: string;
+  user_id?: string;
 }
 export interface WidgetRendererFallbackWarningShown {
-  data?: Data69;
+  data?: Data27;
 }
 
 export type ViolationHandler = (
@@ -1334,250 +845,163 @@ function withTypewriterContext(message: Segment.Options = {}): Segment.Options {
 }
 
 /**
- * @typedef PageViewed
- * @property {any | null} [accepted_permissions] -
- * @property {boolean} [add_to_context] -
- * @property {string} [api_key_id] -
- * @property {any | null} [app_id] -
- * @property {string} [asset_id] -
- * @property {string} [content_type_id] -
- * @property {string} [definition_id] -
- * @property {string} [entry_id] -
- * @property {string} [environment_id] -
- * @property {boolean} [ignore_leave_confirmation] -
- * @property {string} [jump_to_role] -
- * @property {string} [locale_id] -
- * @property {string} [name] -
- * @property {string} [org_id] -
- * @property {any | null} [org_owner_or_admin] -
- * @property {string} [path] -
- * @property {string} [path_suffix] -
- * @property {string} [previous_entries] -
- * @property {string} [referrer] -
- * @property {string} [search] -
- * @property {string} [space_id] -
- * @property {string} [tab] -
- * @property {any | null} [template_id] -
- * @property {string} [title] -
- * @property {string} [url] -
- * @property {string} [user_id] -
- * @property {string} [webhook_id] -
- */
-/**
  * @typedef Payload
- * @property {boolean} [hasInaccessibleTasks] -
- * @property {number} [numPendingTasks] -
- * @property {number} [numVisiblePendingTasks] -
+ * @property {boolean} [has_inaccessible_tasks] -
+ * @property {number} [num_pending_tasks] -
+ * @property {number} [num_visible_pending_tasks] -
  */
 /**
  * @typedef Data
  * @property {string} [action] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
  * @property {Payload} [payload] -
  * @property {string} [scope] -
- * @property {string} [spaceId] -
+ * @property {string} [space_key] -
  */
 /**
  * @typedef AccountDropdownPendingTasksFetched
  * @property {Data} [data] -
  */
 /**
+ * @typedef Payload1
+ * @property {string} [definition_id] -
+ */
+/**
  * @typedef Data1
  * @property {string} [action] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {string} [spaceId] -
- */
-/**
- * @typedef ApiKeyClipboardCopy
- * @property {Data1} [data] -
- */
-/**
- * @typedef Payload1
- * @property {string} [definitionId] -
- */
-/**
- * @typedef Data2
- * @property {string} [action] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
  * @property {Payload1} [payload] -
  * @property {string} [scope] -
  */
 /**
  * @typedef AppManagementCreated
- * @property {Data2} [data] -
+ * @property {Data1} [data] -
  */
 /**
  * @typedef Payload2
- * @property {string} [definitionId] -
+ * @property {string} [definition_id] -
  */
 /**
- * @typedef Data3
+ * @typedef Data2
  * @property {string} [action] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
  * @property {Payload2} [payload] -
  * @property {string} [scope] -
  */
 /**
  * @typedef AppManagementUpdated
- * @property {Data3} [data] -
+ * @property {Data2} [data] -
  */
 /**
- * @typedef Data4
- * @property {string} [appEventName] -
- * @property {string} [contentfulAppId] -
- * @property {string} [contentfulEventId] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {string} [spaceId] -
+ * @typedef Data3
+ * @property {string} [app_event_name] -
+ * @property {string} [contentful_app_id] -
+ * @property {string} [contentful_event_id] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
+ * @property {string} [space_key] -
  */
 /**
  * @typedef AppsLifecycleEvent
- * @property {Data4} [data] -
+ * @property {Data3} [data] -
  */
 /**
  * @typedef AssetCreated
  * @property {string} [asset_id] -
  * @property {string} [environment] -
- * @property {string} [space_id] -
+ * @property {string} [space_key] -
  * @property {string} [version] -
+ */
+/**
+ * @typedef Data4
+ * @property {string} [action] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
+ * @property {Record<string, any>} [payload] -
+ * @property {string} [scope] -
+ * @property {string} [space_key] -
+ */
+/**
+ * @typedef AssetListAddAssetMultiple
+ * @property {Data4} [data] -
  */
 /**
  * @typedef Data5
  * @property {string} [action] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
  * @property {Record<string, any>} [payload] -
  * @property {string} [scope] -
- * @property {string} [spaceId] -
- */
-/**
- * @typedef AssetListAddAssetMultiple
- * @property {Data5} [data] -
- */
-/**
- * @typedef Data6
- * @property {string} [action] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {Record<string, any>} [payload] -
- * @property {string} [scope] -
- * @property {string} [spaceId] -
+ * @property {string} [space_key] -
  */
 /**
  * @typedef AssetListAddAssetSingle
- * @property {Data6} [data] -
+ * @property {Data5} [data] -
  */
 /**
  * @typedef AssetPublished
  * @property {string} [asset_id] -
  * @property {string} [environment] -
- * @property {string} [space_id] -
+ * @property {string} [space_key] -
  * @property {string} [version] -
+ */
+/**
+ * @typedef Data6
+ * @property {string} [action] -
+ * @property {string} [environment_key] -
+ * @property {number} [num_edited_entries] -
+ * @property {number} [num_published_entries] -
+ * @property {string} [organization_key] -
+ * @property {string} [parent_entry_id] -
+ * @property {number} [ref_count] -
+ * @property {string} [space_key] -
+ */
+/**
+ * @typedef BulkEditorClose
+ * @property {Data6} [data] -
  */
 /**
  * @typedef Data7
  * @property {string} [action] -
- * @property {string} [executingUserId] -
- * @property {number} [numEditedEntries] -
- * @property {number} [numPublishedEntries] -
- * @property {string} [organizationId] -
- * @property {string} [parentEntryId] -
- * @property {number} [refCount] -
- * @property {string} [spaceId] -
+ * @property {string} [entry_id] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
+ * @property {string} [parent_entry_id] -
+ * @property {number} [ref_count] -
+ * @property {string} [space_key] -
  */
 /**
- * @typedef BulkEditorClose
+ * @typedef BulkEditorEditInEntryEditor
  * @property {Data7} [data] -
  */
 /**
  * @typedef Data8
  * @property {string} [action] -
- * @property {string} [entryId] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {string} [parentEntryId] -
- * @property {number} [refCount] -
- * @property {string} [spaceId] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
+ * @property {string} [parent_entry_id] -
+ * @property {number} [ref_count] -
+ * @property {string} [space_key] -
  */
 /**
- * @typedef BulkEditorEditInEntryEditor
+ * @typedef BulkEditorOpen
  * @property {Data8} [data] -
  */
 /**
  * @typedef Data9
  * @property {string} [action] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {string} [parentEntryId] -
- * @property {number} [refCount] -
- * @property {string} [spaceId] -
- */
-/**
- * @typedef BulkEditorOpen
- * @property {Data9} [data] -
- */
-/**
- * @typedef Data10
- * @property {string} [action] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {string} [parentEntryId] -
- * @property {number} [refCount] -
- * @property {string} [spaceId] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
+ * @property {string} [parent_entry_id] -
+ * @property {number} [ref_count] -
+ * @property {string} [space_key] -
  */
 /**
  * @typedef BulkEditorOpenSlideIn
- * @property {Data10} [data] -
- */
-/**
- * @typedef EditorLoaded
- * @property {string} [action] - `init` is triggered every time a slide is loaded. `entity_loaded` is triggered when the editor's main entity is loaded. `sharejs_connected` is triggered when a connection with ShareJS has been established while in case ShareJS is not used for the editor, the more generic `doc_connected` is triggered. `links_rendered` is triggered when all the links (references, media, and rich text embeds / entry hyperlinks) in a slide have been fetched and rendered. `fully_interactive` is trigger when both the links have rendered and the entry has become editable (i.e. ShareJS has connected).
- * @property {string} [executing_user_id] -
- * @property {number} [link_count] - The total number of links (reference links, media field assets, rich text embedded block and inline entries, rich text embedded block assets, and rich text hyperlinked entries) in the entry on initial load
- * @property {number} [link_field_editor_instance_count] - The overall number of reference and media field instances in an individual entry (1 locale field = 1 instance)
- * @property {number} [load_ms] - Number of milliseconds since the initial load of the entry
- * @property {string} [organization_id] -
- * @property {number} [rich_text_editor_instance_count] - The overall number of rich text editor instances in an individual entry (1 locale field editor = 1 instance)
- * @property {number} [slide_level] - Level of the entry editor within the slides (zero-indexed, -1 if the slide was closed at the time the event is triggered)
- * @property {string} [slide_uuid] - ID uniquely identifying the slide instance - does NOT uniquely identify the entry
- * @property {string} [slides_controller_uuid] - ID uniquely identifying the overall session and therefore all slides loaded around the same time within the same browser tab
- * @property {string} [space_id] -
- * @property {number} [total_slide_count] - The total number of slides open when the entry is initially loaded, default = 0 if there are no slides
- */
-/**
- * @typedef Payload3
- * @property {string} [tabName] -
- */
-/**
- * @typedef Data11
- * @property {string} [action] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {Payload3} [payload] -
- * @property {string} [scope] -
- * @property {string} [spaceId] -
- */
-/**
- * @typedef EditorWorkbenchTabOpen
- * @property {Data11} [data] -
- */
-/**
- * @typedef Data12
- * @property {string} [elementId] -
- * @property {string} [executingUserId] -
- * @property {string} [fromState] -
- * @property {string} [groupId] -
- * @property {string} [organizationId] -
- * @property {string} [spaceId] -
- */
-/**
- * @typedef ElementClick
- * @property {any[]} [contexts] -
- * @property {Data12} [data] -
+ * @property {Data9} [data] -
  */
 /**
  * @typedef EditorInterfaceFieldUpdated
@@ -1591,464 +1015,349 @@ function withTypewriterContext(message: Segment.Options = {}): Segment.Options {
  * @property {string} [widget_id] -
  */
 /**
- * @typedef Data13
- * @property {number} [autoConflictResolutionVersion] -
- * @property {string} [entityId] -
- * @property {string} [entityType] -
- * @property {string} [executingUserId] -
- * @property {boolean} [isConflictAutoResolvable] -
- * @property {string[]} [localChangesFieldPaths] -
- * @property {string} [localEntityLastFetchedAtTstamp] -
- * @property {string} [localEntityUpdatedAtTstamp] -
- * @property {number} [localEntityVersion] -
- * @property {string} [organizationId] -
- * @property {string[]} [remoteChangesSinceLocalEntityFieldPaths] -
- * @property {string} [remoteEntityUpdatedAtTstamp] -
- * @property {string} [remoteEntityUpdatedByUserId] -
- * @property {number} [remoteEntityVersion] -
- * @property {string} [spaceId] -
+ * @typedef EditorLoaded
+ * @property {string} [action] - `init` is triggered every time a slide is loaded. `entity_loaded` is triggered when the editor's main entity is loaded. `sharejs_connected` is triggered when a connection with ShareJS has been established while in case ShareJS is not used for the editor, the more generic `doc_connected` is triggered. `links_rendered` is triggered when all the links (references, media, and rich text embeds / entry hyperlinks) in a slide have been fetched and rendered. `fully_interactive` is trigger when both the links have rendered and the entry has become editable (i.e. ShareJS has connected).
+ * @property {string} [environment_key] -
+ * @property {number} [link_count] - The total number of links (reference links, media field assets, rich text embedded block and inline entries, rich text embedded block assets, and rich text hyperlinked entries) in the entry on initial load
+ * @property {number} [link_field_editor_instance_count] - The overall number of reference and media field instances in an individual entry (1 locale field = 1 instance)
+ * @property {number} [load_ms] - Number of milliseconds since the initial load of the entry
+ * @property {string} [organization_key] -
+ * @property {number} [rich_text_editor_instance_count] - The overall number of rich text editor instances in an individual entry (1 locale field editor = 1 instance)
+ * @property {number} [slide_level] - Level of the entry editor within the slides (zero-indexed, -1 if the slide was closed at the time the event is triggered)
+ * @property {string} [slide_uuid] - ID uniquely identifying the slide instance - does NOT uniquely identify the entry
+ * @property {string} [slides_controller_uuid] - ID uniquely identifying the overall session and therefore all slides loaded around the same time within the same browser tab
+ * @property {string} [space_key] -
+ * @property {number} [total_slide_count] - The total number of slides open when the entry is initially loaded, default = 0 if there are no slides
  */
 /**
- * @typedef EntityEditorEditConflict
+ * @typedef Payload3
+ * @property {string} [tab_name] -
+ */
+/**
+ * @typedef Data10
+ * @property {string} [action] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
+ * @property {Payload3} [payload] -
+ * @property {string} [scope] -
+ * @property {string} [space_key] -
+ */
+/**
+ * @typedef EditorWorkbenchTabOpen
+ * @property {Data10} [data] -
+ */
+/**
+ * @typedef ElementClick
+ * @property {string} [contexts] -
+ * @property {string} [element_id] -
+ * @property {string} [environment_key] -
+ * @property {string} [from_state] -
+ * @property {string} [group_id] -
+ * @property {string} [organization_key] -
+ * @property {string} [space_key] -
+ */
+/**
+ * @typedef EntryPublish
+ * @property {string} [action] -
+ * @property {string} [content_type_id] -
+ * @property {string} [contexts] -
+ * @property {number} [entry_ct_entry_reference_fields_count] -
+ * @property {string} [entry_id] -
+ * @property {string} [event_origin] -
+ * @property {boolean} [has_legacy_extensions] -
+ * @property {boolean} [is_default] -
+ * @property {string} [organization_key] -
+ * @property {string} [space_key] -
+ * @property {number} [version] -
+ */
+/**
+ * @typedef Payload4
+ * @property {number} [circular_references_count] -
+ * @property {string} [entity_id] -
+ * @property {number} [references_depth] -
+ * @property {number[]} [references_per_level] -
+ */
+/**
+ * @typedef Data11
+ * @property {string} [action] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
+ * @property {Payload4} [payload] -
+ * @property {string} [scope] -
+ * @property {string} [space_key] -
+ */
+/**
+ * @typedef EntryReferencesDialogOpen
+ * @property {Data11} [data] -
+ */
+/**
+ * @typedef Payload5
+ * @property {string} [entity_id] -
+ * @property {number} [references_count] -
+ */
+/**
+ * @typedef Data12
+ * @property {string} [action] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
+ * @property {Payload5} [payload] -
+ * @property {string} [scope] -
+ * @property {string} [space_key] -
+ */
+/**
+ * @typedef EntryReferencesPublish
+ * @property {Data12} [data] -
+ */
+/**
+ * @typedef Payload6
+ * @property {string} [entity_id] -
+ * @property {number} [references_count] -
+ */
+/**
+ * @typedef Data13
+ * @property {string} [action] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
+ * @property {Payload6} [payload] -
+ * @property {string} [scope] -
+ * @property {string} [space_key] -
+ */
+/**
+ * @typedef EntryReferencesValidate
  * @property {Data13} [data] -
- * @property {string} [schema] -
+ */
+/**
+ * @typedef ExperimentStarted
+ * @property {string} [environment_key] -
+ * @property {string} experiment_id - The experiment name the current user is part of
+ * @property {string} experiment_variation - The experiment variation the current user is assigned to
+ * @property {string} [organization_key] - Current organization key
+ * @property {string} [space_key] - Current space key
+ */
+/**
+ * @typedef GlobalAppLoaded
+ * @property {string} [action] -
+ * @property {string} [contexts] -
+ * @property {string} [organization_key] -
+ * @property {string} [space_key] -
  */
 /**
  * @typedef Data14
  * @property {string} [action] -
- * @property {string} [contentTypeId] -
- * @property {string} [entryId] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {string} [spaceId] -
- * @property {number} [version] -
+ * @property {string} [environment_key] -
+ * @property {string} [name] -
+ * @property {string} [organization_key] -
+ * @property {string} [purpose] -
+ * @property {string} [space_key] -
  */
 /**
- * @typedef ContextsItem
+ * @typedef GlobalDialog
  * @property {Data14} [data] -
  * @property {string} [schema] -
  */
 /**
- * @typedef Data15
- * @property {number} [entryCtEntryReferenceFieldsCount] -
- * @property {string} [entryId] -
- * @property {string} [eventOrigin] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {string} [spaceId] -
+ * @typedef GlobalSpaceChanged
+ * @property {string} [action] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
+ * @property {Record<string, any>} [payload] -
+ * @property {string} [scope] -
+ * @property {string} [space_key] -
  */
 /**
- * @typedef EntryCreate
- * @property {ContextsItem[]} [contexts] -
+ * @typedef GlobalSpaceLeft
+ * @property {string} [action] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
+ * @property {Record<string, any>} [payload] -
+ * @property {string} [scope] -
+ */
+/**
+ * @typedef FromStateParams
+ * @property {any | null} [accepted_permissions] -
+ * @property {boolean} [add_to_context] -
+ * @property {string} [api_key_id] -
+ * @property {any | null} [app_id] -
+ * @property {string} [asset_id] -
+ * @property {string} [content_type_id] -
+ * @property {string} [definition_id] -
+ * @property {string} [entry_id] -
+ * @property {string} [environment_key] -
+ * @property {boolean} [ignore_leave_confirmation] -
+ * @property {string} [invitation_id] -
+ * @property {string} [jump_to_role] -
+ * @property {string} [locale_id] -
+ * @property {any | null} [org_id] -
+ * @property {any | null} [org_owner_or_admin] -
+ * @property {string} [path_suffix] -
+ * @property {any | null} [referrer] -
+ * @property {string} [space_key] -
+ * @property {string} [tab] -
+ * @property {any | null} [template_id] -
+ * @property {string} [user_id] -
+ * @property {string} [webhook_id] -
+ */
+/**
+ * @typedef ToStateParams
+ * @property {any | null} [accepted_permissions] -
+ * @property {boolean} [add_to_context] -
+ * @property {string} [api_key_id] -
+ * @property {any | null} [app_id] -
+ * @property {string} [asset_id] -
+ * @property {string} [content_type_id] -
+ * @property {string} [definition_id] -
+ * @property {string} [entry_id] -
+ * @property {string} [environment_key] -
+ * @property {boolean} [ignore_leave_confirmation] -
+ * @property {string} [jump_to_role] -
+ * @property {string} [locale_id] -
+ * @property {string} [org_id] -
+ * @property {any | null} [org_owner_or_admin] -
+ * @property {string} [path_suffix] -
+ * @property {any | null} [referrer] -
+ * @property {string} [space_key] -
+ * @property {string} [tab] -
+ * @property {any | null} [template_id] -
+ * @property {string} [user_id] -
+ * @property {string} [webhook_id] -
+ */
+/**
+ * @typedef Data15
+ * @property {string} [from_state] -
+ * @property {FromStateParams} [from_state_params] -
+ * @property {string} [organization_key] -
+ * @property {string} [space_key] -
+ * @property {string} [to_state] -
+ * @property {ToStateParams} [to_state_params] -
+ */
+/**
+ * @typedef GlobalStateChanged
  * @property {Data15} [data] -
+ */
+/**
+ * @typedef Payload7
+ * @property {string} [dialog_action] -
+ * @property {string} [dialog_session_id] -
+ * @property {string} [entity_id] -
+ * @property {string} [entity_type] -
+ * @property {number} [incoming_links_count] -
  */
 /**
  * @typedef Data16
  * @property {string} [action] -
- * @property {string} [contentTypeId] -
- * @property {string} [entryId] -
- * @property {string} [executingUserId] -
- * @property {boolean} [hasLegacyExtensions] -
- * @property {boolean} [isDefault] -
- * @property {string} [organizationId] -
- * @property {string} [spaceId] -
- * @property {number} [version] -
- * @property {any | null} [widgets] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
+ * @property {Payload7} [payload] -
+ * @property {string} [scope] -
+ * @property {string} [space_key] -
  */
 /**
- * @typedef ContextsItem1
+ * @typedef IncomingLinksDialogConfirm
  * @property {Data16} [data] -
- * @property {string} [schema] -
+ */
+/**
+ * @typedef Payload8
+ * @property {string} [dialog_action] -
+ * @property {string} [dialog_session_id] -
+ * @property {string} [entity_id] -
+ * @property {string} [entity_type] -
+ * @property {number} [incoming_links_count] -
  */
 /**
  * @typedef Data17
- * @property {number} [entryCtEntryReferenceFieldsCount] -
- * @property {string} [entryId] -
- * @property {string} [eventOrigin] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {string} [spaceId] -
+ * @property {string} [action] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
+ * @property {Payload8} [payload] -
+ * @property {string} [scope] -
+ * @property {string} [space_key] -
  */
 /**
- * @typedef EntryPublish
- * @property {ContextsItem1[]} [contexts] -
+ * @typedef IncomingLinksDialogOpen
  * @property {Data17} [data] -
  */
 /**
- * @typedef Data18
- * @property {string} [contentTypeId] -
- * @property {string} [contentTypeName] -
- * @property {any | null} [extensionDefinitionId] -
- * @property {string} [extensionId] -
- * @property {string} [extensionName] -
- * @property {boolean} [hasLegacyExtensions] -
- * @property {any[]} [installationParams] -
- * @property {any[]} [instanceParams] -
- * @property {boolean} [isDefault] -
- * @property {string} [location] -
- * @property {string} [parentEntryId] -
- * @property {any | null} [src] -
- * @property {any | null} [widgets] -
+ * @typedef Payload9
+ * @property {string} [entity_id] -
+ * @property {string} [entity_type] -
+ * @property {string[]} [incoming_link_ids] -
+ * @property {number} [incoming_links_count] -
  */
 /**
- * @typedef ContextsItem2
+ * @typedef Data18
+ * @property {string} [action] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
+ * @property {Payload9} [payload] -
+ * @property {string} [scope] -
+ * @property {string} [space_key] -
+ */
+/**
+ * @typedef IncomingLinksQuery
  * @property {Data18} [data] -
- * @property {string} [schema] -
+ */
+/**
+ * @typedef Payload10
+ * @property {string} [state_name] -
+ * @property {number} [value] -
  */
 /**
  * @typedef Data19
- * @property {string} [contentTypeId] -
- * @property {string} [contentTypeName] -
- * @property {string} [editorType] -
- * @property {string} [entryId] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {string} [spaceId] -
+ * @property {string} [action] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
+ * @property {Payload10} [payload] -
+ * @property {string} [scope] -
+ * @property {string} [space_key] -
  */
 /**
- * @typedef EntryEditorView
- * @property {ContextsItem2[]} [contexts] -
+ * @typedef PerfDomContentLoaded
  * @property {Data19} [data] -
  */
 /**
- * @typedef Payload4
- * @property {number} [circularReferencesCount] -
- * @property {string} [entityId] -
- * @property {number} [referencesDepth] -
- * @property {number[]} [referencesPerLevel] -
+ * @typedef Payload11
+ * @property {string} [state_name] -
+ * @property {number} [value] -
  */
 /**
  * @typedef Data20
  * @property {string} [action] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {Payload4} [payload] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
+ * @property {Payload11} [payload] -
  * @property {string} [scope] -
- * @property {string} [spaceId] -
+ * @property {string} [space_key] -
  */
 /**
- * @typedef EntryReferencesDialogOpen
+ * @typedef PerfFirstContentfulPaint
  * @property {Data20} [data] -
  */
 /**
- * @typedef Payload5
- * @property {string} [entityId] -
- * @property {number} [referencesCount] -
+ * @typedef Payload12
+ * @property {string} [state_name] -
+ * @property {number} [value] -
  */
 /**
  * @typedef Data21
  * @property {string} [action] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {Payload5} [payload] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
+ * @property {Payload12} [payload] -
  * @property {string} [scope] -
- * @property {string} [spaceId] -
+ * @property {string} [space_key] -
  */
 /**
- * @typedef EntryReferencesPublish
+ * @typedef PerfTimeToInteractive
  * @property {Data21} [data] -
- */
-/**
- * @typedef Payload6
- * @property {string} [entityId] -
- * @property {number} [referencesCount] -
  */
 /**
  * @typedef Data22
  * @property {string} [action] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {Payload6} [payload] -
- * @property {string} [scope] -
- * @property {string} [spaceId] -
- */
-/**
- * @typedef EntryReferencesValidate
- * @property {Data22} [data] -
- */
-/**
- * @typedef ExperimentStart
- * @property {string} experiment_id - The experiment name the current user is part of
- * @property {string} experiment_variation - The experiment variation the current user is assigned to
- * @property {string} [organization_id] - Current organization key
- * @property {string} [space_id] - Current space key
- * @property {string} [user_id] - Curent user key
- */
-/**
- * @typedef Data23
- * @property {string} [action] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {string} [spaceId] -
- */
-/**
- * @typedef ContextsItem3
- * @property {Data23} [data] -
- * @property {string} [schema] -
- */
-/**
- * @typedef GlobalAppLoaded
- * @property {ContextsItem3[]} [contexts] -
- * @property {Record<string, any>} [data] -
- */
-/**
- * @typedef Data24
- * @property {string} [action] -
- * @property {string} [executingUserId] -
- * @property {string} [name] -
- * @property {string} [organizationId] -
- * @property {string} [purpose] -
- * @property {string} [spaceId] -
- */
-/**
- * @typedef GlobalDialog
- * @property {Data24} [data] -
- * @property {string} [schema] -
- */
-/**
- * @typedef Data25
- * @property {string} [action] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {Record<string, any>} [payload] -
- * @property {string} [scope] -
- * @property {string} [spaceId] -
- */
-/**
- * @typedef GlobalSpaceChanged
- * @property {Data25} [data] -
- */
-/**
- * @typedef Data26
- * @property {string} [action] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {Record<string, any>} [payload] -
- * @property {string} [scope] -
- */
-/**
- * @typedef GlobalSpaceLeft
- * @property {Data26} [data] -
- */
-/**
- * @typedef FromStateParams
- * @property {any | null} [acceptedPermissions] -
- * @property {boolean} [addToContext] -
- * @property {string} [apiKeyId] -
- * @property {any | null} [appId] -
- * @property {string} [assetId] -
- * @property {string} [contentTypeId] -
- * @property {string} [definitionId] -
- * @property {string} [entryId] -
- * @property {string} [environmentId] -
- * @property {boolean} [ignoreLeaveConfirmation] -
- * @property {string} [invitationId] -
- * @property {string} [jumpToRole] -
- * @property {string} [localeId] -
- * @property {any | null} [orgId] -
- * @property {any | null} [orgOwnerOrAdmin] -
- * @property {string} [pathSuffix] -
- * @property {any | null} [referrer] -
- * @property {string} [spaceId] -
- * @property {string} [tab] -
- * @property {any | null} [templateId] -
- * @property {string} [userId] -
- * @property {string} [webhookId] -
- */
-/**
- * @typedef ToStateParams
- * @property {any | null} [acceptedPermissions] -
- * @property {boolean} [addToContext] -
- * @property {string} [apiKeyId] -
- * @property {any | null} [appId] -
- * @property {string} [assetId] -
- * @property {string} [contentTypeId] -
- * @property {string} [definitionId] -
- * @property {string} [entryId] -
- * @property {string} [environmentId] -
- * @property {boolean} [ignoreLeaveConfirmation] -
- * @property {string} [jumpToRole] -
- * @property {string} [localeId] -
- * @property {string} [orgId] -
- * @property {any | null} [orgOwnerOrAdmin] -
- * @property {string} [pathSuffix] -
- * @property {any | null} [referrer] -
- * @property {string} [spaceId] -
- * @property {string} [tab] -
- * @property {any | null} [templateId] -
- * @property {string} [userId] -
- * @property {string} [webhookId] -
- */
-/**
- * @typedef Data27
- * @property {string} [executingUserId] -
- * @property {string} [fromState] -
- * @property {FromStateParams} [fromStateParams] -
- * @property {string} [organizationId] -
- * @property {string} [spaceId] -
- * @property {string} [toState] -
- * @property {ToStateParams} [toStateParams] -
- */
-/**
- * @typedef GlobalStateChanged
- * @property {Data27} [data] -
- */
-/**
- * @typedef Payload7
- * @property {string} [dialogAction] -
- * @property {string} [dialogSessionId] -
- * @property {string} [entityId] -
- * @property {string} [entityType] -
- * @property {number} [incomingLinksCount] -
- */
-/**
- * @typedef Data28
- * @property {string} [action] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {Payload7} [payload] -
- * @property {string} [scope] -
- * @property {string} [spaceId] -
- */
-/**
- * @typedef IncomingLinksDialogConfirm
- * @property {Data28} [data] -
- */
-/**
- * @typedef Payload8
- * @property {string} [dialogAction] -
- * @property {string} [dialogSessionId] -
- * @property {string} [entityId] -
- * @property {string} [entityType] -
- * @property {number} [incomingLinksCount] -
- */
-/**
- * @typedef Data29
- * @property {string} [action] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {Payload8} [payload] -
- * @property {string} [scope] -
- * @property {string} [spaceId] -
- */
-/**
- * @typedef IncomingLinksDialogOpen
- * @property {Data29} [data] -
- */
-/**
- * @typedef Payload9
- * @property {string} [entityId] -
- * @property {string} [entityType] -
- * @property {string[]} [incomingLinkIds] -
- * @property {number} [incomingLinksCount] -
- */
-/**
- * @typedef Data30
- * @property {string} [action] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {Payload9} [payload] -
- * @property {string} [scope] -
- * @property {string} [spaceId] -
- */
-/**
- * @typedef IncomingLinksQuery
- * @property {Data30} [data] -
- */
-/**
- * @typedef Data31
- * @property {string} [action] -
- * @property {string} [executingUserId] -
- * @property {string} [jobId] -
- * @property {string} [organizationId] -
- * @property {string} [spaceId] -
- */
-/**
- * @typedef JobsCancel
- * @property {Data31} [data] -
- * @property {string} [schema] -
- */
-/**
- * @typedef Data32
- * @property {string} [action] -
- * @property {string} [entityId] -
- * @property {string} [executingUserId] -
- * @property {string} [jobId] -
- * @property {string} [localTimezone] -
- * @property {string} [organizationId] -
- * @property {string} [scheduledFor] -
- * @property {string} [scheduledForTimezone] -
- * @property {string} [spaceId] -
- * @property {number} [timezoneOffset] -
- */
-/**
- * @typedef JobsCreate
- * @property {Data32} [data] -
- * @property {string} [schema] -
- */
-/**
- * @typedef Payload10
- * @property {string} [stateName] -
- * @property {number} [value] -
- */
-/**
- * @typedef Data33
- * @property {string} [action] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {Payload10} [payload] -
- * @property {string} [scope] -
- * @property {string} [spaceId] -
- */
-/**
- * @typedef PerfDomContentLoaded
- * @property {Data33} [data] -
- */
-/**
- * @typedef Payload11
- * @property {string} [stateName] -
- * @property {number} [value] -
- */
-/**
- * @typedef Data34
- * @property {string} [action] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {Payload11} [payload] -
- * @property {string} [scope] -
- * @property {string} [spaceId] -
- */
-/**
- * @typedef PerfFirstContentfulPaint
- * @property {Data34} [data] -
- */
-/**
- * @typedef Payload12
- * @property {string} [stateName] -
- * @property {number} [value] -
- */
-/**
- * @typedef Data35
- * @property {string} [action] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {Payload12} [payload] -
- * @property {string} [scope] -
- * @property {string} [spaceId] -
- */
-/**
- * @typedef PerfTimeToInteractive
- * @property {Data35} [data] -
- */
-/**
- * @typedef Data36
- * @property {string} [action] -
- * @property {string} [executingUserId] -
- * @property {string} [personalAccessTokenId] -
+ * @property {string} [personal_access_token_id] -
  */
 /**
  * @typedef PersonalAccessTokenAction
- * @property {Data36} [data] -
+ * @property {Data22} [data] -
  */
 /**
  * @typedef ReleaseCreated
@@ -2120,478 +1429,172 @@ function withTypewriterContext(message: Segment.Options = {}): Segment.Options {
  * @property {string} space_key -
  */
 /**
- * @typedef Data37
- * @property {string} [entityType] -
- * @property {string} [executingUserId] -
- * @property {number} [index] -
- * @property {string} [organizationId] -
- * @property {number} [resultCount] -
- * @property {string[]} [searchFilters] -
- * @property {string} [searchQuery] -
- * @property {string} [sequenceKey] -
- * @property {string} [spaceId] -
- */
-/**
  * @typedef SearchEntryClicked
- * @property {Data37} [data] -
- */
-/**
- * @typedef Data38
- * @property {string} [entityType] -
- * @property {string} [executingUserId] -
- * @property {string} [filter] -
- * @property {string} [organizationId] -
- * @property {number} [resultCount] -
- * @property {string[]} [searchFilters] -
- * @property {string} [searchQuery] -
- * @property {string} [sequenceKey] -
- * @property {string} [spaceId] -
+ * @property {string} [entity_type] -
+ * @property {string} [environment_key] -
+ * @property {number} [index] -
+ * @property {string} [organization_key] -
+ * @property {number} [result_count] -
+ * @property {string[]} [search_filters] -
+ * @property {string} [search_query] -
+ * @property {string} [sequence_key] -
+ * @property {string} [space_key] -
  */
 /**
  * @typedef SearchFilterAdded
- * @property {Data38} [data] -
- */
-/**
- * @typedef Data39
- * @property {string} [entityType] -
- * @property {string} [executingUserId] -
+ * @property {string} [entity_type] -
+ * @property {string} [environment_key] -
  * @property {string} [filter] -
- * @property {string} [organizationId] -
- * @property {number} [resultCount] -
- * @property {string[]} [searchFilters] -
- * @property {string} [searchQuery] -
- * @property {string} [sequenceKey] -
- * @property {string} [spaceId] -
+ * @property {string} [organization_key] -
+ * @property {number} [result_count] -
+ * @property {string[]} [search_filters] -
+ * @property {string} [search_query] -
+ * @property {string} [sequence_key] -
+ * @property {string} [space_key] -
  */
 /**
  * @typedef SearchFilterRemoved
- * @property {Data39} [data] -
- */
-/**
- * @typedef Data40
- * @property {string} [entityType] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {number} [resultCount] -
- * @property {string[]} [searchFilters] -
- * @property {string} [searchQuery] -
- * @property {string} [sequenceKey] -
- * @property {string} [spaceId] -
+ * @property {string} [entity_type] -
+ * @property {string} [environment_key] -
+ * @property {string} [filter] -
+ * @property {string} [organization_key] -
+ * @property {number} [result_count] -
+ * @property {string[]} [search_filters] -
+ * @property {string} [search_query] -
+ * @property {string} [sequence_key] -
+ * @property {string} [space_key] -
  */
 /**
  * @typedef SearchQueryChanged
- * @property {Data40} [data] -
- */
-/**
- * @typedef Data41
- * @property {any | null} [contentTypeId] -
- * @property {string} [entityType] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {number} [resultCount] -
- * @property {string[]} [searchFilters] -
- * @property {string} [searchQuery] -
- * @property {string} [sequenceKey] -
- * @property {string} [spaceId] -
+ * @property {string} [entity_type] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
+ * @property {number} [result_count] -
+ * @property {string[]} [search_filters] -
+ * @property {string} [search_query] -
+ * @property {string} [sequence_key] -
+ * @property {string} [space_key] -
  */
 /**
  * @typedef SearchSearchPerformed
- * @property {Data41} [data] -
- */
-/**
- * @typedef Data42
- * @property {any | null} [contentTypeId] -
- * @property {string} [entityType] -
- * @property {string} [executingUserId] -
- * @property {string} [folderId] -
- * @property {string} [folderTitle] -
- * @property {string} [organizationId] -
- * @property {string[]} [searchFilters] -
- * @property {string} [searchQuery] -
- * @property {string} [spaceId] -
- * @property {string} [viewId] -
- * @property {string} [viewType] -
+ * @property {any | null} [content_type_id] -
+ * @property {string} [entity_type] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
+ * @property {number} [result_count] -
+ * @property {string[]} [search_filters] -
+ * @property {string} [search_query] -
+ * @property {string} [sequence_key] -
+ * @property {string} [space_key] -
  */
 /**
  * @typedef SearchViewCreated
- * @property {Data42} [data] -
- */
-/**
- * @typedef Data43
- * @property {string} [entityType] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {string} [spaceId] -
- * @property {string} [viewId] -
- * @property {string} [viewType] -
+ * @property {any | null} [content_type_id] -
+ * @property {string} [entity_type] -
+ * @property {string} [environment_key] -
+ * @property {string} [folder_id] -
+ * @property {string} [folder_title] -
+ * @property {string} [organization_key] -
+ * @property {string[]} [search_filters] -
+ * @property {string} [search_query] -
+ * @property {string} [space_key] -
+ * @property {string} [view_id] -
+ * @property {string} [view_type] -
  */
 /**
  * @typedef SearchViewDeleted
- * @property {Data43} [data] -
- */
-/**
- * @typedef Data44
- * @property {any | null} [contentTypeId] -
- * @property {string} [entityType] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {number} [resultCount] -
- * @property {string[]} [searchFilters] -
- * @property {string} [searchQuery] -
- * @property {string} [sequenceKey] -
- * @property {string} [spaceId] -
- * @property {string} [viewId] -
- * @property {any | null} [viewRoles] -
- * @property {string} [viewTitle] -
- * @property {string} [viewType] -
+ * @property {string} [entity_type] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
+ * @property {string} [space_key] -
+ * @property {string} [view_id] -
+ * @property {string} [view_type] -
  */
 /**
  * @typedef SearchViewLoaded
- * @property {Data44} [data] -
+ * @property {any | null} [content_type_id] -
+ * @property {string} [entity_type] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
+ * @property {number} [result_count] -
+ * @property {string[]} [search_filters] -
+ * @property {string} [search_query] -
+ * @property {string} [sequence_key] -
+ * @property {string} [space_key] -
+ * @property {string} [view_id] -
+ * @property {any | null} [view_roles] -
+ * @property {string} [view_title] -
+ * @property {string} [view_type] -
  */
 /**
  * @typedef Payload13
- * @property {number} [cmaEntityVersion] -
- * @property {string} [entityId] -
- * @property {string} [entityType] -
- * @property {number} [shareJsDocCompressedVersion] -
- * @property {number} [shareJsDocVersion] -
- */
-/**
- * @typedef Data45
- * @property {string} [action] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {Payload13} [payload] -
- * @property {string} [scope] -
- * @property {string} [spaceId] -
+ * @property {number} [cma_entity_version] -
+ * @property {string} [entity_id] -
+ * @property {string} [entity_type] -
+ * @property {number} [share_js_doc_compressed_version] -
+ * @property {number} [share_js_doc_version] -
  */
 /**
  * @typedef SharejsCmaEntityVersionMismatch
- * @property {Data45} [data] -
- */
-/**
- * @typedef Data46
  * @property {string} [action] -
- * @property {number} [currentSlideLevel] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {number} [peekHoverTimeMs] -
- * @property {string} [spaceId] -
- * @property {number} [targetSlideLevel] -
- */
-/**
- * @typedef SlideInEditorArrowBack
- * @property {Data46} [data] -
- */
-/**
- * @typedef Data47
- * @property {string} [action] -
- * @property {number} [currentSlideLevel] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {number} [peekHoverTimeMs] -
- * @property {string} [spaceId] -
- * @property {number} [targetSlideLevel] -
- */
-/**
- * @typedef SlideInEditorDelete
- * @property {Data47} [data] -
- */
-/**
- * @typedef Data48
- * @property {string} [action] -
- * @property {number} [currentSlideLevel] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {number} [peekHoverTimeMs] -
- * @property {string} [spaceId] -
- * @property {number} [targetSlideLevel] -
- */
-/**
- * @typedef SlideInEditorOpen
- * @property {Data48} [data] -
- */
-/**
- * @typedef Data49
- * @property {string} [action] -
- * @property {number} [currentSlideLevel] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {number} [peekHoverTimeMs] -
- * @property {string} [spaceId] -
- * @property {number} [targetSlideLevel] -
- */
-/**
- * @typedef SlideInEditorOpenCreate
- * @property {Data49} [data] -
- */
-/**
- * @typedef Data50
- * @property {string} [action] -
- * @property {number} [currentSlideLevel] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {number} [peekHoverTimeMs] -
- * @property {string} [spaceId] -
- * @property {number} [targetSlideLevel] -
- */
-/**
- * @typedef SlideInEditorPeekClick
- * @property {Data50} [data] -
- */
-/**
- * @typedef Data51
- * @property {string} [action] -
- * @property {string} [executingUserId] -
- * @property {string} [name] -
- * @property {string} [organizationId] -
- * @property {string} [spaceId] -
- */
-/**
- * @typedef ContextsItem4
- * @property {Data51} [data] -
- * @property {string} [schema] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
+ * @property {Payload13} [payload] -
+ * @property {string} [scope] -
+ * @property {string} [space_key] -
  */
 /**
  * @typedef SpaceCreate
- * @property {ContextsItem4[]} [contexts] -
- * @property {Record<string, any>} [data] -
- */
-/**
- * @typedef Data52
- * @property {string} [action] -
- * @property {any | null} [currentProductType] -
- * @property {any | null} [currentSpaceType] -
- * @property {any | null} [currentStep] -
- * @property {string} [executingUserId] -
- * @property {string} [intendedAction] -
- * @property {string} [organizationId] -
- * @property {any | null} [paymentDetailsExist] -
- * @property {any | null} [recommendedProductType] -
- * @property {any | null} [recommendedSpaceType] -
- * @property {string} [spaceId] -
- * @property {any | null} [targetProductType] -
- * @property {any | null} [targetSpaceName] -
- * @property {any | null} [targetSpaceTemplateId] -
- * @property {any | null} [targetSpaceType] -
- * @property {any | null} [targetStep] -
- */
-/**
- * @typedef SpaceWizardCancel
- * @property {Data52} [data] -
- */
-/**
- * @typedef Data53
- * @property {string} [action] -
- * @property {any | null} [currentProductType] -
- * @property {any | null} [currentSpaceType] -
- * @property {any | null} [currentStep] -
- * @property {string} [executingUserId] -
- * @property {string} [intendedAction] -
- * @property {string} [organizationId] -
- * @property {any | null} [paymentDetailsExist] -
- * @property {any | null} [recommendedProductType] -
- * @property {any | null} [recommendedSpaceType] -
- * @property {string} [spaceId] -
- * @property {any | null} [targetProductType] -
- * @property {any | null} [targetSpaceName] -
- * @property {any | null} [targetSpaceTemplateId] -
- * @property {any | null} [targetSpaceType] -
- * @property {any | null} [targetStep] -
- */
-/**
- * @typedef SpaceWizardConfirm
- * @property {Data53} [data] -
- */
-/**
- * @typedef Data54
- * @property {string} [action] -
- * @property {any | null} [currentProductType] -
- * @property {any | null} [currentSpaceType] -
- * @property {string} [executingUserId] -
- * @property {string} [intendedAction] -
- * @property {any | null} [paymentDetailsExist] -
- * @property {any | null} [recommendedProductType] -
- * @property {any | null} [targetProductType] -
- * @property {string} [targetSpaceName] -
- */
-/**
- * @typedef SpaceWizardEnteredDetails
- * @property {Data54} [data] -
- */
-/**
- * @typedef Data55
- * @property {any | null} [currentProductType] -
- * @property {string} [executingUserId] -
- * @property {string} [intendedAction] -
- * @property {string} [organizationId] -
- * @property {any | null} [paymentDetailsExist] -
- * @property {any | null} [targetProductType] -
- * @property {any | null} [targetSpaceName] -
- * @property {any | null} [targetSpaceType] -
- * @property {any | null} [targetStep] -
- */
-/**
- * @typedef SpaceWizardLinkClick
- * @property {Data55} [data] -
- */
-/**
- * @typedef Data56
- * @property {string} [action] -
- * @property {any | null} [currentProductType] -
- * @property {any | null} [currentSpaceType] -
- * @property {any | null} [currentStep] -
- * @property {string} [executingUserId] -
- * @property {string} [intendedAction] -
- * @property {string} [organizationId] -
- * @property {any | null} [paymentDetailsExist] -
- * @property {any | null} [recommendedProductType] -
- * @property {any | null} [recommendedSpaceType] -
- * @property {string} [spaceId] -
- * @property {any | null} [targetProductType] -
- * @property {any | null} [targetSpaceName] -
- * @property {any | null} [targetSpaceTemplateId] -
- * @property {any | null} [targetSpaceType] -
- * @property {string} [targetStep] -
- */
-/**
- * @typedef SpaceWizardNavigate
- * @property {Data56} [data] -
- */
-/**
- * @typedef Data57
- * @property {string} [action] -
- * @property {any | null} [currentProductType] -
- * @property {any | null} [currentSpaceType] -
- * @property {any | null} [currentStep] -
- * @property {string} [executingUserId] -
- * @property {string} [intendedAction] -
- * @property {string} [organizationId] -
- * @property {boolean} [paymentDetailsExist] -
- * @property {any | null} [recommendedProductType] -
- * @property {any | null} [recommendedSpaceType] -
- * @property {string} [spaceId] -
- * @property {any | null} [targetProductType] -
- * @property {any | null} [targetSpaceName] -
- * @property {any | null} [targetSpaceTemplateId] -
- * @property {any | null} [targetSpaceType] -
- * @property {any | null} [targetStep] -
- */
-/**
- * @typedef SpaceWizardOpen
- * @property {Data57} [data] -
- */
-/**
- * @typedef Data58
- * @property {string} [action] -
- * @property {any | null} [currentProductType] -
- * @property {any | null} [currentSpaceType] -
- * @property {any | null} [currentStep] -
- * @property {string} [executingUserId] -
- * @property {string} [intendedAction] -
- * @property {string} [organizationId] -
- * @property {any | null} [paymentDetailsExist] -
- * @property {any | null} [recommendedProductType] -
- * @property {any | null} [recommendedSpaceType] -
- * @property {string} [spaceId] -
- * @property {string} [targetProductType] -
- * @property {any | null} [targetSpaceName] -
- * @property {any | null} [targetSpaceTemplateId] -
- * @property {string} [targetSpaceType] -
- * @property {any | null} [targetStep] -
- */
-/**
- * @typedef SpaceWizardSelectPlan
- * @property {Data58} [data] -
- */
-/**
- * @typedef Data59
- * @property {any | null} [currentProductType] -
- * @property {any | null} [currentStep] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {any | null} [recommendedProductType] -
- * @property {any | null} [recommendedSpaceType] -
- * @property {any | null} [targetSpaceName] -
- * @property {any | null} [targetSpaceTemplateId] -
- * @property {any | null} [targetSpaceType] -
- */
-/**
- * @typedef SpaceWizardSpaceCreate
- * @property {Data59} [data] -
- */
-/**
- * @typedef Data60
- * @property {string} [action] -
- * @property {any | null} [currentProductType] -
- * @property {any | null} [currentSpaceType] -
- * @property {any | null} [currentStep] -
- * @property {string} [executingUserId] -
- * @property {string} [intendedAction] -
- * @property {string} [organizationId] -
- * @property {any | null} [paymentDetailsExist] -
- * @property {any | null} [recommendedProductType] -
- * @property {any | null} [recommendedSpaceType] -
- * @property {string} [spaceId] -
- * @property {any | null} [targetProductType] -
- * @property {any | null} [targetSpaceName] -
- * @property {any | null} [targetSpaceTemplateId] -
- * @property {any | null} [targetSpaceType] -
- * @property {any | null} [targetStep] -
- */
-/**
- * @typedef SpaceWizardSpaceTypeChange
- * @property {Data60} [data] -
+ * @property {string} [contexts] -
  */
 /**
  * @typedef Payload14
- * @property {number} [numErr] -
- * @property {number} [numSuccess] -
+ * @property {number} [num_err] -
+ * @property {number} [num_success] -
  */
 /**
- * @typedef Data61
+ * @typedef Data23
  * @property {string} [action] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
  * @property {Payload14} [payload] -
  * @property {string} [scope] -
- * @property {string} [spaceId] -
+ * @property {string} [space_key] -
  */
 /**
  * @typedef TeamsInSpaceUsersAdded
- * @property {Data61} [data] -
+ * @property {Data23} [data] -
  */
 /**
  * @typedef AdditionalData
- * @property {number} [characterCountAfter] -
- * @property {number} [characterCountBefore] -
- * @property {number} [characterCountSelection] -
- * @property {string} [linkType] -
- * @property {string} [markType] -
- * @property {string} [nodeType] -
+ * @property {number} [character_count_after] -
+ * @property {number} [character_count_before] -
+ * @property {number} [character_count_selection] -
+ * @property {string} [link_type] -
+ * @property {string} [mark_type] -
+ * @property {string} [node_type] -
  */
 /**
- * @typedef Data62
+ * @typedef Data24
  * @property {string} [action] -
- * @property {string} [actionOrigin] -
- * @property {AdditionalData} [additionalData] -
- * @property {number} [characterCountAfter] -
- * @property {any | null} [characterCountBefore] -
- * @property {any | null} [characterCountSelection] -
- * @property {string} [contentTypeId] -
- * @property {string} [editorName] -
- * @property {string} [entryId] -
- * @property {string} [executingUserId] -
- * @property {string} [fieldId] -
- * @property {string} [fieldLocale] -
- * @property {boolean} [isFullscreen] -
- * @property {string} [organizationId] -
- * @property {string} [spaceId] -
+ * @property {string} [action_origin] -
+ * @property {AdditionalData} [additional_data] -
+ * @property {number} [character_count_after] -
+ * @property {any | null} [character_count_before] -
+ * @property {any | null} [character_count_selection] -
+ * @property {string} [content_type_id] -
+ * @property {string} [editor_name] -
+ * @property {string} [entry_id] -
+ * @property {string} [environment_key] -
+ * @property {string} [field_id] -
+ * @property {string} [field_locale] -
+ * @property {boolean} [is_fullscreen] -
+ * @property {string} [organization_key] -
+ * @property {string} [space_key] -
  */
 /**
  * @typedef TextEditorAction
- * @property {Data62} [data] -
+ * @property {Data24} [data] -
  * @property {string} [schema] -
  */
 /**
@@ -2599,207 +1602,45 @@ function withTypewriterContext(message: Segment.Options = {}): Segment.Options {
  * @property {string} [event] -
  */
 /**
- * @typedef Data63
+ * @typedef Data25
  * @property {string} [action] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
  * @property {Payload15} [payload] -
  * @property {string} [scope] -
- * @property {string} [spaceId] -
+ * @property {string} [space_key] -
  */
 /**
  * @typedef TrackingInvalidEvent
- * @property {Data63} [data] -
+ * @property {Data25} [data] -
  */
 /**
- * @typedef Data64
- * @property {string} [action] -
- * @property {string} [currentMode] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {string} [spaceId] -
- */
-/**
- * @typedef TranslationSidebarChangeFocusedLocale
- * @property {Data64} [data] -
- */
-/**
- * @typedef Data65
- * @property {string} [action] -
- * @property {number} [currentActiveLocaleCount] -
- * @property {string} [currentMode] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {number} [previousActiveLocaleCount] -
- * @property {string} [spaceId] -
- */
-/**
- * @typedef TranslationSidebarDeselectActiveLocale
- * @property {Data65} [data] -
- */
-/**
- * @typedef Data66
- * @property {string} [action] -
- * @property {string} [currentMode] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {string} [spaceId] -
- */
-/**
- * @typedef TranslationSidebarToggleWidgetMode
- * @property {Data66} [data] -
- */
-/**
- * @typedef Data67
- * @property {string} [action] -
- * @property {number} [currentActiveLocaleCount] -
- * @property {string} [currentMode] -
- * @property {string} [executingUserId] -
- * @property {string} [organizationId] -
- * @property {number} [previousActiveLocaleCount] -
- * @property {string} [spaceId] -
- */
-/**
- * @typedef TranslationSidebarUpdateActiveLocales
- * @property {Data67} [data] -
- */
-/**
- * @typedef Data68
- * @property {string} [appDefinitionId] -
+ * @typedef Data26
+ * @property {string} [app_definition_id] -
  * @property {string} [environment] -
- * @property {string} [organizationId] -
- * @property {string} [spaceId] -
- * @property {string} [userId] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
+ * @property {string} [space_key] -
+ * @property {string} [user_id] -
  */
 /**
  * @typedef WidgetRendererFallbackRendered
- * @property {Data68} [data] -
+ * @property {Data26} [data] -
  */
 /**
- * @typedef Data69
- * @property {string} [appDefinitionId] -
+ * @typedef Data27
+ * @property {string} [app_definition_id] -
  * @property {string} [environment] -
- * @property {string} [organizationId] -
- * @property {string} [spaceId] -
- * @property {string} [userId] -
+ * @property {string} [environment_key] -
+ * @property {string} [organization_key] -
+ * @property {string} [space_key] -
+ * @property {string} [user_id] -
  */
 /**
  * @typedef WidgetRendererFallbackWarningShown
- * @property {Data69} [data] -
+ * @property {Data27} [data] -
  */
 
-/**
- * Fires a 'Page Viewed' track call.
- *
- * @param {PageViewed} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function pageViewed(
-  props?: PageViewed,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          accepted_permissions: {},
-          add_to_context: {
-            type: ['boolean'],
-          },
-          api_key_id: {
-            type: ['string'],
-          },
-          app_id: {},
-          asset_id: {
-            type: ['string'],
-          },
-          content_type_id: {
-            type: ['string'],
-          },
-          definition_id: {
-            type: ['string'],
-          },
-          entry_id: {
-            type: ['string'],
-          },
-          environment_id: {
-            type: ['string'],
-          },
-          ignore_leave_confirmation: {
-            type: ['boolean'],
-          },
-          jump_to_role: {
-            type: ['string'],
-          },
-          locale_id: {
-            type: ['string'],
-          },
-          name: {
-            type: ['string'],
-          },
-          org_id: {
-            type: ['string'],
-          },
-          org_owner_or_admin: {},
-          path: {
-            type: ['string'],
-          },
-          path_suffix: {
-            type: ['string'],
-          },
-          previous_entries: {
-            type: ['string'],
-          },
-          referrer: {
-            type: ['string'],
-          },
-          search: {
-            type: ['string'],
-          },
-          space_id: {
-            type: ['string'],
-          },
-          tab: {
-            type: ['string'],
-          },
-          template_id: {},
-          title: {
-            type: ['string'],
-          },
-          url: {
-            type: ['string'],
-          },
-          user_id: {
-            type: ['string'],
-          },
-          webhook_id: {
-            type: ['string'],
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'Page Viewed',
-    type: 'object',
-  };
-  const message = {
-    event: 'Page Viewed',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('Page Viewed', props || {}, withTypewriterContext(options), callback);
-  }
-}
 /**
  * Fires a 'account_dropdown:pending_tasks_fetched' track call.
  *
@@ -2824,21 +1665,21 @@ export function accountDropdownPendingTasksFetched(
               action: {
                 type: ['string'],
               },
-              executingUserId: {
+              environment_key: {
                 type: ['string'],
               },
-              organizationId: {
+              organization_key: {
                 type: ['string'],
               },
               payload: {
                 properties: {
-                  hasInaccessibleTasks: {
+                  has_inaccessible_tasks: {
                     type: ['boolean'],
                   },
-                  numPendingTasks: {
+                  num_pending_tasks: {
                     type: ['integer'],
                   },
-                  numVisiblePendingTasks: {
+                  num_visible_pending_tasks: {
                     type: ['integer'],
                   },
                 },
@@ -2847,7 +1688,7 @@ export function accountDropdownPendingTasksFetched(
               scope: {
                 type: ['string'],
               },
-              spaceId: {
+              space_key: {
                 type: ['string'],
               },
             },
@@ -2879,51 +1720,52 @@ export function accountDropdownPendingTasksFetched(
   }
 }
 /**
- * Fires a 'api_key:clipboard_copy' track call.
+ * ApiKey schema
  *
- * @param {ApiKeyClipboardCopy} [props] - The analytics properties that will be sent to Segment.
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
  * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
  * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
  * 		call is fired.
  */
-export function apiKeyClipboardCopy(
-  props?: ApiKeyClipboardCopy,
+export function apiKey(
+  props?: Record<string, any>,
   options?: Segment.Options,
   callback?: Segment.Callback
 ): void {
   const schema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'ApiKey schema',
     properties: {
       context: {},
       properties: {
         properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              executingUserId: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              spaceId: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
+          action: {
+            type: ['string'],
+          },
+          api_key_id: {
+            type: ['string'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: ['string', 'null'],
+          },
+          space_key: {
+            type: ['string'],
+          },
+          version: {
+            type: ['integer', 'null'],
           },
         },
-        type: 'object',
+        required: ['space_key', 'action', 'api_key_id'],
       },
       traits: {},
     },
-    title: 'api_key:clipboard_copy',
-    type: 'object',
+    title: 'api_key',
   };
   const message = {
-    event: 'api_key:clipboard_copy',
+    event: 'api_key',
     properties: props || {},
     options,
   };
@@ -2931,7 +1773,236 @@ export function apiKeyClipboardCopy(
 
   const a = analytics();
   if (a) {
-    a.track('api_key:clipboard_copy', props || {}, withTypewriterContext(options), callback);
+    a.track('api_key', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Records an app definition lifecycle event
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function appDefinition(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Records an app definition lifecycle event',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          action: {
+            description: 'Type of action event',
+            type: 'string',
+          },
+          app_definition_id: {
+            description: 'Refers to app definition id',
+            type: 'string',
+          },
+          created_at: {
+            description: 'App definition creation timestamp',
+            type: 'string',
+          },
+          deleted_at: {
+            description: 'App definition delete timestamp',
+            type: 'string',
+          },
+          has_config: {
+            description: 'Whether the app has configuration screen',
+            type: 'boolean',
+          },
+          is_public: {
+            description: 'Public or private app',
+            type: 'boolean',
+          },
+          locations: {
+            description: 'Locations enabled for the app',
+            type: 'array',
+          },
+          name: {
+            description: 'Name of the app',
+            type: 'string',
+          },
+          organization_key: {
+            description: 'Refers to organization key',
+            type: 'string',
+          },
+          src: {
+            description: 'Host domain for the app',
+            type: 'string',
+          },
+          updated_at: {
+            description: 'App definition update timestamp',
+            type: 'string',
+          },
+          user_agent: {
+            description: 'Refers to the original request user-agent',
+            type: 'string',
+          },
+        },
+        required: [
+          'action',
+          'organization_key',
+          'app_definition_id',
+          'name',
+          'src',
+          'locations',
+          'is_public',
+          'has_config',
+        ],
+      },
+      traits: {},
+    },
+    title: 'app_definition',
+  };
+  const message = {
+    event: 'app_definition',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('app_definition', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Records an app installation lifecycle event
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function appInstallation(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Records an app installation lifecycle event',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          action: {
+            description: 'Type of action event',
+            type: 'string',
+          },
+          app_definition_id: {
+            description: 'Refers to app_id',
+            type: 'string',
+          },
+          created_at: {
+            description: 'App creation timestamp',
+            type: ['string', 'null'],
+          },
+          deleted_at: {
+            description: 'App delete timestamp',
+            type: ['string', 'null'],
+          },
+          environment_key: {
+            description: 'Refers to environment_key',
+            type: 'string',
+          },
+          space_key: {
+            description: 'Refers to space_key',
+            type: 'string',
+          },
+          updated_at: {
+            description: 'App update timestamp',
+            type: ['string', 'null'],
+          },
+          user_agent: {
+            description: 'Refers to the original request user-agent',
+            type: 'string',
+          },
+        },
+        required: ['space_key', 'environment_key', 'app_definition_id'],
+      },
+      traits: {},
+    },
+    title: 'app_installation',
+  };
+  const message = {
+    event: 'app_installation',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('app_installation', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Records an event in App lifecycle
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function appLifecycleEvent(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Records an event in App lifecycle',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          app_event_name: {
+            description: 'Name of lifecycle event',
+            type: 'string',
+          },
+          contentful_app_id: {
+            description: 'ID of Contentful App',
+            type: 'string',
+          },
+          contentful_event_id: {
+            description: 'Web App generated correlation ID',
+            type: 'string',
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          organization_key: {
+            description: 'Refers to organization_key',
+            type: ['string', 'null'],
+          },
+          space_key: {
+            description: 'Refers to space_key',
+            type: 'string',
+          },
+        },
+        required: ['space_key', 'contentful_event_id', 'contentful_app_id', 'app_event_name'],
+      },
+      traits: {},
+    },
+    title: 'app_lifecycle_event',
+  };
+  const message = {
+    event: 'app_lifecycle_event',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('app_lifecycle_event', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
@@ -2958,15 +2029,15 @@ export function appManagementCreated(
               action: {
                 type: ['string'],
               },
-              executingUserId: {
+              environment_key: {
                 type: ['string'],
               },
-              organizationId: {
+              organization_key: {
                 type: ['string'],
               },
               payload: {
                 properties: {
-                  definitionId: {
+                  definition_id: {
                     type: ['string'],
                   },
                 },
@@ -3022,15 +2093,15 @@ export function appManagementUpdated(
               action: {
                 type: ['string'],
               },
-              executingUserId: {
+              environment_key: {
                 type: ['string'],
               },
-              organizationId: {
+              organization_key: {
                 type: ['string'],
               },
               payload: {
                 properties: {
-                  definitionId: {
+                  definition_id: {
                     type: ['string'],
                   },
                 },
@@ -3063,6 +2134,170 @@ export function appManagementUpdated(
   }
 }
 /**
+ * Web app opened by visiting app.contentful.com
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function appOpen(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Web app opened by visiting app.contentful.com',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          environment_key: {
+            type: 'string',
+          },
+          organization_key: {
+            type: 'string',
+          },
+          space_key: {
+            type: 'string',
+          },
+        },
+      },
+      traits: {},
+    },
+    title: 'app_open',
+  };
+  const message = {
+    event: 'app_open',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('app_open', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Event fired when the example app opens
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function appTheExampleAppOpen(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Event fired when the example app opens',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          app_framework: {
+            type: ['string'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          sdk_language_used: {
+            type: ['string'],
+          },
+          space_key: {
+            type: ['string'],
+          },
+        },
+        required: ['space_key', 'sdk_language_used', 'app_framework'],
+      },
+      traits: {},
+    },
+    title: 'app_the_example_app_open',
+  };
+  const message = {
+    event: 'app_the_example_app_open',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('app_the_example_app_open', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Records a reason for App uninstallation
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function appUninstallationReason(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Records a reason for App uninstallation',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          contentful_app_id: {
+            description: 'ID of Contentful App',
+            type: 'string',
+          },
+          contentful_event_id: {
+            description: 'Web App generated correlation ID',
+            type: 'string',
+          },
+          custom: {
+            description: 'Is reason custom or not',
+            type: 'boolean',
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          organization_key: {
+            description: 'Refers to organization_key',
+            type: ['string', 'null'],
+          },
+          reason: {
+            description: 'Reason for uninstalling',
+            type: 'string',
+          },
+          space_key: {
+            description: 'Refers to space_key',
+            type: 'string',
+          },
+        },
+        required: ['space_key', 'contentful_event_id', 'contentful_app_id', 'custom', 'reason'],
+      },
+      traits: {},
+    },
+    title: 'app_uninstallation_reason',
+  };
+  const message = {
+    event: 'app_uninstallation_reason',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('app_uninstallation_reason', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
  * Fires a 'apps:lifecycle_event' track call.
  *
  * @param {AppsLifecycleEvent} [props] - The analytics properties that will be sent to Segment.
@@ -3083,22 +2318,22 @@ export function appsLifecycleEvent(
         properties: {
           data: {
             properties: {
-              appEventName: {
+              app_event_name: {
                 type: ['string'],
               },
-              contentfulAppId: {
+              contentful_app_id: {
                 type: ['string'],
               },
-              contentfulEventId: {
+              contentful_event_id: {
                 type: ['string'],
               },
-              executingUserId: {
+              environment_key: {
                 type: ['string'],
               },
-              organizationId: {
+              organization_key: {
                 type: ['string'],
               },
-              spaceId: {
+              space_key: {
                 type: ['string'],
               },
             },
@@ -3149,7 +2384,7 @@ export function assetCreated(
           environment: {
             type: ['string'],
           },
-          space_id: {
+          space_key: {
             type: ['string'],
           },
           version: {
@@ -3199,10 +2434,10 @@ export function assetListAddAssetMultiple(
               action: {
                 type: ['string'],
               },
-              executingUserId: {
+              environment_key: {
                 type: ['string'],
               },
-              organizationId: {
+              organization_key: {
                 type: ['string'],
               },
               payload: {
@@ -3211,7 +2446,7 @@ export function assetListAddAssetMultiple(
               scope: {
                 type: ['string'],
               },
-              spaceId: {
+              space_key: {
                 type: ['string'],
               },
             },
@@ -3261,10 +2496,10 @@ export function assetListAddAssetSingle(
               action: {
                 type: ['string'],
               },
-              executingUserId: {
+              environment_key: {
                 type: ['string'],
               },
-              organizationId: {
+              organization_key: {
                 type: ['string'],
               },
               payload: {
@@ -3273,7 +2508,7 @@ export function assetListAddAssetSingle(
               scope: {
                 type: ['string'],
               },
-              spaceId: {
+              space_key: {
                 type: ['string'],
               },
             },
@@ -3324,7 +2559,7 @@ export function assetPublished(
           environment: {
             type: ['string'],
           },
-          space_id: {
+          space_key: {
             type: ['string'],
           },
           version: {
@@ -3351,6 +2586,60 @@ export function assetPublished(
   }
 }
 /**
+ * Tracks usage of boilerplate projects
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function boilerplate(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Tracks usage of boilerplate projects',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          action: {
+            type: ['string'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          platform: {
+            type: ['string'],
+          },
+          space_key: {
+            type: ['string'],
+          },
+        },
+        required: ['organization_key', 'space_key', 'action', 'platform'],
+      },
+      traits: {},
+    },
+    title: 'boilerplate',
+  };
+  const message = {
+    event: 'boilerplate',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('boilerplate', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
  * Fires a 'bulk_editor:close' track call.
  *
  * @param {BulkEditorClose} [props] - The analytics properties that will be sent to Segment.
@@ -3374,25 +2663,25 @@ export function bulkEditorClose(
               action: {
                 type: ['string'],
               },
-              executingUserId: {
+              environment_key: {
                 type: ['string'],
               },
-              numEditedEntries: {
+              num_edited_entries: {
                 type: ['integer'],
               },
-              numPublishedEntries: {
+              num_published_entries: {
                 type: ['integer'],
               },
-              organizationId: {
+              organization_key: {
                 type: ['string'],
               },
-              parentEntryId: {
+              parent_entry_id: {
                 type: ['string'],
               },
-              refCount: {
+              ref_count: {
                 type: ['integer'],
               },
-              spaceId: {
+              space_key: {
                 type: ['string'],
               },
             },
@@ -3442,22 +2731,22 @@ export function bulkEditorEditInEntryEditor(
               action: {
                 type: ['string'],
               },
-              entryId: {
+              entry_id: {
                 type: ['string'],
               },
-              executingUserId: {
+              environment_key: {
                 type: ['string'],
               },
-              organizationId: {
+              organization_key: {
                 type: ['string'],
               },
-              parentEntryId: {
+              parent_entry_id: {
                 type: ['string'],
               },
-              refCount: {
+              ref_count: {
                 type: ['integer'],
               },
-              spaceId: {
+              space_key: {
                 type: ['string'],
               },
             },
@@ -3512,19 +2801,19 @@ export function bulkEditorOpen(
               action: {
                 type: ['string'],
               },
-              executingUserId: {
+              environment_key: {
                 type: ['string'],
               },
-              organizationId: {
+              organization_key: {
                 type: ['string'],
               },
-              parentEntryId: {
+              parent_entry_id: {
                 type: ['string'],
               },
-              refCount: {
+              ref_count: {
                 type: ['integer'],
               },
-              spaceId: {
+              space_key: {
                 type: ['string'],
               },
             },
@@ -3574,19 +2863,19 @@ export function bulkEditorOpenSlideIn(
               action: {
                 type: ['string'],
               },
-              executingUserId: {
+              environment_key: {
                 type: ['string'],
               },
-              organizationId: {
+              organization_key: {
                 type: ['string'],
               },
-              parentEntryId: {
+              parent_entry_id: {
                 type: ['string'],
               },
-              refCount: {
+              ref_count: {
                 type: ['integer'],
               },
-              spaceId: {
+              space_key: {
                 type: ['string'],
               },
             },
@@ -3613,95 +2902,115 @@ export function bulkEditorOpenSlideIn(
   }
 }
 /**
- * Fires a 'editor_loaded' track call.
+ * Schema for any event that has to do with content preview in our webapp
  *
- * @param {EditorLoaded} [props] - The analytics properties that will be sent to Segment.
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
  * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
  * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
  * 		call is fired.
  */
-export function editorLoaded(
-  props?: EditorLoaded,
+export function contentPreview(
+  props?: Record<string, any>,
   options?: Segment.Options,
   callback?: Segment.Callback
 ): void {
   const schema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Schema for any event that has to do with content preview in our webapp',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          content_type_id: {
+            type: ['string'],
+          },
+          content_type_name: {
+            type: ['string'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          preview_id: {
+            type: ['string'],
+          },
+          preview_name: {
+            type: ['string'],
+          },
+          space_key: {
+            type: ['string'],
+          },
+        },
+        required: ['organization_key', 'space_key', 'preview_name', 'preview_id'],
+      },
+      traits: {},
+    },
+    title: 'content_preview',
+  };
+  const message = {
+    event: 'content_preview',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('content_preview', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * ContentTyppe schema
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function contentType(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'ContentTyppe schema',
     properties: {
       context: {},
       properties: {
         properties: {
           action: {
-            description:
-              "`init` is triggered every time a slide is loaded. `entity_loaded` is triggered when the editor's main entity is loaded. `sharejs_connected` is triggered when a connection with ShareJS has been established while in case ShareJS is not used for the editor, the more generic `doc_connected` is triggered. `links_rendered` is triggered when all the links (references, media, and rich text embeds / entry hyperlinks) in a slide have been fetched and rendered. `fully_interactive` is trigger when both the links have rendered and the entry has become editable (i.e. ShareJS has connected).",
-            enum: [
-              'init',
-              'entity_loaded',
-              'sharejs_connected',
-              'doc_connected',
-              'links_rendered',
-              'fully_interactive',
-            ],
             type: ['string'],
           },
-          executing_user_id: {
+          content_type_id: {
             type: ['string'],
           },
-          link_count: {
-            description:
-              'The total number of links (reference links, media field assets, rich text embedded block and inline entries, rich text embedded block assets, and rich text hyperlinked entries) in the entry on initial load',
-            type: ['integer'],
-          },
-          link_field_editor_instance_count: {
-            description:
-              'The overall number of reference and media field instances in an individual entry (1 locale field = 1 instance)',
-            type: ['integer'],
-          },
-          load_ms: {
-            description: 'Number of milliseconds since the initial load of the entry',
-            type: ['integer'],
-          },
-          organization_id: {
+          environment_key: {
             type: ['string'],
           },
-          rich_text_editor_instance_count: {
-            description:
-              'The overall number of rich text editor instances in an individual entry (1 locale field editor = 1 instance)',
-            type: ['integer'],
+          organization_key: {
+            type: ['string', 'null'],
           },
-          slide_level: {
-            description:
-              'Level of the entry editor within the slides (zero-indexed, -1 if the slide was closed at the time the event is triggered)',
-            type: ['integer'],
+          revision: {
+            type: ['integer', 'null'],
           },
-          slide_uuid: {
-            description:
-              'ID uniquely identifying the slide instance - does NOT uniquely identify the entry',
+          space_key: {
             type: ['string'],
           },
-          slides_controller_uuid: {
-            description:
-              'ID uniquely identifying the overall session and therefore all slides loaded around the same time within the same browser tab',
-            type: ['string'],
-          },
-          space_id: {
-            type: ['string'],
-          },
-          total_slide_count: {
-            description:
-              'The total number of slides open when the entry is initially loaded, default = 0 if there are no slides',
-            type: ['integer'],
+          version: {
+            type: ['integer', 'null'],
           },
         },
-        type: 'object',
+        required: ['space_key', 'content_type_id', 'action'],
       },
       traits: {},
     },
-    title: 'editor_loaded',
-    type: 'object',
+    title: 'content_type',
   };
   const message = {
-    event: 'editor_loaded',
+    event: 'content_type',
     properties: props || {},
     options,
   };
@@ -3709,66 +3018,66 @@ export function editorLoaded(
 
   const a = analytics();
   if (a) {
-    a.track('editor_loaded', props || {}, withTypewriterContext(options), callback);
+    a.track('content_type', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
- * Fires a 'editor_workbench:tab_open' track call.
+ * Emitted when a job is triggered
  *
- * @param {EditorWorkbenchTabOpen} [props] - The analytics properties that will be sent to Segment.
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
  * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
  * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
  * 		call is fired.
  */
-export function editorWorkbenchTabOpen(
-  props?: EditorWorkbenchTabOpen,
+export function dialog(
+  props?: Record<string, any>,
   options?: Segment.Options,
   callback?: Segment.Callback
 ): void {
   const schema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Emitted when a job is triggered',
     properties: {
       context: {},
       properties: {
         properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              executingUserId: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              payload: {
-                properties: {
-                  tabName: {
-                    type: ['string'],
-                  },
-                },
-                type: 'object',
-              },
-              scope: {
-                type: ['string'],
-              },
-              spaceId: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
+          action: {
+            description: 'action performed in relationship with the dialog. Example: (dialog) open',
+            type: ['string'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          funnel_id: {
+            description: 'unique id generated, to make funnel analytics way simpler',
+            type: ['string', 'null'],
+          },
+          name: {
+            description: 'name identifying the current dialog name. Example: jobs_create',
+            type: ['string'],
+          },
+          organization_key: {
+            description: 'refers to GK organization key',
+            type: ['string'],
+          },
+          purpose: {
+            description:
+              'if known, identifies what the dialog is intended to fulfill. Example: Entry.publish',
+            type: ['string', 'null'],
+          },
+          space_key: {
+            description: 'refers to GK space key',
+            type: ['string'],
           },
         },
-        type: 'object',
+        required: ['organization_key', 'space_key', 'name', 'action'],
       },
       traits: {},
     },
-    title: 'editor_workbench:tab_open',
-    type: 'object',
+    title: 'dialog',
   };
   const message = {
-    event: 'editor_workbench:tab_open',
+    event: 'dialog',
     properties: props || {},
     options,
   };
@@ -3776,72 +3085,7 @@ export function editorWorkbenchTabOpen(
 
   const a = analytics();
   if (a) {
-    a.track('editor_workbench:tab_open', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'element:click' track call.
- *
- * @param {ElementClick} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function elementClick(
-  props?: ElementClick,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          contexts: {
-            type: ['array'],
-          },
-          data: {
-            properties: {
-              elementId: {
-                type: ['string'],
-              },
-              executingUserId: {
-                type: ['string'],
-              },
-              fromState: {
-                type: ['string'],
-              },
-              groupId: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              spaceId: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'element:click',
-    type: 'object',
-  };
-  const message = {
-    event: 'element:click',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('element:click', props || {}, withTypewriterContext(options), callback);
+    a.track('dialog', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
@@ -3923,15 +3167,115 @@ export function editorInterfaceFieldUpdated(
   }
 }
 /**
- * Fires a 'entity_editor:edit_conflict' track call.
+ * Fires a 'editor_loaded' track call.
  *
- * @param {EntityEditorEditConflict} [props] - The analytics properties that will be sent to Segment.
+ * @param {EditorLoaded} [props] - The analytics properties that will be sent to Segment.
  * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
  * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
  * 		call is fired.
  */
-export function entityEditorEditConflict(
-  props?: EntityEditorEditConflict,
+export function editorLoaded(
+  props?: EditorLoaded,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          action: {
+            description:
+              "`init` is triggered every time a slide is loaded. `entity_loaded` is triggered when the editor's main entity is loaded. `sharejs_connected` is triggered when a connection with ShareJS has been established while in case ShareJS is not used for the editor, the more generic `doc_connected` is triggered. `links_rendered` is triggered when all the links (references, media, and rich text embeds / entry hyperlinks) in a slide have been fetched and rendered. `fully_interactive` is trigger when both the links have rendered and the entry has become editable (i.e. ShareJS has connected).",
+            enum: [
+              'doc_connected',
+              'entity_loaded',
+              'fully_interactive',
+              'init',
+              'links_rendered',
+              'sharejs_connected',
+            ],
+            type: ['string'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          link_count: {
+            description:
+              'The total number of links (reference links, media field assets, rich text embedded block and inline entries, rich text embedded block assets, and rich text hyperlinked entries) in the entry on initial load',
+            type: ['integer'],
+          },
+          link_field_editor_instance_count: {
+            description:
+              'The overall number of reference and media field instances in an individual entry (1 locale field = 1 instance)',
+            type: ['integer'],
+          },
+          load_ms: {
+            description: 'Number of milliseconds since the initial load of the entry',
+            type: ['integer'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          rich_text_editor_instance_count: {
+            description:
+              'The overall number of rich text editor instances in an individual entry (1 locale field editor = 1 instance)',
+            type: ['integer'],
+          },
+          slide_level: {
+            description:
+              'Level of the entry editor within the slides (zero-indexed, -1 if the slide was closed at the time the event is triggered)',
+            type: ['integer'],
+          },
+          slide_uuid: {
+            description:
+              'ID uniquely identifying the slide instance - does NOT uniquely identify the entry',
+            type: ['string'],
+          },
+          slides_controller_uuid: {
+            description:
+              'ID uniquely identifying the overall session and therefore all slides loaded around the same time within the same browser tab',
+            type: ['string'],
+          },
+          space_key: {
+            type: ['string'],
+          },
+          total_slide_count: {
+            description:
+              'The total number of slides open when the entry is initially loaded, default = 0 if there are no slides',
+            type: ['integer'],
+          },
+        },
+        type: 'object',
+      },
+      traits: {},
+    },
+    title: 'editor_loaded',
+    type: 'object',
+  };
+  const message = {
+    event: 'editor_loaded',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('editor_loaded', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Fires a 'editor_workbench:tab_open' track call.
+ *
+ * @param {EditorWorkbenchTabOpen} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function editorWorkbenchTabOpen(
+  props?: EditorWorkbenchTabOpen,
   options?: Segment.Options,
   callback?: Segment.Callback
 ): void {
@@ -3943,73 +3287,42 @@ export function entityEditorEditConflict(
         properties: {
           data: {
             properties: {
-              autoConflictResolutionVersion: {
-                type: ['integer'],
-              },
-              entityId: {
+              action: {
                 type: ['string'],
               },
-              entityType: {
+              environment_key: {
                 type: ['string'],
               },
-              executingUserId: {
+              organization_key: {
                 type: ['string'],
               },
-              isConflictAutoResolvable: {
-                type: ['boolean'],
-              },
-              localChangesFieldPaths: {
-                items: {
-                  type: 'string',
+              payload: {
+                properties: {
+                  tab_name: {
+                    type: ['string'],
+                  },
                 },
-                type: 'array',
+                type: 'object',
               },
-              localEntityLastFetchedAtTstamp: {
+              scope: {
                 type: ['string'],
               },
-              localEntityUpdatedAtTstamp: {
-                type: ['string'],
-              },
-              localEntityVersion: {
-                type: ['integer'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              remoteChangesSinceLocalEntityFieldPaths: {
-                items: {
-                  type: 'string',
-                },
-                type: 'array',
-              },
-              remoteEntityUpdatedAtTstamp: {
-                type: ['string'],
-              },
-              remoteEntityUpdatedByUserId: {
-                type: ['string'],
-              },
-              remoteEntityVersion: {
-                type: ['integer'],
-              },
-              spaceId: {
+              space_key: {
                 type: ['string'],
               },
             },
             type: 'object',
-          },
-          schema: {
-            type: ['string'],
           },
         },
         type: 'object',
       },
       traits: {},
     },
-    title: 'entity_editor:edit_conflict',
+    title: 'editor_workbench:tab_open',
     type: 'object',
   };
   const message = {
-    event: 'entity_editor:edit_conflict',
+    event: 'editor_workbench:tab_open',
     properties: props || {},
     options,
   };
@@ -4017,19 +3330,19 @@ export function entityEditorEditConflict(
 
   const a = analytics();
   if (a) {
-    a.track('entity_editor:edit_conflict', props || {}, withTypewriterContext(options), callback);
+    a.track('editor_workbench:tab_open', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
- * Fires a 'entry:create' track call.
+ * Fires a 'element:click' track call.
  *
- * @param {EntryCreate} [props] - The analytics properties that will be sent to Segment.
+ * @param {ElementClick} [props] - The analytics properties that will be sent to Segment.
  * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
  * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
  * 		call is fired.
  */
-export function entryCreate(
-  props?: EntryCreate,
+export function elementClick(
+  props?: ElementClick,
   options?: Segment.Options,
   callback?: Segment.Callback
 ): void {
@@ -4040,75 +3353,36 @@ export function entryCreate(
       properties: {
         properties: {
           contexts: {
-            items: {
-              properties: {
-                data: {
-                  properties: {
-                    action: {
-                      type: ['string'],
-                    },
-                    contentTypeId: {
-                      type: ['string'],
-                    },
-                    entryId: {
-                      type: ['string'],
-                    },
-                    executingUserId: {
-                      type: ['string'],
-                    },
-                    organizationId: {
-                      type: ['string'],
-                    },
-                    spaceId: {
-                      type: ['string'],
-                    },
-                    version: {
-                      type: ['integer'],
-                    },
-                  },
-                  type: 'object',
-                },
-                schema: {
-                  type: ['string'],
-                },
-              },
-              type: 'object',
-            },
-            type: 'array',
+            type: ['string'],
           },
-          data: {
-            properties: {
-              entryCtEntryReferenceFieldsCount: {
-                type: ['integer'],
-              },
-              entryId: {
-                type: ['string'],
-              },
-              eventOrigin: {
-                type: ['string'],
-              },
-              executingUserId: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              spaceId: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
+          element_id: {
+            type: ['string'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          from_state: {
+            type: ['string'],
+          },
+          group_id: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          space_key: {
+            type: ['string'],
           },
         },
         type: 'object',
       },
       traits: {},
     },
-    title: 'entry:create',
+    title: 'element:click',
     type: 'object',
   };
   const message = {
-    event: 'entry:create',
+    event: 'element:click',
     properties: props || {},
     options,
   };
@@ -4116,7 +3390,375 @@ export function entryCreate(
 
   const a = analytics();
   if (a) {
-    a.track('entry:create', props || {}, withTypewriterContext(options), callback);
+    a.track('element:click', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * ShareJS removal, CMA-only entity editor edit conflicts tracking. This event is tracked when persisting local editor changes fails due to a CMA version mismatch error. `local_entity` refers to the last CMA version of the entity known to the entity editor without local changes and before the conflict. All pending local changes are based on this entity version. `remote_entity` refers to the most recent version of the entity which has caused the version mismatch and thus might have conflicts with the local changes on top of `local_entity`.
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function entityEditorEditConflict(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description:
+      'ShareJS removal, CMA-only entity editor edit conflicts tracking. This event is tracked when persisting local editor changes fails due to a CMA version mismatch error. `local_entity` refers to the last CMA version of the entity known to the entity editor without local changes and before the conflict. All pending local changes are based on this entity version. `remote_entity` refers to the most recent version of the entity which has caused the version mismatch and thus might have conflicts with the local changes on top of `local_entity`.',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          auto_conflict_resolution_version: {
+            description:
+              "Version of our editor's auto conflict resolution version. Should bump this whenever we fit to be able to only compare events of the same implemented version.",
+            type: 'integer',
+          },
+          entity_id: {
+            type: 'string',
+          },
+          entity_type: {
+            enum: ['Entry', 'Asset'],
+            type: 'string',
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          is_conflict_auto_resolvable: {
+            description:
+              "Whether or not the current editor implementation is able to resolve the conflict without the user's input.",
+            type: 'boolean',
+          },
+          local_changes_paths: {
+            description:
+              'Comma separated paths `path,...` where `path` can be either `fields:${FIELD_ID}:${LOCALE_CODE}` for pending fields changes or `metadata:${NAME}` for pending metadata changes not persisted yet and on top of the `local_entity`. ID/code are public CMA identifiers, not internal CF IDs. Should only be `null` if there are too many paths to be tracked due to `maxLength` constraint.',
+            type: ['string', 'null'],
+          },
+          local_entity_last_fetched_at_tstamp: {
+            description:
+              'Point in time when the most-up-to-date local in-memory `local_entity` was received by the editor.',
+            type: 'string',
+          },
+          local_entity_state: {
+            description: 'The `local_entity` state before any local changes.',
+            enum: ['draft', 'published', 'archived', 'inaccessible'],
+            type: 'string',
+          },
+          local_entity_updated_at_tstamp: {
+            description: 'entity.sys.updatedAt of the `local_entity`.',
+            type: 'string',
+          },
+          local_entity_version: {
+            description: '`entity.sys.version` of the `local_entity`.',
+            type: 'integer',
+          },
+          local_state_change: {
+            description:
+              'Local pending state update that was not successful due to the conflict. `null` if there was no local state update.',
+            enum: ['draft', 'published', 'archived', 'inaccessible', null],
+            type: ['string', 'null'],
+          },
+          organization_key: {
+            type: 'string',
+          },
+          precomputed: {
+            properties: {
+              local_field_locale_changes_count: {
+                description:
+                  'Total number of locally changed field locales on top of the `local_entity`: `count(onlyFieldPaths(local_changes_paths))`',
+                type: 'integer',
+              },
+              local_metadata_changes_count: {
+                description:
+                  'Total number of locally changed metadata properties on top of the `local_entity`: `count(onlyMetadataPaths(local_changes_paths))`',
+                type: 'integer',
+              },
+              remote_field_locale_changes_count: {
+                description:
+                  'Total number of field locales changed in `remote_entity` compared to `local_entity`: `count(onlyFieldPaths(remote_changes_paths))`',
+                type: 'integer',
+              },
+              remote_metadata_changes_count: {
+                description:
+                  'Total number of metadata properties changed in `remote_entity` compared to `local_entity`: `count(onlyMetadataPaths(remote_changes_paths))`',
+                type: 'integer',
+              },
+              same_field_locale_conflicts_count: {
+                description:
+                  'Pre-computed number of conflicts on same field locales: `count(intersection(onlyFieldPaths(local_changes_paths), onlyFieldPaths(remote_changes_paths)))`',
+                type: 'integer',
+              },
+              same_metadata_conflicts_count: {
+                description:
+                  'Pre-computed number of conflicts on same metadata property: `count(intersection(onlyMetadataPaths(local_changes_paths), onlyMetadataPaths(remote_changes_paths)))`',
+                type: 'integer',
+              },
+            },
+            type: ['object'],
+          },
+          remote_changes_paths: {
+            description:
+              'Comma separated paths as in `local_changes_paths` but for `remote_entity` fields or metadata with different values from `local_entity`. See `local_changes_paths` description for specifics and `null` case explanation.',
+            type: ['string', 'null'],
+          },
+          remote_entity_state: {
+            description: 'The state of the `remote_entity` after the edit conflict.',
+            enum: ['draft', 'published', 'archived', 'inaccessible'],
+            type: 'string',
+          },
+          remote_entity_updated_at_tstamp: {
+            description: 'entity.sys.updatedAt of the `remote_entity`.',
+            type: 'string',
+          },
+          remote_entity_updated_by_user_id: {
+            description: 'entity.sys.updatedBy.sys.id of the `remote_entity`.',
+            type: 'string',
+          },
+          remote_entity_version: {
+            description: '`entity.sys.version` of the `remote_entity`.',
+            type: 'integer',
+          },
+          space_key: {
+            type: 'string',
+          },
+        },
+        required: [
+          'organization_key',
+          'space_key',
+          'entity_id',
+          'entity_type',
+          'local_changes_paths',
+          'remote_changes_paths',
+          'local_state_change',
+          'local_entity_state',
+          'remote_entity_state',
+          'local_entity_version',
+          'remote_entity_version',
+          'local_entity_last_fetched_at_tstamp',
+          'local_entity_updated_at_tstamp',
+          'remote_entity_updated_at_tstamp',
+          'remote_entity_updated_by_user_id',
+          'is_conflict_auto_resolvable',
+          'auto_conflict_resolution_version',
+        ],
+      },
+      traits: {},
+    },
+    title: 'entity_editor_edit_conflict',
+  };
+  const message = {
+    event: 'entity_editor_edit_conflict',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('entity_editor_edit_conflict', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * EXPERIMENT for Snowplow -> Segment migration (hence "_2" suffix) | ShareJS removal, CMA-only entity editor edit conflicts tracking. This event is tracked when persisting local editor changes fails due to a CMA version mismatch error. `local_entity` refers to the last CMA version of the entity known to the entity editor without local changes and before the conflict. All pending local changes are based on this entity version. `remote_entity` refers to the most recent version of the entity which has caused the version mismatch and thus might have conflicts with the local changes on top of `local_entity`.
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function entityEditorEditConflict2(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description:
+      'EXPERIMENT for Snowplow -> Segment migration (hence "_2" suffix) | ShareJS removal, CMA-only entity editor edit conflicts tracking. This event is tracked when persisting local editor changes fails due to a CMA version mismatch error. `local_entity` refers to the last CMA version of the entity known to the entity editor without local changes and before the conflict. All pending local changes are based on this entity version. `remote_entity` refers to the most recent version of the entity which has caused the version mismatch and thus might have conflicts with the local changes on top of `local_entity`.',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          auto_conflict_resolution_version: {
+            description:
+              "Version of our editor's auto conflict resolution version. Should bump this whenever we fit to be able to only compare events of the same implemented version.",
+            type: 'integer',
+          },
+          entity_id: {
+            type: 'string',
+          },
+          entity_type: {
+            enum: ['Entry', 'Asset'],
+            type: 'string',
+          },
+          is_conflict_auto_resolvable: {
+            description:
+              "Whether or not the current editor implementation is able to resolve the conflict without the user's input.",
+            type: 'boolean',
+          },
+          local_changes_paths: {
+            description:
+              'Comma separated paths `path,...` where `path` can be either `fields:${FIELD_ID}:${LOCALE_CODE}` for pending fields changes or `metadata:${NAME}` for pending metadata changes not persisted yet and on top of the `local_entity`. ID/code are public CMA identifiers, not internal CF IDs. Should only be `null` if there are too many paths to be tracked due to `maxLength` constraint.',
+            type: ['string', 'null'],
+          },
+          local_entity_last_fetched_at_tstamp: {
+            description:
+              'Point in time when the most-up-to-date local in-memory `local_entity` was received by the editor.',
+            type: 'string',
+          },
+          local_entity_state: {
+            description: 'The `local_entity` state before any local changes.',
+            enum: ['draft', 'published', 'archived', 'inaccessible'],
+            type: 'string',
+          },
+          local_entity_updated_at_tstamp: {
+            description: 'entity.sys.updatedAt of the `local_entity`.',
+            type: 'string',
+          },
+          local_entity_version: {
+            description: '`entity.sys.version` of the `local_entity`.',
+            type: 'integer',
+          },
+          local_state_change: {
+            description:
+              'Local pending state update that was not successful due to the conflict. `null` if there was no local state update.',
+            enum: ['draft', 'published', 'archived', 'inaccessible', null],
+            type: ['string', 'null'],
+          },
+          organization_key: {
+            type: 'string',
+          },
+          precomputed: {
+            type: ['object'],
+          },
+          remote_changes_paths: {
+            description:
+              'Comma separated paths as in `local_changes_paths` but for `remote_entity` fields or metadata with different values from `local_entity`. See `local_changes_paths` description for specifics and `null` case explanation.',
+            type: ['string', 'null'],
+          },
+          remote_entity_state: {
+            description: 'The state of the `remote_entity` after the edit conflict.',
+            enum: ['draft', 'published', 'archived', 'inaccessible'],
+            type: 'string',
+          },
+          remote_entity_updated_at_tstamp: {
+            description: 'entity.sys.updatedAt of the `remote_entity`.',
+            type: 'string',
+          },
+          remote_entity_updated_by_user_id: {
+            description: 'entity.sys.updatedBy.sys.id of the `remote_entity`.',
+            type: 'string',
+          },
+          remote_entity_version: {
+            description: '`entity.sys.version` of the `remote_entity`.',
+            type: 'integer',
+          },
+          space_key: {
+            type: 'string',
+          },
+        },
+        required: [
+          'organization_key',
+          'space_key',
+          'entity_id',
+          'entity_type',
+          'local_changes_paths',
+          'remote_changes_paths',
+          'local_state_change',
+          'local_entity_state',
+          'remote_entity_state',
+          'local_entity_version',
+          'remote_entity_version',
+          'local_entity_last_fetched_at_tstamp',
+          'local_entity_updated_at_tstamp',
+          'remote_entity_updated_at_tstamp',
+          'remote_entity_updated_by_user_id',
+          'is_conflict_auto_resolvable',
+          'auto_conflict_resolution_version',
+        ],
+      },
+      traits: {},
+    },
+    title: 'entity_editor_edit_conflict_2',
+  };
+  const message = {
+    event: 'entity_editor_edit_conflict_2',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('entity_editor_edit_conflict_2', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Entry schema
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function entry(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Entry schema',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          action: {
+            type: ['string'],
+          },
+          content_type_id: {
+            type: ['string'],
+          },
+          entry_id: {
+            type: ['string'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: ['string', 'null'],
+          },
+          revision: {
+            type: ['integer', 'null'],
+          },
+          space_key: {
+            type: ['string'],
+          },
+          version: {
+            type: ['integer', 'null'],
+          },
+        },
+        required: ['space_key', 'content_type_id', 'entry_id', 'action'],
+      },
+      traits: {},
+    },
+    title: 'entry',
+  };
+  const message = {
+    event: 'entry',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('entry', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
@@ -4138,72 +3780,38 @@ export function entryPublish(
       context: {},
       properties: {
         properties: {
-          contexts: {
-            items: {
-              properties: {
-                data: {
-                  properties: {
-                    action: {
-                      type: ['string'],
-                    },
-                    contentTypeId: {
-                      type: ['string'],
-                    },
-                    entryId: {
-                      type: ['string'],
-                    },
-                    executingUserId: {
-                      type: ['string'],
-                    },
-                    hasLegacyExtensions: {
-                      type: ['boolean'],
-                    },
-                    isDefault: {
-                      type: ['boolean'],
-                    },
-                    organizationId: {
-                      type: ['string'],
-                    },
-                    spaceId: {
-                      type: ['string'],
-                    },
-                    version: {
-                      type: ['integer'],
-                    },
-                    widgets: {},
-                  },
-                  type: 'object',
-                },
-                schema: {
-                  type: ['string'],
-                },
-              },
-              type: 'object',
-            },
-            type: 'array',
+          action: {
+            type: ['string'],
           },
-          data: {
-            properties: {
-              entryCtEntryReferenceFieldsCount: {
-                type: ['integer'],
-              },
-              entryId: {
-                type: ['string'],
-              },
-              eventOrigin: {
-                type: ['string'],
-              },
-              executingUserId: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              spaceId: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
+          content_type_id: {
+            type: ['string'],
+          },
+          contexts: {
+            type: ['string'],
+          },
+          entry_ct_entry_reference_fields_count: {
+            type: ['integer'],
+          },
+          entry_id: {
+            type: ['string'],
+          },
+          event_origin: {
+            type: ['string'],
+          },
+          has_legacy_extensions: {
+            type: ['boolean'],
+          },
+          is_default: {
+            type: ['boolean'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          space_key: {
+            type: ['string'],
+          },
+          version: {
+            type: ['integer'],
           },
         },
         type: 'object',
@@ -4226,15 +3834,72 @@ export function entryPublish(
   }
 }
 /**
- * Fires a 'entry_editor:view' track call.
+ * Schema of creating an entry in the webapp
  *
- * @param {EntryEditorView} [props] - The analytics properties that will be sent to Segment.
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
  * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
  * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
  * 		call is fired.
  */
-export function entryEditorView(
-  props?: EntryEditorView,
+export function entryCreate(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Schema of creating an entry in the webapp',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          entry_ct_entry_reference_fields_count: {
+            type: 'integer',
+          },
+          entry_id: {
+            type: 'string',
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          event_origin: {
+            type: 'string',
+          },
+          organization_key: {
+            type: 'string',
+          },
+          space_key: {
+            type: 'string',
+          },
+        },
+        required: ['organization_key', 'space_key'],
+      },
+      traits: {},
+    },
+    title: 'entry_create',
+  };
+  const message = {
+    event: 'entry_create',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('entry_create', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Fires a 'entry_created' track call.
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function entryCreated(
+  props?: Record<string, any>,
   options?: Segment.Options,
   callback?: Segment.Callback
 ): void {
@@ -4244,91 +3909,42 @@ export function entryEditorView(
       context: {},
       properties: {
         properties: {
-          contexts: {
-            items: {
-              properties: {
-                data: {
-                  properties: {
-                    contentTypeId: {
-                      type: ['string'],
-                    },
-                    contentTypeName: {
-                      type: ['string'],
-                    },
-                    extensionDefinitionId: {},
-                    extensionId: {
-                      type: ['string'],
-                    },
-                    extensionName: {
-                      type: ['string'],
-                    },
-                    hasLegacyExtensions: {
-                      type: ['boolean'],
-                    },
-                    installationParams: {
-                      type: ['array'],
-                    },
-                    instanceParams: {
-                      type: ['array'],
-                    },
-                    isDefault: {
-                      type: ['boolean'],
-                    },
-                    location: {
-                      type: ['string'],
-                    },
-                    parentEntryId: {
-                      type: ['string'],
-                    },
-                    src: {},
-                    widgets: {},
-                  },
-                  type: 'object',
-                },
-                schema: {
-                  type: ['string'],
-                },
-              },
-              type: 'object',
-            },
-            type: 'array',
+          content_type_id: {
+            type: 'string',
           },
-          data: {
-            properties: {
-              contentTypeId: {
-                type: ['string'],
-              },
-              contentTypeName: {
-                type: ['string'],
-              },
-              editorType: {
-                type: ['string'],
-              },
-              entryId: {
-                type: ['string'],
-              },
-              executingUserId: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              spaceId: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
+          entry_ct_entry_reference_fields_count: {
+            type: 'integer',
+          },
+          entry_ct_fields_count: {
+            type: ['integer', 'null'],
+          },
+          entry_id: {
+            type: 'string',
+          },
+          entry_version: {
+            type: 'integer',
+          },
+          environment_key: {
+            type: 'string',
+          },
+          event_origin: {
+            type: 'string',
+          },
+          organization_key: {
+            type: 'string',
+          },
+          space_key: {
+            type: 'string',
           },
         },
-        type: 'object',
+        required: ['organization_key', 'space_key'],
       },
       traits: {},
     },
-    title: 'entry_editor:view',
-    type: 'object',
+    title: 'entry_created',
   };
   const message = {
-    event: 'entry_editor:view',
+    event: 'entry_created',
     properties: props || {},
     options,
   };
@@ -4336,7 +3952,133 @@ export function entryEditorView(
 
   const a = analytics();
   if (a) {
-    a.track('entry_editor:view', props || {}, withTypewriterContext(options), callback);
+    a.track('entry_created', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Schema of publishing an entry in the webapp
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function entryPublish1(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Schema of publishing an entry in the webapp',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          content_type_id: {
+            type: 'string',
+          },
+          entry_ct_entry_reference_fields_count: {
+            type: 'integer',
+          },
+          entry_ct_fields_count: {
+            type: ['integer', 'null'],
+          },
+          entry_id: {
+            type: 'string',
+          },
+          entry_version: {
+            type: 'integer',
+          },
+          environment_key: {
+            type: 'string',
+          },
+          event_origin: {
+            type: 'string',
+          },
+          organization_key: {
+            type: 'string',
+          },
+          space_key: {
+            type: 'string',
+          },
+        },
+        required: ['organization_key', 'space_key'],
+      },
+      traits: {},
+    },
+    title: 'entry_publish',
+  };
+  const message = {
+    event: 'entry_publish',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('entry_publish', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Schema of entry references
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function entryReferences(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Schema of entry references',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          circular_references_count: {
+            type: 'number',
+          },
+          entry_id: {
+            type: 'string',
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: 'string',
+          },
+          references_depth: {
+            type: 'number',
+          },
+          references_per_level: {
+            type: ['number'],
+          },
+          space_key: {
+            type: 'string',
+          },
+        },
+        required: ['organization_key', 'space_key', 'entry_id'],
+      },
+      traits: {},
+    },
+    title: 'entry_references',
+  };
+  const message = {
+    event: 'entry_references',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('entry_references', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
@@ -4363,24 +4105,24 @@ export function entryReferencesDialogOpen(
               action: {
                 type: ['string'],
               },
-              executingUserId: {
+              environment_key: {
                 type: ['string'],
               },
-              organizationId: {
+              organization_key: {
                 type: ['string'],
               },
               payload: {
                 properties: {
-                  circularReferencesCount: {
+                  circular_references_count: {
                     type: ['integer'],
                   },
-                  entityId: {
+                  entity_id: {
                     type: ['string'],
                   },
-                  referencesDepth: {
+                  references_depth: {
                     type: ['integer'],
                   },
-                  referencesPerLevel: {
+                  references_per_level: {
                     items: {
                       type: 'integer',
                     },
@@ -4392,7 +4134,7 @@ export function entryReferencesDialogOpen(
               scope: {
                 type: ['string'],
               },
-              spaceId: {
+              space_key: {
                 type: ['string'],
               },
             },
@@ -4442,18 +4184,18 @@ export function entryReferencesPublish(
               action: {
                 type: ['string'],
               },
-              executingUserId: {
+              environment_key: {
                 type: ['string'],
               },
-              organizationId: {
+              organization_key: {
                 type: ['string'],
               },
               payload: {
                 properties: {
-                  entityId: {
+                  entity_id: {
                     type: ['string'],
                   },
-                  referencesCount: {
+                  references_count: {
                     type: ['integer'],
                   },
                 },
@@ -4462,7 +4204,7 @@ export function entryReferencesPublish(
               scope: {
                 type: ['string'],
               },
-              spaceId: {
+              space_key: {
                 type: ['string'],
               },
             },
@@ -4512,18 +4254,18 @@ export function entryReferencesValidate(
               action: {
                 type: ['string'],
               },
-              executingUserId: {
+              environment_key: {
                 type: ['string'],
               },
-              organizationId: {
+              organization_key: {
                 type: ['string'],
               },
               payload: {
                 properties: {
-                  entityId: {
+                  entity_id: {
                     type: ['string'],
                   },
-                  referencesCount: {
+                  references_count: {
                     type: ['integer'],
                   },
                 },
@@ -4532,7 +4274,7 @@ export function entryReferencesValidate(
               scope: {
                 type: ['string'],
               },
-              spaceId: {
+              space_key: {
                 type: ['string'],
               },
             },
@@ -4559,25 +4301,357 @@ export function entryReferencesValidate(
   }
 }
 /**
- * Fires a 'experiment_start' track call.
+ * Schema for tracking entry page views
  *
- * @param {ExperimentStart} props - The analytics properties that will be sent to Segment.
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
  * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
  * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
  * 		call is fired.
  */
-export function experimentStart(
-  props: ExperimentStart,
+export function entryView(
+  props?: Record<string, any>,
   options?: Segment.Options,
   callback?: Segment.Callback
 ): void {
   const schema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Schema for tracking entry page views',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          content_type_id: {
+            type: ['string'],
+          },
+          content_type_name: {
+            type: ['string'],
+          },
+          contexts: {
+            type: ['string'],
+          },
+          editor_type: {
+            enum: ['bulk_editor', 'slide_in_editor', 'entry_editor'],
+            type: 'string',
+          },
+          entry_id: {
+            type: ['string'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          slide_in_level: {
+            type: 'integer',
+          },
+          space_key: {
+            type: ['string'],
+          },
+        },
+        required: [
+          'contexts',
+          'organization_key',
+          'space_key',
+          'entry_id',
+          'content_type_id',
+          'content_type_name',
+          'editor_type',
+        ],
+      },
+      traits: {},
+    },
+    title: 'entry_view',
+  };
+  const message = {
+    event: 'entry_view',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('entry_view', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Environment aliases tracking
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function environmentAliases(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Environment aliases tracking',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          action: {
+            description: 'refers to the action performed',
+            type: ['string', 'null'],
+          },
+          environment_alias_id: {
+            description: 'refers to the internal id of the environment alias',
+            type: ['integer'],
+          },
+          environment_alias_key: {
+            description: 'refers to the key of the environment alias',
+            type: ['string', 'null'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          from_environment_id: {
+            description: 'refers to the key of the previously aliased environment',
+            type: ['string', 'null'],
+          },
+          from_environment_uuid: {
+            description: 'refers to the UUID of the previously aliased environment',
+            type: ['string', 'null'],
+          },
+          inferred_intent: {
+            description:
+              'This field will contain the X-Contentful-Header sent by sdks and the webapp, allowing us to track the intent of the creation.',
+            type: ['string', 'null'],
+          },
+          organization_key: {
+            description: 'refers to organization key',
+            type: ['string', 'null'],
+          },
+          platform: {
+            description:
+              'this will be `web-app` if the webapp sent the request, or anything else the x-contentful-header contains in the platform field, if existing. Null otherwise.',
+            type: ['string', 'null'],
+          },
+          space_key: {
+            description: 'refers to space key',
+            type: ['string'],
+          },
+          to_environment_id: {
+            description: 'refers to the key of the newly aliased environment',
+            type: ['string', 'null'],
+          },
+          to_environment_uuid: {
+            description: 'refers to the UUID of the newly aliased environment',
+            type: ['string', 'null'],
+          },
+          user_agent: {
+            description: 'refers to the http user agent header sent',
+            type: ['string', 'null'],
+          },
+        },
+        required: [
+          'organization_key',
+          'space_key',
+          'action',
+          'environment_alias_id',
+          'environment_alias_key',
+          'to_environment_id',
+        ],
+      },
+      traits: {},
+    },
+    title: 'environment_aliases',
+  };
+  const message = {
+    event: 'environment_aliases',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('environment_aliases', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Environment branching tracking
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function environmentBranching(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Environment branching tracking',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          action: {
+            type: ['string', 'null'],
+          },
+          count_assets: {
+            description: 'refers to number of assets in the source environment',
+            type: ['integer', 'null'],
+          },
+          count_content_types: {
+            description: 'refers to number of content types in the source environment',
+            type: ['integer', 'null'],
+          },
+          count_entries: {
+            description: 'refers to number of entries in the source environment',
+            type: ['integer', 'null'],
+          },
+          count_locales: {
+            description: 'refers to number of locales in the source environment',
+            type: ['integer', 'null'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          environment_uuid: {
+            type: ['string', 'null'],
+          },
+          inferred_intent: {
+            description:
+              'This field will contain the X-Contentful-Header send by sdks and the webapp, allowing us to track the intent of the creation.',
+            type: ['string', 'null'],
+          },
+          organization_key: {
+            description: 'refers to organization key',
+            type: ['string', 'null'],
+          },
+          platform: {
+            description:
+              'this will be `web-app` if the webapp sent the request, or anything else the x-contentful-header contains in the platform field, if existing. Null otherwise.',
+            type: ['string', 'null'],
+          },
+          source_environment_id: {
+            description: 'refers to environment key',
+            type: ['string', 'null'],
+          },
+          source_environment_uuid: {
+            type: ['string', 'null'],
+          },
+          space_key: {
+            description: 'refers to space key',
+            type: ['string'],
+          },
+          user_agent: {
+            description: 'refers to the http user agent header sent',
+            type: ['string', 'null'],
+          },
+        },
+        required: ['organization_key', 'space_key', 'action'],
+      },
+      traits: {},
+    },
+    title: 'environment_branching',
+  };
+  const message = {
+    event: 'environment_branching',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('environment_branching', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Schema for A/B tests, inside of the user_interface
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function experiment(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Schema for A/B tests, inside of the user_interface',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          action: {
+            type: ['string'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          experiment_id: {
+            type: ['string'],
+          },
+          interaction_context: {
+            type: ['string', 'null'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          space_key: {
+            type: ['string'],
+          },
+          variation: {
+            type: ['boolean', 'null'],
+          },
+        },
+        required: ['experiment_id', 'variation', 'action'],
+      },
+      traits: {},
+    },
+    title: 'experiment',
+  };
+  const message = {
+    event: 'experiment',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('experiment', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Allows to track which user is part of a UI experiment or a particular A/B test variation, e.g. controlled through `LaunchDarkly` or another kind of feature flag.
+ *
+ * @param {ExperimentStarted} props - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function experimentStarted(
+  props: ExperimentStarted,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description:
+      'Allows to track which user is part of a UI experiment or a particular A/B test variation, e.g. controlled through `LaunchDarkly` or another kind of feature flag.',
     labels: {},
     properties: {
       context: {},
       properties: {
         properties: {
+          environment_key: {
+            type: ['string'],
+          },
           experiment_id: {
             description: 'The experiment name the current user is part of',
             type: 'string',
@@ -4586,16 +4660,12 @@ export function experimentStart(
             description: 'The experiment variation the current user is assigned to',
             type: 'string',
           },
-          organization_id: {
+          organization_key: {
             description: 'Current organization key',
             type: 'string',
           },
-          space_id: {
+          space_key: {
             description: 'Current space key',
-            type: 'string',
-          },
-          user_id: {
-            description: 'Curent user key',
             type: 'string',
           },
         },
@@ -4607,11 +4677,11 @@ export function experimentStart(
       },
     },
     required: ['properties'],
-    title: 'experiment_start',
+    title: 'experiment_started',
     type: 'object',
   };
   const message = {
-    event: 'experiment_start',
+    event: 'experiment_started',
     properties: props || {},
     options,
   };
@@ -4619,11 +4689,481 @@ export function experimentStart(
 
   const a = analytics();
   if (a) {
-    a.track('experiment_start', props || {}, withTypewriterContext(options), callback);
+    a.track('experiment_started', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
- * Fires a 'feature_reference_action' track call.
+ * Extension was activated
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function extensionActivate(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Extension was activated',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          environment_key: {
+            type: ['string'],
+          },
+          extension_definition_id: {
+            description: 'Extenstion Indentifyer',
+            type: ['string', 'null'],
+          },
+          extension_id: {
+            description: 'Extenstion Indentifyer',
+            type: 'string',
+          },
+          location: {
+            description: 'Dunno',
+            type: 'string',
+          },
+          organization_key: {
+            description: 'Refers to organization_key',
+            type: ['string', 'null'],
+          },
+          space_key: {
+            description: 'Refers to space_key',
+            type: 'string',
+          },
+        },
+        required: ['space_key', 'extension_id', 'location'],
+      },
+      traits: {},
+    },
+    title: 'extension_activate',
+  };
+  const message = {
+    event: 'extension_activate',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('extension_activate', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Extension rendered
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function extensionRender(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Extension rendered',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          contexts: {
+            type: ['string'],
+          },
+          environment_key: {
+            description: 'Refers to environment_key',
+            type: 'string',
+          },
+          extension_definition_id: {
+            type: ['string', 'null'],
+          },
+          extension_id: {
+            type: 'string',
+          },
+          extension_name: {
+            type: 'string',
+          },
+          installation_params: {
+            type: 'array',
+          },
+          instance_params: {
+            type: 'array',
+          },
+          location: {
+            type: 'string',
+          },
+          src: {
+            type: ['string', 'null'],
+          },
+        },
+        required: [
+          'contexts',
+          'location',
+          'extension_id',
+          'extension_name',
+          'src',
+          'installation_params',
+          'instance_params',
+        ],
+      },
+      traits: {},
+    },
+    title: 'extension_render',
+  };
+  const message = {
+    event: 'extension_render',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('extension_render', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Extension set a value of a field
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function extensionSetValue(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Extension set a value of a field',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          content_type_id: {
+            type: 'string',
+          },
+          entry_id: {
+            type: 'string',
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          extension_definition_id: {
+            type: ['string', 'null'],
+          },
+          extension_id: {
+            type: 'string',
+          },
+          field_id: {
+            type: 'string',
+          },
+          locale_code: {
+            type: 'string',
+          },
+          organization_key: {
+            description: 'Refers to organization_key',
+            type: ['string', 'null'],
+          },
+          space_key: {
+            description: 'Refers to space_key',
+            type: 'string',
+          },
+        },
+        required: [
+          'space_key',
+          'entry_id',
+          'content_type_id',
+          'field_id',
+          'locale_code',
+          'extension_id',
+        ],
+      },
+      traits: {},
+    },
+    title: 'extension_set_value',
+  };
+  const message = {
+    event: 'extension_set_value',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('extension_set_value', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Bulk references editor feature tracking
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function featureBulkEditor(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Bulk references editor feature tracking',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          action: {
+            type: ['string'],
+          },
+          content_type_id: {
+            type: ['string', 'null'],
+          },
+          entry_id: {
+            type: ['string', 'null'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          num_edited_entries: {
+            type: ['integer', 'null'],
+          },
+          num_published_entries: {
+            type: ['integer', 'null'],
+          },
+          option_added: {
+            type: ['boolean', 'null'],
+          },
+          option_existing: {
+            type: ['boolean', 'null'],
+          },
+          organization_key: {
+            type: ['string', 'null'],
+          },
+          parent_entry_id: {
+            type: ['string', 'null'],
+          },
+          ref_count: {
+            type: ['integer', 'null'],
+          },
+          space_key: {
+            type: ['string'],
+          },
+          status: {
+            type: ['string', 'null'],
+          },
+        },
+        required: ['space_key', 'action'],
+      },
+      traits: {},
+    },
+    title: 'feature_bulk_editor',
+  };
+  const message = {
+    event: 'feature_bulk_editor',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('feature_bulk_editor', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Events for the comments endpoint, emitted on CUD actions. Note: The Tasks feature is using the comments endpoint behind the scenes.
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function featureCommentsAndTasks(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description:
+      'Events for the comments endpoint, emitted on CUD actions. Note: The Tasks feature is using the comments endpoint behind the scenes.',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          action: {
+            description: 'The action that is performed on the comment or task',
+            type: ['string'],
+          },
+          comment_id: {
+            description: "The comment's (or tasks) ID",
+            type: ['string'],
+          },
+          comment_type: {
+            description:
+              'The kind of comment that this event is about (can be a Task or normal Comment)',
+            type: ['string'],
+          },
+          entity_id: {
+            description: 'The ID of the entity containing the comment',
+            type: ['string'],
+          },
+          entity_type: {
+            description: 'The type of the entity containing the comment',
+            type: ['string'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          environment_uuid: {
+            description: 'Environment internally used ID',
+            type: ['string'],
+          },
+          has_body_changed: {
+            description:
+              "Whether the comment's message or task's title was touched by the performed action. Only relevant for `update` action (omitted otherwise)",
+            type: ['boolean', 'null'],
+          },
+          new_assignee_id: {
+            description:
+              'ID of the assigned user after the action. Skip in case of `delete` action action and for non-task comments.',
+            type: ['string', 'null'],
+          },
+          new_body_length: {
+            description:
+              "Total length of the comment's message or task's title after the action. Skip in case of a `delete` action.",
+            type: ['integer', 'null'],
+          },
+          new_status: {
+            description:
+              'Status ("resolved" or "open") of a task after the action. Skip in case of a `delete` action and for non-task comments.',
+            type: ['string', 'null'],
+          },
+          old_assignee_id: {
+            description:
+              'ID of the assigned user before the action. Skip in case of a `create` action and for non-task comments.',
+            type: ['string', 'null'],
+          },
+          old_body_length: {
+            description:
+              "Total length of the comment's message or task's title before the action. Skip in case of a `create` action.",
+            type: ['integer', 'null'],
+          },
+          old_status: {
+            description:
+              'Status ("resolved" or "open") of a task before the action. Skip in case of a `create` action and for non-task comments.',
+            type: ['string', 'null'],
+          },
+          organization_key: {
+            description: 'Gatekeeper organization key',
+            type: ['string'],
+          },
+          parent_comment_id: {
+            description:
+              'ID of the parent comment (discussion thread), `null` if the comment has no parent (and therefore is a parent itself)',
+            type: ['string', 'null'],
+          },
+          space_key: {
+            description: 'Gatekeeper space key',
+            type: ['string'],
+          },
+        },
+        required: [
+          'organization_key',
+          'space_key',
+          'environment_key',
+          'environment_uuid',
+          'entity_id',
+          'entity_type',
+          'action',
+          'comment_type',
+          'comment_id',
+        ],
+      },
+      traits: {},
+    },
+    title: 'feature_comments_and_tasks',
+  };
+  const message = {
+    event: 'feature_comments_and_tasks',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('feature_comments_and_tasks', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Generated empty schema for feature_playground
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function featurePlayground(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Generated empty schema for feature_playground',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          action: {
+            type: ['string'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          integration_environment: {
+            type: ['string', 'null'],
+          },
+          mocked_device: {
+            type: ['string', 'null'],
+          },
+          organization_key: {
+            type: ['string', 'null'],
+          },
+        },
+        required: ['action'],
+      },
+      traits: {},
+    },
+    title: 'feature_playground',
+  };
+  const message = {
+    event: 'feature_playground',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('feature_playground', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Schema of interacting with a reference entry
  *
  * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
  * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
@@ -4637,59 +5177,37 @@ export function featureReferenceAction(
 ): void {
   const schema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Schema of interacting with a reference entry',
     properties: {
       context: {},
       properties: {
         properties: {
           content_type_id: {
-            description:
-              'Content type ID of the linked entity the action was performed on. `null` in case of an asset.',
-            type: ['string'],
+            type: 'string',
           },
-          entity_id: {
-            description: 'ID of the linked entity the action was performed on.',
-            type: ['string'],
-          },
-          entity_type: {
-            description: 'Type of the linked entity the action was performed on.',
+          environment_key: {
             type: ['string'],
           },
           event_type: {
-            description: 'The action performed on the linked entity.',
-            type: ['string'],
+            type: 'string',
           },
-          executing_user_id: {
-            type: ['string'],
-          },
-          organization_id: {
-            type: ['string'],
+          organization_key: {
+            type: 'string',
           },
           parent_entry_id: {
-            description:
-              'Entry ID of the entry with the field containing the linked entity which the event is about.',
-            type: ['string'],
+            type: 'string',
           },
-          parent_field_path: {
-            description:
-              '`${FIELD_ID}:${LOCALE_CODE}` on the `parent_entry_id` that contains the linked  entity which the event is about. ID/code are public CMA identifiers, not internal CF IDs.',
-            type: ['string'],
-          },
-          space_id: {
-            type: ['string'],
+          space_key: {
+            type: 'string',
           },
         },
         required: [
+          'organization_key',
+          'space_key',
           'content_type_id',
-          'entity_id',
-          'entity_type',
           'event_type',
-          'executing_user_id',
-          'organization_id',
           'parent_entry_id',
-          'parent_field_path',
-          'space_id',
         ],
-        type: 'object',
       },
       traits: {},
     },
@@ -4705,6 +5223,264 @@ export function featureReferenceAction(
   const a = analytics();
   if (a) {
     a.track('feature_reference_action', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Snapshot tracking feature
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function featureSnapshot(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Snapshot tracking feature',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          action: {
+            type: ['string'],
+          },
+          entry_fields_count: {
+            type: ['integer', 'null'],
+          },
+          entry_id: {
+            type: ['string'],
+          },
+          entry_version: {
+            type: ['integer', 'null'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          option_changes_discarded: {
+            type: ['boolean', 'null'],
+          },
+          option_full_restore: {
+            type: ['boolean', 'null'],
+          },
+          option_show_diffs_only: {
+            type: ['boolean', 'null'],
+          },
+          organization_key: {
+            type: ['string', 'null'],
+          },
+          restore_fields_count: {
+            type: ['integer', 'null'],
+          },
+          snapshot_id: {
+            type: ['string', 'null'],
+          },
+          snapshot_version: {
+            type: ['integer', 'null'],
+          },
+          source: {
+            type: ['string', 'null'],
+          },
+          space_key: {
+            type: ['string'],
+          },
+        },
+        required: ['space_key', 'entry_id', 'action'],
+      },
+      traits: {},
+    },
+    title: 'feature_snapshot',
+  };
+  const message = {
+    event: 'feature_snapshot',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('feature_snapshot', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Action tracking for Single Sign-On (SSO) Self Configuration via the webapp
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function featureSsoSelfConfiguration(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Action tracking for Single Sign-On (SSO) Self Configuration via the webapp',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          action: {
+            description: 'The action being performed',
+            type: 'string',
+          },
+          connection_test_result_errors: {
+            description:
+              'If the action is `connection_test_result`, the errors that occurred if the status is failure',
+            type: ['array', 'null'],
+          },
+          connection_test_result_status: {
+            description:
+              'If the action is `connection_test_result`, the status of the latest test result',
+            type: ['string', 'null'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          organization_key: {
+            description: 'The organization that this is happening in',
+            type: ['string', 'null'],
+          },
+        },
+        required: ['organization_key', 'action'],
+      },
+      traits: {},
+    },
+    title: 'feature_sso_self_configuration',
+  };
+  const message = {
+    event: 'feature_sso_self_configuration',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track(
+      'feature_sso_self_configuration',
+      props || {},
+      withTypewriterContext(options),
+      callback
+    );
+  }
+}
+/**
+ * Generic event for tracking text editor widgets (e.g. StructuredText or Markdown).
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function featureTextEditor(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description:
+      'Generic event for tracking text editor widgets (e.g. StructuredText or Markdown).',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          action: {
+            description: 'The action the user has triggered within the text editor',
+            type: ['string'],
+          },
+          action_origin: {
+            description:
+              "Where the action was triggered, e.g. toolbar icon or shortcut (`null` means we don't know)",
+            type: ['string', 'null'],
+          },
+          additional_data: {
+            description: 'Allows to add additional action specific data',
+            type: ['object', 'null'],
+          },
+          character_count_after: {
+            description: 'Character count after the action was applied',
+            type: ['integer', 'null'],
+          },
+          character_count_before: {
+            description: 'Character count before the action was applied (useful for paste action)',
+            type: ['integer', 'null'],
+          },
+          character_count_selection: {
+            description:
+              'The number of characters selected when the action was triggered (e.g. useful to know whether a hyperlink is mostly applied to a selection or not)',
+            type: ['integer', 'null'],
+          },
+          content_type_id: {
+            description: 'content_api content_type ID of the entry with the text editor',
+            type: ['string'],
+          },
+          editor_name: {
+            description: 'The editor widget name (use front-end widget ID)',
+            type: 'string',
+          },
+          entry_id: {
+            description: 'content_api entry ID with the text editor widget',
+            type: ['string'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          field_id: {
+            description: 'ID of field with the text editor widget',
+            type: ['string'],
+          },
+          field_locale: {
+            description:
+              'Locale ID complementing the `field_id`, null if the action is not for one particular locale only.',
+            type: ['string', 'null'],
+          },
+          is_fullscreen: {
+            description: 'Whether the action was triggered while full-screen mode was active',
+            type: ['boolean'],
+          },
+          organization_key: {
+            description: 'Gatekeeper organization KEY',
+            type: ['string'],
+          },
+          space_key: {
+            description: 'Gatekeeper space KEY',
+            type: ['string'],
+          },
+        },
+        required: [
+          'organization_key',
+          'space_key',
+          'content_type_id',
+          'entry_id',
+          'field_id',
+          'field_locale',
+          'editor_name',
+          'action',
+          'is_fullscreen',
+        ],
+      },
+      traits: {},
+    },
+    title: 'feature_text_editor',
+  };
+  const message = {
+    event: 'feature_text_editor',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('feature_text_editor', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
@@ -4726,36 +5502,17 @@ export function globalAppLoaded(
       context: {},
       properties: {
         properties: {
-          contexts: {
-            items: {
-              properties: {
-                data: {
-                  properties: {
-                    action: {
-                      type: ['string'],
-                    },
-                    executingUserId: {
-                      type: ['string'],
-                    },
-                    organizationId: {
-                      type: ['string'],
-                    },
-                    spaceId: {
-                      type: ['string'],
-                    },
-                  },
-                  type: 'object',
-                },
-                schema: {
-                  type: ['string'],
-                },
-              },
-              type: 'object',
-            },
-            type: 'array',
+          action: {
+            type: ['string'],
           },
-          data: {
-            type: ['object'],
+          contexts: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          space_key: {
+            type: ['string'],
           },
         },
         type: 'object',
@@ -4801,19 +5558,19 @@ export function globalDialog(
               action: {
                 type: ['string'],
               },
-              executingUserId: {
+              environment_key: {
                 type: ['string'],
               },
               name: {
                 type: ['string'],
               },
-              organizationId: {
+              organization_key: {
                 type: ['string'],
               },
               purpose: {
                 type: ['string'],
               },
-              spaceId: {
+              space_key: {
                 type: ['string'],
               },
             },
@@ -4861,28 +5618,23 @@ export function globalSpaceChanged(
       context: {},
       properties: {
         properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              executingUserId: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              payload: {
-                type: ['object'],
-              },
-              scope: {
-                type: ['string'],
-              },
-              spaceId: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
+          action: {
+            type: ['string'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          payload: {
+            type: ['object'],
+          },
+          scope: {
+            type: ['string'],
+          },
+          space_key: {
+            type: ['string'],
           },
         },
         type: 'object',
@@ -4923,25 +5675,20 @@ export function globalSpaceLeft(
       context: {},
       properties: {
         properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              executingUserId: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              payload: {
-                type: ['object'],
-              },
-              scope: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
+          action: {
+            type: ['string'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          payload: {
+            type: ['object'],
+          },
+          scope: {
+            type: ['string'],
           },
         },
         type: 'object',
@@ -4984,133 +5731,130 @@ export function globalStateChanged(
         properties: {
           data: {
             properties: {
-              executingUserId: {
+              from_state: {
                 type: ['string'],
               },
-              fromState: {
-                type: ['string'],
-              },
-              fromStateParams: {
+              from_state_params: {
                 properties: {
-                  acceptedPermissions: {},
-                  addToContext: {
+                  accepted_permissions: {},
+                  add_to_context: {
                     type: ['boolean'],
                   },
-                  apiKeyId: {
+                  api_key_id: {
                     type: ['string'],
                   },
-                  appId: {},
-                  assetId: {
+                  app_id: {},
+                  asset_id: {
                     type: ['string'],
                   },
-                  contentTypeId: {
+                  content_type_id: {
                     type: ['string'],
                   },
-                  definitionId: {
+                  definition_id: {
                     type: ['string'],
                   },
-                  entryId: {
+                  entry_id: {
                     type: ['string'],
                   },
-                  environmentId: {
+                  environment_key: {
                     type: ['string'],
                   },
-                  ignoreLeaveConfirmation: {
+                  ignore_leave_confirmation: {
                     type: ['boolean'],
                   },
-                  invitationId: {
+                  invitation_id: {
                     type: ['string'],
                   },
-                  jumpToRole: {
+                  jump_to_role: {
                     type: ['string'],
                   },
-                  localeId: {
+                  locale_id: {
                     type: ['string'],
                   },
-                  orgId: {},
-                  orgOwnerOrAdmin: {},
-                  pathSuffix: {
+                  org_id: {},
+                  org_owner_or_admin: {},
+                  path_suffix: {
                     type: ['string'],
                   },
                   referrer: {},
-                  spaceId: {
+                  space_key: {
                     type: ['string'],
                   },
                   tab: {
                     type: ['string'],
                   },
-                  templateId: {},
-                  userId: {
+                  template_id: {},
+                  user_id: {
                     type: ['string'],
                   },
-                  webhookId: {
+                  webhook_id: {
                     type: ['string'],
                   },
                 },
                 type: 'object',
               },
-              organizationId: {
+              organization_key: {
                 type: ['string'],
               },
-              spaceId: {
+              space_key: {
                 type: ['string'],
               },
-              toState: {
+              to_state: {
                 type: ['string'],
               },
-              toStateParams: {
+              to_state_params: {
                 properties: {
-                  acceptedPermissions: {},
-                  addToContext: {
+                  accepted_permissions: {},
+                  add_to_context: {
                     type: ['boolean'],
                   },
-                  apiKeyId: {
+                  api_key_id: {
                     type: ['string'],
                   },
-                  appId: {},
-                  assetId: {
+                  app_id: {},
+                  asset_id: {
                     type: ['string'],
                   },
-                  contentTypeId: {
+                  content_type_id: {
                     type: ['string'],
                   },
-                  definitionId: {
+                  definition_id: {
                     type: ['string'],
                   },
-                  entryId: {
+                  entry_id: {
                     type: ['string'],
                   },
-                  environmentId: {
+                  environment_key: {
                     type: ['string'],
                   },
-                  ignoreLeaveConfirmation: {
+                  ignore_leave_confirmation: {
                     type: ['boolean'],
                   },
-                  jumpToRole: {
+                  jump_to_role: {
                     type: ['string'],
                   },
-                  localeId: {
+                  locale_id: {
                     type: ['string'],
                   },
-                  orgId: {
+                  org_id: {
                     type: ['string'],
                   },
-                  orgOwnerOrAdmin: {},
-                  pathSuffix: {
+                  org_owner_or_admin: {},
+                  path_suffix: {
                     type: ['string'],
                   },
                   referrer: {},
-                  spaceId: {
+                  space_key: {
                     type: ['string'],
                   },
                   tab: {
                     type: ['string'],
                   },
-                  templateId: {},
-                  userId: {
+                  template_id: {},
+                  user_id: {
                     type: ['string'],
                   },
-                  webhookId: {
+                  webhook_id: {
                     type: ['string'],
                   },
                 },
@@ -5163,27 +5907,27 @@ export function incomingLinksDialogConfirm(
               action: {
                 type: ['string'],
               },
-              executingUserId: {
+              environment_key: {
                 type: ['string'],
               },
-              organizationId: {
+              organization_key: {
                 type: ['string'],
               },
               payload: {
                 properties: {
-                  dialogAction: {
+                  dialog_action: {
                     type: ['string'],
                   },
-                  dialogSessionId: {
+                  dialog_session_id: {
                     type: ['string'],
                   },
-                  entityId: {
+                  entity_id: {
                     type: ['string'],
                   },
-                  entityType: {
+                  entity_type: {
                     type: ['string'],
                   },
-                  incomingLinksCount: {
+                  incoming_links_count: {
                     type: ['integer'],
                   },
                 },
@@ -5192,7 +5936,7 @@ export function incomingLinksDialogConfirm(
               scope: {
                 type: ['string'],
               },
-              spaceId: {
+              space_key: {
                 type: ['string'],
               },
             },
@@ -5242,27 +5986,27 @@ export function incomingLinksDialogOpen(
               action: {
                 type: ['string'],
               },
-              executingUserId: {
+              environment_key: {
                 type: ['string'],
               },
-              organizationId: {
+              organization_key: {
                 type: ['string'],
               },
               payload: {
                 properties: {
-                  dialogAction: {
+                  dialog_action: {
                     type: ['string'],
                   },
-                  dialogSessionId: {
+                  dialog_session_id: {
                     type: ['string'],
                   },
-                  entityId: {
+                  entity_id: {
                     type: ['string'],
                   },
-                  entityType: {
+                  entity_type: {
                     type: ['string'],
                   },
-                  incomingLinksCount: {
+                  incoming_links_count: {
                     type: ['integer'],
                   },
                 },
@@ -5271,7 +6015,7 @@ export function incomingLinksDialogOpen(
               scope: {
                 type: ['string'],
               },
-              spaceId: {
+              space_key: {
                 type: ['string'],
               },
             },
@@ -5321,27 +6065,27 @@ export function incomingLinksQuery(
               action: {
                 type: ['string'],
               },
-              executingUserId: {
+              environment_key: {
                 type: ['string'],
               },
-              organizationId: {
+              organization_key: {
                 type: ['string'],
               },
               payload: {
                 properties: {
-                  entityId: {
+                  entity_id: {
                     type: ['string'],
                   },
-                  entityType: {
+                  entity_type: {
                     type: ['string'],
                   },
-                  incomingLinkIds: {
+                  incoming_link_ids: {
                     items: {
                       type: 'string',
                     },
                     type: 'array',
                   },
-                  incomingLinksCount: {
+                  incoming_links_count: {
                     type: ['integer'],
                   },
                 },
@@ -5350,7 +6094,7 @@ export function incomingLinksQuery(
               scope: {
                 type: ['string'],
               },
-              spaceId: {
+              space_key: {
                 type: ['string'],
               },
             },
@@ -5377,57 +6121,49 @@ export function incomingLinksQuery(
   }
 }
 /**
- * Fires a 'jobs:cancel' track call.
+ * Emitted when the user cancels the job
  *
- * @param {JobsCancel} [props] - The analytics properties that will be sent to Segment.
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
  * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
  * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
  * 		call is fired.
  */
 export function jobsCancel(
-  props?: JobsCancel,
+  props?: Record<string, any>,
   options?: Segment.Options,
   callback?: Segment.Callback
 ): void {
   const schema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Emitted when the user cancels the job',
     properties: {
       context: {},
       properties: {
         properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              executingUserId: {
-                type: ['string'],
-              },
-              jobId: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              spaceId: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
+          action: {
+            type: ['string'],
           },
-          schema: {
+          environment_key: {
+            type: ['string'],
+          },
+          job_id: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          space_key: {
             type: ['string'],
           },
         },
-        type: 'object',
+        required: ['organization_key', 'space_key', 'job_id', 'action'],
       },
       traits: {},
     },
-    title: 'jobs:cancel',
-    type: 'object',
+    title: 'jobs_cancel',
   };
   const message = {
-    event: 'jobs:cancel',
+    event: 'jobs_cancel',
     properties: props || {},
     options,
   };
@@ -5435,76 +6171,66 @@ export function jobsCancel(
 
   const a = analytics();
   if (a) {
-    a.track('jobs:cancel', props || {}, withTypewriterContext(options), callback);
+    a.track('jobs_cancel', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
- * Fires a 'jobs:create' track call.
+ * Emitted when a user creates a job
  *
- * @param {JobsCreate} [props] - The analytics properties that will be sent to Segment.
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
  * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
  * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
  * 		call is fired.
  */
 export function jobsCreate(
-  props?: JobsCreate,
+  props?: Record<string, any>,
   options?: Segment.Options,
   callback?: Segment.Callback
 ): void {
   const schema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Emitted when a user creates a job',
     properties: {
       context: {},
       properties: {
         properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              entityId: {
-                type: ['string'],
-              },
-              executingUserId: {
-                type: ['string'],
-              },
-              jobId: {
-                type: ['string'],
-              },
-              localTimezone: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              scheduledFor: {
-                type: ['string'],
-              },
-              scheduledForTimezone: {
-                type: ['string'],
-              },
-              spaceId: {
-                type: ['string'],
-              },
-              timezoneOffset: {
-                type: ['integer'],
-              },
-            },
-            type: 'object',
-          },
-          schema: {
+          action: {
             type: ['string'],
           },
+          environment_key: {
+            type: ['string'],
+          },
+          job_id: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          scheduled_for: {
+            type: ['string'],
+          },
+          space_key: {
+            type: ['string'],
+          },
+          timezone_offset: {
+            type: ['integer'],
+          },
         },
-        type: 'object',
+        required: [
+          'organization_key',
+          'space_key',
+          'action',
+          'job_id',
+          'scheduled_for',
+          'timezone_offset',
+        ],
       },
       traits: {},
     },
-    title: 'jobs:create',
-    type: 'object',
+    title: 'jobs_create',
   };
   const message = {
-    event: 'jobs:create',
+    event: 'jobs_create',
     properties: props || {},
     options,
   };
@@ -5512,7 +6238,116 @@ export function jobsCreate(
 
   const a = analytics();
   if (a) {
-    a.track('jobs:create', props || {}, withTypewriterContext(options), callback);
+    a.track('jobs_create', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Emitted when a job is triggered
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function jobsProcessing(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Emitted when a job is triggered',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          action: {
+            type: ['string'],
+          },
+          job_id: {
+            type: ['string'],
+          },
+          status_code: {
+            description: 'code of the status of the current job process. Example: 200 for success',
+            type: ['integer'],
+          },
+        },
+        required: ['job_id', 'action', 'status_code'],
+      },
+      traits: {},
+    },
+    title: 'jobs_processing',
+  };
+  const message = {
+    event: 'jobs_processing',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('jobs_processing', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Schema for tracking every state transition in the user interface
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function pageView(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Schema for tracking every state transition in the user interface',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          environment_key: {
+            type: ['string'],
+          },
+          from_state: {
+            type: ['string'],
+          },
+          from_state_params: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          space_key: {
+            type: ['string'],
+          },
+          to_state: {
+            type: ['string'],
+          },
+          to_state_params: {
+            type: ['string'],
+          },
+        },
+        required: ['to_state'],
+      },
+      traits: {},
+    },
+    title: 'page_view',
+  };
+  const message = {
+    event: 'page_view',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('page_view', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
@@ -5539,15 +6374,15 @@ export function perfDomContentLoaded(
               action: {
                 type: ['string'],
               },
-              executingUserId: {
+              environment_key: {
                 type: ['string'],
               },
-              organizationId: {
+              organization_key: {
                 type: ['string'],
               },
               payload: {
                 properties: {
-                  stateName: {
+                  state_name: {
                     type: ['string'],
                   },
                   value: {
@@ -5559,7 +6394,7 @@ export function perfDomContentLoaded(
               scope: {
                 type: ['string'],
               },
-              spaceId: {
+              space_key: {
                 type: ['string'],
               },
             },
@@ -5609,15 +6444,15 @@ export function perfFirstContentfulPaint(
               action: {
                 type: ['string'],
               },
-              executingUserId: {
+              environment_key: {
                 type: ['string'],
               },
-              organizationId: {
+              organization_key: {
                 type: ['string'],
               },
               payload: {
                 properties: {
-                  stateName: {
+                  state_name: {
                     type: ['string'],
                   },
                   value: {
@@ -5629,7 +6464,7 @@ export function perfFirstContentfulPaint(
               scope: {
                 type: ['string'],
               },
-              spaceId: {
+              space_key: {
                 type: ['string'],
               },
             },
@@ -5679,15 +6514,15 @@ export function perfTimeToInteractive(
               action: {
                 type: ['string'],
               },
-              executingUserId: {
+              environment_key: {
                 type: ['string'],
               },
-              organizationId: {
+              organization_key: {
                 type: ['string'],
               },
               payload: {
                 properties: {
-                  stateName: {
+                  state_name: {
                     type: ['string'],
                   },
                   value: {
@@ -5699,7 +6534,7 @@ export function perfTimeToInteractive(
               scope: {
                 type: ['string'],
               },
-              spaceId: {
+              space_key: {
                 type: ['string'],
               },
             },
@@ -5749,10 +6584,7 @@ export function personalAccessTokenAction(
               action: {
                 type: ['string'],
               },
-              executingUserId: {
-                type: ['string'],
-              },
-              personalAccessTokenId: {
+              personal_access_token_id: {
                 type: ['string'],
               },
             },
@@ -5776,6 +6608,60 @@ export function personalAccessTokenAction(
   const a = analytics();
   if (a) {
     a.track('personal_access_token:action', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * PrevieApiKey schema
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function previewApiKey(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'PrevieApiKey schema',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          action: {
+            type: ['string'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: ['string', 'null'],
+          },
+          space_key: {
+            type: ['string'],
+          },
+          version: {
+            type: ['integer', 'null'],
+          },
+        },
+        required: ['space_key', 'action'],
+      },
+      traits: {},
+    },
+    title: 'preview_api_key',
+  };
+  const message = {
+    event: 'preview_api_key',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('preview_api_key', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
@@ -6364,40 +7250,35 @@ export function searchEntryClicked(
       context: {},
       properties: {
         properties: {
-          data: {
-            properties: {
-              entityType: {
-                type: ['string'],
-              },
-              executingUserId: {
-                type: ['string'],
-              },
-              index: {
-                type: ['integer'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              resultCount: {
-                type: ['integer'],
-              },
-              searchFilters: {
-                items: {
-                  type: 'string',
-                },
-                type: 'array',
-              },
-              searchQuery: {
-                type: ['string'],
-              },
-              sequenceKey: {
-                type: ['string'],
-              },
-              spaceId: {
-                type: ['string'],
-              },
+          entity_type: {
+            type: ['string'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          index: {
+            type: ['integer'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          result_count: {
+            type: ['integer'],
+          },
+          search_filters: {
+            items: {
+              type: 'string',
             },
-            type: 'object',
+            type: 'array',
+          },
+          search_query: {
+            type: ['string'],
+          },
+          sequence_key: {
+            type: ['string'],
+          },
+          space_key: {
+            type: ['string'],
           },
         },
         type: 'object',
@@ -6438,40 +7319,35 @@ export function searchFilterAdded(
       context: {},
       properties: {
         properties: {
-          data: {
-            properties: {
-              entityType: {
-                type: ['string'],
-              },
-              executingUserId: {
-                type: ['string'],
-              },
-              filter: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              resultCount: {
-                type: ['integer'],
-              },
-              searchFilters: {
-                items: {
-                  type: 'string',
-                },
-                type: 'array',
-              },
-              searchQuery: {
-                type: ['string'],
-              },
-              sequenceKey: {
-                type: ['string'],
-              },
-              spaceId: {
-                type: ['string'],
-              },
+          entity_type: {
+            type: ['string'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          filter: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          result_count: {
+            type: ['integer'],
+          },
+          search_filters: {
+            items: {
+              type: 'string',
             },
-            type: 'object',
+            type: 'array',
+          },
+          search_query: {
+            type: ['string'],
+          },
+          sequence_key: {
+            type: ['string'],
+          },
+          space_key: {
+            type: ['string'],
           },
         },
         type: 'object',
@@ -6512,40 +7388,35 @@ export function searchFilterRemoved(
       context: {},
       properties: {
         properties: {
-          data: {
-            properties: {
-              entityType: {
-                type: ['string'],
-              },
-              executingUserId: {
-                type: ['string'],
-              },
-              filter: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              resultCount: {
-                type: ['integer'],
-              },
-              searchFilters: {
-                items: {
-                  type: 'string',
-                },
-                type: 'array',
-              },
-              searchQuery: {
-                type: ['string'],
-              },
-              sequenceKey: {
-                type: ['string'],
-              },
-              spaceId: {
-                type: ['string'],
-              },
+          entity_type: {
+            type: ['string'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          filter: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          result_count: {
+            type: ['integer'],
+          },
+          search_filters: {
+            items: {
+              type: 'string',
             },
-            type: 'object',
+            type: 'array',
+          },
+          search_query: {
+            type: ['string'],
+          },
+          sequence_key: {
+            type: ['string'],
+          },
+          space_key: {
+            type: ['string'],
           },
         },
         type: 'object',
@@ -6586,37 +7457,32 @@ export function searchQueryChanged(
       context: {},
       properties: {
         properties: {
-          data: {
-            properties: {
-              entityType: {
-                type: ['string'],
-              },
-              executingUserId: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              resultCount: {
-                type: ['integer'],
-              },
-              searchFilters: {
-                items: {
-                  type: 'string',
-                },
-                type: 'array',
-              },
-              searchQuery: {
-                type: ['string'],
-              },
-              sequenceKey: {
-                type: ['string'],
-              },
-              spaceId: {
-                type: ['string'],
-              },
+          entity_type: {
+            type: ['string'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          result_count: {
+            type: ['integer'],
+          },
+          search_filters: {
+            items: {
+              type: 'string',
             },
-            type: 'object',
+            type: 'array',
+          },
+          search_query: {
+            type: ['string'],
+          },
+          sequence_key: {
+            type: ['string'],
+          },
+          space_key: {
+            type: ['string'],
           },
         },
         type: 'object',
@@ -6657,38 +7523,33 @@ export function searchSearchPerformed(
       context: {},
       properties: {
         properties: {
-          data: {
-            properties: {
-              contentTypeId: {},
-              entityType: {
-                type: ['string'],
-              },
-              executingUserId: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              resultCount: {
-                type: ['integer'],
-              },
-              searchFilters: {
-                items: {
-                  type: 'string',
-                },
-                type: 'array',
-              },
-              searchQuery: {
-                type: ['string'],
-              },
-              sequenceKey: {
-                type: ['string'],
-              },
-              spaceId: {
-                type: ['string'],
-              },
+          content_type_id: {},
+          entity_type: {
+            type: ['string'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          result_count: {
+            type: ['integer'],
+          },
+          search_filters: {
+            items: {
+              type: 'string',
             },
-            type: 'object',
+            type: 'array',
+          },
+          search_query: {
+            type: ['string'],
+          },
+          sequence_key: {
+            type: ['string'],
+          },
+          space_key: {
+            type: ['string'],
           },
         },
         type: 'object',
@@ -6729,44 +7590,39 @@ export function searchViewCreated(
       context: {},
       properties: {
         properties: {
-          data: {
-            properties: {
-              contentTypeId: {},
-              entityType: {
-                type: ['string'],
-              },
-              executingUserId: {
-                type: ['string'],
-              },
-              folderId: {
-                type: ['string'],
-              },
-              folderTitle: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              searchFilters: {
-                items: {
-                  type: 'string',
-                },
-                type: 'array',
-              },
-              searchQuery: {
-                type: ['string'],
-              },
-              spaceId: {
-                type: ['string'],
-              },
-              viewId: {
-                type: ['string'],
-              },
-              viewType: {
-                type: ['string'],
-              },
+          content_type_id: {},
+          entity_type: {
+            type: ['string'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          folder_id: {
+            type: ['string'],
+          },
+          folder_title: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          search_filters: {
+            items: {
+              type: 'string',
             },
-            type: 'object',
+            type: 'array',
+          },
+          search_query: {
+            type: ['string'],
+          },
+          space_key: {
+            type: ['string'],
+          },
+          view_id: {
+            type: ['string'],
+          },
+          view_type: {
+            type: ['string'],
           },
         },
         type: 'object',
@@ -6807,28 +7663,23 @@ export function searchViewDeleted(
       context: {},
       properties: {
         properties: {
-          data: {
-            properties: {
-              entityType: {
-                type: ['string'],
-              },
-              executingUserId: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              spaceId: {
-                type: ['string'],
-              },
-              viewId: {
-                type: ['string'],
-              },
-              viewType: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
+          entity_type: {
+            type: ['string'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          space_key: {
+            type: ['string'],
+          },
+          view_id: {
+            type: ['string'],
+          },
+          view_type: {
+            type: ['string'],
           },
         },
         type: 'object',
@@ -6869,48 +7720,43 @@ export function searchViewLoaded(
       context: {},
       properties: {
         properties: {
-          data: {
-            properties: {
-              contentTypeId: {},
-              entityType: {
-                type: ['string'],
-              },
-              executingUserId: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              resultCount: {
-                type: ['integer'],
-              },
-              searchFilters: {
-                items: {
-                  type: 'string',
-                },
-                type: 'array',
-              },
-              searchQuery: {
-                type: ['string'],
-              },
-              sequenceKey: {
-                type: ['string'],
-              },
-              spaceId: {
-                type: ['string'],
-              },
-              viewId: {
-                type: ['string'],
-              },
-              viewRoles: {},
-              viewTitle: {
-                type: ['string'],
-              },
-              viewType: {
-                type: ['string'],
-              },
+          content_type_id: {},
+          entity_type: {
+            type: ['string'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          result_count: {
+            type: ['integer'],
+          },
+          search_filters: {
+            items: {
+              type: 'string',
             },
-            type: 'object',
+            type: 'array',
+          },
+          search_query: {
+            type: ['string'],
+          },
+          sequence_key: {
+            type: ['string'],
+          },
+          space_key: {
+            type: ['string'],
+          },
+          view_id: {
+            type: ['string'],
+          },
+          view_roles: {},
+          view_title: {
+            type: ['string'],
+          },
+          view_type: {
+            type: ['string'],
           },
         },
         type: 'object',
@@ -6933,6 +7779,75 @@ export function searchViewLoaded(
   }
 }
 /**
+ * Schema for a search performed in the top bar of the webapp
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function searchPerform(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Schema for a search performed in the top bar of the webapp',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          content_type_id: {
+            type: ['string', 'null'],
+          },
+          entity_type: {
+            type: 'string',
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          result_count: {
+            type: ['integer'],
+          },
+          search_filters: {
+            items: {
+              type: 'string',
+            },
+            type: 'array',
+          },
+          search_query: {
+            type: ['string', 'null'],
+          },
+          sequence_key: {
+            type: ['string', 'null'],
+          },
+          space_key: {
+            type: ['string'],
+          },
+        },
+        required: ['organization_key', 'space_key', 'entity_type', 'search_query', 'result_count'],
+      },
+      traits: {},
+    },
+    title: 'search_perform',
+  };
+  const message = {
+    event: 'search_perform',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('search_perform', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
  * Fires a 'sharejs:cma_entity_version_mismatch' track call.
  *
  * @param {SharejsCmaEntityVersionMismatch} [props] - The analytics properties that will be sent to Segment.
@@ -6951,45 +7866,40 @@ export function sharejsCmaEntityVersionMismatch(
       context: {},
       properties: {
         properties: {
-          data: {
+          action: {
+            type: ['string'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          payload: {
             properties: {
-              action: {
+              cma_entity_version: {
+                type: ['integer'],
+              },
+              entity_id: {
                 type: ['string'],
               },
-              executingUserId: {
+              entity_type: {
                 type: ['string'],
               },
-              organizationId: {
-                type: ['string'],
+              share_js_doc_compressed_version: {
+                type: ['integer'],
               },
-              payload: {
-                properties: {
-                  cmaEntityVersion: {
-                    type: ['integer'],
-                  },
-                  entityId: {
-                    type: ['string'],
-                  },
-                  entityType: {
-                    type: ['string'],
-                  },
-                  shareJsDocCompressedVersion: {
-                    type: ['integer'],
-                  },
-                  shareJsDocVersion: {
-                    type: ['integer'],
-                  },
-                },
-                type: 'object',
-              },
-              scope: {
-                type: ['string'],
-              },
-              spaceId: {
-                type: ['string'],
+              share_js_doc_version: {
+                type: ['integer'],
               },
             },
             type: 'object',
+          },
+          scope: {
+            type: ['string'],
+          },
+          space_key: {
+            type: ['string'],
           },
         },
         type: 'object',
@@ -7017,60 +7927,55 @@ export function sharejsCmaEntityVersionMismatch(
   }
 }
 /**
- * Fires a 'slide_in_editor:arrow_back' track call.
+ * Schema to track slide in editor usage
  *
- * @param {SlideInEditorArrowBack} [props] - The analytics properties that will be sent to Segment.
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
  * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
  * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
  * 		call is fired.
  */
-export function slideInEditorArrowBack(
-  props?: SlideInEditorArrowBack,
+export function slideInEditor(
+  props?: Record<string, any>,
   options?: Segment.Options,
   callback?: Segment.Callback
 ): void {
   const schema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Schema to track slide in editor usage',
     properties: {
       context: {},
       properties: {
         properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              currentSlideLevel: {
-                type: ['integer'],
-              },
-              executingUserId: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              peekHoverTimeMs: {
-                type: ['integer'],
-              },
-              spaceId: {
-                type: ['string'],
-              },
-              targetSlideLevel: {
-                type: ['integer'],
-              },
-            },
-            type: 'object',
+          action: {
+            type: 'string',
+          },
+          current_slide_level: {
+            type: ['integer'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: 'string',
+          },
+          peek_hover_time_ms: {
+            type: ['integer'],
+          },
+          space_key: {
+            type: 'string',
+          },
+          target_slide_level: {
+            type: ['integer'],
           },
         },
-        type: 'object',
+        required: ['organization_key', 'space_key', 'current_slide_level'],
       },
       traits: {},
     },
-    title: 'slide_in_editor:arrow_back',
-    type: 'object',
+    title: 'slide_in_editor',
   };
   const message = {
-    event: 'slide_in_editor:arrow_back',
+    event: 'slide_in_editor',
     properties: props || {},
     options,
   };
@@ -7078,271 +7983,11 @@ export function slideInEditorArrowBack(
 
   const a = analytics();
   if (a) {
-    a.track('slide_in_editor:arrow_back', props || {}, withTypewriterContext(options), callback);
+    a.track('slide_in_editor', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
- * Fires a 'slide_in_editor:delete' track call.
- *
- * @param {SlideInEditorDelete} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function slideInEditorDelete(
-  props?: SlideInEditorDelete,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              currentSlideLevel: {
-                type: ['integer'],
-              },
-              executingUserId: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              peekHoverTimeMs: {
-                type: ['integer'],
-              },
-              spaceId: {
-                type: ['string'],
-              },
-              targetSlideLevel: {
-                type: ['integer'],
-              },
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'slide_in_editor:delete',
-    type: 'object',
-  };
-  const message = {
-    event: 'slide_in_editor:delete',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('slide_in_editor:delete', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'slide_in_editor:open' track call.
- *
- * @param {SlideInEditorOpen} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function slideInEditorOpen(
-  props?: SlideInEditorOpen,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              currentSlideLevel: {
-                type: ['integer'],
-              },
-              executingUserId: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              peekHoverTimeMs: {
-                type: ['integer'],
-              },
-              spaceId: {
-                type: ['string'],
-              },
-              targetSlideLevel: {
-                type: ['integer'],
-              },
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'slide_in_editor:open',
-    type: 'object',
-  };
-  const message = {
-    event: 'slide_in_editor:open',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('slide_in_editor:open', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'slide_in_editor:open_create' track call.
- *
- * @param {SlideInEditorOpenCreate} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function slideInEditorOpenCreate(
-  props?: SlideInEditorOpenCreate,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              currentSlideLevel: {
-                type: ['integer'],
-              },
-              executingUserId: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              peekHoverTimeMs: {
-                type: ['integer'],
-              },
-              spaceId: {
-                type: ['string'],
-              },
-              targetSlideLevel: {
-                type: ['integer'],
-              },
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'slide_in_editor:open_create',
-    type: 'object',
-  };
-  const message = {
-    event: 'slide_in_editor:open_create',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('slide_in_editor:open_create', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'slide_in_editor:peek_click' track call.
- *
- * @param {SlideInEditorPeekClick} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function slideInEditorPeekClick(
-  props?: SlideInEditorPeekClick,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              currentSlideLevel: {
-                type: ['integer'],
-              },
-              executingUserId: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              peekHoverTimeMs: {
-                type: ['integer'],
-              },
-              spaceId: {
-                type: ['string'],
-              },
-              targetSlideLevel: {
-                type: ['integer'],
-              },
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'slide_in_editor:peek_click',
-    type: 'object',
-  };
-  const message = {
-    event: 'slide_in_editor:peek_click',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('slide_in_editor:peek_click', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'space:create' track call.
+ * Legacy Snowplow schema (originally `space_create`) for tracking space creation. Heavily relies on Snowplow contexts. Numbers tracked went down to almost 0 since Nov 2020 presumably due to the new space creation flow which doesn't track space creation with this schema anymore.
  *
  * @param {SpaceCreate} [props] - The analytics properties that will be sent to Segment.
  * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
@@ -7356,43 +8001,14 @@ export function spaceCreate(
 ): void {
   const schema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
+    description:
+      "Legacy Snowplow schema (originally `space_create`) for tracking space creation. Heavily relies on Snowplow contexts. Numbers tracked went down to almost 0 since Nov 2020 presumably due to the new space creation flow which doesn't track space creation with this schema anymore.",
     properties: {
       context: {},
       properties: {
         properties: {
           contexts: {
-            items: {
-              properties: {
-                data: {
-                  properties: {
-                    action: {
-                      type: ['string'],
-                    },
-                    executingUserId: {
-                      type: ['string'],
-                    },
-                    name: {
-                      type: ['string'],
-                    },
-                    organizationId: {
-                      type: ['string'],
-                    },
-                    spaceId: {
-                      type: ['string'],
-                    },
-                  },
-                  type: 'object',
-                },
-                schema: {
-                  type: ['string'],
-                },
-              },
-              type: 'object',
-            },
-            type: 'array',
-          },
-          data: {
-            type: ['object'],
+            type: 'string',
           },
         },
         type: 'object',
@@ -7412,616 +8028,6 @@ export function spaceCreate(
   const a = analytics();
   if (a) {
     a.track('space:create', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'space_wizard:cancel' track call.
- *
- * @param {SpaceWizardCancel} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function spaceWizardCancel(
-  props?: SpaceWizardCancel,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              currentProductType: {},
-              currentSpaceType: {},
-              currentStep: {},
-              executingUserId: {
-                type: ['string'],
-              },
-              intendedAction: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              paymentDetailsExist: {},
-              recommendedProductType: {},
-              recommendedSpaceType: {},
-              spaceId: {
-                type: ['string'],
-              },
-              targetProductType: {},
-              targetSpaceName: {},
-              targetSpaceTemplateId: {},
-              targetSpaceType: {},
-              targetStep: {},
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'space_wizard:cancel',
-    type: 'object',
-  };
-  const message = {
-    event: 'space_wizard:cancel',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('space_wizard:cancel', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'space_wizard:confirm' track call.
- *
- * @param {SpaceWizardConfirm} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function spaceWizardConfirm(
-  props?: SpaceWizardConfirm,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              currentProductType: {},
-              currentSpaceType: {},
-              currentStep: {},
-              executingUserId: {
-                type: ['string'],
-              },
-              intendedAction: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              paymentDetailsExist: {},
-              recommendedProductType: {},
-              recommendedSpaceType: {},
-              spaceId: {
-                type: ['string'],
-              },
-              targetProductType: {},
-              targetSpaceName: {},
-              targetSpaceTemplateId: {},
-              targetSpaceType: {},
-              targetStep: {},
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'space_wizard:confirm',
-    type: 'object',
-  };
-  const message = {
-    event: 'space_wizard:confirm',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('space_wizard:confirm', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'space_wizard:entered_details' track call.
- *
- * @param {SpaceWizardEnteredDetails} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function spaceWizardEnteredDetails(
-  props?: SpaceWizardEnteredDetails,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              currentProductType: {},
-              currentSpaceType: {},
-              executingUserId: {
-                type: ['string'],
-              },
-              intendedAction: {
-                type: ['string'],
-              },
-              paymentDetailsExist: {},
-              recommendedProductType: {},
-              targetProductType: {},
-              targetSpaceName: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'space_wizard:entered_details',
-    type: 'object',
-  };
-  const message = {
-    event: 'space_wizard:entered_details',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('space_wizard:entered_details', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'space_wizard:link_click' track call.
- *
- * @param {SpaceWizardLinkClick} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function spaceWizardLinkClick(
-  props?: SpaceWizardLinkClick,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              currentProductType: {},
-              executingUserId: {
-                type: ['string'],
-              },
-              intendedAction: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              paymentDetailsExist: {},
-              targetProductType: {},
-              targetSpaceName: {},
-              targetSpaceType: {},
-              targetStep: {},
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'space_wizard:link_click',
-    type: 'object',
-  };
-  const message = {
-    event: 'space_wizard:link_click',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('space_wizard:link_click', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'space_wizard:navigate' track call.
- *
- * @param {SpaceWizardNavigate} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function spaceWizardNavigate(
-  props?: SpaceWizardNavigate,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              currentProductType: {},
-              currentSpaceType: {},
-              currentStep: {},
-              executingUserId: {
-                type: ['string'],
-              },
-              intendedAction: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              paymentDetailsExist: {},
-              recommendedProductType: {},
-              recommendedSpaceType: {},
-              spaceId: {
-                type: ['string'],
-              },
-              targetProductType: {},
-              targetSpaceName: {},
-              targetSpaceTemplateId: {},
-              targetSpaceType: {},
-              targetStep: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'space_wizard:navigate',
-    type: 'object',
-  };
-  const message = {
-    event: 'space_wizard:navigate',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('space_wizard:navigate', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'space_wizard:open' track call.
- *
- * @param {SpaceWizardOpen} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function spaceWizardOpen(
-  props?: SpaceWizardOpen,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              currentProductType: {},
-              currentSpaceType: {},
-              currentStep: {},
-              executingUserId: {
-                type: ['string'],
-              },
-              intendedAction: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              paymentDetailsExist: {
-                type: ['boolean'],
-              },
-              recommendedProductType: {},
-              recommendedSpaceType: {},
-              spaceId: {
-                type: ['string'],
-              },
-              targetProductType: {},
-              targetSpaceName: {},
-              targetSpaceTemplateId: {},
-              targetSpaceType: {},
-              targetStep: {},
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'space_wizard:open',
-    type: 'object',
-  };
-  const message = {
-    event: 'space_wizard:open',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('space_wizard:open', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'space_wizard:select_plan' track call.
- *
- * @param {SpaceWizardSelectPlan} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function spaceWizardSelectPlan(
-  props?: SpaceWizardSelectPlan,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              currentProductType: {},
-              currentSpaceType: {},
-              currentStep: {},
-              executingUserId: {
-                type: ['string'],
-              },
-              intendedAction: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              paymentDetailsExist: {},
-              recommendedProductType: {},
-              recommendedSpaceType: {},
-              spaceId: {
-                type: ['string'],
-              },
-              targetProductType: {
-                type: ['string'],
-              },
-              targetSpaceName: {},
-              targetSpaceTemplateId: {},
-              targetSpaceType: {
-                type: ['string'],
-              },
-              targetStep: {},
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'space_wizard:select_plan',
-    type: 'object',
-  };
-  const message = {
-    event: 'space_wizard:select_plan',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('space_wizard:select_plan', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'space_wizard:space_create' track call.
- *
- * @param {SpaceWizardSpaceCreate} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function spaceWizardSpaceCreate(
-  props?: SpaceWizardSpaceCreate,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              currentProductType: {},
-              currentStep: {},
-              executingUserId: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              recommendedProductType: {},
-              recommendedSpaceType: {},
-              targetSpaceName: {},
-              targetSpaceTemplateId: {},
-              targetSpaceType: {},
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'space_wizard:space_create',
-    type: 'object',
-  };
-  const message = {
-    event: 'space_wizard:space_create',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('space_wizard:space_create', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'space_wizard:space_type_change' track call.
- *
- * @param {SpaceWizardSpaceTypeChange} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function spaceWizardSpaceTypeChange(
-  props?: SpaceWizardSpaceTypeChange,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              currentProductType: {},
-              currentSpaceType: {},
-              currentStep: {},
-              executingUserId: {
-                type: ['string'],
-              },
-              intendedAction: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              paymentDetailsExist: {},
-              recommendedProductType: {},
-              recommendedSpaceType: {},
-              spaceId: {
-                type: ['string'],
-              },
-              targetProductType: {},
-              targetSpaceName: {},
-              targetSpaceTemplateId: {},
-              targetSpaceType: {},
-              targetStep: {},
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'space_wizard:space_type_change',
-    type: 'object',
-  };
-  const message = {
-    event: 'space_wizard:space_type_change',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track(
-      'space_wizard:space_type_change',
-      props || {},
-      withTypewriterContext(options),
-      callback
-    );
   }
 }
 /**
@@ -8048,18 +8054,18 @@ export function teamsInSpaceUsersAdded(
               action: {
                 type: ['string'],
               },
-              executingUserId: {
+              environment_key: {
                 type: ['string'],
               },
-              organizationId: {
+              organization_key: {
                 type: ['string'],
               },
               payload: {
                 properties: {
-                  numErr: {
+                  num_err: {
                     type: ['integer'],
                   },
-                  numSuccess: {
+                  num_success: {
                     type: ['integer'],
                   },
                 },
@@ -8068,7 +8074,7 @@ export function teamsInSpaceUsersAdded(
               scope: {
                 type: ['string'],
               },
-              spaceId: {
+              space_key: {
                 type: ['string'],
               },
             },
@@ -8118,62 +8124,62 @@ export function textEditorAction(
               action: {
                 type: ['string'],
               },
-              actionOrigin: {
+              action_origin: {
                 type: ['string'],
               },
-              additionalData: {
+              additional_data: {
                 properties: {
-                  characterCountAfter: {
+                  character_count_after: {
                     type: ['integer'],
                   },
-                  characterCountBefore: {
+                  character_count_before: {
                     type: ['integer'],
                   },
-                  characterCountSelection: {
+                  character_count_selection: {
                     type: ['integer'],
                   },
-                  linkType: {
+                  link_type: {
                     type: ['string'],
                   },
-                  markType: {
+                  mark_type: {
                     type: ['string'],
                   },
-                  nodeType: {
+                  node_type: {
                     type: ['string'],
                   },
                 },
                 type: 'object',
               },
-              characterCountAfter: {
+              character_count_after: {
                 type: ['integer'],
               },
-              characterCountBefore: {},
-              characterCountSelection: {},
-              contentTypeId: {
+              character_count_before: {},
+              character_count_selection: {},
+              content_type_id: {
                 type: ['string'],
               },
-              editorName: {
+              editor_name: {
                 type: ['string'],
               },
-              entryId: {
+              entry_id: {
                 type: ['string'],
               },
-              executingUserId: {
+              environment_key: {
                 type: ['string'],
               },
-              fieldId: {
+              field_id: {
                 type: ['string'],
               },
-              fieldLocale: {
+              field_locale: {
                 type: ['string'],
               },
-              isFullscreen: {
+              is_fullscreen: {
                 type: ['boolean'],
               },
-              organizationId: {
+              organization_key: {
                 type: ['string'],
               },
-              spaceId: {
+              space_key: {
                 type: ['string'],
               },
             },
@@ -8226,10 +8232,10 @@ export function trackingInvalidEvent(
               action: {
                 type: ['string'],
               },
-              executingUserId: {
+              environment_key: {
                 type: ['string'],
               },
-              organizationId: {
+              organization_key: {
                 type: ['string'],
               },
               payload: {
@@ -8243,7 +8249,7 @@ export function trackingInvalidEvent(
               scope: {
                 type: ['string'],
               },
-              spaceId: {
+              space_key: {
                 type: ['string'],
               },
             },
@@ -8270,54 +8276,70 @@ export function trackingInvalidEvent(
   }
 }
 /**
- * Fires a 'translation_sidebar:change_focused_locale' track call.
+ * Schema to track the translation sidebar widgets
  *
- * @param {TranslationSidebarChangeFocusedLocale} [props] - The analytics properties that will be sent to Segment.
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
  * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
  * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
  * 		call is fired.
  */
-export function translationSidebarChangeFocusedLocale(
-  props?: TranslationSidebarChangeFocusedLocale,
+export function translationSidebar(
+  props?: Record<string, any>,
   options?: Segment.Options,
   callback?: Segment.Callback
 ): void {
   const schema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Schema to track the translation sidebar widgets',
     properties: {
       context: {},
       properties: {
         properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              currentMode: {
-                type: ['string'],
-              },
-              executingUserId: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              spaceId: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
+          action: {
+            description:
+              '`toggle_widget_mode` is triggered every time the translation sidebar mode is toggled from single to multiple locales (or vice versa). `deselect_active_locale` is triggered when an editor is using the multiple locale mode and deselects one of the active locales using the pills in the sidebar widget. `update_active_locales` is triggered when an editor is using the multiple locale mode and updates the active locales using the locale update modal. `change_focused_locale` is triggered when an editor is using the single locale mode and changes the focused locale using the sidebar locale dropdown.',
+            enum: [
+              'toggle_widget_mode',
+              'deselect_active_locale',
+              'update_active_locales',
+              'change_focused_locale',
+            ],
+            type: 'string',
+          },
+          current_active_locale_count: {
+            description:
+              'The total number of locales activated by the editor as a consequence of an `update_active_locales` or `deselect_active_locale` action.',
+            type: ['integer', 'null'],
+          },
+          current_mode: {
+            description:
+              'The widget mode from which the action is executed. When the action is `toggle_widget_mode`, this refers to the mode to which the editor has toggled. Will always be `single` for `change_focused_locale`. Will always be `multiple` for `deselect_active_locale` or `update_active_locales`.',
+            enum: ['single', 'multiple'],
+            type: 'string',
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: 'string',
+          },
+          previous_active_locale_count: {
+            description:
+              'The total number of active locales prior to the triggering of an `update_active_locales` or `deselect_active_locale` action.',
+            type: ['integer', 'null'],
+          },
+          space_key: {
+            type: 'string',
           },
         },
-        type: 'object',
+        required: ['organization_key', 'space_key', 'action', 'current_mode'],
       },
       traits: {},
     },
-    title: 'translation_sidebar:change_focused_locale',
-    type: 'object',
+    title: 'translation_sidebar',
   };
   const message = {
-    event: 'translation_sidebar:change_focused_locale',
+    event: 'translation_sidebar',
     properties: props || {},
     options,
   };
@@ -8325,69 +8347,62 @@ export function translationSidebarChangeFocusedLocale(
 
   const a = analytics();
   if (a) {
-    a.track(
-      'translation_sidebar:change_focused_locale',
-      props || {},
-      withTypewriterContext(options),
-      callback
-    );
+    a.track('translation_sidebar', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
- * Fires a 'translation_sidebar:deselect_active_locale' track call.
+ * Track the view migration in `ui_config` endpoint per space
  *
- * @param {TranslationSidebarDeselectActiveLocale} [props] - The analytics properties that will be sent to Segment.
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
  * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
  * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
  * 		call is fired.
  */
-export function translationSidebarDeselectActiveLocale(
-  props?: TranslationSidebarDeselectActiveLocale,
+export function uiConfigMigrate(
+  props?: Record<string, any>,
   options?: Segment.Options,
   callback?: Segment.Callback
 ): void {
   const schema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Track the view migration in `ui_config` endpoint per space',
     properties: {
       context: {},
       properties: {
         properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              currentActiveLocaleCount: {
-                type: ['integer'],
-              },
-              currentMode: {
-                type: ['string'],
-              },
-              executingUserId: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              previousActiveLocaleCount: {
-                type: ['integer'],
-              },
-              spaceId: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
+          endpoint: {
+            type: ['string'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          space_key: {
+            type: ['string'],
+          },
+          view_count_migrated: {
+            type: ['integer'],
+          },
+          view_count_migration_failed: {
+            type: ['integer'],
           },
         },
-        type: 'object',
+        required: [
+          'organization_key',
+          'space_key',
+          'view_count_migrated',
+          'view_count_migration_failed',
+          'endpoint',
+        ],
       },
       traits: {},
     },
-    title: 'translation_sidebar:deselect_active_locale',
-    type: 'object',
+    title: 'ui_config_migrate',
   };
   const message = {
-    event: 'translation_sidebar:deselect_active_locale',
+    event: 'ui_config_migrate',
     properties: props || {},
     options,
   };
@@ -8395,63 +8410,68 @@ export function translationSidebarDeselectActiveLocale(
 
   const a = analytics();
   if (a) {
-    a.track(
-      'translation_sidebar:deselect_active_locale',
-      props || {},
-      withTypewriterContext(options),
-      callback
-    );
+    a.track('ui_config_migrate', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
- * Fires a 'translation_sidebar:toggle_widget_mode' track call.
+ * UI Extension Install Schema
  *
- * @param {TranslationSidebarToggleWidgetMode} [props] - The analytics properties that will be sent to Segment.
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
  * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
  * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
  * 		call is fired.
  */
-export function translationSidebarToggleWidgetMode(
-  props?: TranslationSidebarToggleWidgetMode,
+export function uiExtensionInstall(
+  props?: Record<string, any>,
   options?: Segment.Options,
   callback?: Segment.Callback
 ): void {
   const schema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'UI Extension Install Schema',
     properties: {
       context: {},
       properties: {
         properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              currentMode: {
-                type: ['string'],
-              },
-              executingUserId: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              spaceId: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
+          environment_key: {
+            type: ['string'],
+          },
+          field_types: {
+            type: ['array', 'null'],
+          },
+          installation_params: {
+            type: ['array', 'null'],
+          },
+          instance_params: {
+            type: ['array', 'null'],
+          },
+          name: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          space_key: {
+            type: ['string'],
+          },
+          src: {
+            type: ['string', 'null'],
+          },
+          type: {
+            type: ['string', 'null'],
+          },
+          url: {
+            type: ['string', 'null'],
           },
         },
-        type: 'object',
+        required: ['organization_key', 'space_key', 'name'],
       },
       traits: {},
     },
-    title: 'translation_sidebar:toggle_widget_mode',
-    type: 'object',
+    title: 'ui_extension_install',
   };
   const message = {
-    event: 'translation_sidebar:toggle_widget_mode',
+    event: 'ui_extension_install',
     properties: props || {},
     options,
   };
@@ -8459,69 +8479,59 @@ export function translationSidebarToggleWidgetMode(
 
   const a = analytics();
   if (a) {
-    a.track(
-      'translation_sidebar:toggle_widget_mode',
-      props || {},
-      withTypewriterContext(options),
-      callback
-    );
+    a.track('ui_extension_install', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
- * Fires a 'translation_sidebar:update_active_locales' track call.
+ * UI Extension Save Schema
  *
- * @param {TranslationSidebarUpdateActiveLocales} [props] - The analytics properties that will be sent to Segment.
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
  * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
  * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
  * 		call is fired.
  */
-export function translationSidebarUpdateActiveLocales(
-  props?: TranslationSidebarUpdateActiveLocales,
+export function uiExtensionSave(
+  props?: Record<string, any>,
   options?: Segment.Options,
   callback?: Segment.Callback
 ): void {
   const schema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'UI Extension Save Schema',
     properties: {
       context: {},
       properties: {
         properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              currentActiveLocaleCount: {
-                type: ['integer'],
-              },
-              currentMode: {
-                type: ['string'],
-              },
-              executingUserId: {
-                type: ['string'],
-              },
-              organizationId: {
-                type: ['string'],
-              },
-              previousActiveLocaleCount: {
-                type: ['integer'],
-              },
-              spaceId: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
+          fieldTypes: {
+            type: ['string', 'null'],
+          },
+          installationParams: {
+            type: ['string', 'null'],
+          },
+          instanceParams: {
+            type: ['string', 'null'],
+          },
+          name: {
+            type: ['string'],
+          },
+          src: {
+            type: ['string', 'null'],
+          },
+          ui_extension_id: {
+            type: 'string',
+          },
+          url: {
+            type: ['string', 'null'],
           },
         },
-        type: 'object',
+        required: ['ui_extension_id', 'name', 'src'],
       },
       traits: {},
     },
-    title: 'translation_sidebar:update_active_locales',
-    type: 'object',
+    title: 'ui_extension_save',
   };
   const message = {
-    event: 'translation_sidebar:update_active_locales',
+    event: 'ui_extension_save',
     properties: props || {},
     options,
   };
@@ -8529,12 +8539,384 @@ export function translationSidebarUpdateActiveLocales(
 
   const a = analytics();
   if (a) {
-    a.track(
-      'translation_sidebar:update_active_locales',
-      props || {},
-      withTypewriterContext(options),
-      callback
-    );
+    a.track('ui_extension_save', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Saving webhook in the UI
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function uiWebhookEditorSave(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Saving webhook in the UI',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          body_transformation: {
+            type: ['string', 'null'],
+          },
+          content_type_header: {
+            type: ['string', 'null'],
+          },
+          custom_headers: {
+            type: ['array', 'null'],
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          filters: {
+            type: ['string', 'null'],
+          },
+          method: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          space_key: {
+            type: ['string'],
+          },
+          template_id: {
+            type: ['string', 'null'],
+          },
+          topics: {
+            type: ['array', 'null'],
+          },
+          url: {
+            type: ['string'],
+          },
+          uses_http_basic: {
+            type: ['boolean'],
+          },
+          version: {
+            type: ['integer'],
+          },
+          webhook_id: {
+            type: ['string'],
+          },
+          webhook_name: {
+            type: ['string'],
+          },
+        },
+        required: [
+          'organization_key',
+          'space_key',
+          'webhook_id',
+          'version',
+          'webhook_name',
+          'url',
+          'uses_http_basic',
+        ],
+      },
+      traits: {},
+    },
+    title: 'ui_webhook_editor_save',
+  };
+  const message = {
+    event: 'ui_webhook_editor_save',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('ui_webhook_editor_save', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Schema of creating a view in the webapp
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function viewCreate(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Schema of creating a view in the webapp',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          content_type_id: {
+            type: ['string', 'null'],
+          },
+          entity_type: {
+            type: 'string',
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          folder_id: {
+            type: ['string'],
+          },
+          folder_title: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          search_query: {
+            type: ['string', 'null'],
+          },
+          space_key: {
+            type: ['string'],
+          },
+          view_id: {
+            type: ['string'],
+          },
+        },
+        required: [
+          'organization_key',
+          'space_key',
+          'entity_type',
+          'search_query',
+          'content_type_id',
+          'folder_id',
+          'folder_title',
+          'view_id',
+        ],
+      },
+      traits: {},
+    },
+    title: 'view_create',
+  };
+  const message = {
+    event: 'view_create',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('view_create', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Schema of delete a view in the webapp
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function viewDelete(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Schema of delete a view in the webapp',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          entity_type: {
+            type: 'string',
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          space_key: {
+            type: ['string'],
+          },
+          view_id: {
+            type: ['string'],
+          },
+          view_type: {
+            type: 'string',
+          },
+        },
+        required: ['organization_key', 'space_key', 'entity_type', 'view_id', 'view_type'],
+      },
+      traits: {},
+    },
+    title: 'view_delete',
+  };
+  const message = {
+    event: 'view_delete',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('view_delete', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Schema of editing a view in the webapp
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function viewEdit(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Schema of editing a view in the webapp',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          change_property: {
+            type: ['string'],
+          },
+          entity_type: {
+            type: 'string',
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          space_key: {
+            type: ['string'],
+          },
+          view_id: {
+            type: ['string'],
+          },
+          view_roles: {
+            type: ['string', 'null'],
+          },
+          view_title: {
+            type: ['string'],
+          },
+        },
+        required: [
+          'organization_key',
+          'space_key',
+          'entity_type',
+          'view_id',
+          'view_title',
+          'view_roles',
+          'change_property',
+        ],
+      },
+      traits: {},
+    },
+    title: 'view_edit',
+  };
+  const message = {
+    event: 'view_edit',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('view_edit', props || {}, withTypewriterContext(options), callback);
+  }
+}
+/**
+ * Schema of loading a view in the webapp
+ *
+ * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+ * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+ * 		call is fired.
+ */
+export function viewLoad(
+  props?: Record<string, any>,
+  options?: Segment.Options,
+  callback?: Segment.Callback
+): void {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    description: 'Schema of loading a view in the webapp',
+    properties: {
+      context: {},
+      properties: {
+        properties: {
+          content_type_id: {
+            type: ['string', 'null'],
+          },
+          entity_type: {
+            type: 'string',
+          },
+          environment_key: {
+            type: ['string'],
+          },
+          organization_key: {
+            type: ['string'],
+          },
+          search_query: {
+            type: ['string', 'null'],
+          },
+          sequence_key: {
+            type: ['string', 'null'],
+          },
+          space_key: {
+            type: ['string'],
+          },
+          view_id: {
+            type: ['string'],
+          },
+          view_roles: {
+            type: ['string', 'null'],
+          },
+          view_title: {
+            type: ['string'],
+          },
+          view_type: {
+            type: 'string',
+          },
+        },
+        required: [
+          'organization_key',
+          'space_key',
+          'entity_type',
+          'search_query',
+          'content_type_id',
+          'view_id',
+          'view_type',
+          'view_title',
+          'view_roles',
+        ],
+      },
+      traits: {},
+    },
+    title: 'view_load',
+  };
+  const message = {
+    event: 'view_load',
+    properties: props || {},
+    options,
+  };
+  validateAgainstSchema(message, schema);
+
+  const a = analytics();
+  if (a) {
+    a.track('view_load', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
@@ -8560,7 +8942,7 @@ export function widgetRendererFallbackRendered(
           data: {
             description: '',
             properties: {
-              appDefinitionId: {
+              app_definition_id: {
                 description: '',
                 type: 'string',
               },
@@ -8568,15 +8950,18 @@ export function widgetRendererFallbackRendered(
                 description: '',
                 type: 'string',
               },
-              organizationId: {
+              environment_key: {
+                type: ['string'],
+              },
+              organization_key: {
                 description: '',
                 type: 'string',
               },
-              spaceId: {
+              space_key: {
                 description: '',
                 type: 'string',
               },
-              userId: {
+              user_id: {
                 description: '',
                 type: 'string',
               },
@@ -8634,7 +9019,7 @@ export function widgetRendererFallbackWarningShown(
           data: {
             description: '',
             properties: {
-              appDefinitionId: {
+              app_definition_id: {
                 description: '',
                 type: 'string',
               },
@@ -8642,15 +9027,18 @@ export function widgetRendererFallbackWarningShown(
                 description: '',
                 type: 'string',
               },
-              organizationId: {
+              environment_key: {
+                type: ['string'],
+              },
+              organization_key: {
                 description: '',
                 type: 'string',
               },
-              spaceId: {
+              space_key: {
                 description: '',
                 type: 'string',
               },
-              userId: {
+              user_id: {
                 description: '',
                 type: 'string',
               },
@@ -8702,15 +9090,6 @@ const clientAPI = {
    */
   setTypewriterOptions,
   /**
-   * Fires a 'Page Viewed' track call.
-   *
-   * @param {PageViewed} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  pageViewed,
-  /**
    * Fires a 'account_dropdown:pending_tasks_fetched' track call.
    *
    * @param {AccountDropdownPendingTasksFetched} [props] - The analytics properties that will be sent to Segment.
@@ -8720,14 +9099,41 @@ const clientAPI = {
    */
   accountDropdownPendingTasksFetched,
   /**
-   * Fires a 'api_key:clipboard_copy' track call.
+   * ApiKey schema
    *
-   * @param {ApiKeyClipboardCopy} [props] - The analytics properties that will be sent to Segment.
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
    * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
    * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
    * 		call is fired.
    */
-  apiKeyClipboardCopy,
+  apiKey,
+  /**
+   * Records an app definition lifecycle event
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  appDefinition,
+  /**
+   * Records an app installation lifecycle event
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  appInstallation,
+  /**
+   * Records an event in App lifecycle
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  appLifecycleEvent,
   /**
    * Fires a 'app_management:created' track call.
    *
@@ -8746,6 +9152,33 @@ const clientAPI = {
    * 		call is fired.
    */
   appManagementUpdated,
+  /**
+   * Web app opened by visiting app.contentful.com
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  appOpen,
+  /**
+   * Event fired when the example app opens
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  appTheExampleAppOpen,
+  /**
+   * Records a reason for App uninstallation
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  appUninstallationReason,
   /**
    * Fires a 'apps:lifecycle_event' track call.
    *
@@ -8792,6 +9225,15 @@ const clientAPI = {
    */
   assetPublished,
   /**
+   * Tracks usage of boilerplate projects
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  boilerplate,
+  /**
    * Fires a 'bulk_editor:close' track call.
    *
    * @param {BulkEditorClose} [props] - The analytics properties that will be sent to Segment.
@@ -8828,6 +9270,42 @@ const clientAPI = {
    */
   bulkEditorOpenSlideIn,
   /**
+   * Schema for any event that has to do with content preview in our webapp
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  contentPreview,
+  /**
+   * ContentTyppe schema
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  contentType,
+  /**
+   * Emitted when a job is triggered
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  dialog,
+  /**
+   * Fires a 'editor_interface_field_updated' track call.
+   *
+   * @param {EditorInterfaceFieldUpdated} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  editorInterfaceFieldUpdated,
+  /**
    * Fires a 'editor_loaded' track call.
    *
    * @param {EditorLoaded} [props] - The analytics properties that will be sent to Segment.
@@ -8855,32 +9333,32 @@ const clientAPI = {
    */
   elementClick,
   /**
-   * Fires a 'editor_interface_field_updated' track call.
+   * ShareJS removal, CMA-only entity editor edit conflicts tracking. This event is tracked when persisting local editor changes fails due to a CMA version mismatch error. `local_entity` refers to the last CMA version of the entity known to the entity editor without local changes and before the conflict. All pending local changes are based on this entity version. `remote_entity` refers to the most recent version of the entity which has caused the version mismatch and thus might have conflicts with the local changes on top of `local_entity`.
    *
-   * @param {EditorInterfaceFieldUpdated} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  editorInterfaceFieldUpdated,
-  /**
-   * Fires a 'entity_editor:edit_conflict' track call.
-   *
-   * @param {EntityEditorEditConflict} [props] - The analytics properties that will be sent to Segment.
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
    * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
    * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
    * 		call is fired.
    */
   entityEditorEditConflict,
   /**
-   * Fires a 'entry:create' track call.
+   * EXPERIMENT for Snowplow -> Segment migration (hence "_2" suffix) | ShareJS removal, CMA-only entity editor edit conflicts tracking. This event is tracked when persisting local editor changes fails due to a CMA version mismatch error. `local_entity` refers to the last CMA version of the entity known to the entity editor without local changes and before the conflict. All pending local changes are based on this entity version. `remote_entity` refers to the most recent version of the entity which has caused the version mismatch and thus might have conflicts with the local changes on top of `local_entity`.
    *
-   * @param {EntryCreate} [props] - The analytics properties that will be sent to Segment.
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
    * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
    * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
    * 		call is fired.
    */
-  entryCreate,
+  entityEditorEditConflict2,
+  /**
+   * Entry schema
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  entry,
   /**
    * Fires a 'entry:publish' track call.
    *
@@ -8891,14 +9369,41 @@ const clientAPI = {
    */
   entryPublish,
   /**
-   * Fires a 'entry_editor:view' track call.
+   * Schema of creating an entry in the webapp
    *
-   * @param {EntryEditorView} [props] - The analytics properties that will be sent to Segment.
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
    * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
    * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
    * 		call is fired.
    */
-  entryEditorView,
+  entryCreate,
+  /**
+   * Fires a 'entry_created' track call.
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  entryCreated,
+  /**
+   * Schema of publishing an entry in the webapp
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  entryPublish1,
+  /**
+   * Schema of entry references
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  entryReferences,
   /**
    * Fires a 'entry_references:dialog_open' track call.
    *
@@ -8927,16 +9432,106 @@ const clientAPI = {
    */
   entryReferencesValidate,
   /**
-   * Fires a 'experiment_start' track call.
+   * Schema for tracking entry page views
    *
-   * @param {ExperimentStart} props - The analytics properties that will be sent to Segment.
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
    * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
    * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
    * 		call is fired.
    */
-  experimentStart,
+  entryView,
   /**
-   * Fires a 'feature_reference_action' track call.
+   * Environment aliases tracking
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  environmentAliases,
+  /**
+   * Environment branching tracking
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  environmentBranching,
+  /**
+   * Schema for A/B tests, inside of the user_interface
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  experiment,
+  /**
+   * Allows to track which user is part of a UI experiment or a particular A/B test variation, e.g. controlled through `LaunchDarkly` or another kind of feature flag.
+   *
+   * @param {ExperimentStarted} props - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  experimentStarted,
+  /**
+   * Extension was activated
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  extensionActivate,
+  /**
+   * Extension rendered
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  extensionRender,
+  /**
+   * Extension set a value of a field
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  extensionSetValue,
+  /**
+   * Bulk references editor feature tracking
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  featureBulkEditor,
+  /**
+   * Events for the comments endpoint, emitted on CUD actions. Note: The Tasks feature is using the comments endpoint behind the scenes.
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  featureCommentsAndTasks,
+  /**
+   * Generated empty schema for feature_playground
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  featurePlayground,
+  /**
+   * Schema of interacting with a reference entry
    *
    * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
    * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
@@ -8944,6 +9539,33 @@ const clientAPI = {
    * 		call is fired.
    */
   featureReferenceAction,
+  /**
+   * Snapshot tracking feature
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  featureSnapshot,
+  /**
+   * Action tracking for Single Sign-On (SSO) Self Configuration via the webapp
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  featureSsoSelfConfiguration,
+  /**
+   * Generic event for tracking text editor widgets (e.g. StructuredText or Markdown).
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  featureTextEditor,
   /**
    * Fires a 'global:app_loaded' track call.
    *
@@ -9017,23 +9639,41 @@ const clientAPI = {
    */
   incomingLinksQuery,
   /**
-   * Fires a 'jobs:cancel' track call.
+   * Emitted when the user cancels the job
    *
-   * @param {JobsCancel} [props] - The analytics properties that will be sent to Segment.
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
    * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
    * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
    * 		call is fired.
    */
   jobsCancel,
   /**
-   * Fires a 'jobs:create' track call.
+   * Emitted when a user creates a job
    *
-   * @param {JobsCreate} [props] - The analytics properties that will be sent to Segment.
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
    * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
    * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
    * 		call is fired.
    */
   jobsCreate,
+  /**
+   * Emitted when a job is triggered
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  jobsProcessing,
+  /**
+   * Schema for tracking every state transition in the user interface
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  pageView,
   /**
    * Fires a 'perf:dom_content_loaded' track call.
    *
@@ -9070,6 +9710,15 @@ const clientAPI = {
    * 		call is fired.
    */
   personalAccessTokenAction,
+  /**
+   * PrevieApiKey schema
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  previewApiKey,
   /**
    * Fires a 'release_created' track call.
    *
@@ -9215,6 +9864,15 @@ const clientAPI = {
    */
   searchViewLoaded,
   /**
+   * Schema for a search performed in the top bar of the webapp
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  searchPerform,
+  /**
    * Fires a 'sharejs:cma_entity_version_mismatch' track call.
    *
    * @param {SharejsCmaEntityVersionMismatch} [props] - The analytics properties that will be sent to Segment.
@@ -9224,52 +9882,16 @@ const clientAPI = {
    */
   sharejsCmaEntityVersionMismatch,
   /**
-   * Fires a 'slide_in_editor:arrow_back' track call.
+   * Schema to track slide in editor usage
    *
-   * @param {SlideInEditorArrowBack} [props] - The analytics properties that will be sent to Segment.
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
    * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
    * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
    * 		call is fired.
    */
-  slideInEditorArrowBack,
+  slideInEditor,
   /**
-   * Fires a 'slide_in_editor:delete' track call.
-   *
-   * @param {SlideInEditorDelete} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  slideInEditorDelete,
-  /**
-   * Fires a 'slide_in_editor:open' track call.
-   *
-   * @param {SlideInEditorOpen} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  slideInEditorOpen,
-  /**
-   * Fires a 'slide_in_editor:open_create' track call.
-   *
-   * @param {SlideInEditorOpenCreate} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  slideInEditorOpenCreate,
-  /**
-   * Fires a 'slide_in_editor:peek_click' track call.
-   *
-   * @param {SlideInEditorPeekClick} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  slideInEditorPeekClick,
-  /**
-   * Fires a 'space:create' track call.
+   * Legacy Snowplow schema (originally `space_create`) for tracking space creation. Heavily relies on Snowplow contexts. Numbers tracked went down to almost 0 since Nov 2020 presumably due to the new space creation flow which doesn't track space creation with this schema anymore.
    *
    * @param {SpaceCreate} [props] - The analytics properties that will be sent to Segment.
    * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
@@ -9277,87 +9899,6 @@ const clientAPI = {
    * 		call is fired.
    */
   spaceCreate,
-  /**
-   * Fires a 'space_wizard:cancel' track call.
-   *
-   * @param {SpaceWizardCancel} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  spaceWizardCancel,
-  /**
-   * Fires a 'space_wizard:confirm' track call.
-   *
-   * @param {SpaceWizardConfirm} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  spaceWizardConfirm,
-  /**
-   * Fires a 'space_wizard:entered_details' track call.
-   *
-   * @param {SpaceWizardEnteredDetails} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  spaceWizardEnteredDetails,
-  /**
-   * Fires a 'space_wizard:link_click' track call.
-   *
-   * @param {SpaceWizardLinkClick} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  spaceWizardLinkClick,
-  /**
-   * Fires a 'space_wizard:navigate' track call.
-   *
-   * @param {SpaceWizardNavigate} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  spaceWizardNavigate,
-  /**
-   * Fires a 'space_wizard:open' track call.
-   *
-   * @param {SpaceWizardOpen} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  spaceWizardOpen,
-  /**
-   * Fires a 'space_wizard:select_plan' track call.
-   *
-   * @param {SpaceWizardSelectPlan} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  spaceWizardSelectPlan,
-  /**
-   * Fires a 'space_wizard:space_create' track call.
-   *
-   * @param {SpaceWizardSpaceCreate} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  spaceWizardSpaceCreate,
-  /**
-   * Fires a 'space_wizard:space_type_change' track call.
-   *
-   * @param {SpaceWizardSpaceTypeChange} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  spaceWizardSpaceTypeChange,
   /**
    * Fires a 'teams_in_space:users_added' track call.
    *
@@ -9386,41 +9927,86 @@ const clientAPI = {
    */
   trackingInvalidEvent,
   /**
-   * Fires a 'translation_sidebar:change_focused_locale' track call.
+   * Schema to track the translation sidebar widgets
    *
-   * @param {TranslationSidebarChangeFocusedLocale} [props] - The analytics properties that will be sent to Segment.
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
    * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
    * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
    * 		call is fired.
    */
-  translationSidebarChangeFocusedLocale,
+  translationSidebar,
   /**
-   * Fires a 'translation_sidebar:deselect_active_locale' track call.
+   * Track the view migration in `ui_config` endpoint per space
    *
-   * @param {TranslationSidebarDeselectActiveLocale} [props] - The analytics properties that will be sent to Segment.
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
    * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
    * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
    * 		call is fired.
    */
-  translationSidebarDeselectActiveLocale,
+  uiConfigMigrate,
   /**
-   * Fires a 'translation_sidebar:toggle_widget_mode' track call.
+   * UI Extension Install Schema
    *
-   * @param {TranslationSidebarToggleWidgetMode} [props] - The analytics properties that will be sent to Segment.
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
    * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
    * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
    * 		call is fired.
    */
-  translationSidebarToggleWidgetMode,
+  uiExtensionInstall,
   /**
-   * Fires a 'translation_sidebar:update_active_locales' track call.
+   * UI Extension Save Schema
    *
-   * @param {TranslationSidebarUpdateActiveLocales} [props] - The analytics properties that will be sent to Segment.
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
    * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
    * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
    * 		call is fired.
    */
-  translationSidebarUpdateActiveLocales,
+  uiExtensionSave,
+  /**
+   * Saving webhook in the UI
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  uiWebhookEditorSave,
+  /**
+   * Schema of creating a view in the webapp
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  viewCreate,
+  /**
+   * Schema of delete a view in the webapp
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  viewDelete,
+  /**
+   * Schema of editing a view in the webapp
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  viewEdit,
+  /**
+   * Schema of loading a view in the webapp
+   *
+   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
+   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
+   * 		call is fired.
+   */
+  viewLoad,
   /**
    * Fires a 'widget_renderer:fallback_rendered' track call.
    *

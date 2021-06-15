@@ -54,7 +54,7 @@ export function createLoadEventTracker({
     const totalSlideCount = keys(slideStates).length;
     const slideLevel = findIndex(slideStates, (state) => isEqual(state.slide, slide));
     const baseData = {
-      ...Analytics.legacyEventProps(),
+      ...Analytics.defaultEventProps(),
       slides_controller_uuid: slidesControllerUuid,
       slide_uuid: slideUuid,
       total_slide_count: totalSlideCount,
