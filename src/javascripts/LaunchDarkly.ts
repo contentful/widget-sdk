@@ -62,6 +62,7 @@ export enum FLAGS {
   CUSTOM_TRACKING_FIELD_FOR_SLUGS = 'dante-2021-05-custom-slug-field',
   EXPERIENCE_SDK_ENTRY_EDITOR_LOCATION = 'feature-ext-05-2021-experience-sdk-entry-editor-location',
   EXPERIENCE_SDK_APP_CONFIG_LOCATION = 'feature-ext-05-2021-experience-sdk-app-config-location',
+  PREASSIGN_ONBOARDING_FLOW = 'feature-growth-06-2021-preassign-onboarding-flow',
 
   // So that we can test the fallback mechanism without needing to rely on an actual
   // flag above, we use these special flags.
@@ -97,6 +98,7 @@ const FALLBACK_VALUES = {
   [FLAGS.CUSTOM_TRACKING_FIELD_FOR_SLUGS]: false,
   [FLAGS.EXPERIENCE_SDK_APP_CONFIG_LOCATION]: false,
   [FLAGS.EXPERIENCE_SDK_ENTRY_EDITOR_LOCATION]: false,
+  [FLAGS.PREASSIGN_ONBOARDING_FLOW]: false,
 
   [FLAGS.REACT_MIGRATION_CT]: false,
 

@@ -10,10 +10,9 @@ import {
   createDeliveryToken,
   createManagementToken,
   MODERN_STACK_ONBOARDING_SPACE_NAME,
+  DEFAULT_LOCALE,
 } from './CreateModernOnboardingUtils';
 import { BLANK_SPACE_NAME } from 'features/onboarding';
-
-const DEFAULT_LOCALE = 'en-US';
 
 export const create = ({ onDefaultChoice, org, user, markOnboarding }) => {
   const onContentChoice = ({ closeModal }) => {

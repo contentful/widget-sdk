@@ -10,6 +10,7 @@ import { getCurrentStateName } from 'states/Navigator';
 
 const store = getBrowserStorage();
 
+export const DEFAULT_LOCALE = 'en-US';
 export const MODERN_STACK_ONBOARDING_SPACE_NAME = 'Gatsby Starter for Contentful';
 export const MODERN_STACK_ONBOARDING_COMPLETE_EVENT = 'onboardingComplete';
 export const getUser = () => getValue(user$);
