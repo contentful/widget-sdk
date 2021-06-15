@@ -31,6 +31,7 @@ const mockFreeSpacePlan = {
 
 describe('EnterpriseSubscriptionPage', () => {
   beforeEach(() => {
+    isOwnerOrAdmin.mockReturnValue(true);
     fetchWebappContentByEntryID.mockReset().mockResolvedValue(mockWebappContent);
   });
 

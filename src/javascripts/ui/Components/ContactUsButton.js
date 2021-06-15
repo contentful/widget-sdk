@@ -45,6 +45,7 @@ ContactUsButton.propTypes = {
   isLink: PropTypes.bool,
   onClick: PropTypes.func,
   children: PropTypes.node,
+  testId: PropTypes.string,
 };
 
 ContactUsButton.defaultProps = {

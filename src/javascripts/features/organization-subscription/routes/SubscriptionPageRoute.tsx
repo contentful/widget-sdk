@@ -11,7 +11,9 @@ import {
   isEnterprisePlan,
 } from 'account/pricing/PricingDataProvider';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
+import type { Organization } from 'classes/spaceContextTypes';
 import DocumentTitle from 'components/shared/DocumentTitle';
+import type { ProductRatePlan } from 'features/pricing-entities';
 import { getAllProductRatePlans } from 'features/pricing-entities';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { LoadingState } from 'features/loading-state';
@@ -29,26 +31,50 @@ import { SubscriptionPage } from '../components/SubscriptionPage';
 import { NonEnterpriseSubscriptionPage } from '../components/NonEnterpriseSubscriptionPage';
 import { EnterpriseSubscriptionPage } from '../components/EnterpriseSubscriptionPage';
 import { actions, OrgSubscriptionContext } from '../context';
+import type { OrgSubscriptionReducerAction } from '../context';
+import type { UsersMeta } from '../types';
 
 async function fetchNumMemberships(orgEndpoint) {
   const resources = createResourceService(orgEndpoint);
   const membershipsResource = await resources.get('organization_membership');
-  return membershipsResource.usage;
+  return (membershipsResource as { usage: number }).usage;
 }
 
-async function fetch(organizationId, dispatch) {
+interface SubscriptionPageFetch {
+  isSubscriptionPageRebrandingEnabled?: boolean;
+  usersMeta?: UsersMeta;
+  numMemberships?: number;
+  organization: Organization;
+  productRatePlans?: ProductRatePlan[];
+  orgIsEnterprise?: boolean;
+  memberAccessibleSpaces?: unknown[];
+}
+
+async function fetch(
+  organizationId: string,
+  dispatch: React.Dispatch<OrgSubscriptionReducerAction>
+): Promise<SubscriptionPageFetch> {
   const organization = await getOrganization(organizationId);
   const endpoint = createOrganizationEndpoint(organizationId);
 
+  const isSubscriptionPageRebrandingEnabled = await getVariation(
+    FLAGS.SUBSCRIPTION_PAGE_REBRANDING
+  );
+
   if (!isOwnerOrAdmin(organization)) {
+    // if user is a member of a org on Enterprise Trial
+    // we show them the subscription page we reduced information
     if (isOrganizationOnTrial(organization)) {
-      const spaces = await getAllSpaces(endpoint);
+      const memberAccessibleSpaces = await getAllSpaces(endpoint);
+
       return {
         organization,
-        memberAccessibleSpaces: spaces,
+        memberAccessibleSpaces,
       };
     }
 
+    // if the user is a member of an org not on Trial
+    // we show them an error
     throw new Error();
   }
 
@@ -73,9 +99,6 @@ async function fetch(organizationId, dispatch) {
 
   const usersMeta = calcUsersMeta({ basePlan, numMemberships });
 
-  const isSubscriptionPageRebrandingEnabled = await getVariation(
-    FLAGS.SUBSCRIPTION_PAGE_REBRANDING
-  );
   const orgIsEnterprise = isEnterprisePlan(basePlan);
 
   dispatch({
@@ -99,11 +122,7 @@ export function SubscriptionPageRoute({ orgId: organizationId }) {
     dispatch,
   } = useContext(OrgSubscriptionContext);
 
-  const {
-    isLoading,
-    error,
-    data = {},
-  } = useAsync(
+  const { isLoading, error, data } = useAsync<SubscriptionPageFetch>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useCallback(() => fetch(organizationId, dispatch), [])
   );
@@ -138,13 +157,15 @@ export function SubscriptionPageRoute({ orgId: organizationId }) {
            * if the feature flag is on and the base plan content is already created in Contentful, show one of the rebranded Subscription Pages
            * Otherwise, show the generic Subscription Page
            * */}
-          {data.isSubscriptionPageRebrandingEnabled && hasContentForBasePlan(basePlan) ? (
+          {data?.isSubscriptionPageRebrandingEnabled &&
+          basePlan &&
+          hasContentForBasePlan(basePlan) ? (
             <>
               {data.orgIsEnterprise && (
                 <EnterpriseSubscriptionPage
                   usersMeta={data.usersMeta}
                   organization={data.organization}
-                  memberAccessibleSpaces={data.memberAccessibleSpaces}
+                  memberAccessibleSpaces={data.memberAccessibleSpaces ?? []}
                   // Currently this is the only way to know if a basePlan is plan used internally at Contentful
                   isInternalBasePlan={/internal/i.test(basePlan.productName)}
                 />
@@ -160,9 +181,9 @@ export function SubscriptionPageRoute({ orgId: organizationId }) {
             <SubscriptionPage
               basePlan={basePlan}
               addOnPlan={addOnPlans.find((plan) => isComposeAndLaunchPlan(plan))}
-              usersMeta={data.usersMeta}
-              organization={data.organization}
-              memberAccessibleSpaces={data.memberAccessibleSpaces}
+              usersMeta={data?.usersMeta}
+              organization={data?.organization}
+              memberAccessibleSpaces={data?.memberAccessibleSpaces}
             />
           )}
         </Workbench.Content>
