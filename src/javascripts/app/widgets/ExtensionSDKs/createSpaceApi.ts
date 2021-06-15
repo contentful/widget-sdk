@@ -15,6 +15,9 @@ import {
 } from 'services/SignEmbargoedAssetUrl';
 import APIClient from 'data/APIClient';
 import { Asset, Entry, AssetFile } from '@contentful/types';
+import { SpaceContextType } from 'classes/spaceContextTypes';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import { getOrganizationId } from 'core/services/SpaceEnvContext/utils';
 
 const ASSET_PROCESSING_POLL_MS = 500;
 const GET_WAIT_ON_ENTITY_UPDATE = 500;
@@ -71,7 +74,7 @@ export function createSpaceApi({
   environmentIds: string[];
   spaceId: string;
   tagsRepo: TagsRepoType;
-  usersRepo: any;
+  usersRepo: SpaceContextType['users'];
   readOnly?: boolean;
   appId?: string;
 }): InternalSpaceAPI {
@@ -179,13 +182,19 @@ export function createSpaceApi({
   }
 
   async function getTeams() {
+    // TODO: Replace with teams from space instead of organization
     const plainCmaClient = getCMAClient();
-    const result = await plainCmaClient.team.getMany({ query: { limit: 100 } });
+    const space = await plainCmaClient.space.get({ spaceId });
+    const currentOrganizationId = space.sys.organization.sys.id;
+    const result = await plainCmaClient.team.getMany({
+      organizationId: currentOrganizationId,
+      query: { limit: 100 },
+    });
     return result;
   }
 
   async function getUsers() {
-    const users = (await usersRepo.getAll()) ?? [];
+    const users: any = (await usersRepo?.getAll()) ?? [];
 
     return {
       sys: { type: 'Array' },
