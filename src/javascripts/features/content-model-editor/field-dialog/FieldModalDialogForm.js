@@ -26,11 +26,15 @@ import { useSpaceEnvContentTypes } from 'core/services/SpaceEnvContext';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import { useContentTypeField } from './hooks/useContentTypeField';
+import FeedbackButton from 'app/common/FeedbackButton';
 
 const styles = {
   modalControls: css({
     backgroundColor: tokens.colorWhite,
     borderTop: `1px solid ${tokens.colorElementMid}`,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     paddingTop: tokens.spacingL,
     position: 'relative',
     width: '100%',
@@ -250,16 +254,22 @@ const FieldModalDialogForm = ({
         )}
       </Modal.Content>
       <Modal.Controls className={styles.modalControls}>
-        <Button
-          testId="confirm-field-dialog-form"
-          disabled={isInvalid || isPristine}
-          onClick={() => onSubmit(richTextOptions, widgetSettings.data)}
-          buttonType="positive">
-          Confirm
-        </Button>
-        <Button onClick={onClose} buttonType="muted">
-          Cancel
-        </Button>
+        <div>
+          <Button
+            testId="confirm-field-dialog-form"
+            disabled={isInvalid || isPristine}
+            onClick={() => onSubmit(richTextOptions, widgetSettings.data)}
+            buttonType="positive">
+            Confirm
+          </Button>
+          <Button onClick={onClose} buttonType="muted">
+            Cancel
+          </Button>
+        </div>
+
+        {isInitialFieldValuesEnabled && selectedTab === formTabs.INITIAL_VALUE && (
+          <FeedbackButton about="Initial values" />
+        )}
       </Modal.Controls>
     </Fragment>
   );
