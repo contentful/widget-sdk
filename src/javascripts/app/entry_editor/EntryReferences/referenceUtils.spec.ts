@@ -15,6 +15,7 @@ describe('isLinkableEntity', () => {
 
   it('should return false for another type of entity', () => {
     const entity = test.generator.entity({ type: 'ContentType' }) as any;
+    entity.sys.type = 'Something';
     expect(isLinkableEntity(entity)).toBe(false);
   });
 

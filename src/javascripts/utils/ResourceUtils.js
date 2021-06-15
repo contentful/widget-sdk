@@ -107,17 +107,6 @@ export function getAccumulatedUsage(resource) {
   return getAccumulatedUsage(resource.parent);
 }
 
-/*
-  Determine if an organization is legacy based on the
-  pricing version.
-
-  Used in cases where the fact that the organization
-  is legacy matters.
- */
-export function isLegacyOrganization(organization) {
-  return organization.pricingVersion !== 'pricing_version_2';
-}
-
 export function resourceIncludedLimitReached(resource) {
   const limitIncluded = getResourceLimits(resource).included;
   const usage = resource.usage;

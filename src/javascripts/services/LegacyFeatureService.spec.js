@@ -3,7 +3,6 @@ import { set } from 'lodash';
 
 import createLegacyFeatureService from 'services/LegacyFeatureService';
 
-import * as ResourceUtils from 'utils/ResourceUtils';
 import * as EndpointFactory from 'data/EndpointFactory';
 import * as TokenStore from 'services/TokenStore';
 
@@ -34,10 +33,6 @@ describe('Legacy Feature Service', () => {
 
     stubs = {};
     spies = {};
-
-    ResourceUtils.isLegacyOrganization = () => {
-      return mocks.legacyOrganization;
-    };
 
     // Spying on both the endpoint creation and the actual endpoint
     // calls are important.
@@ -100,17 +95,6 @@ describe('Legacy Feature Service', () => {
       FeatureService = createLegacyFeatureService('1234');
     });
 
-    it('should return true if feature is enabled from the token if org is legacy', async function () {
-      mocks.legacyOrganization = true;
-
-      let feature = await FeatureService.get('multipleLocales');
-      expect(feature).toEqual(false);
-
-      mocks.organization.subscriptionPlan.limits.features.multipleLocales = true;
-      feature = await FeatureService.get('multipleLocales');
-      expect(feature).toEqual(true);
-    });
-
     it('should return true if feature is enabled from the endpoint if org is not legacy', async function () {
       let feature;
 
@@ -141,21 +125,6 @@ describe('Legacy Feature Service', () => {
   describe('#getAll', () => {
     beforeEach(function () {
       FeatureService = createLegacyFeatureService('1234');
-    });
-
-    it('should return all enabled features from the token if org is legacy', async function () {
-      mocks.legacyOrganization = true;
-
-      const features = await FeatureService.getAll();
-      expect(features).toHaveLength(1);
-      expect(features).toEqual([
-        {
-          sys: {
-            id: 'custom_roles',
-            type: 'Feature',
-          },
-        },
-      ]);
     });
 
     it('should return all features from the endpoint if org is not legacy', async function () {

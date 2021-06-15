@@ -1,9 +1,8 @@
 import { createSpaceEndpoint, createOrganizationEndpoint } from 'data/EndpointFactory';
-import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { getSpace, getOrganization } from 'services/TokenStore';
 import { getEnabledFeatures as getFeaturesFromApi } from 'account/pricing/PricingDataProvider';
 
-import { get, snakeCase } from 'lodash';
+import { snakeCase } from 'lodash';
 
 /*
   This is the legacy feature service that allows you to query
@@ -27,34 +26,8 @@ export default function create(id, type = 'space') {
   }
 
   async function getAll() {
-    const organization = await getTokenOrganization(id, type);
-    const legacy = isLegacyOrganization(organization);
-
-    if (legacy) {
-      return getFeaturesFromToken(organization);
-    } else {
-      return getFeaturesFromApi(endpoint);
-    }
+    return getFeaturesFromApi(endpoint);
   }
-}
-
-function getFeaturesFromToken(organization) {
-  const featuresHash = get(organization, 'subscriptionPlan.limits.features', {});
-  const enabledFeatureIds = Object.keys(featuresHash).filter(
-    (featureId) => featuresHash[featureId]
-  );
-
-  // Make feature consistent with API Feature object
-  const features = enabledFeatureIds.map((featureId) => {
-    return {
-      sys: {
-        type: 'Feature',
-        id: snakeCase(featureId),
-      },
-    };
-  });
-
-  return features;
 }
 
 function createEndpoint(id, type) {

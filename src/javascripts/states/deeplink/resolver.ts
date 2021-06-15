@@ -1,6 +1,5 @@
 import { getSpaceInfo, getOrg, checkOrgAccess, getOnboardingSpaceId } from './utils';
 import * as accessChecker from 'access_control/AccessChecker';
-import { isLegacyOrganization } from 'utils/ResourceUtils';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { getSpaceContext } from 'classes/spaceContext';
@@ -421,13 +420,7 @@ function makeOrgScopedPathResolver(fn: (orgId: string) => { path: string; params
 }
 
 async function resolveSubscriptions() {
-  const { orgId, org } = await getOrg();
-
-  const hasNewPricing = !isLegacyOrganization(org);
-
-  if (!hasNewPricing) {
-    return applyOrgAccess(orgId, routes['organizations.subscription_v1']({}, { orgId }));
-  }
+  const { orgId } = await getOrg();
 
   return applyOrgAccess(orgId, {
     path: ['account', 'organizations', 'subscription_new.overview'],

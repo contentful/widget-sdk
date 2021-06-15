@@ -239,30 +239,6 @@ describe('ResourceUtils', () => {
     });
   });
 
-  describe('#isLegacyOrganization', () => {
-    it('should return true if the organization uses pricing version 1', function () {
-      const organization = {
-        pricingVersion: 'pricing_version_1',
-        sys: {
-          id: 'legacy_org',
-        },
-      };
-
-      expect(ResourceUtils.isLegacyOrganization(organization)).toBe(true);
-    });
-
-    it('should return false if the organization uses pricing version 2', function () {
-      const organization = {
-        pricingVersion: 'pricing_version_2',
-        sys: {
-          id: 'legacy_org',
-        },
-      };
-
-      expect(ResourceUtils.isLegacyOrganization(organization)).toBe(false);
-    });
-  });
-
   describe('#getStoreResource', function () {
     it('should return the store resource object if it exists', function () {
       expect(ResourceUtils.getStoreResource(storeResources, 'space_1234', 'record')).toEqual(

@@ -13,7 +13,6 @@ import { getSpacePlanForSpace, getBasePlan } from 'features/pricing-entities';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import SpaceWizardsWrapper from 'app/SpaceWizards/SpaceWizardsWrapper';
-import { FLAGS, getVariation } from 'LaunchDarkly';
 import { router } from 'core/react-routing';
 
 /**
@@ -61,17 +60,7 @@ export async function beginSpaceChange({ organizationId, space, onSubmit: onModa
   const basePlan = await getBasePlan(endpoint);
   const spacePurchaseFlowAllowedForPlanChange = isSelfServicePlan(basePlan) || isFreePlan(basePlan);
 
-  const isEnterpriseSpaceChangeAllowed = await getVariation(FLAGS.SPACE_PLAN_ASSIGNMENT, {
-    organizationId,
-  });
-
-  if (isEnterpriseSpaceChangeAllowed && isEnterprisePlan(spacePlan)) {
-    router.navigate({
-      path: 'organizations.subscription.overview.space-plans',
-      orgId: organizationId,
-      spaceId: space.sys.id,
-    });
-  } else if (isEnterprisePlan(spacePlan)) {
+  if (isEnterprisePlan(spacePlan)) {
     openChangeSpaceWarningModal(MODAL_TYPES.COMMITTED);
   } else if (spacePurchaseFlowAllowedForPlanChange) {
     router.navigate({

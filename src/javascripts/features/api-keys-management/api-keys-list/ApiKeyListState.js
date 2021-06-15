@@ -4,7 +4,7 @@ import * as ResourceUtils from 'utils/ResourceUtils';
 import * as accessChecker from 'access_control/AccessChecker';
 import { getApiKeyRepo } from '../services/ApiKeyRepoInstance';
 
-async function getData({ organization, resources }) {
+async function getData({ resources }) {
   const [apiKeys, resource] = await Promise.all([
     getApiKeyRepo().getAll(),
     resources.get('apiKey'),
@@ -16,7 +16,6 @@ async function getData({ organization, resources }) {
 
   return {
     canCreate,
-    isLegacyOrganization: ResourceUtils.isLegacyOrganization(organization),
     limits,
     reachedLimit: !canCreate,
     usage: resource.usage,
@@ -29,7 +28,6 @@ export function useApiKeysState({ spaceName, organization, resources }) {
   const [loaded, setLoaded] = useState(false);
   const [data, setData] = useState({
     canCreate: false,
-    isLegacyOrganization: undefined,
     limit: undefined,
     usage: undefined,
     reachedLimit: undefined,
