@@ -3,16 +3,17 @@ import ScheduledActionsRepo from 'app/ScheduledActions/DataManagement/ScheduledA
 import { CONTENT_ENTITY_UPDATED_EVENT, PubSubClient } from 'services/PubSubService';
 import { getToken } from 'Authentication';
 import { uploadApiUrl } from 'Config';
-import { CollectionResponse, SearchQuery, SpaceAPI, User } from '@contentful/app-sdk';
+import { SpaceAPI, User } from '@contentful/app-sdk';
 import { InternalContentType, createContentTypeApi } from './createContentTypeApi';
 import { get, noop } from 'lodash';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
+import { getCMAClient } from 'core/services/usePlainCMAClient/usePlainCMAClient';
+
 import {
   generateSignedAssetUrl,
   importAsciiStringAsHS256Key,
 } from 'services/SignEmbargoedAssetUrl';
 import APIClient from 'data/APIClient';
-import { SpaceContextType } from 'classes/spaceContextTypes';
 import { Asset, Entry, AssetFile } from '@contentful/types';
 
 const ASSET_PROCESSING_POLL_MS = 500;
@@ -116,7 +117,7 @@ export function createSpaceApi({
     deleteTag: makeReadOnlyGuardedMethod(readOnly, tagsRepo.deleteTag),
     updateTag: makeReadOnlyGuardedMethod(readOnly, tagsRepo.updateTag),
 
-    getTeams: makeReadOnlyGuardedMethod(readOnly, cma.team.getMany),
+    getTeams: makeReadOnlyGuardedMethod(readOnly, getTeams),
 
     // Implementation in this module:
     getCachedContentTypes,
@@ -175,6 +176,12 @@ export function createSpaceApi({
     });
 
     return response.json();
+  }
+
+  async function getTeams() {
+    const plainCmaClient = getCMAClient();
+    const result = await plainCmaClient.team.getMany({ query: { limit: 100 } });
+    return result;
   }
 
   async function getUsers() {

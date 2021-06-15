@@ -5,8 +5,6 @@ import { InternalContentType } from './createContentTypeApi';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
 import { ContentType } from '@contentful/app-sdk';
 import * as jwt from 'jsonwebtoken';
-import APIClient from 'data/APIClient';
-import { SpaceContextType } from 'classes/spaceContextTypes';
 
 jest.mock('Config', () => ({
   uploadApiUrl: jest.fn(() => 'example_url'),
