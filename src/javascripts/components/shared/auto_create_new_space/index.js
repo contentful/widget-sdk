@@ -3,7 +3,6 @@ import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { combine, getValue } from 'core/utils/kefir';
 import { user$, spacesByOrganization$ as spacesByOrg$ } from 'services/TokenStore';
 import { organizations$ } from 'services/TokenStore';
-import { getModule } from 'core/NgRegistry';
 import { getSpaceAutoCreatedKey } from './getSpaceAutoCreatedKey';
 import {
   getFirstOwnedOrgWithoutSpaces,
@@ -14,6 +13,7 @@ import {
 } from 'data/User';
 import { create } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
 import { router } from 'core/react-routing';
+import { getSpaceContext } from 'classes/spaceContext';
 
 let creatingSampleSpace = false;
 
@@ -78,10 +78,10 @@ function qualifyUser(user, spacesByOrg, store) {
 }
 
 function currentUserIsCurrentOrgCreator(user) {
-  const $stateParams = getModule('$stateParams');
-  const orgId = $stateParams.orgId;
+  const spaceContext = getSpaceContext();
+  const organizationId = spaceContext.getData('organization.sys.id');
   const orgs = getValue(organizations$);
-  const currOrg = getCurrOrg(orgs, orgId);
+  const currOrg = getCurrOrg(orgs, organizationId);
 
   return !!currOrg && isUserOrgCreator(user, currOrg);
 }
