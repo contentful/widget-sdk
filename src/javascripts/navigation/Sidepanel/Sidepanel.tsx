@@ -11,7 +11,6 @@ import type { Organization, SpaceData } from 'classes/spaceContextTypes';
 import * as K from 'core/utils/kefir';
 import { captureError } from 'core/monitoring';
 import { ReactRouterLink } from 'core/react-routing';
-import { navState$ } from 'navigation/NavState';
 import * as Navigator from 'states/Navigator';
 import * as CreateSpace from 'services/CreateSpace';
 import * as TokenStore from 'services/TokenStore';
@@ -49,6 +48,10 @@ interface SpacesByOrg {
 }
 
 interface SidepanelProps {
+  currentSpaceId?: string;
+  currentEnvId?: string;
+  currentAliasId?: string;
+  currentOrgId?: string;
   sidePanelIsShown: boolean;
   closeOrgsDropdown: () => void;
   closeSidePanel: () => void;
@@ -91,16 +94,15 @@ export class Sidepanel extends React.Component<SidepanelProps, SidepanelState> {
   }
 
   async initializeSidebar() {
-    const [orgs, spacesByOrg, navState] = await Promise.all([
+    const [orgs, spacesByOrg] = await Promise.all([
       K.getValue<Organization[]>(TokenStore.organizations$),
       K.getValue<SpacesByOrg>(TokenStore.spacesByOrganization$),
-      K.getValue(navState$),
     ]);
 
-    const currentSpaceId = get(navState, ['space', 'sys', 'id']);
-    const currentEnvId = get(navState, ['env', 'sys', 'id'], 'master');
-    const currentAliasId = get(navState, ['environmentMeta', 'aliasId'], null);
-    const org = navState.org || orgs[0];
+    const currentSpaceId = this.props.currentSpaceId;
+    const currentEnvId = this.props.currentEnvId;
+    const currentAliasId = this.props.currentAliasId;
+    const org = orgs.find((org) => org.sys.id === this.props.currentOrgId) || orgs[0];
     const currentOrgId = get(org, ['sys', 'id']);
 
     const environmentsEnabled = await getVariation(FLAGS.ENVIRONMENTS_FLAG, {

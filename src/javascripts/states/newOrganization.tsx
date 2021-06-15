@@ -3,6 +3,7 @@ import { CustomRouter, Route, RouteErrorBoundary, Routes } from 'core/react-rout
 import StateRedirect from 'app/common/StateRedirect';
 import { GatekeeperView } from 'account/GatekeeperView';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
+import { StateTitle } from 'navigation/Sidepanel/SidePanelTrigger/SidePanelTrigger';
 
 function NewOrganizationRouter() {
   const [basename] = window.location.pathname.split('organizations');
@@ -26,7 +27,9 @@ function NewOrganizationRouter() {
 const newOrganizationState = {
   name: 'new_organization',
   url: '/organizations/new',
-  navComponent: EmptyNavigationBar,
+  navComponent: () => {
+    return <EmptyNavigationBar triggerText={<StateTitle title="Create new organization" />} />;
+  },
   component: NewOrganizationRouter,
 };
 

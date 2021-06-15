@@ -4,7 +4,6 @@ import { captureError } from 'core/monitoring';
 import * as AppPerformanceMetrics from 'i13n/AppPerformance';
 import { getSpaceContext } from 'classes/spaceContext';
 
-import { updateNavState } from 'navigation/NavState';
 import * as Analytics from 'analytics/Analytics';
 
 /**
@@ -37,8 +36,6 @@ export function setupStateChangeHandlers() {
 
 function stateChangeSuccessHandler(_event, toState, toStateParams, fromState, fromStateParams) {
   const spaceContext = getSpaceContext();
-
-  updateNavState(toState, toStateParams, spaceContext);
 
   // we do it here instead of "onExit" hook in "spaces" state
   // using the latter caused problems when redirecting with

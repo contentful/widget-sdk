@@ -10,17 +10,14 @@ import { setUser } from 'core/monitoring';
 export default function register() {
   registerController('ClientController', [
     '$scope',
-    '$state',
     '$rootScope',
-    function ClientController($scope, $state, $rootScope) {
+    function ClientController($scope, $rootScope) {
       const spaceContext = getSpaceContext();
       let SpaceFeatures;
       let getSpaceFeature;
       let EnforcementsService;
-      let NavState;
       let CreateSpace;
       let TokenStore;
-      let refreshNavState;
       let pubsubSubscribed;
       let authorization;
       let EntityFieldValueSpaceContext;
@@ -143,7 +140,6 @@ export default function register() {
             return environmentAliasDeletedHandler(payload);
           });
         }
-        refreshNavState();
       }
 
       function handleUser(user) {
@@ -171,7 +167,6 @@ export default function register() {
         [
           { getSpaceFeature, SpaceFeatures },
           EnforcementsService,
-          NavState,
           CreateSpace,
           TokenStore,
           { default: authorization },
@@ -191,7 +186,6 @@ export default function register() {
         ] = await Promise.all([
           import(/* webpackMode: "eager" */ 'data/CMA/ProductCatalog'),
           import(/* webpackMode: "eager" */ 'services/EnforcementsService'),
-          import(/* webpackMode: "eager" */ 'navigation/NavState'),
           import(/* webpackMode: "eager" */ 'services/CreateSpace'),
           import(/* webpackMode: "eager" */ 'services/TokenStore'),
           import(/* webpackMode: "eager" */ 'services/authorization'),
@@ -203,8 +197,6 @@ export default function register() {
           import(/* webpackMode: "eager" */ 'services/OsanoService'),
           import(/* webpackMode: "eager" */ 'features/news-slider'),
         ]);
-
-        refreshNavState = NavState.makeStateRefresher($state, spaceContext);
 
         $scope.showCreateSpaceDialog = CreateSpace.showDialog;
         $scope.EntityFieldValueSpaceContext = EntityFieldValueSpaceContext;

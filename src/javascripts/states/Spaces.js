@@ -15,7 +15,6 @@ import settings from './settings';
 import { scheduledActionsState } from 'features/scheduled-actions';
 import { tasksRouteState } from 'features/tasks';
 import { pageExtensionsState } from 'features/page-widgets';
-import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
 import { spaceHomeState } from 'features/space-home';
 import { SpaceHibernationRoute, isHibernated } from 'features/space-hibernation';
 import AccessForbidden from 'components/access-forbidden/AccessForbidden';
@@ -28,7 +27,7 @@ const store = getBrowserStorage();
 const hibernation = {
   name: 'hibernation',
   url: '/hibernation',
-  navComponent: EmptyNavigationBar,
+  navComponent: () => null,
   component: SpaceHibernationRoute,
 };
 

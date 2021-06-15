@@ -1,8 +1,10 @@
+import React from 'react';
 import accountState from './account';
 import spacesState from 'states/Spaces';
 import { DeeplinkRouteContainer } from 'states/deeplink/DeeplinkRouteContainer';
 import userInvitationState from 'states/UserInvitationState';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
+import { StateTitle } from 'navigation/Sidepanel/SidePanelTrigger/SidePanelTrigger';
 import ErrorPage from './ErrorPage';
 import { homeState } from 'features/home';
 
@@ -43,7 +45,9 @@ export function loadAll() {
     {
       name: 'error',
       url: '/error',
-      navComponent: EmptyNavigationBar,
+      navComponent: () => {
+        return <EmptyNavigationBar triggerText={<StateTitle title="Switch space" />} />;
+      },
       component: ErrorPage,
     },
     {

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
+import { StateTitle } from 'navigation/Sidepanel/SidePanelTrigger/SidePanelTrigger';
+
 import { LoadingState } from 'features/loading-state';
 import * as TokenStore from 'services/TokenStore';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
@@ -71,6 +73,8 @@ export const homeState = {
       value: false,
     },
   },
-  navComponent: EmptyNavigationBar,
+  navComponent: () => {
+    return <EmptyNavigationBar triggerText={<StateTitle title="Welcome to Contentful" />} />;
+  },
   component: EmptyHomeRouter,
 };

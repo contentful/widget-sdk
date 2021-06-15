@@ -10,6 +10,10 @@ import { FLAGS, getVariation } from 'LaunchDarkly';
 import { AdvancedExtensibilityFeature } from 'features/extensions-management';
 import { isOrganizationOnTrial } from 'features/trials';
 import { routes } from 'core/react-routing';
+import { getOrganization } from 'services/TokenStore';
+import { TrialTag } from 'features/trials';
+import { OrganizationName, StateTitle } from './Sidepanel/SidePanelTrigger/SidePanelTrigger';
+import { OrganizationProp as Organization } from 'contentful-management/types';
 
 function getItems(params, { orgId }) {
   const shouldDisplayAccessTools = params.isOwnerOrAdmin;
@@ -169,6 +173,29 @@ type State = {
   items: any[];
 };
 
+const OrganizationSidepanelTrigger = React.memo(
+  ({ organizationId }: { organizationId: string }) => {
+    const [organization, setOrganization] = React.useState<null | Organization>(null);
+
+    React.useEffect(() => {
+      getOrganization(organizationId).then((data) => {
+        setOrganization(data);
+      });
+    }, [organizationId]);
+
+    if (!organization) {
+      return null;
+    }
+
+    return (
+      <>
+        <OrganizationName name={organization.name} />
+        <StateTitle title="Organization settings" />
+      </>
+    );
+  }
+);
+
 export default class OrganizationNavigationBar extends React.Component<Props, State> {
   constructor(props) {
     super(props);
@@ -232,14 +259,14 @@ export default class OrganizationNavigationBar extends React.Component<Props, St
   render() {
     return (
       <div className="app-top-bar">
-        <SidepanelContainer />
+        <SidepanelContainer
+          triggerText={<OrganizationSidepanelTrigger organizationId={this.props.orgId} />}
+          currentOrgId={this.props.orgId}
+        />
         <div className="app-top-bar__outer-wrapper">
-          <NavBar
-            showQuickNavigation={false}
-            showModernStackOnboardingRelaunch={false}
-            listItems={this.state.items}
-            organizationId={this.props.orgId}
-          />
+          <NavBar listItems={this.state.items}>
+            <TrialTag organizationId={this.props.orgId} />
+          </NavBar>
         </div>
       </div>
     );

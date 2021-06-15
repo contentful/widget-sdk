@@ -6,6 +6,8 @@ import {
   OrganizationFeatures,
   SpaceFeatures,
 } from 'data/CMA/ProductCatalog';
+import { QuickNavigation } from 'features/quick-navigation';
+import OnboardingRelaunch from 'navigation/modernStackOnboardingRelaunch';
 import NavBar from './NavBar/NavBar';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import { getSpaceNavigationItems } from './SpaceNavigationBarItems';
@@ -17,8 +19,15 @@ import {
   getSpaceEnforcements,
   isCurrentEnvironmentMaster,
 } from 'core/services/SpaceEnvContext/utils';
+import { TrialTag } from 'features/trials';
 import { hasEnvironmentSectionInUrl } from 'core/react-routing/hasEnvironmentSectionInUrl';
 import { NavigationItemType } from './NavBar/NavigationItem';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext';
+import {
+  OrganizationName,
+  StateTitle,
+  EnvironmentLabel,
+} from './Sidepanel/SidePanelTrigger/SidePanelTrigger';
 
 // We don't want to display the following sections within the context of
 // a sandbox space environment.
@@ -37,6 +46,38 @@ type Props = {
 };
 
 type State = { items: NavigationItemType[] };
+
+const SpaceTriggerText = React.memo(() => {
+  const { currentSpaceName, currentOrganizationName, currentSpace, currentSpaceEnvironments } =
+    useSpaceEnvContext();
+
+  const hasManyEnvs = (currentSpaceEnvironments || []).length > 1;
+  const showEnvironments = hasManyEnvs || currentSpace?.environmentMeta.aliasId;
+
+  return (
+    <>
+      {currentOrganizationName && <OrganizationName name={currentOrganizationName} />}
+      {currentSpaceName && <StateTitle title={currentSpaceName || ''} />}
+      {currentSpace && showEnvironments && (
+        <EnvironmentLabel environmentMeta={currentSpace.environmentMeta} />
+      )}
+    </>
+  );
+});
+
+const ProvidedSidepanelContainer = () => {
+  const { currentEnvironmentAliasId, currentOrganizationId, currentSpaceId, currentEnvironmentId } =
+    useSpaceEnvContext();
+  return (
+    <SidepanelContainer
+      triggerText={<SpaceTriggerText />}
+      currentOrgId={currentOrganizationId}
+      currentSpaceId={currentSpaceId}
+      currentAliasId={currentEnvironmentAliasId}
+      currentEnvId={currentEnvironmentId}
+    />
+  );
+};
 
 export default class SpaceNavigationBar extends React.Component<Props, State> {
   static contextType = SpaceEnvContext;
@@ -111,13 +152,15 @@ export default class SpaceNavigationBar extends React.Component<Props, State> {
   render() {
     return (
       <div className="app-top-bar">
-        <SidepanelContainer />
+        <ProvidedSidepanelContainer />
         <div className="app-top-bar__outer-wrapper">
-          <NavBar
-            listItems={this.state.items}
-            showQuickNavigation
-            showModernStackOnboardingRelaunch
-          />
+          <NavBar listItems={this.state.items}>
+            <div className="app-top-bar__child">
+              <OnboardingRelaunch />
+            </div>
+            <TrialTag organizationId={this.context.currentOrganizationId} />
+            <QuickNavigation />
+          </NavBar>
         </div>
       </div>
     );

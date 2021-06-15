@@ -1,16 +1,10 @@
-/* eslint-disable rulesdir/restrict-non-f36-components */
-
 import React from 'react';
-import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import AccountDropdown from './AccountDropdown';
-import { QuickNavigation } from 'features/quick-navigation';
-import OnboardingRelaunch from 'navigation/modernStackOnboardingRelaunch';
 import { NavigationItem, NavigationItemType } from './NavigationItem';
 import { NavigationDropdown } from './NavigationDropdown';
 import { KnowledgeMenu } from './KnowledgeMenu/KnowledgeMenu';
-import { TrialTag } from 'features/trials';
 
 const styles = {
   navBar: css({
@@ -29,7 +23,7 @@ const styles = {
   }),
 };
 
-const NavigationList = ({ items }) => {
+const NavigationList = ({ items }: { items: NavigationItemType[] }) => {
   return (
     <ul className={styles.navBarList}>
       {items.map((item) => {
@@ -44,20 +38,12 @@ const NavigationList = ({ items }) => {
   );
 };
 
-NavigationList.propTypes = {
-  items: PropTypes.array.isRequired,
-};
-
 export default class NavBar extends React.Component<{
   listItems: NavigationItemType[];
-  showQuickNavigation?: boolean;
-  showModernStackOnboardingRelaunch?: boolean;
-  organizationId?: string;
+  children?: React.ReactNode;
 }> {
   static defaultProps = {
     listItems: [],
-    showQuickNavigation: false,
-    showModernStackOnboardingRelaunch: false,
   };
 
   render() {
@@ -68,13 +54,7 @@ export default class NavBar extends React.Component<{
             <nav className={styles.navBar} aria-label="Main Navigation">
               <NavigationList items={this.props.listItems} />
               <div className={styles.navBarEnd}>
-                {this.props.showModernStackOnboardingRelaunch && (
-                  <div className="app-top-bar__child">
-                    <OnboardingRelaunch />
-                  </div>
-                )}
-                <TrialTag organizationId={this.props.organizationId} />
-                {this.props.showQuickNavigation && <QuickNavigation />}
+                {this.props.children}
                 <KnowledgeMenu />
               </div>
             </nav>

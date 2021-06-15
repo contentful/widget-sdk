@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
-import SidePanelTrigger from './index';
+import { SidePanelTrigger } from './SidePanelTrigger';
 
 describe('SidePanelTrigger', () => {
   const renderComponent = () => {
