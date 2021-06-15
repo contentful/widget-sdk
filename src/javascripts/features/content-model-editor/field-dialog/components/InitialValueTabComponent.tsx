@@ -1,12 +1,5 @@
-import React, { Fragment, useRef, useState } from 'react';
-import {
-  Button,
-  Flex,
-  Modal,
-  Note,
-  Paragraph,
-  TextLink,
-} from '@contentful/forma-36-react-components';
+import React, { Fragment, useRef } from 'react';
+import { Button, Flex, Note, Paragraph, TextLink } from '@contentful/forma-36-react-components';
 import localeStore from 'services/localeStore';
 import { InitialValueField } from './InitialValueField';
 import type { ContentType, ContentTypeField } from 'core/typings';
@@ -14,6 +7,7 @@ import type { FieldValueChangedHandler } from '../../types';
 import mitt from 'mitt';
 import { InitialValueUsageNote } from './InitialValueUsageNote';
 import { Locale } from 'core/typings';
+import { confirmAllLocalesAction } from './initialValue/AllLocalesActionConfirm';
 
 export const SUPPORTED_FIELD_TYPES = ['Boolean', 'Date', 'Integer', 'Number', 'Symbol', 'Text'];
 const MANAGABLE_NUMBER_OF_LOCALES = 4;
@@ -50,7 +44,6 @@ export const InitialValueTabComponent = ({
   fields,
   onChange,
 }: InitialValueTabComponentProps) => {
-  const [isModalShown, setIsModalShown] = useState(false);
   const isFieldTypeSupported = SUPPORTED_FIELD_TYPES.includes(ctField.type);
   const locales: Locale[] = localeStore.getLocales();
   const defaultLocale: Locale = localeStore.getDefaultLocale();
@@ -105,54 +98,35 @@ export const InitialValueTabComponent = ({
     onChange('initialValue', payload);
   };
 
+  const applyAll = async () => {
+    if (!otherLocalesHaveValues || (await confirmAllLocalesAction('replace'))) {
+      applyValueToOtherLocales(initialValueForDefaultLocale);
+    }
+  };
+
+  const clearAll = async () => {
+    const confirmed = await confirmAllLocalesAction('remove');
+    if (!confirmed) {
+      return;
+    }
+
+    applyValueToOtherLocales(undefined);
+  };
+
   const otherLocaleFields = (
     <>
       {numberOfLocales > MANAGABLE_NUMBER_OF_LOCALES && (
         <Fragment>
-          <Modal isShown={isModalShown} onClose={() => setIsModalShown(false)}>
-            {() => (
-              <Fragment>
-                <Modal.Header title="You are replacing initial values" />
-                <Modal.Content>
-                  Applying the same initial value to all locales will replace the values you have
-                  already set.
-                </Modal.Content>
-                <Modal.Controls>
-                  <Button
-                    buttonType="negative"
-                    onClick={() => {
-                      applyValueToOtherLocales(initialValueForDefaultLocale);
-                      setIsModalShown(false);
-                    }}>
-                    Replace
-                  </Button>
-                  <Button buttonType="muted" onClick={() => setIsModalShown(false)}>
-                    Cancel
-                  </Button>
-                </Modal.Controls>
-              </Fragment>
-            )}
-          </Modal>
           <div>
             <Flex flexDirection="row" marginBottom="spacingXs">
-              <Button
-                disabled={initialValueForDefaultLocale === undefined}
-                onClick={() => {
-                  if (otherLocalesHaveValues) {
-                    setIsModalShown(true);
-                  } else {
-                    applyValueToOtherLocales(initialValueForDefaultLocale);
-                  }
-                }}>
+              <Button disabled={initialValueForDefaultLocale === undefined} onClick={applyAll}>
                 Apply to all locales
               </Button>
               {initialValueForDefaultLocale !== undefined && (
                 <Flex marginLeft="spacingM">
                   <TextLink
                     disabled={!otherLocalesHaveValues}
-                    onClick={() => {
-                      applyValueToOtherLocales(undefined);
-                    }}
+                    onClick={clearAll}
                     linkType="secondary">
                     Clear all
                   </TextLink>
