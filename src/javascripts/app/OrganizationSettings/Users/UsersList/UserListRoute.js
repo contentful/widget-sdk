@@ -51,7 +51,7 @@ function UsersListRoute(props) {
   }
 
   if (error) {
-    return <StateRedirect path="spaces.detail.entries.list" />;
+    return <StateRedirect path="account.organizations.subscription_new.overview" />;
   }
 
   const [spaces, roles, teams, org, hasTeamsFeature] = data;
