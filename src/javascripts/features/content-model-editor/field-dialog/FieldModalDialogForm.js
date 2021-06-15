@@ -268,7 +268,7 @@ const FieldModalDialogForm = ({
         </div>
 
         {isInitialFieldValuesEnabled && selectedTab === formTabs.INITIAL_VALUE && (
-          <FeedbackButton about="Initial values" />
+          <FeedbackButton about="Initial values" target="dante" />
         )}
       </Modal.Controls>
     </Fragment>
