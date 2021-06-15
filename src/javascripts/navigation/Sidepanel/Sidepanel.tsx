@@ -232,7 +232,7 @@ export class Sidepanel extends React.Component<SidepanelProps, SidepanelState> {
                   orgId: this.state.currOrg.sys.id,
                 }}
                 onClick={this.props.closeSidePanel}
-                testId="sidepanel-org-actions-settings">
+                data-test-id="sidepanel-org-actions-settings">
                 <Flex padding="spacingM" className={styles.orgSettingsButton}>
                   <Icon
                     className={css({ marginRight: tokens.spacingXs })}
