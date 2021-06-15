@@ -8,7 +8,7 @@ import * as utils from '../shared/utils';
 import cleanupNotifications from 'test/helpers/cleanupNotifications';
 import { mediumSpaceCurrent, largeSpace, freeSpace } from '../__tests__/fixtures/plans';
 import { createResourcesForPlan, FULFILLMENT_STATUSES } from '../__tests__/helpers';
-import { mockEndpoint } from 'data/EndpointFactory';
+import { mockSpaceEndpoint, mockOrganizationEndpoint } from 'data/EndpointFactory';
 import * as Analytics from 'analytics/Analytics';
 
 const mockOrganization = Fake.Organization({ isBillable: true });
@@ -30,18 +30,18 @@ const mockWizardSessionId = 'session_id_1234';
 
 jest.spyOn(utils, 'changeSpacePlan');
 
-mockEndpoint.mockRejectedValue();
-when(mockEndpoint)
+when(mockOrganizationEndpoint)
   .calledWith(expect.objectContaining({ path: ['product_rate_plans'] }))
   .mockResolvedValue({ items: mockPlans })
   .calledWith(expect.objectContaining({ path: ['plans'] }))
   .mockResolvedValue({ items: [mockCurrentSpaceSubscriptionPlan] })
+  .calledWith(expect.objectContaining({ path: ['resources', 'free_space'] }))
+  .mockResolvedValue(mockFreeSpaceResource);
+when(mockSpaceEndpoint)
   .calledWith(expect.objectContaining({ path: [] }))
   .mockResolvedValue()
   .calledWith(expect.objectContaining({ path: ['resources'] }))
-  .mockResolvedValue({ items: mockResources })
-  .calledWith(expect.objectContaining({ path: ['resources', 'free_space'] }))
-  .mockResolvedValue(mockFreeSpaceResource);
+  .mockResolvedValue({ items: mockResources });
 
 jest.useFakeTimers();
 
@@ -87,7 +87,7 @@ describe('ChangeOnDemandWizard', () => {
   });
 
   it('shouid not recommend the bigger plan is there is no plan to recommend', async () => {
-    when(mockEndpoint)
+    when(mockOrganizationEndpoint)
       .calledWith(expect.objectContaining({ path: ['product_rate_plans'] }))
       .mockResolvedValueOnce({
         items: [mediumSpaceCurrent, freeSpace],
@@ -198,7 +198,7 @@ describe('ChangeOnDemandWizard', () => {
   });
 
   it('should not call onClose and should trigger a notification if the plans endpoint rejects', async () => {
-    when(mockEndpoint)
+    when(mockSpaceEndpoint)
       .calledWith(expect.objectContaining({ path: [] }))
       .mockRejectedValueOnce(new Error());
 

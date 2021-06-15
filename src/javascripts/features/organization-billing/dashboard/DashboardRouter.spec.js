@@ -11,7 +11,7 @@ import { MemoryRouter } from 'core/react-routing';
 import { go } from 'states/Navigator';
 
 // eslint-disable-next-line
-import { mockEndpoint } from 'data/EndpointFactory';
+import { mockOrganizationEndpoint as mockEndpoint } from 'data/EndpointFactory';
 
 jest.mock('account/pricing/PricingDataProvider', () => ({
   isSelfServicePlan: jest.fn(),

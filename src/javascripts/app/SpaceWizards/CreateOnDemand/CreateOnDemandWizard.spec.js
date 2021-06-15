@@ -10,7 +10,7 @@ import * as Analytics from 'analytics/Analytics';
 import CreateOnDemandWizard from './CreateOnDemandWizard';
 
 import { freeSpace } from '../__tests__/fixtures/plans';
-import { mockEndpoint } from 'data/EndpointFactory';
+import { mockOrganizationEndpoint, mockSpaceEndpoint } from 'data/EndpointFactory';
 
 const mockSpace = Fake.Space();
 const mockOrganization = Fake.Organization({ isBillable: true });
@@ -23,16 +23,16 @@ const mockTemplate = {
 };
 const mockWizardSessionId = 'session_id_1234';
 
-mockEndpoint.mockRejectedValue();
-when(mockEndpoint)
+when(mockOrganizationEndpoint)
   .calledWith(expect.objectContaining({ path: ['product_rate_plans'] }))
   .mockResolvedValue({ items: [freeSpace] })
   .calledWith(expect.objectContaining({ path: ['plans'] }))
   .mockResolvedValue({ items: [] })
-  .calledWith(expect.objectContaining({ path: [] }))
-  .mockResolvedValue()
   .calledWith(expect.objectContaining({ path: ['resources', 'free_space'] }))
   .mockResolvedValue(mockFreeSpaceResource);
+when(mockSpaceEndpoint)
+  .calledWith(expect.objectContaining({ path: [] }))
+  .mockResolvedValue();
 
 jest.mock('services/SpaceTemplateLoader', () => ({
   getTemplatesList: jest.fn(),
@@ -494,7 +494,7 @@ describe('CreateOnDemandWizard', () => {
     };
 
     beforeEach(() => {
-      when(mockEndpoint)
+      when(mockOrganizationEndpoint)
         .calledWith(expect.objectContaining({ path: ['product_rate_plans'] }))
         .mockResolvedValueOnce({ items: [mockPartnerSpacePlan] });
     });
@@ -514,7 +514,7 @@ describe('CreateOnDemandWizard', () => {
     });
 
     it('should not care if sendParnershipEmail throws', async () => {
-      when(mockEndpoint)
+      when(mockSpaceEndpoint)
         .calledWith(expect.objectContaining({ path: ['partner_projects'] }))
         .mockRejectedValueOnce();
 

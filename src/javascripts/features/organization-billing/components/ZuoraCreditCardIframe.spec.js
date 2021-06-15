@@ -5,7 +5,7 @@ import { ZuoraCreditCardIframe } from './ZuoraCreditCardIframe';
 import * as Fake from 'test/helpers/fakeFactory';
 
 // eslint-disable-next-line
-import { mockEndpoint } from 'data/EndpointFactory';
+import { mockOrganizationEndpoint } from 'data/EndpointFactory';
 import * as LazyLoader from 'utils/LazyLoader';
 
 const mockOrganization = Fake.Organization();
@@ -27,7 +27,7 @@ jest.mock('utils/LazyLoader', () => {
   };
 });
 
-when(mockEndpoint)
+when(mockOrganizationEndpoint)
   .calledWith(expect.objectContaining({ path: ['hosted_payment_params'] }))
   .mockResolvedValue(mockHostedPaymentParams);
 
@@ -40,7 +40,7 @@ describe('ZuoraCreditCardIframe', () => {
     await waitFor(() => expect(LazyLoader.get).toBeCalled());
 
     expect(LazyLoader.get).toHaveBeenCalledWith('Zuora');
-    expect(mockEndpoint).toHaveBeenCalledWith(
+    expect(mockOrganizationEndpoint).toHaveBeenCalledWith(
       expect.objectContaining({ path: ['hosted_payment_params'] })
     );
   });
@@ -50,7 +50,7 @@ describe('ZuoraCreditCardIframe', () => {
 
     await waitFor(() => expect(LazyLoader.get).toBeCalled());
 
-    expect(mockEndpoint).toHaveBeenCalledWith(
+    expect(mockOrganizationEndpoint).toHaveBeenCalledWith(
       expect.objectContaining({ path: ['hosted_payment_params'], query: { country_code: 'CX' } })
     );
   });

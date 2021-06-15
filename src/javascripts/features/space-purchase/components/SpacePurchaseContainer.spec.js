@@ -17,9 +17,6 @@ import {
 } from 'features/organization-billing/index';
 import { getSpacesByOrganization } from 'services/TokenStore';
 
-// eslint-disable-next-line
-import { mockEndpoint } from 'data/EndpointFactory';
-
 const mockOrganization = FakeFactory.Organization({ isBillable: false });
 const mockSpaceFromOrganization = FakeFactory.Space();
 const mockBillingDetails = {

@@ -9,7 +9,7 @@ import * as Fake from 'test/helpers/fakeFactory';
 import EnterpriseWizard from './EnterpriseWizard';
 
 import { freeSpace } from '../__tests__/fixtures/plans';
-import { mockEndpoint } from 'data/EndpointFactory';
+import { mockOrganizationEndpoint as mockEndpoint } from 'data/EndpointFactory';
 
 const mockOrganization = Fake.Organization();
 const mockSpace = Fake.Space();
