@@ -37,24 +37,6 @@ const organizationsEditRoute = {
 };
 
 /**
- * Organization spaces
- */
-
-type OrganizationSpacesRouteType = {
-  path: 'organizations.spaces';
-  orgId: string;
-};
-
-const organizationsSpacesRoute = {
-  'organizations.spaces': (_, { orgId }: Omit<OrganizationSpacesRouteType, 'path'>) => ({
-    path: 'account.organizations',
-    params: {
-      pathname: `/${orgId}/spaces`,
-    },
-  }),
-};
-
-/**
  * Organization offsite backup
  */
 
@@ -472,7 +454,6 @@ const routes = {
   ...organizationsOffisiteBackupRoute,
   ...organizationsSubscriptionV1Route,
   ...organizationsSubscriptionBillingRoute,
-  ...organizationsSpacesRoute,
   ...organizationsBillingRoute,
   ...organizationsAccessToolsRoutes,
   ...organizationsTeamsRoutes,
@@ -491,7 +472,6 @@ type OrganizationSettingsRouteType =
   | OrganizationOffisiteBackupRouteType
   | OrganizationSubscriptionV1RouteType
   | OrganizationSubscriptionBillingRouteType
-  | OrganizationSpacesRouteType
   | OrganizationsAccessToolsRouteType
   | OrganizationBillingRouteType
   | OrganizationBillingEditPaymentRouteType
