@@ -18,7 +18,6 @@ const useFieldDialog = (props: FieldDialogProps) => {
     field,
     instance,
     contentType,
-    editorInterface,
   };
 };
 
