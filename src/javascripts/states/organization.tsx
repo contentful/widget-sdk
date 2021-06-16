@@ -43,16 +43,6 @@ const RouterWithOrganizationData = withOrganizationRoute(({ orgId }: { orgId: st
         }
       />
       <Route
-        name="account.organizations.subscription"
-        path="/z_subscription*"
-        element={
-          <GatekeeperView
-            title="Subscription"
-            icon={<ProductIcon size="large" icon="Subscription" />}
-          />
-        }
-      />
-      <Route
         name="account.organizations.edit"
         path="/edit*"
         element={

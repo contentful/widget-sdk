@@ -37,27 +37,6 @@ const organizationsEditRoute = {
 };
 
 /**
- * Organization subscription V1
- */
-
-type OrganizationSubscriptionV1RouteType = {
-  path: 'organizations.subscription_v1';
-  orgId: string;
-};
-
-const organizationsSubscriptionV1Route = {
-  'organizations.subscription_v1': (
-    _,
-    { orgId }: Omit<OrganizationSubscriptionV1RouteType, 'path'>
-  ) => ({
-    path: 'account.organizations',
-    params: {
-      pathname: `/${orgId}/z_subscription`,
-    },
-  }),
-};
-
-/**
  * Organization subscription billing
  */
 
@@ -430,7 +409,6 @@ const newOrganizationRoute = {
 const routes = {
   ...organizationsUsageRoute,
   ...organizationsEditRoute,
-  ...organizationsSubscriptionV1Route,
   ...organizationsSubscriptionBillingRoute,
   ...organizationsBillingRoute,
   ...organizationsAccessToolsRoutes,
@@ -447,7 +425,6 @@ const routes = {
 type OrganizationSettingsRouteType =
   | OrganizationUsageRouteType
   | OrganizationEditRouteType
-  | OrganizationSubscriptionV1RouteType
   | OrganizationSubscriptionBillingRouteType
   | OrganizationsAccessToolsRouteType
   | OrganizationBillingRouteType
