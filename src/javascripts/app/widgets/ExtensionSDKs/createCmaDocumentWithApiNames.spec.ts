@@ -3,6 +3,10 @@ import { createDocumentMock } from 'app/entity_editor/Document/__mocks__/createD
 import noop from 'lodash/noop';
 import { createCmaDocumentWithApiNames } from './createCmaDocumentWithApiNames';
 
+jest.mock('services/localeStore', () => ({
+  toInternalCode: jest.fn().mockImplementation(() => 'en-US'),
+}));
+
 let doc: Document;
 let docWithApiNames: Document;
 
@@ -48,6 +52,11 @@ describe('getValueAt', () => {
     expect(value).toBe('Old content');
   });
 
+  it("changes field id to api name for `path = ['fields', 'apiName', 'de-DE']`", () => {
+    const value = docWithApiNames.getValueAt(['fields', 'apiName', 'de-DE']);
+    expect(value).toBe('Old content');
+  });
+
   it('throws if requesting field id', () => {
     expect(() => docWithApiNames.getValueAt(['fields', 'id'])).toThrow();
   });
@@ -69,6 +78,11 @@ describe('setValueAt', () => {
     expect(doc.getValueAt(['fields', 'id', 'en-US'])).toBe('New content');
   });
 
+  it("replaces api names with id for `path = ['fields', 'apiName', 'de-DE']`", () => {
+    docWithApiNames.setValueAt(['fields', 'apiName', 'de-DE'], 'New content');
+    expect(doc.getValueAt(['fields', 'id', 'en-US'])).toBe('New content');
+  });
+
   it('fails if setting field id', async () => {
     await expect(
       docWithApiNames.setValueAt(['fields', 'id'], { 'en-US': 'New content' })
@@ -80,6 +94,11 @@ describe('setValueAt', () => {
 describe('insertValueAt', () => {
   it("replaces api names with id for `path = ['fields', 'arrayApiName', 'en-US']`", async () => {
     await docWithApiNames.insertValueAt(['fields', 'arrayApiName', 'en-US'], 1, 'three');
+    expect(doc.getValueAt(['fields', 'arrayId', 'en-US'])).toStrictEqual(['one', 'three', 'two']);
+  });
+
+  it("replaces api names with id for `path = ['fields', 'arrayApiName', 'de-DE']`", async () => {
+    await docWithApiNames.insertValueAt(['fields', 'arrayApiName', 'de-DE'], 1, 'three');
     expect(doc.getValueAt(['fields', 'arrayId', 'en-US'])).toStrictEqual(['one', 'three', 'two']);
   });
 
