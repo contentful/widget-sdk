@@ -7,10 +7,6 @@ import { SpaceAPI, User } from '@contentful/app-sdk';
 import { InternalContentType, createContentTypeApi } from './createContentTypeApi';
 import { get, noop } from 'lodash';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
-import {
-  getCMAClient,
-  getDefaultCMAClient,
-} from 'core/services/usePlainCMAClient/usePlainCMAClient';
 
 import {
   generateSignedAssetUrl,

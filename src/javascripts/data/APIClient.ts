@@ -4,7 +4,6 @@ import { SpaceEndpoint } from './CMA/types';
 import {
   Asset,
   BulkAction,
-  Collection,
   Entity,
   Entry,
   Link,
@@ -54,7 +53,7 @@ export default class APIClient {
     return this.getResources('content_types', query);
   };
 
-  getEditorInterfaces = (): Promise<Collection<EditorInterfaceProps>> => {
+  getEditorInterfaces = (): Promise<CollectionResponse<EditorInterfaceProps>> => {
     return this.getResources<EditorInterfaceProps>('editor_interfaces');
   };
 

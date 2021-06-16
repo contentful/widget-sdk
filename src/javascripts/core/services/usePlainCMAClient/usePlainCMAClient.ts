@@ -61,34 +61,6 @@ export function getCMAClient(defaults?: PlainClientDefaultParams, options?: GetC
   };
 }
 
-export function getDefaultCMAClient(options?: GetCmaClientOptions) {
-  const request = makeRequest({
-    auth: {
-      getToken,
-      refreshToken,
-    },
-    source: options?.source,
-    clientName: 'contentful-management',
-    overrideDefaultResponseTransform: axiosTransformResponse,
-  });
-  /*
-   `accessToken` and `refreshToken` is only for interface completeness,
-   the accessToken is always set inside the adapter
-   */
-  const client = createClient({
-    ...getHostParams(),
-    accessToken: () => getToken(),
-    headers: getDefaultHeaders(),
-    adapter: createAdapter(request),
-    retryOnError: false,
-    onError: handleError,
-  });
-
-  return {
-    ...client,
-  };
-}
-
 export function getSpaceEnvCMAClient() {
   const spaceContext = getSpaceContext();
   const spaceId = spaceContext.getId();
