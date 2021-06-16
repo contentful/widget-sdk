@@ -115,7 +115,7 @@ export function createEntryFieldApi({
 
   const setValue = makeReadOnlyGuardedMethod(
     !!readOnly,
-    async (value: any, publicLocaleCode?: string) => {
+    async (value: any, publicLocaleCode?: string): Promise<any> => {
       if (!canEdit(publicLocaleCode)) {
         throw makePermissionError();
       }

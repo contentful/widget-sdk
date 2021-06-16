@@ -8,7 +8,7 @@ import SpaceWizardsWrapper from './SpaceWizardsWrapper';
 import * as Fake from 'test/helpers/fakeFactory';
 import * as Analytics from 'analytics/Analytics';
 import { freeSpace } from './__tests__/fixtures/plans';
-import { mockEndpoint } from 'data/EndpointFactory';
+import { mockSpaceEndpoint, mockOrganizationEndpoint } from 'data/EndpointFactory';
 import * as utils from './shared/utils';
 
 const mockOrganization = Fake.Organization({
@@ -30,14 +30,16 @@ jest.mock('features/pricing-entities', () => ({
   ),
 }));
 
-mockEndpoint.mockRejectedValue();
-when(mockEndpoint)
+mockOrganizationEndpoint.mockRejectedValue();
+when(mockOrganizationEndpoint)
   .calledWith(expect.objectContaining({ path: ['product_rate_plans'] }))
   .mockResolvedValue({ items: [freeSpace] })
   .calledWith(expect.objectContaining({ path: ['plans'] }))
   .mockResolvedValue({ items: [mockBasePlan] })
   .calledWith(expect.objectContaining({ path: ['resources', 'free_space'] }))
-  .mockResolvedValue(mockFreeSpaceResource)
+  .mockResolvedValue(mockFreeSpaceResource);
+mockSpaceEndpoint.mockRejectedValue();
+when(mockSpaceEndpoint)
   .calledWith(expect.objectContaining({ path: ['resources'] }))
   .mockResolvedValue({ items: mockSpaceResources });
 
@@ -122,7 +124,7 @@ describe('SpaceWizardsWrapper', () => {
 
     it('should show the on-demand space creation wizard if the base plan is not enterprise', async () => {
       const mockOnDemandBasePlan = Fake.Plan({ customerType: PricingDataProvider.SELF_SERVICE });
-      when(mockEndpoint)
+      when(mockOrganizationEndpoint)
         .calledWith(expect.objectContaining({ path: ['plans'] }))
         .mockResolvedValue({ items: [mockOnDemandBasePlan] });
 

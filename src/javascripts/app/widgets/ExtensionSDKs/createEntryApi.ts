@@ -79,17 +79,24 @@ export function createEntryApi({
 }
 
 function transformUserLinkOnTask(data: TaskInputData) {
-  return {
-    status: data.status,
-    body: data.body,
+  const { assignedToId, body, dueDate, status } = data;
+  const resp = {
+    status: status,
+    body: body,
     assignedTo: {
       sys: {
         type: 'Link',
         linkType: 'User',
-        id: data.assignedToId,
+        id: assignedToId,
       },
     },
   };
+
+  if (dueDate) {
+    return { ...resp, dueDate };
+  }
+
+  return resp;
 }
 
 function reduceFields(fields: EntryFieldAPI[]) {

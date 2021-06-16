@@ -15,7 +15,7 @@ import * as FakeFactory from 'test/helpers/fakeFactory';
 import { getSpace } from 'access_control/OrganizationMembershipRepository';
 import { renderWithProvider } from '../__tests__/helpers';
 import { getVariation } from 'LaunchDarkly';
-import { mockEndpoint } from '__mocks__/data/EndpointFactory';
+import { mockOrganizationEndpoint } from '__mocks__/data/EndpointFactory';
 import {
   getAddOnProductRatePlans,
   getAllProductRatePlans,
@@ -381,7 +381,7 @@ describe('SpacePurchaseRoute', () => {
       expect(screen.getByTestId('space-purchase-container')).toBeVisible();
     });
 
-    expect(getSpacePlans).toBeCalledWith(mockEndpoint);
+    expect(getSpacePlans).toBeCalledWith(mockOrganizationEndpoint);
   });
 
   it('should fetch the space plan selection FAQs by default', async () => {

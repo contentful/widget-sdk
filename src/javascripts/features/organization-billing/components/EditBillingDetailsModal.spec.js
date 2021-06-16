@@ -6,13 +6,13 @@ import * as Fake from 'test/helpers/fakeFactory';
 import cleanupNotifications from 'test/helpers/cleanupNotifications';
 
 // eslint-disable-next-line
-import { mockEndpoint } from 'data/EndpointFactory';
+import { mockOrganizationEndpoint } from 'data/EndpointFactory';
 
 import { EditBillingDetailsModal } from './EditBillingDetailsModal';
 
 jest.useFakeTimers();
 
-when(mockEndpoint)
+when(mockOrganizationEndpoint)
   .calledWith(expect.objectContaining({ path: ['billing_details'], method: 'PUT' }))
   .mockResolvedValue();
 
@@ -56,7 +56,7 @@ describe('EditBillingDetailsModal', () => {
     );
     userEvent.click(screen.getByTestId('billing-details.submit'));
 
-    await waitFor(expect(mockEndpoint).not.toBeCalled);
+    await waitFor(expect(mockOrganizationEndpoint).not.toBeCalled);
   });
 
   it('should send a request to the billing_details API and call onConfirm when the form is valid and submitted', async () => {
@@ -67,7 +67,7 @@ describe('EditBillingDetailsModal', () => {
     userEvent.click(screen.getByTestId('billing-details.submit'));
 
     await waitFor(() =>
-      expect(mockEndpoint).toBeCalledWith({
+      expect(mockOrganizationEndpoint).toBeCalledWith({
         method: 'PUT',
         path: ['billing_details'],
         data: expect.objectContaining(mockBillingDetails),
@@ -88,7 +88,7 @@ describe('EditBillingDetailsModal', () => {
   });
 
   it('should show an error notification when the API request fails', async () => {
-    when(mockEndpoint)
+    when(mockOrganizationEndpoint)
       .calledWith(expect.objectContaining({ path: ['billing_details'], method: 'PUT' }))
       .mockRejectedValueOnce();
 

@@ -6,13 +6,13 @@ import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { MemoryRouter } from 'core/react-routing';
 
 // eslint-disable-next-line
-import { mockEndpoint } from 'data/EndpointFactory';
+import { mockOrganizationEndpoint } from 'data/EndpointFactory';
 import { Dashboard } from './Dashboard';
 
 const mockOrganization = Fake.Organization();
 const mockInvoiceData = new ArrayBuffer([1, 2, 3, 4]);
 
-when(mockEndpoint)
+when(mockOrganizationEndpoint)
   .calledWith(expect.objectContaining({ path: ['invoices', expect.any(String)] }))
   .mockResolvedValue(mockInvoiceData);
 

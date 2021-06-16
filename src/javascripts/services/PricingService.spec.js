@@ -1,6 +1,6 @@
 import { when } from 'jest-when';
 import * as Fake from 'test/helpers/fakeFactory';
-import { mockEndpoint } from 'data/EndpointFactory';
+import { mockOrganizationEndpoint, mockSpaceEndpoint } from 'data/EndpointFactory';
 
 const mockOrganization = Fake.Organization();
 const mockSpace = Fake.Space();
@@ -23,15 +23,16 @@ const mockCurrentSpaceSubscriptionPlan = Object.assign({}, mediumSpace, {
   ratePlanCharges: mediumSpace.productRatePlanCharges,
 });
 
-mockEndpoint.mockRejectedValue();
+mockOrganizationEndpoint.mockRejectedValue();
 
 describe('PricingService', () => {
   beforeEach(() => {
-    when(mockEndpoint)
+    when(mockOrganizationEndpoint)
       .calledWith(expect.objectContaining({ path: ['product_rate_plans'] }))
       .mockResolvedValue({ items: [mediumSpace, largeSpace] })
       .calledWith(expect.objectContaining({ path: ['plans'] }))
-      .mockResolvedValue({ items: [mockCurrentSpaceSubscriptionPlan] })
+      .mockResolvedValue({ items: [mockCurrentSpaceSubscriptionPlan] });
+    when(mockSpaceEndpoint)
       .calledWith(expect.objectContaining({ path: ['resources'] }))
       .mockResolvedValue({ items: createResourcesForPlan(mockCurrentSpaceSubscriptionPlan) });
   });
@@ -40,7 +41,7 @@ describe('PricingService', () => {
     it('should return null if all of the current resource usage is below the warning threshold', async () => {
       const resources = createResourcesForPlan(largeSpace);
 
-      when(mockEndpoint)
+      when(mockSpaceEndpoint)
         .calledWith(expect.objectContaining({ path: ['resources'] }))
         .mockResolvedValueOnce({
           items: resources,
@@ -56,7 +57,7 @@ describe('PricingService', () => {
         [PricingService.SPACE_PLAN_RESOURCE_TYPES.LOCALE]: FULFILLMENT_STATUSES.REACHED,
       });
 
-      when(mockEndpoint)
+      when(mockSpaceEndpoint)
         .calledWith(expect.objectContaining({ path: ['resources'] }))
         .mockResolvedValueOnce({
           items: resources,
@@ -75,9 +76,10 @@ describe('PricingService', () => {
         unavailabilityReasons: [{ type: 'something' }],
       });
 
-      when(mockEndpoint)
+      when(mockOrganizationEndpoint)
         .calledWith(expect.objectContaining({ path: ['product_rate_plans'] }))
-        .mockResolvedValueOnce({ items: [mediumSpace, unavailableLarge] })
+        .mockResolvedValueOnce({ items: [mediumSpace, unavailableLarge] });
+      when(mockSpaceEndpoint)
         .calledWith(expect.objectContaining({ path: ['resources'] }))
         .mockResolvedValueOnce({
           items: resources,
@@ -93,7 +95,7 @@ describe('PricingService', () => {
         [PricingService.SPACE_PLAN_RESOURCE_TYPES.LOCALE]: FULFILLMENT_STATUSES.REACHED,
       });
 
-      when(mockEndpoint)
+      when(mockSpaceEndpoint)
         .calledWith(expect.objectContaining({ path: ['resources'] }))
         .mockResolvedValueOnce({
           items: resources,
@@ -112,9 +114,10 @@ describe('PricingService', () => {
         unavailabilityReasons: [{ type: 'something' }],
       });
 
-      when(mockEndpoint)
+      when(mockOrganizationEndpoint)
         .calledWith(expect.objectContaining({ path: ['product_rate_plans'] }))
-        .mockResolvedValueOnce({ items: [mediumSpace, unavailableLarge] })
+        .mockResolvedValueOnce({ items: [mediumSpace, unavailableLarge] });
+      when(mockSpaceEndpoint)
         .calledWith(expect.objectContaining({ path: ['resources'] }))
         .mockResolvedValueOnce({
           items: resources,
@@ -134,7 +137,7 @@ describe('PricingService', () => {
         [PricingService.SPACE_PLAN_RESOURCE_TYPES.RECORD]: FULFILLMENT_STATUSES.REACHED,
       });
 
-      when(mockEndpoint)
+      when(mockSpaceEndpoint)
         .calledWith(expect.objectContaining({ path: ['resources'] }))
         .mockResolvedValueOnce({
           items: resources,
@@ -154,7 +157,7 @@ describe('PricingService', () => {
         ratePlanCharges: largeSpace.productRatePlanCharges,
       });
 
-      when(mockEndpoint)
+      when(mockOrganizationEndpoint)
         .calledWith(expect.objectContaining({ path: ['plans'] }))
         .mockResolvedValueOnce({ items: [currentSpacePlan] });
 

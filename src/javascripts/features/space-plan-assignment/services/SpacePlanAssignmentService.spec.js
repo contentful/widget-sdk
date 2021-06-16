@@ -1,7 +1,7 @@
 import { changeSpacePlanAssignment } from './SpacePlanAssignmentService';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { updateSpacePlan } from 'features/pricing-entities';
-import { mockEndpoint } from '__mocks__/data/EndpointFactory';
+import { mockOrganizationEndpoint as mockEndpoint } from '__mocks__/data/EndpointFactory';
 import * as fake from 'test/helpers/fakeFactory';
 import { track } from 'analytics/Analytics';
 

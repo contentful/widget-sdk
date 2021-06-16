@@ -11,7 +11,7 @@ import { CreditCardDetailsStep } from './CreditCardDetailsStep';
 import { renderWithProvider } from '../../__tests__/helpers';
 
 // eslint-disable-next-line
-import { mockEndpoint } from 'data/EndpointFactory';
+import { mockOrganizationEndpoint as mockEndpoint } from 'data/EndpointFactory';
 
 when(mockEndpoint)
   .calledWith(expect.objectContaining({ method: 'POST', path: ['billing_details'] }))

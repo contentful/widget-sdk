@@ -3,6 +3,11 @@ import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import AccountDropdown from './AccountDropdown';
 import { NavigationItem, NavigationItemType } from './NavigationItem';
+import {
+  ReactRouterNavigationItemType,
+  ReactRouterNavigationItem,
+} from './ReactRouterNavigationItem';
+import { ReactRouterNavigationDropdown } from './ReactRouterNavigationDropdown';
 import { NavigationDropdown } from './NavigationDropdown';
 import { KnowledgeMenu } from './KnowledgeMenu/KnowledgeMenu';
 
@@ -38,12 +43,35 @@ const NavigationList = ({ items }: { items: NavigationItemType[] }) => {
   );
 };
 
+const ReactRouterNavigationList = ({ items }: { items: ReactRouterNavigationItemType[] }) => {
+  return (
+    <ul className={styles.navBarList}>
+      {items.map((item) => {
+        if (item.render) {
+          return item.render(item);
+        } else if (item.children) {
+          return (
+            <ReactRouterNavigationDropdown
+              key={item.title}
+              item={item}
+              isActiveFn={item.isActiveFn}
+            />
+          );
+        }
+        return <ReactRouterNavigationItem key={item.title} item={item} />;
+      })}
+    </ul>
+  );
+};
+
 export default class NavBar extends React.Component<{
   listItems: NavigationItemType[];
+  reactRouterListItems: ReactRouterNavigationItemType[];
   children?: React.ReactNode;
 }> {
   static defaultProps = {
     listItems: [],
+    reactRouterListItems: [],
   };
 
   render() {
@@ -52,7 +80,11 @@ export default class NavBar extends React.Component<{
         <div className="app-top-bar__inner-wrapper">
           <div className="app-top-bar__child app-top-bar__main-nav">
             <nav className={styles.navBar} aria-label="Main Navigation">
-              <NavigationList items={this.props.listItems} />
+              {this.props.reactRouterListItems.length > 0 ? (
+                <ReactRouterNavigationList items={this.props.reactRouterListItems} />
+              ) : (
+                <NavigationList items={this.props.listItems} />
+              )}
               <div className={styles.navBarEnd}>
                 {this.props.children}
                 <KnowledgeMenu />

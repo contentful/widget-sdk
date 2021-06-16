@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 
 import { createTeam } from '../services/TeamRepository';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
-import { mockEndpoint } from '__mocks__/data/EndpointFactory';
+import { mockOrganizationEndpoint } from '__mocks__/data/EndpointFactory';
 import { Notification } from '@contentful/forma-36-react-components';
 
 const onCloseFn = jest.fn();
@@ -36,7 +36,7 @@ describe('NewTeamDialog', () => {
     fireEvent.click(submitButton);
 
     expect(createOrganizationEndpoint).toHaveBeenCalledWith('orgid');
-    expect(createTeam).toHaveBeenCalledWith(mockEndpoint, {
+    expect(createTeam).toHaveBeenCalledWith(mockOrganizationEndpoint, {
       name: 'Team B',
       description: 'Not Team A',
     });
@@ -67,7 +67,10 @@ describe('NewTeamDialog', () => {
     });
     userEvent.type(nameField, 'Team C');
     fireEvent.click(submitButton);
-    expect(createTeam).toHaveBeenCalledWith(mockEndpoint, { name: 'Team C', description: '' });
+    expect(createTeam).toHaveBeenCalledWith(mockOrganizationEndpoint, {
+      name: 'Team C',
+      description: '',
+    });
     await screen.findByText('This name is already in use');
   });
 

@@ -10,7 +10,7 @@
     "npm": "6.4.1"
   },
   "dependencies": {
-    "@contentful/app-sdk": "^4.0.0-alpha.7",
+    "@contentful/app-sdk": "^4.0.0-alpha.13",
     "@contentful/asn1js": "^2.1.0",
     "@contentful/default-field-editors": "^0.8.17",
     "@contentful/editorial-primitives": "^1.4.0",
@@ -20,7 +20,7 @@
     "@contentful/experience-components": "^1.4.4",
     "@contentful/experience-error-tracking": "^2.0.0",
     "@contentful/experience-provisioning": "^0.4.1",
-    "@contentful/experience-sdk": "^1.12.1",
+    "@contentful/experience-sdk": "^1.13.0",
     "@contentful/field-editor-boolean": "0.11.1",
     "@contentful/field-editor-checkbox": "0.13.1",
     "@contentful/field-editor-date": "0.11.1",
@@ -57,7 +57,7 @@
     "@contentful/rich-text-types": "^14.1.2",
     "@contentful/types": "^16.2.0",
     "@contentful/validation": "^13.2.5",
-    "@contentful/widget-renderer": "^1.3.0",
+    "@contentful/widget-renderer": "^1.5.0",
     "@contentful/worf": "^4.10.0",
     "@types/json-patch": "0.0.30",
     "ajv": "^6.12.6",
@@ -348,6 +348,6 @@
     }
   },
   "resolutions": {
-    "@contentful/app-sdk": "4.0.0-alpha.7"
+    "@contentful/app-sdk": "4.0.0-alpha.13"
   }
 }

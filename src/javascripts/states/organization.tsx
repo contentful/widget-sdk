@@ -16,7 +16,6 @@ import { OrganizationAppsRouter } from 'features/apps';
 import * as TokenStore from 'services/TokenStore';
 import { StartAppTrialRoute } from 'features/trials';
 import { OrganizationUsageRoute } from 'features/organization-usage';
-import { OrganizationSpacesV1Page } from 'features/organization-spaces';
 import { NewSpaceRouter, UpgradeSpaceRouter } from 'features/space-purchase';
 import StateRedirect from 'app/common/StateRedirect';
 
@@ -27,12 +26,6 @@ const RouterWithOrganizationData = withOrganizationRoute(({ orgId }: { orgId: st
         name="account.organizations.usage"
         path="/usage"
         element={<OrganizationUsageRoute orgId={orgId} />}
-      />
-
-      <Route
-        name="account.organizations.spaces"
-        path="/spaces"
-        element={<OrganizationSpacesV1Page orgId={orgId} />}
       />
       <Route
         name="account.organizations.start_trial"
@@ -68,11 +61,6 @@ const RouterWithOrganizationData = withOrganizationRoute(({ orgId }: { orgId: st
             icon={<ProductIcon size="large" icon="OrgInfo" />}
           />
         }
-      />
-      <Route
-        name="account.organizations.offsitebackup"
-        path="/offsite_backup/edit*"
-        element={<GatekeeperView title="Offsite backup" />}
       />
       <Route name={null} path="/access_tools*" element={<AccessToolsRouter orgId={orgId} />} />
       <Route name={null} path="/billing*" element={<BillingRouter orgId={orgId} />} />

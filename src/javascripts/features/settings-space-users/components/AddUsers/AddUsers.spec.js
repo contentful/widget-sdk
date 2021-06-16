@@ -11,7 +11,7 @@ import {
 } from '@testing-library/react';
 import { ADMIN_ROLE_ID } from 'access_control/constants';
 import { getAllMembershipsWithQuery } from 'access_control/OrganizationMembershipRepository';
-import { mockEndpoint } from '__mocks__/data/EndpointFactory';
+import { mockOrganizationEndpoint } from '__mocks__/data/EndpointFactory';
 
 const onCloseFn = jest.fn();
 const mockInvite = jest.fn();
@@ -64,7 +64,7 @@ describe('AddUsers', () => {
     await build();
     expect(getAllMembershipsWithQuery).toHaveBeenCalledTimes(1);
     expect(getAllMembershipsWithQuery).toHaveBeenCalledWith(
-      mockEndpoint,
+      mockOrganizationEndpoint,
       expect.objectContaining({ include: ['sys.user'] })
     );
   });

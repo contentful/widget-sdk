@@ -7,7 +7,7 @@ import { getCreator } from 'services/SpaceTemplateCreator';
 import { getTemplate } from 'services/SpaceTemplateLoader';
 import { $broadcast } from 'ng/$rootScope';
 import * as spaceContext from 'ng/spaceContext';
-import { createSpaceEndpoint, mockEndpoint } from 'data/EndpointFactory';
+import { createSpaceEndpoint, mockSpaceEndpoint } from 'data/EndpointFactory';
 import { changeSpacePlan as changeSpacePlanApiCall } from 'account/pricing/PricingDataProvider';
 
 import * as Fake from 'test/helpers/fakeFactory';
@@ -768,7 +768,7 @@ describe('utils', () => {
       });
 
       expect(createSpaceEndpoint).toBeCalledWith(mockSpace.sys.id);
-      expect(mockEndpoint).toBeCalledWith({
+      expect(mockSpaceEndpoint).toBeCalledWith({
         method: 'POST',
         path: ['partner_projects'],
         data: {
@@ -782,7 +782,7 @@ describe('utils', () => {
     it('should handle missing field data', () => {
       utils.sendParnershipEmail(mockSpace.sys.id);
 
-      expect(mockEndpoint).toBeCalledWith({
+      expect(mockSpaceEndpoint).toBeCalledWith({
         method: 'POST',
         path: ['partner_projects'],
         data: {

@@ -56,7 +56,7 @@ async function fetchContent(
 interface EnterpriseSubscriptionPageProps {
   memberAccessibleSpaces: unknown[];
   organization: Organization;
-  usersMeta: UsersMeta;
+  usersMeta?: UsersMeta;
   isInternalBasePlan?: boolean;
 }
 
@@ -79,7 +79,6 @@ export function EnterpriseSubscriptionPage({
   );
 
   const isOrgOwnerOrAdmin = isOwnerOrAdmin(organization);
-  const isNotAdminOrOwnerOfTrialOrg = isOrgOnEnterpriseTrial && !isOrgOwnerOrAdmin;
 
   // if this is an org on Enterprise trial we show how many days of trial the user has
   let daysOfTrial;
@@ -89,20 +88,22 @@ export function EnterpriseSubscriptionPage({
 
   return (
     <Grid testId="enterprise-subs-page" columns={2} columnGap="spacingXl" rowGap="spacingXl">
-      <Flex flexDirection="column" className={styles.fullRow}>
-        <BasePlanCard
-          loading={isLoading || !!error}
-          content={content}
-          organizationId={organizationId}
-          users={
-            usersMeta && {
-              count: usersMeta.numFree + usersMeta.numPaid,
-              limit: usersMeta.hardLimit,
+      {isOrgOwnerOrAdmin && (
+        <Flex flexDirection="column" className={styles.fullRow}>
+          <BasePlanCard
+            loading={isLoading || !!error}
+            content={content}
+            organizationId={organizationId}
+            users={
+              usersMeta && {
+                count: usersMeta.numFree + usersMeta.numPaid,
+                limit: usersMeta.hardLimit,
+              }
             }
-          }
-          daysOfTrial={daysOfTrial}
-        />
-      </Flex>
+            daysOfTrial={daysOfTrial}
+          />
+        </Flex>
+      )}
 
       {isOrgOnEnterpriseTrial && (
         <Flex className={styles.fullRow} flexDirection="column">
@@ -111,7 +112,7 @@ export function EnterpriseSubscriptionPage({
       )}
 
       <Flex className={styles.fullRow} flexDirection="column">
-        {isNotAdminOrOwnerOfTrialOrg ? (
+        {!isOrgOwnerOrAdmin && isOrgOnEnterpriseTrial ? (
           <SpacesListForMembers spaces={memberAccessibleSpaces} />
         ) : (
           <SpacePlans

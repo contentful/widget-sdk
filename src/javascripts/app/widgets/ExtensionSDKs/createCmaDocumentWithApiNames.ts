@@ -2,6 +2,7 @@ import { Document } from '@contentful/editorial-primitives';
 import { Entry } from 'core/typings';
 import { isEqual } from 'lodash';
 import { InternalContentType } from './createContentTypeApi';
+import localeStore from 'services/localeStore';
 
 export function createCmaDocumentWithApiNames(
   doc: Document,
@@ -9,18 +10,20 @@ export function createCmaDocumentWithApiNames(
 ): Document {
   function getPathWithApiNames(path: string[]): string[] {
     if (path[0] === 'fields' && path.length >= 2) {
-      return [path[0], getFieldApiName(contentType, path[1]), ...path.slice(2)];
-    } else {
-      return path;
+      return convertToInternalLocale([
+        path[0],
+        getFieldApiName(contentType, path[1]),
+        ...path.slice(2),
+      ]);
     }
+    return path;
   }
 
   function getPathWithIds(path: string[]): string[] {
     if (path[0] === 'fields' && path.length >= 2) {
-      return [path[0], getFieldId(contentType, path[1]), ...path.slice(2)];
-    } else {
-      return path;
+      return convertToInternalLocale([path[0], getFieldId(contentType, path[1]), ...path.slice(2)]);
     }
+    return path;
   }
 
   function getValueWithIds(path: string[], value: any) {
@@ -121,6 +124,15 @@ function convertFieldPropertyToIds(
 function getFieldId(contentType: InternalContentType, fieldApiName: string): string {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   return contentType.fields.find((field) => field.apiName === fieldApiName)!.id;
+}
+
+function convertToInternalLocale(path: string[]): string[] {
+  if (path[0] === 'fields' && path.length === 3) {
+    const newPath = [...path];
+    newPath[2] = localeStore.toInternalCode(newPath[2]);
+    return newPath;
+  }
+  return path;
 }
 
 function getFieldApiName(contentType: InternalContentType, fieldId: string): string {

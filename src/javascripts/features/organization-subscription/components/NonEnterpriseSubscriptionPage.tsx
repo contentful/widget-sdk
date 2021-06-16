@@ -67,7 +67,7 @@ async function fetchContent(basePlan?: BasePlan): Promise<BasePlanContent | unde
 
 interface NonEnterpriseSubscriptionPageProps {
   organization: Organization;
-  usersMeta: UsersMeta;
+  usersMeta?: UsersMeta;
 }
 
 export function NonEnterpriseSubscriptionPage({

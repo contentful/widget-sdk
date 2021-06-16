@@ -11,7 +11,7 @@ import { captureError } from 'core/monitoring';
 import { MemoryRouter } from 'core/react-routing';
 
 // eslint-disable-next-line
-import { mockEndpoint } from 'data/EndpointFactory';
+import { mockOrganizationEndpoint as mockEndpoint } from 'data/EndpointFactory';
 import * as LazyLoader from 'utils/LazyLoader';
 
 const mockOrganization = Fake.Organization();

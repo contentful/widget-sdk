@@ -16,7 +16,9 @@ export class SidePanel {
   }
 
   goToOrganizationSettings() {
-    cy.findByTestId('sidepanel-org-actions-settings').click();
+    cy.findByTestId('sidepanel')
+      .findByText(/Organization settings/)
+      .click();
 
     return new OrganizationSettingsPage();
   }

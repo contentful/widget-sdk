@@ -3,8 +3,8 @@ import { css } from 'emotion';
 
 import { Workbench } from '@contentful/forma-36-react-components';
 import { LoadingState } from 'features/loading-state';
-
 import { getGatekeeperUrl } from './UrlSyncHelper';
+import { useLocation } from 'core/react-routing';
 
 const wrapperStyle = css({
   position: 'absolute',
@@ -21,25 +21,32 @@ export function GatekeeperView({
   title: string;
   icon?: React.ReactElement<unknown>;
 }) {
-  const gatekeeperUrl = React.useMemo(() => getGatekeeperUrl() as string, []);
+  const location = useLocation();
+  const [gatekeeperUrl, setGatekeeperUrl] = useState<string>('');
   const [loading, setLoading] = useState(true);
+
+  React.useEffect(() => {
+    setGatekeeperUrl(getGatekeeperUrl(location.pathname) as string);
+  }, [location.pathname]);
 
   return (
     <Workbench testId="account-iframe-page">
-      {loading && <LoadingState />}
+      {(loading || !gatekeeperUrl) && <LoadingState />}
 
       <Workbench.Header title={title} icon={icon} />
       <Workbench.Content>
-        <div className={wrapperStyle}>
-          <iframe
-            data-test-id="account-iframe"
-            width="100%"
-            height="100%"
-            id="accountViewFrame"
-            onLoad={() => setLoading(false)}
-            src={gatekeeperUrl}
-          />
-        </div>
+        {gatekeeperUrl && (
+          <div className={wrapperStyle}>
+            <iframe
+              data-test-id="account-iframe"
+              width="100%"
+              height="100%"
+              id="accountViewFrame"
+              onLoad={() => setLoading(false)}
+              src={gatekeeperUrl}
+            />
+          </div>
+        )}
       </Workbench.Content>
     </Workbench>
   );

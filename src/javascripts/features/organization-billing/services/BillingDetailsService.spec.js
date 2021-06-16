@@ -2,8 +2,10 @@ import * as BillingDetailsService from './BillingDetailsService';
 import { when } from 'jest-when';
 import * as Fake from 'test/helpers/fakeFactory';
 
-// eslint-disable-next-line
-import { createOrganizationEndpoint, mockEndpoint } from 'data/EndpointFactory';
+import {
+  createOrganizationEndpoint,
+  mockOrganizationEndpoint as mockEndpoint,
+} from '__mocks__/data/EndpointFactory';
 
 const mockOrganization = Fake.Organization();
 const mockInvoices = ['invoiceOne', 'invoiceTwo', 'invoiceThree'];
