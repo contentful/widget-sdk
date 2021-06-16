@@ -234,7 +234,6 @@ Object {
                         <a
                           class=""
                           href="/account.organizations?pathname=/my-org-123/apps/definitions/3AjEyjWz5tRouW4cVOF9la/general"
-                          route="[object Object]"
                           state="[object Object]"
                           to="account.organizations?pathname=/my-org-123/apps/definitions/3AjEyjWz5tRouW4cVOF9la/general"
                         >
@@ -404,7 +403,6 @@ Object {
                         <a
                           class=""
                           href="/account.organizations?pathname=/my-org-123/apps/definitions/2WoMzSs2fRJx79JeVvqdGR/general"
-                          route="[object Object]"
                           state="[object Object]"
                           to="account.organizations?pathname=/my-org-123/apps/definitions/2WoMzSs2fRJx79JeVvqdGR/general"
                         >
@@ -574,7 +572,6 @@ Object {
                         <a
                           class=""
                           href="/account.organizations?pathname=/my-org-123/apps/definitions/3cG9ueyzkY0GCndLiQzmZ0/general"
-                          route="[object Object]"
                           state="[object Object]"
                           to="account.organizations?pathname=/my-org-123/apps/definitions/3cG9ueyzkY0GCndLiQzmZ0/general"
                         >
@@ -1023,7 +1020,6 @@ Object {
                       <a
                         class=""
                         href="/account.organizations?pathname=/my-org-123/apps/definitions/3AjEyjWz5tRouW4cVOF9la/general"
-                        route="[object Object]"
                         state="[object Object]"
                         to="account.organizations?pathname=/my-org-123/apps/definitions/3AjEyjWz5tRouW4cVOF9la/general"
                       >
@@ -1193,7 +1189,6 @@ Object {
                       <a
                         class=""
                         href="/account.organizations?pathname=/my-org-123/apps/definitions/2WoMzSs2fRJx79JeVvqdGR/general"
-                        route="[object Object]"
                         state="[object Object]"
                         to="account.organizations?pathname=/my-org-123/apps/definitions/2WoMzSs2fRJx79JeVvqdGR/general"
                       >
@@ -1363,7 +1358,6 @@ Object {
                       <a
                         class=""
                         href="/account.organizations?pathname=/my-org-123/apps/definitions/3cG9ueyzkY0GCndLiQzmZ0/general"
-                        route="[object Object]"
                         state="[object Object]"
                         to="account.organizations?pathname=/my-org-123/apps/definitions/3cG9ueyzkY0GCndLiQzmZ0/general"
                       >

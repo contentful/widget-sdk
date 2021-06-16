@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import NavBar from './NavBar/NavBar';
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
@@ -8,40 +7,26 @@ import { SidepanelContainer } from './Sidepanel/SidepanelContainer';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import { AdvancedExtensibilityFeature } from 'features/extensions-management';
 import { isOrganizationOnTrial } from 'features/trials';
-import { routes } from 'core/react-routing';
 import { getOrganization } from 'services/TokenStore';
 import { TrialTag } from 'features/trials';
 import { OrganizationName, StateTitle } from './Sidepanel/SidePanelTrigger/SidePanelTrigger';
 import { OrganizationProp as Organization } from 'contentful-management/types';
+import { ReactRouterNavigationItemType } from './NavBar/ReactRouterNavigationItem';
 
-function getItems(params, { orgId }) {
+function getItems(params, { orgId }): ReactRouterNavigationItemType[] {
   const shouldDisplayAccessTools = params.isOwnerOrAdmin;
-
-  const makeReactRouterRef = (route: keyof typeof routes) => {
-    // @ts-expect-error ignore "params" arg, we expect only .list routes
-    const state = routes[route]({}, { orgId });
-    return {
-      sref: state.path,
-      srefParams: state.params,
-      rootSref: state.path,
-    };
-  };
 
   const accessToolsDropdownItems = [
     {
       title: 'Single Sign-On (SSO)',
-      srefOptions: {
-        inherit: false,
-      },
       dataViewType: 'organization-sso',
-      ...makeReactRouterRef('organizations.access-tools.sso'),
-    },
+      route: { path: 'organizations.access-tools.sso', orgId },
+    } as ReactRouterNavigationItemType,
     {
       title: 'User provisioning',
-      srefOptions: { inherit: false },
       dataViewType: 'organization-user-provisioning',
-      ...makeReactRouterRef('organizations.access-tools.user-provisioning'),
-    },
+      route: { path: 'organizations.access-tools.user-provisioning', orgId },
+    } as ReactRouterNavigationItemType,
   ];
 
   const teamsTooltip = params.highValueLabelEnabled
@@ -54,91 +39,73 @@ function getItems(params, { orgId }) {
     {
       if: params.hasSettingsTab,
       title: 'Organization information',
-      srefOptions: {
-        inherit: false,
-      },
       navIcon: 'OrgInfo',
       dataViewType: 'organization-information',
-      ...makeReactRouterRef('organizations.edit'),
-    },
+      route: { path: 'organizations.edit', orgId },
+    } as ReactRouterNavigationItemType,
     {
       if: params.isOwnerOrAdmin || params.isOrganizationOnTrial,
       title: 'Subscription',
-      srefOptions: {
-        inherit: false,
-      },
       navIcon: 'Subscription',
       dataViewType: 'subscription-new',
-      ...makeReactRouterRef('organizations.subscription.overview'),
-    },
+      route: { path: 'organizations.subscription.overview', orgId },
+    } as ReactRouterNavigationItemType,
     {
       if: params.hasBillingTab,
       title: 'Billing',
-      srefOptions: {
-        inherit: false,
-      },
       navIcon: 'Billing',
       dataViewType: 'billing',
-      ...makeReactRouterRef('organizations.billing'),
-    },
+      route: { path: 'organizations.billing', orgId },
+    } as ReactRouterNavigationItemType,
     {
       if: params.isOwnerOrAdmin,
       title: 'Usage',
-      srefOptions: {
-        inherit: false,
-      },
       navIcon: 'Usage',
       dataViewType: 'platform-usage',
-      ...makeReactRouterRef('organizations.usage'),
-    },
+      route: { path: 'organizations.usage', orgId },
+    } as ReactRouterNavigationItemType,
     {
       if: params.isOwnerOrAdmin,
       title: 'Users',
-      srefOptions: {
-        inherit: false,
-      },
       navIcon: 'Users',
       dataViewType: 'organization-users',
-      ...makeReactRouterRef('organizations.users.list'),
-    },
+      route: { path: 'organizations.users.list', orgId },
+    } as ReactRouterNavigationItemType,
     {
       title: 'Teams',
       highValueLabel: params.highValueLabelEnabled,
       isOrganizationOnTrial: params.isOrganizationOnTrial,
-      srefOptions: {
-        inherit: false,
-      },
       navIcon: 'Teams',
       dataViewType: 'organization-teams',
       tooltip: teamsTooltip,
-      ...makeReactRouterRef('organizations.teams'),
-    },
+      route: { path: 'organizations.teams', orgId },
+    } as ReactRouterNavigationItemType,
     {
       if: params.hasAdvancedExtensibility,
       title: 'Apps',
-      srefOptions: {
-        inherit: false,
-      },
       navIcon: 'Apps',
       dataViewType: 'organization-apps',
-      ...makeReactRouterRef('organizations.apps.list'),
-    },
+      route: { path: 'organizations.apps.list', orgId },
+    } as ReactRouterNavigationItemType,
     {
       if: shouldDisplayAccessTools,
       title: 'Access Tools',
       navIcon: 'Sso',
       dataViewType: 'organization-access-tools',
       children: accessToolsDropdownItems,
-    },
+      isActiveFn: (pathname) => {
+        return pathname.startsWith(`/account/organizations/${orgId}/access_tools`);
+      },
+    } as ReactRouterNavigationItemType,
   ].filter((item) => item.if !== false);
 }
 
 type Props = {
   orgId: string;
-  navVersion: string;
 };
+
 type State = {
-  items: any[];
+  items: ReactRouterNavigationItemType[];
 };
 
 const OrganizationSidepanelTrigger = React.memo(
@@ -172,16 +139,12 @@ export default class OrganizationNavigationBar extends React.Component<Props, St
     };
   }
 
-  static propTypes = {
-    navVersion: PropTypes.number,
-  };
-
   async componentDidMount() {
     this.getConfiguration();
   }
 
   async componentDidUpdate(prevProps) {
-    if (this.props.navVersion !== prevProps.navVersion) {
+    if (this.props.orgId !== prevProps.orgId) {
       this.getConfiguration();
     }
   }
@@ -224,7 +187,7 @@ export default class OrganizationNavigationBar extends React.Component<Props, St
           currentOrgId={this.props.orgId}
         />
         <div className="app-top-bar__outer-wrapper">
-          <NavBar listItems={this.state.items}>
+          <NavBar reactRouterListItems={this.state.items}>
             <TrialTag organizationId={this.props.orgId} />
           </NavBar>
         </div>

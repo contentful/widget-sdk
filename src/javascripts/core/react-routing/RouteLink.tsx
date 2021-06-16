@@ -30,11 +30,12 @@ type RouteLinkProps = Omit<LinkProps, 'to'> & {
   testId?: string;
   handlePrevented?: boolean;
   activeClassName?: string;
+  exact?: boolean;
 };
 
 export const RouteLink = (props: RouteLinkProps) => {
-  const { children, activeClassName, ...rest } = props;
-  const { to, state } = getToAndState(props.route, props.state);
+  const { children, activeClassName, route, state: routeState, exact = true, ...rest } = props;
+  const { to, state } = getToAndState(route, routeState);
 
   const href = useHref(to);
   const navigate = useNavigate();
@@ -44,7 +45,9 @@ export const RouteLink = (props: RouteLinkProps) => {
   const locationPathname = location.pathname;
   const toPathname = path.pathname;
 
-  const isActive = locationPathname === toPathname;
+  const isActive = exact
+    ? locationPathname === toPathname
+    : locationPathname.startsWith(toPathname);
 
   function handleClick(event: React.MouseEvent<HTMLAnchorElement>) {
     if (props.onClick) props.onClick(event);
@@ -77,8 +80,8 @@ export const RouteLink = (props: RouteLinkProps) => {
       {...rest}
       className={cx(props.className, isActive ? activeClassName : null)}
       to={to}
-      state={state}
       href={href}
+      state={state}
       onClick={handleClick}>
       {children}
     </Link>

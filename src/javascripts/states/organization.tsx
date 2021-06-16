@@ -11,7 +11,7 @@ import { BillingRouter } from 'features/organization-billing';
 import OrganizationNavBar from 'navigation/OrganizationNavBar';
 import { withOrganizationRoute } from './withOrganizationRoute';
 import { GatekeeperView } from 'account/GatekeeperView';
-
+import { AppContainer } from 'navigation/AppContainer';
 import { OrganizationAppsRouter } from 'features/apps';
 import * as TokenStore from 'services/TokenStore';
 import { StartAppTrialRoute } from 'features/trials';
@@ -93,7 +93,11 @@ const OrganizationRouter = () => {
     });
   }, [orgId]);
 
-  return <RouterWithOrganizationData orgId={orgId} />;
+  return (
+    <AppContainer navigation={<OrganizationNavBar orgId={orgId} />}>
+      <RouterWithOrganizationData orgId={orgId} />;
+    </AppContainer>
+  );
 };
 
 export const organizationReactState = {
@@ -102,22 +106,7 @@ export const organizationReactState = {
   params: {
     navigationState: null,
   },
-  navComponent: function Navigation(props) {
-    const [basename] = window.location.pathname.split('organizations');
-    function OrganizationNavBarWithId(props) {
-      const { orgId } = useParams() as { orgId: string };
-      return <OrganizationNavBar {...props} orgId={orgId} />;
-    }
-    return (
-      <CustomRouter splitter="organizations" disableSync>
-        <RouteErrorBoundary>
-          <Routes basename={basename + 'organizations'}>
-            <Route name={null} path="/:orgId*" element={<OrganizationNavBarWithId {...props} />} />
-          </Routes>
-        </RouteErrorBoundary>
-      </CustomRouter>
-    );
-  },
+  navComponent: () => null,
   component: memo(function OrganizationsRouter() {
     const [basename] = window.location.pathname.split('organizations');
     return (

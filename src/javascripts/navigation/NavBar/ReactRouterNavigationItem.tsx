@@ -162,6 +162,7 @@ export type ReactRouterNavigationSubitemType = {
 export type ReactRouterNavigationItemType = {
   title: string;
   route: RouteType;
+  if?: boolean;
   icon?: string;
   tagLabel?: string;
   navIcon?: string;
@@ -217,6 +218,7 @@ export function ReactRouterNavigationItem(props: { item: ReactRouterNavigationIt
           'is-disabled': item.disabled,
         })}
         activeClassName={'is-active'}
+        exact={false}
         role="button"
         onClick={(e) => {
           if (e.ctrlKey || e.metaKey) {
