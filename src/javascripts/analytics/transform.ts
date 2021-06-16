@@ -426,6 +426,17 @@ registerGenericEvent('space_usage_summary:pagination_changed');
 registerGenericEvent('space_usage_summary:help_link_clicked');
 registerGenericEvent('space_usage_summary:export');
 
+registerGenericEvent('onboarding_explore:continue');
+registerGenericEvent('space_home:onboarding_explore');
+registerGenericEvent('onboarding_explore:dev_docs');
+registerGenericEvent('onboarding_explore:training_center');
+registerGenericEvent('onboarding_sample_space:continue');
+registerGenericEvent('onboarding_sample_space:back');
+registerGenericEvent('onboarding_gatsby_blog:back');
+registerGenericEvent('space_home:onboarding_discover');
+registerGenericEvent('onboarding_replace:cancel');
+registerGenericEvent('onboarding_replace:replace');
+
 /**
  * @deprecated We're migrating away from Snowplow to Segment
  */
