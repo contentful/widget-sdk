@@ -52,7 +52,6 @@ const userCreationDate = new Date(2018, 12, 25);
 const organization = {
   name: 'Awesome Org',
   role: 'owner',
-  pricingVersion: 'pricing_version_2',
   hasSsoEnabled: true,
   sys: {
     id: 'abcd_org',
@@ -371,7 +370,6 @@ describe('LaunchDarkly', () => {
           currentUserIsFromContentful: false,
           currentOrgCreationDate: orgCreationDate.getTime(),
           currentOrgId: 'abcd_org',
-          currentOrgPricingVersion: 'pricing_version_2',
           currentOrgHasSpace: false,
           currentOrgHasPaymentMethod: false,
           currentOrgHasSsoEnabled: true,
@@ -431,7 +429,6 @@ describe('LaunchDarkly', () => {
           currentUserIsFromContentful: false,
           currentOrgCreationDate: orgCreationDate.getTime(),
           currentOrgId: 'abcd_org',
-          currentOrgPricingVersion: 'pricing_version_2',
           currentOrgHasSpace: false,
           currentOrgHasPaymentMethod: false,
           currentOrgHasSsoEnabled: true,

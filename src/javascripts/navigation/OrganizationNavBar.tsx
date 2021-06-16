@@ -167,7 +167,6 @@ export default class OrganizationNavigationBar extends React.Component<Props, St
     const params = {
       ssoEnabled: ssoFeatureEnabled,
       userProvisioningEnabled: scimFeatureEnabled,
-      pricingVersion: organization.pricingVersion,
       isOwnerOrAdmin: isOwnerOrAdmin(organization),
       hasAdvancedExtensibility,
       hasBillingTab: organization.isBillable && isOwner(organization),

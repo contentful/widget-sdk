@@ -7,7 +7,7 @@ import { getVariation, FLAGS } from 'LaunchDarkly';
 import { getSpaceProductRatePlans, getBasePlan } from 'features/pricing-entities';
 import { router } from 'core/react-routing';
 
-const mockV2Org = { sys: { id: 'v2' }, pricingVersion: 'pricing_version_2' };
+const mockV2Org = { sys: { id: 'v2' } };
 
 const mockRatePlans = {
   enterprise: {

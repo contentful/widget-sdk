@@ -198,7 +198,6 @@ export const fixtures = {
                           updatedAt: '2019-07-24T07:52:07Z',
                         },
                         disableAnalytics: false,
-                        pricingVersion: 'pricing_version_2',
                       },
                     },
                     currentShard: {
@@ -270,7 +269,6 @@ export const fixtures = {
                                   updatedAt: '2020-11-16T15:41:13Z',
                                 },
                                 disableAnalytics: false,
-                                pricingVersion: 'pricing_version_2',
                               },
                             },
                             {
