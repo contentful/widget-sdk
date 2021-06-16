@@ -37,27 +37,6 @@ const organizationsEditRoute = {
 };
 
 /**
- * Organization offsite backup
- */
-
-type OrganizationOffisiteBackupRouteType = {
-  path: 'organizations.offsitebackup';
-  orgId: string;
-};
-
-const organizationsOffisiteBackupRoute = {
-  'organizations.offsitebackup': (
-    _,
-    { orgId }: Omit<OrganizationOffisiteBackupRouteType, 'path'>
-  ) => ({
-    path: 'account.organizations',
-    params: {
-      pathname: `/${orgId}/offsite_backup/edit`,
-    },
-  }),
-};
-
-/**
  * Organization subscription V1
  */
 
@@ -451,7 +430,6 @@ const newOrganizationRoute = {
 const routes = {
   ...organizationsUsageRoute,
   ...organizationsEditRoute,
-  ...organizationsOffisiteBackupRoute,
   ...organizationsSubscriptionV1Route,
   ...organizationsSubscriptionBillingRoute,
   ...organizationsBillingRoute,
@@ -469,7 +447,6 @@ const routes = {
 type OrganizationSettingsRouteType =
   | OrganizationUsageRouteType
   | OrganizationEditRouteType
-  | OrganizationOffisiteBackupRouteType
   | OrganizationSubscriptionV1RouteType
   | OrganizationSubscriptionBillingRouteType
   | OrganizationsAccessToolsRouteType

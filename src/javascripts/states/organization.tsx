@@ -62,11 +62,6 @@ const RouterWithOrganizationData = withOrganizationRoute(({ orgId }: { orgId: st
           />
         }
       />
-      <Route
-        name="account.organizations.offsitebackup"
-        path="/offsite_backup/edit*"
-        element={<GatekeeperView title="Offsite backup" />}
-      />
       <Route name={null} path="/access_tools*" element={<AccessToolsRouter orgId={orgId} />} />
       <Route name={null} path="/billing*" element={<BillingRouter orgId={orgId} />} />
       <Route name={null} path="/teams*" element={<TeamsRouter orgId={orgId} />} />

@@ -5,7 +5,6 @@ import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
 import { getOrgFeature, OrganizationFeatures } from '../data/CMA/ProductCatalog';
 import { SidepanelContainer } from './Sidepanel/SidepanelContainer';
-import createLegacyFeatureService from 'services/LegacyFeatureService';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import { AdvancedExtensibilityFeature } from 'features/extensions-management';
 import { isOrganizationOnTrial } from 'features/trials';
@@ -131,15 +130,6 @@ function getItems(params, { orgId }) {
       dataViewType: 'organization-access-tools',
       children: accessToolsDropdownItems,
     },
-    {
-      if: params.hasOffsiteBackup && params.isOwnerOrAdmin,
-      title: 'Offsite backup',
-      srefOptions: {
-        inherit: false,
-      },
-      dataViewType: 'offsite-backup',
-      ...makeReactRouterRef('organizations.offsitebackup'),
-    },
   ].filter((item) => item.if !== false);
 }
 
@@ -198,25 +188,18 @@ export default class OrganizationNavigationBar extends React.Component<Props, St
 
   async getConfiguration() {
     const { orgId } = this.props;
-    const FeatureService = createLegacyFeatureService(orgId, 'organization');
 
     const organization = await TokenStore.getOrganization(orgId);
 
     const promises = [
       getOrgFeature(orgId, OrganizationFeatures.SELF_CONFIGURE_SSO),
       getOrgFeature(orgId, OrganizationFeatures.SCIM),
-      FeatureService.get('offsiteBackup'),
       AdvancedExtensibilityFeature.isEnabled(),
       getVariation(FLAGS.HIGH_VALUE_LABEL, { organizationId: orgId }),
     ];
 
-    const [
-      ssoFeatureEnabled,
-      scimFeatureEnabled,
-      hasOffsiteBackup,
-      hasAdvancedExtensibility,
-      highValueLabelEnabled,
-    ] = await Promise.all(promises);
+    const [ssoFeatureEnabled, scimFeatureEnabled, hasAdvancedExtensibility, highValueLabelEnabled] =
+      await Promise.all(promises);
 
     const params = {
       ssoEnabled: ssoFeatureEnabled,
@@ -224,7 +207,6 @@ export default class OrganizationNavigationBar extends React.Component<Props, St
       pricingVersion: organization.pricingVersion,
       isOwnerOrAdmin: isOwnerOrAdmin(organization),
       hasAdvancedExtensibility,
-      hasOffsiteBackup,
       hasBillingTab: organization.isBillable && isOwner(organization),
       hasSettingsTab: isOwner(organization),
       highValueLabelEnabled: highValueLabelEnabled && !organization.isBillable,
