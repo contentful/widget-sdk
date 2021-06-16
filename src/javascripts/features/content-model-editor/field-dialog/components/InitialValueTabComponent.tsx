@@ -12,10 +12,16 @@ import { confirmAllLocalesAction } from './initialValue/AllLocalesActionConfirm'
 export const SUPPORTED_FIELD_TYPES = ['Boolean', 'Date', 'Integer', 'Number', 'Symbol', 'Text'];
 const MANAGABLE_NUMBER_OF_LOCALES = 4;
 
-const StyleTagHidingMarkdownEditorAssetButton = () => {
+const StyleTagHidingUnsupportedMarkdownEditorButtons = () => {
   return (
     <style>{`
-      button[data-test-id="markdownEditor.linkExistingAssets"] {
+      button[data-test-id="markdownEditor.linkExistingAssets"],
+      button[data-test-id="markdown-action-button-zen"],
+      button[data-test-id="markdown-action-button-link"],
+      button[data-test-id="markdown-action-button-embed"],
+      button[data-test-id="markdown-action-button-table"],
+      button[data-test-id="markdown-action-button-special"],
+      button[data-test-id="markdown-action-button-organizeLinks"] {
         display: none;
       }
       `}</style>
@@ -58,7 +64,7 @@ export const InitialValueTabComponent = ({
 
   const defaultLocaleField = (
     <>
-      <StyleTagHidingMarkdownEditorAssetButton />
+      <StyleTagHidingUnsupportedMarkdownEditorButtons />
       <InitialValueField
         contentType={contentType}
         eventEmitter={eventEmitters.current[defaultLocale.code]}
@@ -159,7 +165,7 @@ export const InitialValueTabComponent = ({
   return (
     <Flex flexDirection="column">
       <InitialValueUsageNote />
-      <StyleTagHidingMarkdownEditorAssetButton />
+      <StyleTagHidingUnsupportedMarkdownEditorButtons />
       {defaultLocaleField}
       {ctField.localized && otherLocaleFields}
     </Flex>
