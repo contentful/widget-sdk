@@ -205,6 +205,7 @@ export interface Organization {
     _v1Migration?: V1Migration;
   };
   disableAnalytics: boolean;
+  pricingVersion: string;
 }
 
 export enum v1migrationDestinationNames {

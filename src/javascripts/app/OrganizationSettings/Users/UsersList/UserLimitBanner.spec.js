@@ -16,7 +16,7 @@ import { getBasePlan } from 'features/pricing-entities';
 
 import UserLimitBanner, { THRESHOLD_NUMBER_TO_DISPLAY_BANNER } from './UserLimitBanner';
 
-const mockOrg = fake.Organization();
+const mockOrg = fake.Organization({ pricingVersion: 'pricing_version_2' });
 const mockBasePlan = fake.Plan({ customerType: PricingDataProvider.FREE });
 const mockSpaces = Array.from(Array(3)).map((_, idx) => fake.Space(`Space ${idx}`));
 const mockUsersEmpty = { items: [], total: 0 };
@@ -164,6 +164,7 @@ describe('UserLimitBanner', () => {
         expect(mockOrgCall).toBeCalled();
       });
 
+      expect(mockOrgCall().pricingVersion).toBe('pricing_version_2');
       expect(screen.queryByTestId('users-limit-banner')).toBeNull();
     });
   });

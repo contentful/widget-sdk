@@ -36,6 +36,7 @@ describe('ApiKeyListRoute', () => {
   beforeEach(() => {
     mockApiKeyRepo.create.mockReset();
     mockApiKeyRepo.getAll.mockReset();
+    spaceContextMocked.organization.pricingVersion = 'pricing_version_2';
     spaceContextMocked.getId = () => 'space-id';
     spaceContextMocked.getData = jest.fn().mockImplementation((type) => {
       if (type === 'name') {
