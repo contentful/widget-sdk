@@ -8,7 +8,6 @@ import {
 } from './contentPreviewConfig';
 import { enrichTemplate } from './enrichTemplate';
 import * as Config from 'Config';
-import { getModule } from 'core/NgRegistry';
 import TheLocaleStore from 'services/localeStore';
 import { getContentPreview } from 'features/content-preview';
 import { getApiKeyRepo } from 'features/api-keys-management';
@@ -372,12 +371,9 @@ export function getCreator(spaceContext, itemHandlers, templateInfo, selectedLoc
       cmaClient.asset.processForLocale({}, asset, selectedLocaleCode);
 
       destroySubscription = onAssetFileProcessed(_.get(asset, 'sys'), () => {
-        const $rootScope = getModule('$rootScope');
-        $rootScope.$apply(() => {
-          clearTimeout(processingTimeout);
-          resolve(asset);
-          destroySubscription();
-        });
+        clearTimeout(processingTimeout);
+        resolve(asset);
+        destroySubscription();
       });
     });
   }
