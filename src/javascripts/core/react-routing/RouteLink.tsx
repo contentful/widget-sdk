@@ -3,10 +3,12 @@ import { createPath, State } from 'history';
 import { LinkProps, useHref, useLocation, useNavigate, useResolvedPath } from 'react-router-dom';
 import { RouteType } from './routes';
 import { router } from './useRouter';
+import { cx } from 'emotion';
 
 type RouteLinkChildrenFn = (params: {
   getHref: () => string;
   onClick: (e?: any) => unknown;
+  isActive?: boolean;
 }) => React.ReactElement;
 
 function isModifiedEvent(event: React.MouseEvent) {
@@ -21,22 +23,28 @@ function getToAndState(route: RouteType | string, state?: State): { to: string; 
   return { to: router.href(route), state: { ...(route as any)?.navigationState, ...state } };
 }
 
-export const RouteLink = (
-  props: Omit<LinkProps, 'to'> & {
-    route: RouteType | string;
-    as?: any;
-    children: React.ReactNode | RouteLinkChildrenFn;
-    testId?: string;
-    handlePrevented?: boolean;
-  }
-) => {
-  const { children } = props;
+type RouteLinkProps = Omit<LinkProps, 'to'> & {
+  route: RouteType | string;
+  as?: any;
+  children: React.ReactNode | RouteLinkChildrenFn;
+  testId?: string;
+  handlePrevented?: boolean;
+  activeClassName?: string;
+};
+
+export const RouteLink = (props: RouteLinkProps) => {
+  const { children, activeClassName, ...rest } = props;
   const { to, state } = getToAndState(props.route, props.state);
 
   const href = useHref(to);
   const navigate = useNavigate();
   const location = useLocation();
   const path = useResolvedPath(to);
+
+  const locationPathname = location.pathname;
+  const toPathname = path.pathname;
+
+  const isActive = locationPathname === toPathname;
 
   function handleClick(event: React.MouseEvent<HTMLAnchorElement>) {
     if (props.onClick) props.onClick(event);
@@ -60,10 +68,21 @@ export const RouteLink = (
     return (children as RouteLinkChildrenFn)({
       getHref: () => href,
       onClick: handleClick,
+      isActive,
     });
   }
 
-  return <Link {...props} to={to} state={state} href={href} onClick={handleClick} />;
+  return (
+    <Link
+      {...rest}
+      className={cx(props.className, isActive ? activeClassName : null)}
+      to={to}
+      state={state}
+      href={href}
+      onClick={handleClick}>
+      {children}
+    </Link>
+  );
 };
 
 const Link = React.forwardRef<

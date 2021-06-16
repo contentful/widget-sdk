@@ -11,7 +11,6 @@ import {
 import * as Authentication from 'Authentication';
 import * as TokenStore from 'services/TokenStore';
 import * as Analytics from 'analytics/Analytics';
-import * as UrlSyncHelper from 'account/UrlSyncHelper';
 import * as createSpace from 'services/CreateSpace';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { getCurrentStateName, go } from 'states/Navigator';
@@ -35,7 +34,7 @@ export default function handleGatekeeperMessage(data) {
       window.location.pathname = data.path;
     }, 10);
   } else if (match('update', 'location')) {
-    UrlSyncHelper.updateWebappUrl(data.path);
+    // do nothing
   } else if (matchesError(data, 401)) {
     Authentication.redirectToLogin();
   } else if (matchesError(data)) {

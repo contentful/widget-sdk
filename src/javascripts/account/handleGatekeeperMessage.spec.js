@@ -3,7 +3,6 @@ import * as Components from '@contentful/forma-36-react-components';
 import * as CreateSpace from 'services/CreateSpace';
 import * as TokenStore from 'services/TokenStore';
 import * as Analytics from 'analytics/Analytics';
-import * as UrlSyncHelper from 'account/UrlSyncHelper';
 import * as Authentication from 'Authentication';
 import * as Navigator from 'states/Navigator';
 import { window } from 'core/services/window';
@@ -25,7 +24,6 @@ jest.mock('states/Navigator', () => ({
 jest.mock('services/CreateSpace');
 jest.mock('services/TokenStore');
 jest.mock('analytics/Analytics');
-jest.mock('account/UrlSyncHelper');
 jest.mock('Authentication');
 
 describe('Gatekeeper Message Handler', () => {
@@ -35,7 +33,6 @@ describe('Gatekeeper Message Handler', () => {
       beginSpaceCreation: jest.fn(),
       refresh: jest.fn(),
       track: jest.fn(),
-      updateWebappUrl: jest.fn(),
       redirectToLogin: jest.fn(),
       cancelUser: jest.fn(),
     };
@@ -48,7 +45,6 @@ describe('Gatekeeper Message Handler', () => {
     CreateSpace.beginSpaceCreation = stubs.beginSpaceCreation;
     TokenStore.refresh = stubs.refresh;
     Analytics.track = stubs.track;
-    UrlSyncHelper.updateWebappUrl = stubs.updateWebappUrl;
     Authentication.redirectToLogin = stubs.redirectToLogin;
     Authentication.cancelUser = stubs.cancelUser;
   });
@@ -110,11 +106,6 @@ describe('Gatekeeper Message Handler', () => {
         expect(window.location.pathname).toEqual('blah/blah');
         done();
       });
-    });
-
-    it('updates location', function () {
-      handleGatekeeperMessage({ action: 'update', type: 'location', path: 'blah/blah' });
-      expect(stubs.updateWebappUrl).toHaveBeenCalledWith('blah/blah');
     });
 
     it('refreshes token for any other message', function () {

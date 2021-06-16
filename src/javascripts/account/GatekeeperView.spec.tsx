@@ -6,6 +6,7 @@ import {
   waitFor,
   waitForElementToBeRemoved,
 } from '@testing-library/react';
+import { MemoryRouter } from 'core/react-routing';
 
 import { GatekeeperView } from './GatekeeperView';
 
@@ -19,7 +20,11 @@ describe('GatekeeperView', () => {
   };
 
   const build = () => {
-    return render(<GatekeeperView {...props} />);
+    return render(
+      <MemoryRouter>
+        <GatekeeperView {...props} />
+      </MemoryRouter>
+    );
   };
 
   it('renders the iframe with the correct url', () => {
