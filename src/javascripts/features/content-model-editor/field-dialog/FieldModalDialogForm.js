@@ -26,7 +26,7 @@ import { useSpaceEnvContentTypes } from 'core/services/SpaceEnvContext';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { FLAGS, getVariation } from 'LaunchDarkly';
 import { useContentTypeField } from './hooks/useContentTypeField';
-import FeedbackButton from 'app/common/FeedbackButton';
+import { FeedbackButton } from 'core/feature-feedback';
 
 const styles = {
   modalControls: css({

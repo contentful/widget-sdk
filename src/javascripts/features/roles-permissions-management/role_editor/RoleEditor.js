@@ -1,7 +1,7 @@
 import { Note, Notification, TabPanel } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 import * as PolicyBuilder from 'access_control/PolicyBuilder';
-import FeedbackButton from 'app/common/FeedbackButton';
+import { FeedbackButton } from 'core/feature-feedback';
 import * as EntityFieldValueHelpers from 'classes/EntityFieldValueHelpers';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
@@ -524,7 +524,6 @@ class RoleEditorWithNavigator extends React.Component {
                 className={styles.feedback}
                 about="Roles & Permissions"
                 target="devWorkflows"
-                label={'Give feedback'}
               />
             </div>
             <RoleEditorActions

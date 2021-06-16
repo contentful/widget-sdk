@@ -1,4 +1,4 @@
-import FeedbackButton from 'app/common/FeedbackButton';
+import { FeedbackButton } from 'core/feature-feedback';
 import React from 'react';
 import PropTypes from 'prop-types';
 

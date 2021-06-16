@@ -3,7 +3,7 @@ import { Notification, TextLink } from '@contentful/forma-36-react-components';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import * as Analytics from 'analytics/Analytics';
 
-import FeedbackDialog from './FeedbackDialog';
+import { FeedbackDialog } from './FeedbackDialog';
 
 export interface FeedbackButtonProps {
   about: string;
@@ -11,7 +11,8 @@ export interface FeedbackButtonProps {
   label?: string;
 }
 
-export default function FeedbackButton({ about, label, target }: FeedbackButtonProps) {
+export function FeedbackButton(props: FeedbackButtonProps) {
+  const { about, target, label = 'Give feedback' } = props;
   const onClick = useCallback(async () => {
     const feedback = await ModalLauncher.open(({ isShown, onClose }) => (
       <FeedbackDialog
@@ -29,5 +30,5 @@ export default function FeedbackButton({ about, label, target }: FeedbackButtonP
     }
   }, [about, target]);
 
-  return <TextLink onClick={onClick}>{label || 'Give feedback'}</TextLink>;
+  return <TextLink onClick={onClick}>{label}</TextLink>;
 }

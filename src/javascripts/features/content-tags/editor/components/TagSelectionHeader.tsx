@@ -1,6 +1,6 @@
 import { Paragraph } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
-import FeedbackButton from 'app/common/FeedbackButton';
+import { FeedbackButton } from 'core/feature-feedback';
 import { css } from 'emotion';
 import { NoTagsContainer } from 'features/content-tags/core/components/NoTagsContainer';
 import { useCanManageTags, useReadTags } from 'features/content-tags/core/hooks';
