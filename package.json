@@ -280,8 +280,8 @@
     "yargs": "^15.3.1"
   },
   "scripts": {
-    "postinstall": "patch-package",
     "preinstall": "npm install --package-lock-only --ignore-scripts && npx npm-force-resolutions",
+    "postinstall": "patch-package",
     "prepare": "relative-deps",
     "clean-logs-pacts": "rm -rf logs/ pacts/",
     "start": "NODE_ENV=development webpack serve",

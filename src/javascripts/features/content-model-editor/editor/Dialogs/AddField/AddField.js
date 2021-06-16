@@ -184,18 +184,18 @@ const AddFieldModalContent = ({ onClose, onConfirm, onConfirmAndConfigure, exist
   }, [state, dispatch]);
 
   const onCreate = React.useCallback(
-    ({ name, apiName }) => {
+    ({ name, apiName, initialValue }) => {
       const typeInfo = fieldFactory.createTypeInfo(state.fieldType, state.isList);
-      onConfirm({ name, apiName, id: random.id(), ...typeInfo });
+      onConfirm({ name, apiName, id: random.id(), initialValue, ...typeInfo });
       onClose();
     },
     [state, onClose, onConfirm]
   );
 
   const onCreateAndConfigure = React.useCallback(
-    ({ name, apiName }) => {
+    ({ name, apiName, initialValue }) => {
       const typeInfo = fieldFactory.createTypeInfo(state.fieldType, state.isList);
-      onConfirmAndConfigure({ name, apiName, id: random.id(), ...typeInfo });
+      onConfirmAndConfigure({ name, apiName, id: random.id(), initialValue, ...typeInfo });
       onClose();
     },
     [state, onClose, onConfirmAndConfigure]

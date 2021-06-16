@@ -1,8 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { Fragment, useEffect, useState, useMemo } from 'react';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import PropTypes from 'prop-types';
-import { useForm } from 'core/hooks/useForm';
 import {
   Modal,
   Button,
@@ -12,32 +11,43 @@ import {
   Heading,
   DisplayText,
   IconButton,
+  Tag,
 } from '@contentful/forma-36-react-components';
 import Icon from 'ui/Components/Icon';
 import { SettingsTabComponent } from './components/SettingsTabComponent';
 import { ValidationTabComponent } from './components/ValidationTabComponent';
+import { InitialValueTabComponent } from './components/InitialValueTabComponent';
 import { AppearanceTabComponent } from './components/AppearanceTabComponent';
-import {
-  getSettingsFormFields,
-  getValidationsFormFields,
-  getNodeValidationsFormFields,
-} from './utils/formFieldDefetitions';
-import { getRichTextOptions, getWidgetSettings } from './utils/helpers';
+import { getRichTextOptions } from './utils/helpers';
 import { getIconId } from 'services/fieldFactory';
 import { toInternalFieldType } from 'widgets/FieldTypes';
 import { create as createBuiltinWidgetList } from 'widgets/BuiltinWidgets';
 import { useSpaceEnvContentTypes } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
+import { FLAGS, getVariation } from 'LaunchDarkly';
+import { useContentTypeField } from './hooks/useContentTypeField';
+import FeedbackButton from 'app/common/FeedbackButton';
 
 const styles = {
+  modalControls: css({
+    backgroundColor: tokens.colorWhite,
+    borderTop: `1px solid ${tokens.colorElementMid}`,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingTop: tokens.spacingL,
+    position: 'relative',
+    width: '100%',
+  }),
   modalHeader: css({
     display: 'flex',
     flexShrink: 0,
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: tokens.colorElementLightest,
-    borderRadius: '3px 3px 0 0',
-    borderBottom: `1px solid ${tokens.colorElementDark}`,
-    padding: `${tokens.spacingXs} ${tokens.spacingL} 0 ${tokens.spacingL}`,
+    borderRadius: `${tokens.borderRadiusMedium} ${tokens.borderRadiusMedium} 0 0 `,
+    borderBottom: `1px solid ${tokens.colorElementMid}`,
+    padding: `${tokens.spacingXs} ${tokens.spacingM} 0 ${tokens.spacingL}`,
   }),
   leftPanel: css({
     display: 'flex',
@@ -58,11 +68,15 @@ const styles = {
     fontWeight: tokens.fontWeightNormal,
     color: tokens.colorTextLightest,
   }),
+  promotionTag: css({
+    marginLeft: tokens.spacingXs,
+  }),
 };
 
 const formTabs = {
   SETTINGS: 'settings-tab',
   VALIDATION: 'validation-tab',
+  INITIAL_VALUE: 'initial-values-tab',
   APPEARANCE: 'appearance-tab',
 };
 
@@ -83,33 +97,49 @@ const FieldModalDialogForm = ({
   customWidgets,
 }) => {
   const { currentSpaceContentTypes } = useSpaceEnvContentTypes();
+  const { currentOrganizationId, currentSpaceId } = useSpaceEnvContext();
   const [selectedTab, setSelectedTab] = useState(formTabs.SETTINGS);
   const [richTextOptions, setRichTextOptions] = useState(() => getRichTextOptions(ctField));
-  const [widgetSettings, setWidgetSettings] = useState(() => getWidgetSettings(widget));
+  const [isInitialFieldValuesEnabled, setIsInitialFieldValuesEnabled] = useState(false);
+
+  useEffect(() => {
+    const getInitialFieldValuesFeatureFlagVariation = async () => {
+      const featureFlagVariation = await getVariation(FLAGS.INITIAL_FIELD_VALUES, {
+        organizationId: currentOrganizationId,
+        spaceId: currentSpaceId,
+      });
+
+      setIsInitialFieldValuesEnabled(featureFlagVariation);
+    };
+
+    getInitialFieldValuesFeatureFlagVariation();
+  }, [currentOrganizationId, currentSpaceId]);
 
   const availableWidgets = useMemo(
     () => getAvailableWidgets(customWidgets, contentType, editorInterface, ctField),
     [customWidgets, ctField]
   );
 
-  const submitForm = (values, richTextOptions, widgetSettings) => {
+  const submitFn = (values, richTextOptions, widgetSettings) => {
     updateFieldOnScope(values, richTextOptions, widgetSettings);
     onClose();
   };
-
-  const { onBlur, onChange, onSubmit, fields, form } = useForm({
-    fields: {
-      ...getSettingsFormFields(ctField, contentType),
-      ...getValidationsFormFields(ctField),
-      ...getNodeValidationsFormFields(ctField),
-    },
-    submitFn: submitForm,
+  const {
+    contentType: contentTypeForm,
+    widgetSettings,
+    isPristine,
+    isInvalid,
+  } = useContentTypeField({
+    submitFn,
+    field: ctField,
+    contentType,
+    widget,
   });
-
+  const { onBlur, onChange, onSubmit, fields, form } = contentTypeForm;
   const iconId = getIconId(ctField) + '-small';
 
   return (
-    <div data-test-id="field-dialog">
+    <Fragment>
       <div className={styles.modalHeader}>
         <div className={styles.modalTitle}>
           <Icon name={iconId} />
@@ -132,6 +162,18 @@ const FieldModalDialogForm = ({
               onSelect={setSelectedTab}>
               Validation
             </Tab>
+            {isInitialFieldValuesEnabled && (
+              <Tab
+                testId={formTabs.INITIAL_VALUE}
+                id={formTabs.INITIAL_VALUE}
+                selected={selectedTab === formTabs.INITIAL_VALUE}
+                onSelect={setSelectedTab}>
+                Initial value
+                <Tag className={styles.promotionTag} tagType="primary-filled" size="small">
+                  new
+                </Tag>
+              </Tab>
+            )}
             <Tab
               testId={formTabs.APPEARANCE}
               id={formTabs.APPEARANCE}
@@ -152,65 +194,84 @@ const FieldModalDialogForm = ({
         </div>
       </div>
       <Modal.Content>
-        <div>
-          {selectedTab === formTabs.SETTINGS && (
-            <TabPanel id="settings-tab-panel">
-              <SettingsTabComponent
-                onBlur={onBlur}
-                onChange={onChange}
-                fields={fields}
-                form={form}
-                ctField={ctField}
-                contentTypes={currentSpaceContentTypes}
-                contentType={contentType}
-                richTextOptions={richTextOptions}
-                setRichTextOptions={setRichTextOptions}
-              />
-            </TabPanel>
-          )}
-          {selectedTab === formTabs.VALIDATION && (
-            <TabPanel id="validation-tab-panel">
-              <ValidationTabComponent
-                onBlur={onBlur}
-                onChange={onChange}
-                fields={fields}
-                form={form}
-                ctField={ctField}
-                contentTypes={currentSpaceContentTypes}
-                widgetSettings={widgetSettings}
-                availableWidgets={availableWidgets}
-              />
-            </TabPanel>
-          )}
-          {selectedTab === formTabs.APPEARANCE && (
-            <TabPanel id="appearance-tab-panel">
-              <AppearanceTabComponent
-                editorInterface={editorInterface}
-                customWidgets={customWidgets}
-                availableWidgets={availableWidgets}
-                widgetSettings={widgetSettings}
-                setWidgetSettings={setWidgetSettings}
-                contentType={contentType}
-                ctField={ctField}
-                widget={widget}
-              />
-            </TabPanel>
-          )}
-        </div>
+        {selectedTab === formTabs.SETTINGS && (
+          <TabPanel id="settings-tab-panel">
+            <SettingsTabComponent
+              onBlur={onBlur}
+              onChange={onChange}
+              fields={fields}
+              form={form}
+              ctField={ctField}
+              contentTypes={currentSpaceContentTypes}
+              contentType={contentType}
+              richTextOptions={richTextOptions}
+              setRichTextOptions={setRichTextOptions}
+            />
+          </TabPanel>
+        )}
+        {selectedTab === formTabs.VALIDATION && (
+          <TabPanel id="validation-tab-panel">
+            <ValidationTabComponent
+              onBlur={onBlur}
+              onChange={onChange}
+              fields={fields}
+              form={form}
+              ctField={ctField}
+              contentTypes={currentSpaceContentTypes}
+              widgetSettings={widgetSettings.data}
+              availableWidgets={availableWidgets}
+            />
+          </TabPanel>
+        )}
+        {isInitialFieldValuesEnabled && selectedTab === formTabs.INITIAL_VALUE && (
+          <TabPanel id="initial-value-tab-panel">
+            <InitialValueTabComponent
+              onBlur={onBlur}
+              onChange={onChange}
+              fields={fields}
+              ctField={ctField}
+              contentType={contentType}
+              contentTypes={currentSpaceContentTypes}
+              editorInterface={editorInterface}
+              widgetSettings={widgetSettings.data}
+              availableWidgets={availableWidgets}
+            />
+          </TabPanel>
+        )}
+        {selectedTab === formTabs.APPEARANCE && (
+          <TabPanel id="appearance-tab-panel">
+            <AppearanceTabComponent
+              editorInterface={editorInterface}
+              customWidgets={customWidgets}
+              availableWidgets={availableWidgets}
+              widgetSettings={widgetSettings.data}
+              setWidgetSettings={widgetSettings.setData}
+              contentType={contentType}
+              ctField={ctField}
+              widget={widget}
+            />
+          </TabPanel>
+        )}
       </Modal.Content>
-      <Modal.Controls>
-        <Button
-          testId="confirm-field-dialog-form"
-          disabled={form.invalid}
-          onClick={() => onSubmit(richTextOptions, widgetSettings)}
-          buttonType="positive">
-          Confirm
-        </Button>
-        <Button onClick={onClose} buttonType="muted">
-          Cancel
-        </Button>
+      <Modal.Controls className={styles.modalControls}>
+        <div>
+          <Button
+            testId="confirm-field-dialog-form"
+            disabled={isInvalid || isPristine}
+            onClick={() => onSubmit(richTextOptions, widgetSettings.data)}
+            buttonType="positive">
+            Confirm
+          </Button>
+          <Button onClick={onClose} buttonType="muted">
+            Cancel
+          </Button>
+        </div>
+
+        {isInitialFieldValuesEnabled && selectedTab === formTabs.INITIAL_VALUE && (
+          <FeedbackButton about="Initial values" target="dante" />
+        )}
       </Modal.Controls>
-    </div>
+    </Fragment>
   );
 };
 

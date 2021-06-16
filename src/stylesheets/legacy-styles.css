@@ -1936,16 +1936,6 @@ pre,
   .field-dialog__widget-icon {
     margin: auto 0;
   }
-  /* features/content-model-editor/field-dialog/components/FieldDialogAppearanceTab.js */
-  .field-dialog__widget-options {
-    position: relative;
-    min-height: 19em;
-    padding-top: 1.671428571428572em;
-    padding-bottom: 1.671428571428572em;
-    background-color: var(--color-white);
-    border-top: 1px solid var(--color-element-mid);
-    border-bottom: 1px solid var(--color-element-mid);
-  }
   
   
  /* core/components/Paginator/Paginator.tsx */

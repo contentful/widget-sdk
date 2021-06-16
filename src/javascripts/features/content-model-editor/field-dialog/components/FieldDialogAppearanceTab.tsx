@@ -18,6 +18,12 @@ const styles = {
   note: css({
     marginBottom: tokens.spacingL,
   }),
+  widgetOptions: css({
+    position: 'relative',
+    padding: `${tokens.spacingL} 0`,
+    backgroundColor: tokens.colorWhite,
+    borderTop: `1px solid ${tokens.colorElementMid}`,
+  }),
 };
 
 function useSlugTrackingFeatureFlag(widget?: BuiltinWidget) {
@@ -130,7 +136,7 @@ export function FieldDialogAppearanceTab(props: FieldDialogAppearanceTabProps) {
             />
             <div
               className={classNames('modal-dialog__slice', {
-                'field-dialog__widget-options': availableWidgets.length > 1,
+                [styles.widgetOptions]: availableWidgets.length > 1,
               })}>
               {selectedWidget && <WidgetParametersForm {...getFormProps(selectedWidget)} />}
             </div>

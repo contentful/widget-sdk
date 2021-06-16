@@ -124,3 +124,15 @@ export const getNodeValidationsFormFields = (ctField) => {
     {}
   );
 };
+
+export const getInitialValueFormFields = (ctField) => {
+  if (ctField.initialValue) {
+    return {
+      initialValue: {
+        value: ctField.initialValue,
+      },
+    };
+  }
+
+  return {};
+};
