@@ -1,24 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { isFunction, get } from 'lodash';
+import { isFunction } from 'lodash';
 import { registerDirective } from 'core/NgRegistry';
 import angular from 'angular';
-import { captureError } from 'core/monitoring';
 
-import * as Forma36Components from '@contentful/forma-36-react-components';
-
-import * as uiComponentsIconEs6 from 'ui/Components/Icon';
-import * as componentsSharedDocumentTitleEs6 from 'components/shared/DocumentTitle';
-import { EntityFieldHeading } from 'app/entity_editor/EntityField/EntityFieldHeading';
-import { EntityFieldControl } from 'app/entity_editor/EntityField/EntityFieldControl';
-import * as Loader from 'ui/Loader';
 import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
-import { BulkEditor } from 'app/entity_editor/bulk_editor/BulkEditor';
-import { EmptyState } from 'app/entity_editor/EmptyState';
 import { CurrentSpaceAPIClientProvider } from 'core/services/APIClient/CurrentSpaceAPIClientContext';
-import { EntryEditor } from 'app/entry_editor/EntryEditor';
-import { AssetEditor } from 'app/asset_editor/AssetEditor';
-import { SlideInEditor } from 'app/entity_editor/SlideInEditor/SlideInEditor';
 
 function renderComponent(Component, props, scope, container) {
   if (!Component) {
@@ -37,71 +24,6 @@ function renderComponent(Component, props, scope, container) {
       container
     );
   });
-}
-
-function getReactComponent(name) {
-  // if name is a function assume it is component and return it
-  if (isFunction(name)) {
-    return name;
-  }
-
-  // a React component name must be specified
-  if (!name) {
-    throw new Error('ReactComponent name attribute must be specified');
-  }
-
-  // ensure the specified React component is accessible, and fail fast if it's not
-  let reactComponent;
-
-  try {
-    reactComponent = requireComponent(name);
-  } catch (e) {
-    captureError(e);
-  }
-
-  if (!reactComponent) {
-    throw Error(`Cannot find react component "${name}"`);
-  }
-
-  return reactComponent.default ? reactComponent.default : reactComponent;
-}
-
-function requireComponent(name) {
-  // you can just provide name "@contentful/forma-36-react-components/TextLink"
-  if (name.startsWith('@contentful/forma-36-react-components')) {
-    const componentName = name.split('@contentful/forma-36-react-components/')[1];
-
-    if (!componentName) {
-      throw new Error(
-        'You wanted to use forma-36-react-components, but did not provide element:::',
-        name
-      );
-    }
-
-    const Forma36Component = Forma36Components[componentName];
-
-    if (!Forma36Component) {
-      throw new Error(
-        `You wanted to use @contentful/forma-36-react-components component, but "${componentName}" does not exist in it`
-      );
-    }
-
-    return Forma36Component;
-  } else if (getModule(name)) {
-    const component = getModule(name);
-
-    if (!component.default) {
-      throw Error(
-        'React component found but does not expose default export. Expose component using default keyword.'
-      );
-    }
-
-    return component.default;
-  } else {
-    throw new Error(
-      `Module ${name} not available to react-component. Make sure it's an allowed module.`
-    );
-  }
 }
 
 /**
@@ -159,8 +81,7 @@ export default function register() {
    * @usage[js]
    * {
    *   template: `
-   *     <react-component name="app/home/welcome/Welcome" props="myController.props"></react-component>
-   *     <react-component name="@contentful/forma-36-react-components/TextLink"></react-component>
+   *     <react-component component="MyComponent" props="myController.props"></react-component>
    *   `
    * }
    *
@@ -179,18 +100,10 @@ export default function register() {
         const container = $element[0];
         let ReactComponent;
 
-        if (attrs.name) {
-          ReactComponent = getReactComponent(attrs.name);
-        } else if (attrs.component) {
+        if (attrs.component) {
           ReactComponent = $scope.$eval(attrs.component);
-        } else if (attrs.jsx) {
-          ReactComponent = class Component extends React.Component {
-            render() {
-              return $scope.$eval(attrs.jsx);
-            }
-          };
         } else {
-          throw new Error('Expect `component` or `name`');
+          throw new Error('Expect `component`');
         }
 
         const renderMyComponent = () => {
@@ -218,21 +131,4 @@ export default function register() {
       },
     };
   });
-}
-
-function getModule(name) {
-  const allowedModules = {
-    'ui/Components/Icon': uiComponentsIconEs6,
-    'components/shared/DocumentTitle': componentsSharedDocumentTitleEs6,
-    'app/entity_editor/bulk_editor/BulkEditor': { default: BulkEditor },
-    'app/entry_editor/EntryEditor': { default: EntryEditor },
-    'app/asset_editor/AssetEditor': { default: AssetEditor },
-    'ui/Loader': Loader,
-    'app/entity_editor/EntityField/EntityFieldHeading': { default: EntityFieldHeading },
-    'app/entity_editor/EntityField/EntityFieldControl': { default: EntityFieldControl },
-    'app/entity_editor/EmptyState': { default: EmptyState },
-    'app/entity_editor/SlideInEditor/SlideInEditor': { default: SlideInEditor },
-  };
-
-  return get(allowedModules, name, null);
 }
