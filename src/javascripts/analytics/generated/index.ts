@@ -13,49 +13,7 @@
 import Ajv from 'ajv';
 import * as Segment from './segment';
 
-export interface Payload {
-  has_inaccessible_tasks?: boolean;
-  num_pending_tasks?: number;
-  num_visible_pending_tasks?: number;
-}
 export interface Data {
-  action?: string;
-  environment_key?: string;
-  organization_key?: string;
-  payload?: Payload;
-  scope?: string;
-  space_key?: string;
-}
-export interface AccountDropdownPendingTasksFetched {
-  data?: Data;
-}
-export interface Payload1 {
-  definition_id?: string;
-}
-export interface Data1 {
-  action?: string;
-  environment_key?: string;
-  organization_key?: string;
-  payload?: Payload1;
-  scope?: string;
-}
-export interface AppManagementCreated {
-  data?: Data1;
-}
-export interface Payload2 {
-  definition_id?: string;
-}
-export interface Data2 {
-  action?: string;
-  environment_key?: string;
-  organization_key?: string;
-  payload?: Payload2;
-  scope?: string;
-}
-export interface AppManagementUpdated {
-  data?: Data2;
-}
-export interface Data3 {
   app_event_name?: string;
   contentful_app_id?: string;
   contentful_event_id?: string;
@@ -64,88 +22,7 @@ export interface Data3 {
   space_key?: string;
 }
 export interface AppsLifecycleEvent {
-  data?: Data3;
-}
-export interface AssetCreated {
-  asset_id?: string;
-  environment?: string;
-  space_key?: string;
-  version?: string;
-}
-export interface Data4 {
-  action?: string;
-  environment_key?: string;
-  organization_key?: string;
-  payload?: Record<string, any>;
-  scope?: string;
-  space_key?: string;
-}
-export interface AssetListAddAssetMultiple {
-  data?: Data4;
-}
-export interface Data5 {
-  action?: string;
-  environment_key?: string;
-  organization_key?: string;
-  payload?: Record<string, any>;
-  scope?: string;
-  space_key?: string;
-}
-export interface AssetListAddAssetSingle {
-  data?: Data5;
-}
-export interface AssetPublished {
-  asset_id?: string;
-  environment?: string;
-  space_key?: string;
-  version?: string;
-}
-export interface Data6 {
-  action?: string;
-  environment_key?: string;
-  num_edited_entries?: number;
-  num_published_entries?: number;
-  organization_key?: string;
-  parent_entry_id?: string;
-  ref_count?: number;
-  space_key?: string;
-}
-export interface BulkEditorClose {
-  data?: Data6;
-}
-export interface Data7 {
-  action?: string;
-  entry_id?: string;
-  environment_key?: string;
-  organization_key?: string;
-  parent_entry_id?: string;
-  ref_count?: number;
-  space_key?: string;
-}
-export interface BulkEditorEditInEntryEditor {
-  data?: Data7;
-}
-export interface Data8 {
-  action?: string;
-  environment_key?: string;
-  organization_key?: string;
-  parent_entry_id?: string;
-  ref_count?: number;
-  space_key?: string;
-}
-export interface BulkEditorOpen {
-  data?: Data8;
-}
-export interface Data9 {
-  action?: string;
-  environment_key?: string;
-  organization_key?: string;
-  parent_entry_id?: string;
-  ref_count?: number;
-  space_key?: string;
-}
-export interface BulkEditorOpenSlideIn {
-  data?: Data9;
+  data?: Data;
 }
 export interface EditorInterfaceFieldUpdated {
   content_type_id?: string;
@@ -198,20 +75,6 @@ export interface EditorLoaded {
    */
   total_slide_count?: number;
 }
-export interface Payload3 {
-  tab_name?: string;
-}
-export interface Data10 {
-  action?: string;
-  environment_key?: string;
-  organization_key?: string;
-  payload?: Payload3;
-  scope?: string;
-  space_key?: string;
-}
-export interface EditorWorkbenchTabOpen {
-  data?: Data10;
-}
 export interface ElementClick {
   contexts?: string;
   element_id?: string;
@@ -221,65 +84,26 @@ export interface ElementClick {
   organization_key?: string;
   space_key?: string;
 }
-export interface EntryPublish {
-  action?: string;
-  content_type_id?: string;
-  contexts?: string;
-  entry_ct_entry_reference_fields_count?: number;
-  entry_id?: string;
-  event_origin?: string;
-  has_legacy_extensions?: boolean;
-  is_default?: boolean;
-  organization_key?: string;
-  space_key?: string;
-  version?: number;
-}
-export interface Payload4 {
-  circular_references_count?: number;
-  entity_id?: string;
-  references_depth?: number;
-  references_per_level?: number[];
-}
-export interface Data11 {
-  action?: string;
+export interface ExperimentGoalAchieved {
+  action: string;
+  context?: string;
   environment_key?: string;
+  experiment_id: string;
+  experiment_variation: string;
   organization_key?: string;
-  payload?: Payload4;
-  scope?: string;
   space_key?: string;
+  value?: number;
 }
-export interface EntryReferencesDialogOpen {
-  data?: Data11;
-}
-export interface Payload5 {
-  entity_id?: string;
-  references_count?: number;
-}
-export interface Data12 {
-  action?: string;
+export interface ExperimentInteracted {
+  action: string;
+  context?: string;
   environment_key?: string;
+  experiment_id: string;
+  experiment_variation: string;
   organization_key?: string;
-  payload?: Payload5;
-  scope?: string;
   space_key?: string;
-}
-export interface EntryReferencesPublish {
-  data?: Data12;
-}
-export interface Payload6 {
-  entity_id?: string;
-  references_count?: number;
-}
-export interface Data13 {
-  action?: string;
-  environment_key?: string;
-  organization_key?: string;
-  payload?: Payload6;
-  scope?: string;
-  space_key?: string;
-}
-export interface EntryReferencesValidate {
-  data?: Data13;
+  step?: number;
+  value?: number;
 }
 export interface ExperimentStarted {
   environment_key?: string;
@@ -306,7 +130,7 @@ export interface GlobalAppLoaded {
   organization_key?: string;
   space_key?: string;
 }
-export interface Data14 {
+export interface Data1 {
   action?: string;
   environment_key?: string;
   name?: string;
@@ -315,186 +139,15 @@ export interface Data14 {
   space_key?: string;
 }
 export interface GlobalDialog {
-  data?: Data14;
+  data?: Data1;
   schema?: string;
 }
-export interface GlobalSpaceChanged {
-  action?: string;
-  environment_key?: string;
-  organization_key?: string;
-  payload?: Record<string, any>;
-  scope?: string;
-  space_key?: string;
-}
-export interface GlobalSpaceLeft {
-  action?: string;
-  environment_key?: string;
-  organization_key?: string;
-  payload?: Record<string, any>;
-  scope?: string;
-}
-export interface FromStateParams {
-  accepted_permissions?: any | null;
-  add_to_context?: boolean;
-  api_key_id?: string;
-  app_id?: any | null;
-  asset_id?: string;
-  content_type_id?: string;
-  definition_id?: string;
-  entry_id?: string;
-  environment_key?: string;
-  ignore_leave_confirmation?: boolean;
-  invitation_id?: string;
-  jump_to_role?: string;
-  locale_id?: string;
-  org_id?: any | null;
-  org_owner_or_admin?: any | null;
-  path_suffix?: string;
-  referrer?: any | null;
-  space_key?: string;
-  tab?: string;
-  template_id?: any | null;
-  user_id?: string;
-  webhook_id?: string;
-}
-export interface ToStateParams {
-  accepted_permissions?: any | null;
-  add_to_context?: boolean;
-  api_key_id?: string;
-  app_id?: any | null;
-  asset_id?: string;
-  content_type_id?: string;
-  definition_id?: string;
-  entry_id?: string;
-  environment_key?: string;
-  ignore_leave_confirmation?: boolean;
-  jump_to_role?: string;
-  locale_id?: string;
-  org_id?: string;
-  org_owner_or_admin?: any | null;
-  path_suffix?: string;
-  referrer?: any | null;
-  space_key?: string;
-  tab?: string;
-  template_id?: any | null;
-  user_id?: string;
-  webhook_id?: string;
-}
-export interface Data15 {
-  from_state?: string;
-  from_state_params?: FromStateParams;
-  organization_key?: string;
-  space_key?: string;
-  to_state?: string;
-  to_state_params?: ToStateParams;
-}
-export interface GlobalStateChanged {
-  data?: Data15;
-}
-export interface Payload7 {
-  dialog_action?: string;
-  dialog_session_id?: string;
-  entity_id?: string;
-  entity_type?: string;
-  incoming_links_count?: number;
-}
-export interface Data16 {
-  action?: string;
-  environment_key?: string;
-  organization_key?: string;
-  payload?: Payload7;
-  scope?: string;
-  space_key?: string;
-}
-export interface IncomingLinksDialogConfirm {
-  data?: Data16;
-}
-export interface Payload8 {
-  dialog_action?: string;
-  dialog_session_id?: string;
-  entity_id?: string;
-  entity_type?: string;
-  incoming_links_count?: number;
-}
-export interface Data17 {
-  action?: string;
-  environment_key?: string;
-  organization_key?: string;
-  payload?: Payload8;
-  scope?: string;
-  space_key?: string;
-}
-export interface IncomingLinksDialogOpen {
-  data?: Data17;
-}
-export interface Payload9 {
-  entity_id?: string;
-  entity_type?: string;
-  incoming_link_ids?: string[];
-  incoming_links_count?: number;
-}
-export interface Data18 {
-  action?: string;
-  environment_key?: string;
-  organization_key?: string;
-  payload?: Payload9;
-  scope?: string;
-  space_key?: string;
-}
-export interface IncomingLinksQuery {
-  data?: Data18;
-}
-export interface Payload10 {
-  state_name?: string;
-  value?: number;
-}
-export interface Data19 {
-  action?: string;
-  environment_key?: string;
-  organization_key?: string;
-  payload?: Payload10;
-  scope?: string;
-  space_key?: string;
-}
-export interface PerfDomContentLoaded {
-  data?: Data19;
-}
-export interface Payload11 {
-  state_name?: string;
-  value?: number;
-}
-export interface Data20 {
-  action?: string;
-  environment_key?: string;
-  organization_key?: string;
-  payload?: Payload11;
-  scope?: string;
-  space_key?: string;
-}
-export interface PerfFirstContentfulPaint {
-  data?: Data20;
-}
-export interface Payload12 {
-  state_name?: string;
-  value?: number;
-}
-export interface Data21 {
-  action?: string;
-  environment_key?: string;
-  organization_key?: string;
-  payload?: Payload12;
-  scope?: string;
-  space_key?: string;
-}
-export interface PerfTimeToInteractive {
-  data?: Data21;
-}
-export interface Data22 {
+export interface Data2 {
   action?: string;
   personal_access_token_id?: string;
 }
 export interface PersonalAccessTokenAction {
-  data?: Data22;
+  data?: Data2;
 }
 export interface ReleaseCreated {
   environment_key: string;
@@ -520,38 +173,6 @@ export interface ReleaseEntityAdded {
 export interface ReleaseEntityRemoved {
   entity_id: string;
   entity_type: string;
-  environment_key: string;
-  organization_key: string;
-  release_id: string;
-  space_key: string;
-}
-export interface ReleasePublished {
-  asset_count: number;
-  entry_count: number;
-  environment_key: string;
-  organization_key: string;
-  release_id: string;
-  space_key: string;
-}
-export interface ReleaseScheduleCanceled {
-  environment_key: string;
-  job_id: string;
-  organization_key: string;
-  release_id: string;
-  space_key: string;
-}
-export interface ReleaseScheduleCreated {
-  action: string;
-  asset_count: number;
-  entry_count: number;
-  environment_key: string;
-  job_id: string;
-  organization_key: string;
-  release_id: string;
-  scheduled_for: number;
-  space_key: string;
-}
-export interface ReleaseTrashed {
   environment_key: string;
   organization_key: string;
   release_id: string;
@@ -647,103 +268,8 @@ export interface SearchViewLoaded {
   view_title?: string;
   view_type?: string;
 }
-export interface Payload13 {
-  cma_entity_version?: number;
-  entity_id?: string;
-  entity_type?: string;
-  share_js_doc_compressed_version?: number;
-  share_js_doc_version?: number;
-}
-export interface SharejsCmaEntityVersionMismatch {
-  action?: string;
-  environment_key?: string;
-  organization_key?: string;
-  payload?: Payload13;
-  scope?: string;
-  space_key?: string;
-}
 export interface SpaceCreate {
   contexts?: string;
-}
-export interface Payload14 {
-  num_err?: number;
-  num_success?: number;
-}
-export interface Data23 {
-  action?: string;
-  environment_key?: string;
-  organization_key?: string;
-  payload?: Payload14;
-  scope?: string;
-  space_key?: string;
-}
-export interface TeamsInSpaceUsersAdded {
-  data?: Data23;
-}
-export interface AdditionalData {
-  character_count_after?: number;
-  character_count_before?: number;
-  character_count_selection?: number;
-  link_type?: string;
-  mark_type?: string;
-  node_type?: string;
-}
-export interface Data24 {
-  action?: string;
-  action_origin?: string;
-  additional_data?: AdditionalData;
-  character_count_after?: number;
-  character_count_before?: any | null;
-  character_count_selection?: any | null;
-  content_type_id?: string;
-  editor_name?: string;
-  entry_id?: string;
-  environment_key?: string;
-  field_id?: string;
-  field_locale?: string;
-  is_fullscreen?: boolean;
-  organization_key?: string;
-  space_key?: string;
-}
-export interface TextEditorAction {
-  data?: Data24;
-  schema?: string;
-}
-export interface Payload15 {
-  event?: string;
-}
-export interface Data25 {
-  action?: string;
-  environment_key?: string;
-  organization_key?: string;
-  payload?: Payload15;
-  scope?: string;
-  space_key?: string;
-}
-export interface TrackingInvalidEvent {
-  data?: Data25;
-}
-export interface Data26 {
-  app_definition_id?: string;
-  environment?: string;
-  environment_key?: string;
-  organization_key?: string;
-  space_key?: string;
-  user_id?: string;
-}
-export interface WidgetRendererFallbackRendered {
-  data?: Data26;
-}
-export interface Data27 {
-  app_definition_id?: string;
-  environment?: string;
-  environment_key?: string;
-  organization_key?: string;
-  space_key?: string;
-  user_id?: string;
-}
-export interface WidgetRendererFallbackWarningShown {
-  data?: Data27;
 }
 
 export type ViolationHandler = (
@@ -845,58 +371,7 @@ function withTypewriterContext(message: Segment.Options = {}): Segment.Options {
 }
 
 /**
- * @typedef Payload
- * @property {boolean} [has_inaccessible_tasks] -
- * @property {number} [num_pending_tasks] -
- * @property {number} [num_visible_pending_tasks] -
- */
-/**
  * @typedef Data
- * @property {string} [action] -
- * @property {string} [environment_key] -
- * @property {string} [organization_key] -
- * @property {Payload} [payload] -
- * @property {string} [scope] -
- * @property {string} [space_key] -
- */
-/**
- * @typedef AccountDropdownPendingTasksFetched
- * @property {Data} [data] -
- */
-/**
- * @typedef Payload1
- * @property {string} [definition_id] -
- */
-/**
- * @typedef Data1
- * @property {string} [action] -
- * @property {string} [environment_key] -
- * @property {string} [organization_key] -
- * @property {Payload1} [payload] -
- * @property {string} [scope] -
- */
-/**
- * @typedef AppManagementCreated
- * @property {Data1} [data] -
- */
-/**
- * @typedef Payload2
- * @property {string} [definition_id] -
- */
-/**
- * @typedef Data2
- * @property {string} [action] -
- * @property {string} [environment_key] -
- * @property {string} [organization_key] -
- * @property {Payload2} [payload] -
- * @property {string} [scope] -
- */
-/**
- * @typedef AppManagementUpdated
- * @property {Data2} [data] -
- */
-/**
- * @typedef Data3
  * @property {string} [app_event_name] -
  * @property {string} [contentful_app_id] -
  * @property {string} [contentful_event_id] -
@@ -906,102 +381,7 @@ function withTypewriterContext(message: Segment.Options = {}): Segment.Options {
  */
 /**
  * @typedef AppsLifecycleEvent
- * @property {Data3} [data] -
- */
-/**
- * @typedef AssetCreated
- * @property {string} [asset_id] -
- * @property {string} [environment] -
- * @property {string} [space_key] -
- * @property {string} [version] -
- */
-/**
- * @typedef Data4
- * @property {string} [action] -
- * @property {string} [environment_key] -
- * @property {string} [organization_key] -
- * @property {Record<string, any>} [payload] -
- * @property {string} [scope] -
- * @property {string} [space_key] -
- */
-/**
- * @typedef AssetListAddAssetMultiple
- * @property {Data4} [data] -
- */
-/**
- * @typedef Data5
- * @property {string} [action] -
- * @property {string} [environment_key] -
- * @property {string} [organization_key] -
- * @property {Record<string, any>} [payload] -
- * @property {string} [scope] -
- * @property {string} [space_key] -
- */
-/**
- * @typedef AssetListAddAssetSingle
- * @property {Data5} [data] -
- */
-/**
- * @typedef AssetPublished
- * @property {string} [asset_id] -
- * @property {string} [environment] -
- * @property {string} [space_key] -
- * @property {string} [version] -
- */
-/**
- * @typedef Data6
- * @property {string} [action] -
- * @property {string} [environment_key] -
- * @property {number} [num_edited_entries] -
- * @property {number} [num_published_entries] -
- * @property {string} [organization_key] -
- * @property {string} [parent_entry_id] -
- * @property {number} [ref_count] -
- * @property {string} [space_key] -
- */
-/**
- * @typedef BulkEditorClose
- * @property {Data6} [data] -
- */
-/**
- * @typedef Data7
- * @property {string} [action] -
- * @property {string} [entry_id] -
- * @property {string} [environment_key] -
- * @property {string} [organization_key] -
- * @property {string} [parent_entry_id] -
- * @property {number} [ref_count] -
- * @property {string} [space_key] -
- */
-/**
- * @typedef BulkEditorEditInEntryEditor
- * @property {Data7} [data] -
- */
-/**
- * @typedef Data8
- * @property {string} [action] -
- * @property {string} [environment_key] -
- * @property {string} [organization_key] -
- * @property {string} [parent_entry_id] -
- * @property {number} [ref_count] -
- * @property {string} [space_key] -
- */
-/**
- * @typedef BulkEditorOpen
- * @property {Data8} [data] -
- */
-/**
- * @typedef Data9
- * @property {string} [action] -
- * @property {string} [environment_key] -
- * @property {string} [organization_key] -
- * @property {string} [parent_entry_id] -
- * @property {number} [ref_count] -
- * @property {string} [space_key] -
- */
-/**
- * @typedef BulkEditorOpenSlideIn
- * @property {Data9} [data] -
+ * @property {Data} [data] -
  */
 /**
  * @typedef EditorInterfaceFieldUpdated
@@ -1030,23 +410,6 @@ function withTypewriterContext(message: Segment.Options = {}): Segment.Options {
  * @property {number} [total_slide_count] - The total number of slides open when the entry is initially loaded, default = 0 if there are no slides
  */
 /**
- * @typedef Payload3
- * @property {string} [tab_name] -
- */
-/**
- * @typedef Data10
- * @property {string} [action] -
- * @property {string} [environment_key] -
- * @property {string} [organization_key] -
- * @property {Payload3} [payload] -
- * @property {string} [scope] -
- * @property {string} [space_key] -
- */
-/**
- * @typedef EditorWorkbenchTabOpen
- * @property {Data10} [data] -
- */
-/**
  * @typedef ElementClick
  * @property {string} [contexts] -
  * @property {string} [element_id] -
@@ -1057,74 +420,27 @@ function withTypewriterContext(message: Segment.Options = {}): Segment.Options {
  * @property {string} [space_key] -
  */
 /**
- * @typedef EntryPublish
- * @property {string} [action] -
- * @property {string} [content_type_id] -
- * @property {string} [contexts] -
- * @property {number} [entry_ct_entry_reference_fields_count] -
- * @property {string} [entry_id] -
- * @property {string} [event_origin] -
- * @property {boolean} [has_legacy_extensions] -
- * @property {boolean} [is_default] -
- * @property {string} [organization_key] -
- * @property {string} [space_key] -
- * @property {number} [version] -
- */
-/**
- * @typedef Payload4
- * @property {number} [circular_references_count] -
- * @property {string} [entity_id] -
- * @property {number} [references_depth] -
- * @property {number[]} [references_per_level] -
- */
-/**
- * @typedef Data11
- * @property {string} [action] -
+ * @typedef ExperimentGoalAchieved
+ * @property {string} action -
+ * @property {string} [context] -
  * @property {string} [environment_key] -
+ * @property {string} experiment_id -
+ * @property {string} experiment_variation -
  * @property {string} [organization_key] -
- * @property {Payload4} [payload] -
- * @property {string} [scope] -
  * @property {string} [space_key] -
+ * @property {number} [value] -
  */
 /**
- * @typedef EntryReferencesDialogOpen
- * @property {Data11} [data] -
- */
-/**
- * @typedef Payload5
- * @property {string} [entity_id] -
- * @property {number} [references_count] -
- */
-/**
- * @typedef Data12
- * @property {string} [action] -
+ * @typedef ExperimentInteracted
+ * @property {string} action -
+ * @property {string} [context] -
  * @property {string} [environment_key] -
+ * @property {string} experiment_id -
+ * @property {string} experiment_variation -
  * @property {string} [organization_key] -
- * @property {Payload5} [payload] -
- * @property {string} [scope] -
  * @property {string} [space_key] -
- */
-/**
- * @typedef EntryReferencesPublish
- * @property {Data12} [data] -
- */
-/**
- * @typedef Payload6
- * @property {string} [entity_id] -
- * @property {number} [references_count] -
- */
-/**
- * @typedef Data13
- * @property {string} [action] -
- * @property {string} [environment_key] -
- * @property {string} [organization_key] -
- * @property {Payload6} [payload] -
- * @property {string} [scope] -
- * @property {string} [space_key] -
- */
-/**
- * @typedef EntryReferencesValidate
- * @property {Data13} [data] -
+ * @property {number} [step] -
+ * @property {number} [value] -
  */
 /**
  * @typedef ExperimentStarted
@@ -1142,7 +458,7 @@ function withTypewriterContext(message: Segment.Options = {}): Segment.Options {
  * @property {string} [space_key] -
  */
 /**
- * @typedef Data14
+ * @typedef Data1
  * @property {string} [action] -
  * @property {string} [environment_key] -
  * @property {string} [name] -
@@ -1152,212 +468,17 @@ function withTypewriterContext(message: Segment.Options = {}): Segment.Options {
  */
 /**
  * @typedef GlobalDialog
- * @property {Data14} [data] -
+ * @property {Data1} [data] -
  * @property {string} [schema] -
  */
 /**
- * @typedef GlobalSpaceChanged
- * @property {string} [action] -
- * @property {string} [environment_key] -
- * @property {string} [organization_key] -
- * @property {Record<string, any>} [payload] -
- * @property {string} [scope] -
- * @property {string} [space_key] -
- */
-/**
- * @typedef GlobalSpaceLeft
- * @property {string} [action] -
- * @property {string} [environment_key] -
- * @property {string} [organization_key] -
- * @property {Record<string, any>} [payload] -
- * @property {string} [scope] -
- */
-/**
- * @typedef FromStateParams
- * @property {any | null} [accepted_permissions] -
- * @property {boolean} [add_to_context] -
- * @property {string} [api_key_id] -
- * @property {any | null} [app_id] -
- * @property {string} [asset_id] -
- * @property {string} [content_type_id] -
- * @property {string} [definition_id] -
- * @property {string} [entry_id] -
- * @property {string} [environment_key] -
- * @property {boolean} [ignore_leave_confirmation] -
- * @property {string} [invitation_id] -
- * @property {string} [jump_to_role] -
- * @property {string} [locale_id] -
- * @property {any | null} [org_id] -
- * @property {any | null} [org_owner_or_admin] -
- * @property {string} [path_suffix] -
- * @property {any | null} [referrer] -
- * @property {string} [space_key] -
- * @property {string} [tab] -
- * @property {any | null} [template_id] -
- * @property {string} [user_id] -
- * @property {string} [webhook_id] -
- */
-/**
- * @typedef ToStateParams
- * @property {any | null} [accepted_permissions] -
- * @property {boolean} [add_to_context] -
- * @property {string} [api_key_id] -
- * @property {any | null} [app_id] -
- * @property {string} [asset_id] -
- * @property {string} [content_type_id] -
- * @property {string} [definition_id] -
- * @property {string} [entry_id] -
- * @property {string} [environment_key] -
- * @property {boolean} [ignore_leave_confirmation] -
- * @property {string} [jump_to_role] -
- * @property {string} [locale_id] -
- * @property {string} [org_id] -
- * @property {any | null} [org_owner_or_admin] -
- * @property {string} [path_suffix] -
- * @property {any | null} [referrer] -
- * @property {string} [space_key] -
- * @property {string} [tab] -
- * @property {any | null} [template_id] -
- * @property {string} [user_id] -
- * @property {string} [webhook_id] -
- */
-/**
- * @typedef Data15
- * @property {string} [from_state] -
- * @property {FromStateParams} [from_state_params] -
- * @property {string} [organization_key] -
- * @property {string} [space_key] -
- * @property {string} [to_state] -
- * @property {ToStateParams} [to_state_params] -
- */
-/**
- * @typedef GlobalStateChanged
- * @property {Data15} [data] -
- */
-/**
- * @typedef Payload7
- * @property {string} [dialog_action] -
- * @property {string} [dialog_session_id] -
- * @property {string} [entity_id] -
- * @property {string} [entity_type] -
- * @property {number} [incoming_links_count] -
- */
-/**
- * @typedef Data16
- * @property {string} [action] -
- * @property {string} [environment_key] -
- * @property {string} [organization_key] -
- * @property {Payload7} [payload] -
- * @property {string} [scope] -
- * @property {string} [space_key] -
- */
-/**
- * @typedef IncomingLinksDialogConfirm
- * @property {Data16} [data] -
- */
-/**
- * @typedef Payload8
- * @property {string} [dialog_action] -
- * @property {string} [dialog_session_id] -
- * @property {string} [entity_id] -
- * @property {string} [entity_type] -
- * @property {number} [incoming_links_count] -
- */
-/**
- * @typedef Data17
- * @property {string} [action] -
- * @property {string} [environment_key] -
- * @property {string} [organization_key] -
- * @property {Payload8} [payload] -
- * @property {string} [scope] -
- * @property {string} [space_key] -
- */
-/**
- * @typedef IncomingLinksDialogOpen
- * @property {Data17} [data] -
- */
-/**
- * @typedef Payload9
- * @property {string} [entity_id] -
- * @property {string} [entity_type] -
- * @property {string[]} [incoming_link_ids] -
- * @property {number} [incoming_links_count] -
- */
-/**
- * @typedef Data18
- * @property {string} [action] -
- * @property {string} [environment_key] -
- * @property {string} [organization_key] -
- * @property {Payload9} [payload] -
- * @property {string} [scope] -
- * @property {string} [space_key] -
- */
-/**
- * @typedef IncomingLinksQuery
- * @property {Data18} [data] -
- */
-/**
- * @typedef Payload10
- * @property {string} [state_name] -
- * @property {number} [value] -
- */
-/**
- * @typedef Data19
- * @property {string} [action] -
- * @property {string} [environment_key] -
- * @property {string} [organization_key] -
- * @property {Payload10} [payload] -
- * @property {string} [scope] -
- * @property {string} [space_key] -
- */
-/**
- * @typedef PerfDomContentLoaded
- * @property {Data19} [data] -
- */
-/**
- * @typedef Payload11
- * @property {string} [state_name] -
- * @property {number} [value] -
- */
-/**
- * @typedef Data20
- * @property {string} [action] -
- * @property {string} [environment_key] -
- * @property {string} [organization_key] -
- * @property {Payload11} [payload] -
- * @property {string} [scope] -
- * @property {string} [space_key] -
- */
-/**
- * @typedef PerfFirstContentfulPaint
- * @property {Data20} [data] -
- */
-/**
- * @typedef Payload12
- * @property {string} [state_name] -
- * @property {number} [value] -
- */
-/**
- * @typedef Data21
- * @property {string} [action] -
- * @property {string} [environment_key] -
- * @property {string} [organization_key] -
- * @property {Payload12} [payload] -
- * @property {string} [scope] -
- * @property {string} [space_key] -
- */
-/**
- * @typedef PerfTimeToInteractive
- * @property {Data21} [data] -
- */
-/**
- * @typedef Data22
+ * @typedef Data2
  * @property {string} [action] -
  * @property {string} [personal_access_token_id] -
  */
 /**
  * @typedef PersonalAccessTokenAction
- * @property {Data22} [data] -
+ * @property {Data2} [data] -
  */
 /**
  * @typedef ReleaseCreated
@@ -1387,42 +508,6 @@ function withTypewriterContext(message: Segment.Options = {}): Segment.Options {
  * @typedef ReleaseEntityRemoved
  * @property {string} entity_id -
  * @property {string} entity_type -
- * @property {string} environment_key -
- * @property {string} organization_key -
- * @property {string} release_id -
- * @property {string} space_key -
- */
-/**
- * @typedef ReleasePublished
- * @property {number} asset_count -
- * @property {number} entry_count -
- * @property {string} environment_key -
- * @property {string} organization_key -
- * @property {string} release_id -
- * @property {string} space_key -
- */
-/**
- * @typedef ReleaseScheduleCanceled
- * @property {string} environment_key -
- * @property {string} job_id -
- * @property {string} organization_key -
- * @property {string} release_id -
- * @property {string} space_key -
- */
-/**
- * @typedef ReleaseScheduleCreated
- * @property {string} action -
- * @property {number} asset_count -
- * @property {number} entry_count -
- * @property {string} environment_key -
- * @property {string} job_id -
- * @property {string} organization_key -
- * @property {string} release_id -
- * @property {number} scheduled_for -
- * @property {string} space_key -
- */
-/**
- * @typedef ReleaseTrashed
  * @property {string} environment_key -
  * @property {string} organization_key -
  * @property {string} release_id -
@@ -1527,198 +612,10 @@ function withTypewriterContext(message: Segment.Options = {}): Segment.Options {
  * @property {string} [view_type] -
  */
 /**
- * @typedef Payload13
- * @property {number} [cma_entity_version] -
- * @property {string} [entity_id] -
- * @property {string} [entity_type] -
- * @property {number} [share_js_doc_compressed_version] -
- * @property {number} [share_js_doc_version] -
- */
-/**
- * @typedef SharejsCmaEntityVersionMismatch
- * @property {string} [action] -
- * @property {string} [environment_key] -
- * @property {string} [organization_key] -
- * @property {Payload13} [payload] -
- * @property {string} [scope] -
- * @property {string} [space_key] -
- */
-/**
  * @typedef SpaceCreate
  * @property {string} [contexts] -
  */
-/**
- * @typedef Payload14
- * @property {number} [num_err] -
- * @property {number} [num_success] -
- */
-/**
- * @typedef Data23
- * @property {string} [action] -
- * @property {string} [environment_key] -
- * @property {string} [organization_key] -
- * @property {Payload14} [payload] -
- * @property {string} [scope] -
- * @property {string} [space_key] -
- */
-/**
- * @typedef TeamsInSpaceUsersAdded
- * @property {Data23} [data] -
- */
-/**
- * @typedef AdditionalData
- * @property {number} [character_count_after] -
- * @property {number} [character_count_before] -
- * @property {number} [character_count_selection] -
- * @property {string} [link_type] -
- * @property {string} [mark_type] -
- * @property {string} [node_type] -
- */
-/**
- * @typedef Data24
- * @property {string} [action] -
- * @property {string} [action_origin] -
- * @property {AdditionalData} [additional_data] -
- * @property {number} [character_count_after] -
- * @property {any | null} [character_count_before] -
- * @property {any | null} [character_count_selection] -
- * @property {string} [content_type_id] -
- * @property {string} [editor_name] -
- * @property {string} [entry_id] -
- * @property {string} [environment_key] -
- * @property {string} [field_id] -
- * @property {string} [field_locale] -
- * @property {boolean} [is_fullscreen] -
- * @property {string} [organization_key] -
- * @property {string} [space_key] -
- */
-/**
- * @typedef TextEditorAction
- * @property {Data24} [data] -
- * @property {string} [schema] -
- */
-/**
- * @typedef Payload15
- * @property {string} [event] -
- */
-/**
- * @typedef Data25
- * @property {string} [action] -
- * @property {string} [environment_key] -
- * @property {string} [organization_key] -
- * @property {Payload15} [payload] -
- * @property {string} [scope] -
- * @property {string} [space_key] -
- */
-/**
- * @typedef TrackingInvalidEvent
- * @property {Data25} [data] -
- */
-/**
- * @typedef Data26
- * @property {string} [app_definition_id] -
- * @property {string} [environment] -
- * @property {string} [environment_key] -
- * @property {string} [organization_key] -
- * @property {string} [space_key] -
- * @property {string} [user_id] -
- */
-/**
- * @typedef WidgetRendererFallbackRendered
- * @property {Data26} [data] -
- */
-/**
- * @typedef Data27
- * @property {string} [app_definition_id] -
- * @property {string} [environment] -
- * @property {string} [environment_key] -
- * @property {string} [organization_key] -
- * @property {string} [space_key] -
- * @property {string} [user_id] -
- */
-/**
- * @typedef WidgetRendererFallbackWarningShown
- * @property {Data27} [data] -
- */
 
-/**
- * Fires a 'account_dropdown:pending_tasks_fetched' track call.
- *
- * @param {AccountDropdownPendingTasksFetched} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function accountDropdownPendingTasksFetched(
-  props?: AccountDropdownPendingTasksFetched,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              environment_key: {
-                type: ['string'],
-              },
-              organization_key: {
-                type: ['string'],
-              },
-              payload: {
-                properties: {
-                  has_inaccessible_tasks: {
-                    type: ['boolean'],
-                  },
-                  num_pending_tasks: {
-                    type: ['integer'],
-                  },
-                  num_visible_pending_tasks: {
-                    type: ['integer'],
-                  },
-                },
-                type: 'object',
-              },
-              scope: {
-                type: ['string'],
-              },
-              space_key: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'account_dropdown:pending_tasks_fetched',
-    type: 'object',
-  };
-  const message = {
-    event: 'account_dropdown:pending_tasks_fetched',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track(
-      'account_dropdown:pending_tasks_fetched',
-      props || {},
-      withTypewriterContext(options),
-      callback
-    );
-  }
-}
 /**
  * ApiKey schema
  *
@@ -1774,173 +671,6 @@ export function apiKey(
   const a = analytics();
   if (a) {
     a.track('api_key', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Records an app definition lifecycle event
- *
- * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function appDefinition(
-  props?: Record<string, any>,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    description: 'Records an app definition lifecycle event',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          action: {
-            description: 'Type of action event',
-            type: 'string',
-          },
-          app_definition_id: {
-            description: 'Refers to app definition id',
-            type: 'string',
-          },
-          created_at: {
-            description: 'App definition creation timestamp',
-            type: 'string',
-          },
-          deleted_at: {
-            description: 'App definition delete timestamp',
-            type: 'string',
-          },
-          has_config: {
-            description: 'Whether the app has configuration screen',
-            type: 'boolean',
-          },
-          is_public: {
-            description: 'Public or private app',
-            type: 'boolean',
-          },
-          locations: {
-            description: 'Locations enabled for the app',
-            type: 'array',
-          },
-          name: {
-            description: 'Name of the app',
-            type: 'string',
-          },
-          organization_key: {
-            description: 'Refers to organization key',
-            type: 'string',
-          },
-          src: {
-            description: 'Host domain for the app',
-            type: 'string',
-          },
-          updated_at: {
-            description: 'App definition update timestamp',
-            type: 'string',
-          },
-          user_agent: {
-            description: 'Refers to the original request user-agent',
-            type: 'string',
-          },
-        },
-        required: [
-          'action',
-          'organization_key',
-          'app_definition_id',
-          'name',
-          'src',
-          'locations',
-          'is_public',
-          'has_config',
-        ],
-      },
-      traits: {},
-    },
-    title: 'app_definition',
-  };
-  const message = {
-    event: 'app_definition',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('app_definition', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Records an app installation lifecycle event
- *
- * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function appInstallation(
-  props?: Record<string, any>,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    description: 'Records an app installation lifecycle event',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          action: {
-            description: 'Type of action event',
-            type: 'string',
-          },
-          app_definition_id: {
-            description: 'Refers to app_id',
-            type: 'string',
-          },
-          created_at: {
-            description: 'App creation timestamp',
-            type: ['string', 'null'],
-          },
-          deleted_at: {
-            description: 'App delete timestamp',
-            type: ['string', 'null'],
-          },
-          environment_key: {
-            description: 'Refers to environment_key',
-            type: 'string',
-          },
-          space_key: {
-            description: 'Refers to space_key',
-            type: 'string',
-          },
-          updated_at: {
-            description: 'App update timestamp',
-            type: ['string', 'null'],
-          },
-          user_agent: {
-            description: 'Refers to the original request user-agent',
-            type: 'string',
-          },
-        },
-        required: ['space_key', 'environment_key', 'app_definition_id'],
-      },
-      traits: {},
-    },
-    title: 'app_installation',
-  };
-  const message = {
-    event: 'app_installation',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('app_installation', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
@@ -2006,134 +736,6 @@ export function appLifecycleEvent(
   }
 }
 /**
- * Fires a 'app_management:created' track call.
- *
- * @param {AppManagementCreated} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function appManagementCreated(
-  props?: AppManagementCreated,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              environment_key: {
-                type: ['string'],
-              },
-              organization_key: {
-                type: ['string'],
-              },
-              payload: {
-                properties: {
-                  definition_id: {
-                    type: ['string'],
-                  },
-                },
-                type: 'object',
-              },
-              scope: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'app_management:created',
-    type: 'object',
-  };
-  const message = {
-    event: 'app_management:created',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('app_management:created', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'app_management:updated' track call.
- *
- * @param {AppManagementUpdated} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function appManagementUpdated(
-  props?: AppManagementUpdated,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              environment_key: {
-                type: ['string'],
-              },
-              organization_key: {
-                type: ['string'],
-              },
-              payload: {
-                properties: {
-                  definition_id: {
-                    type: ['string'],
-                  },
-                },
-                type: 'object',
-              },
-              scope: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'app_management:updated',
-    type: 'object',
-  };
-  const message = {
-    event: 'app_management:updated',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('app_management:updated', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
  * Web app opened by visiting app.contentful.com
  *
  * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
@@ -2178,57 +780,6 @@ export function appOpen(
   const a = analytics();
   if (a) {
     a.track('app_open', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Event fired when the example app opens
- *
- * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function appTheExampleAppOpen(
-  props?: Record<string, any>,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    description: 'Event fired when the example app opens',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          app_framework: {
-            type: ['string'],
-          },
-          environment_key: {
-            type: ['string'],
-          },
-          sdk_language_used: {
-            type: ['string'],
-          },
-          space_key: {
-            type: ['string'],
-          },
-        },
-        required: ['space_key', 'sdk_language_used', 'app_framework'],
-      },
-      traits: {},
-    },
-    title: 'app_the_example_app_open',
-  };
-  const message = {
-    event: 'app_the_example_app_open',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('app_the_example_app_open', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
@@ -2360,232 +911,6 @@ export function appsLifecycleEvent(
   }
 }
 /**
- * Fires a 'asset_created' track call.
- *
- * @param {AssetCreated} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function assetCreated(
-  props?: AssetCreated,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          asset_id: {
-            type: ['string'],
-          },
-          environment: {
-            type: ['string'],
-          },
-          space_key: {
-            type: ['string'],
-          },
-          version: {
-            type: ['string'],
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'asset_created',
-    type: 'object',
-  };
-  const message = {
-    event: 'asset_created',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('asset_created', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'asset_list:add_asset_multiple' track call.
- *
- * @param {AssetListAddAssetMultiple} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function assetListAddAssetMultiple(
-  props?: AssetListAddAssetMultiple,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              environment_key: {
-                type: ['string'],
-              },
-              organization_key: {
-                type: ['string'],
-              },
-              payload: {
-                type: ['object'],
-              },
-              scope: {
-                type: ['string'],
-              },
-              space_key: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'asset_list:add_asset_multiple',
-    type: 'object',
-  };
-  const message = {
-    event: 'asset_list:add_asset_multiple',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('asset_list:add_asset_multiple', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'asset_list:add_asset_single' track call.
- *
- * @param {AssetListAddAssetSingle} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function assetListAddAssetSingle(
-  props?: AssetListAddAssetSingle,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              environment_key: {
-                type: ['string'],
-              },
-              organization_key: {
-                type: ['string'],
-              },
-              payload: {
-                type: ['object'],
-              },
-              scope: {
-                type: ['string'],
-              },
-              space_key: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'asset_list:add_asset_single',
-    type: 'object',
-  };
-  const message = {
-    event: 'asset_list:add_asset_single',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('asset_list:add_asset_single', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'asset_published' track call.
- *
- * @param {AssetPublished} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function assetPublished(
-  props?: AssetPublished,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          asset_id: {
-            type: ['string'],
-          },
-          environment: {
-            type: ['string'],
-          },
-          space_key: {
-            type: ['string'],
-          },
-          version: {
-            type: ['string'],
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'asset_published',
-    type: 'object',
-  };
-  const message = {
-    event: 'asset_published',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('asset_published', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
  * Tracks usage of boilerplate projects
  *
  * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
@@ -2637,268 +962,6 @@ export function boilerplate(
   const a = analytics();
   if (a) {
     a.track('boilerplate', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'bulk_editor:close' track call.
- *
- * @param {BulkEditorClose} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function bulkEditorClose(
-  props?: BulkEditorClose,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              environment_key: {
-                type: ['string'],
-              },
-              num_edited_entries: {
-                type: ['integer'],
-              },
-              num_published_entries: {
-                type: ['integer'],
-              },
-              organization_key: {
-                type: ['string'],
-              },
-              parent_entry_id: {
-                type: ['string'],
-              },
-              ref_count: {
-                type: ['integer'],
-              },
-              space_key: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'bulk_editor:close',
-    type: 'object',
-  };
-  const message = {
-    event: 'bulk_editor:close',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('bulk_editor:close', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'bulk_editor:edit_in_entry_editor' track call.
- *
- * @param {BulkEditorEditInEntryEditor} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function bulkEditorEditInEntryEditor(
-  props?: BulkEditorEditInEntryEditor,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              entry_id: {
-                type: ['string'],
-              },
-              environment_key: {
-                type: ['string'],
-              },
-              organization_key: {
-                type: ['string'],
-              },
-              parent_entry_id: {
-                type: ['string'],
-              },
-              ref_count: {
-                type: ['integer'],
-              },
-              space_key: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'bulk_editor:edit_in_entry_editor',
-    type: 'object',
-  };
-  const message = {
-    event: 'bulk_editor:edit_in_entry_editor',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track(
-      'bulk_editor:edit_in_entry_editor',
-      props || {},
-      withTypewriterContext(options),
-      callback
-    );
-  }
-}
-/**
- * Fires a 'bulk_editor:open' track call.
- *
- * @param {BulkEditorOpen} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function bulkEditorOpen(
-  props?: BulkEditorOpen,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              environment_key: {
-                type: ['string'],
-              },
-              organization_key: {
-                type: ['string'],
-              },
-              parent_entry_id: {
-                type: ['string'],
-              },
-              ref_count: {
-                type: ['integer'],
-              },
-              space_key: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'bulk_editor:open',
-    type: 'object',
-  };
-  const message = {
-    event: 'bulk_editor:open',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('bulk_editor:open', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'bulk_editor:open_slide_in' track call.
- *
- * @param {BulkEditorOpenSlideIn} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function bulkEditorOpenSlideIn(
-  props?: BulkEditorOpenSlideIn,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              environment_key: {
-                type: ['string'],
-              },
-              organization_key: {
-                type: ['string'],
-              },
-              parent_entry_id: {
-                type: ['string'],
-              },
-              ref_count: {
-                type: ['integer'],
-              },
-              space_key: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'bulk_editor:open_slide_in',
-    type: 'object',
-  };
-  const message = {
-    event: 'bulk_editor:open_slide_in',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('bulk_editor:open_slide_in', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
@@ -2959,66 +1022,6 @@ export function contentPreview(
   const a = analytics();
   if (a) {
     a.track('content_preview', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * ContentTyppe schema
- *
- * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function contentType(
-  props?: Record<string, any>,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    description: 'ContentTyppe schema',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          action: {
-            type: ['string'],
-          },
-          content_type_id: {
-            type: ['string'],
-          },
-          environment_key: {
-            type: ['string'],
-          },
-          organization_key: {
-            type: ['string', 'null'],
-          },
-          revision: {
-            type: ['integer', 'null'],
-          },
-          space_key: {
-            type: ['string'],
-          },
-          version: {
-            type: ['integer', 'null'],
-          },
-        },
-        required: ['space_key', 'content_type_id', 'action'],
-      },
-      traits: {},
-    },
-    title: 'content_type',
-  };
-  const message = {
-    event: 'content_type',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('content_type', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
@@ -3264,73 +1267,6 @@ export function editorLoaded(
   const a = analytics();
   if (a) {
     a.track('editor_loaded', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'editor_workbench:tab_open' track call.
- *
- * @param {EditorWorkbenchTabOpen} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function editorWorkbenchTabOpen(
-  props?: EditorWorkbenchTabOpen,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              environment_key: {
-                type: ['string'],
-              },
-              organization_key: {
-                type: ['string'],
-              },
-              payload: {
-                properties: {
-                  tab_name: {
-                    type: ['string'],
-                  },
-                },
-                type: 'object',
-              },
-              scope: {
-                type: ['string'],
-              },
-              space_key: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'editor_workbench:tab_open',
-    type: 'object',
-  };
-  const message = {
-    event: 'editor_workbench:tab_open',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('editor_workbench:tab_open', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
@@ -3699,198 +1635,6 @@ export function entityEditorEditConflict2(
   }
 }
 /**
- * Entry schema
- *
- * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function entry(
-  props?: Record<string, any>,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    description: 'Entry schema',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          action: {
-            type: ['string'],
-          },
-          content_type_id: {
-            type: ['string'],
-          },
-          entry_id: {
-            type: ['string'],
-          },
-          environment_key: {
-            type: ['string'],
-          },
-          organization_key: {
-            type: ['string', 'null'],
-          },
-          revision: {
-            type: ['integer', 'null'],
-          },
-          space_key: {
-            type: ['string'],
-          },
-          version: {
-            type: ['integer', 'null'],
-          },
-        },
-        required: ['space_key', 'content_type_id', 'entry_id', 'action'],
-      },
-      traits: {},
-    },
-    title: 'entry',
-  };
-  const message = {
-    event: 'entry',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('entry', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'entry:publish' track call.
- *
- * @param {EntryPublish} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function entryPublish(
-  props?: EntryPublish,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          action: {
-            type: ['string'],
-          },
-          content_type_id: {
-            type: ['string'],
-          },
-          contexts: {
-            type: ['string'],
-          },
-          entry_ct_entry_reference_fields_count: {
-            type: ['integer'],
-          },
-          entry_id: {
-            type: ['string'],
-          },
-          event_origin: {
-            type: ['string'],
-          },
-          has_legacy_extensions: {
-            type: ['boolean'],
-          },
-          is_default: {
-            type: ['boolean'],
-          },
-          organization_key: {
-            type: ['string'],
-          },
-          space_key: {
-            type: ['string'],
-          },
-          version: {
-            type: ['integer'],
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'entry:publish',
-    type: 'object',
-  };
-  const message = {
-    event: 'entry:publish',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('entry:publish', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Schema of creating an entry in the webapp
- *
- * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function entryCreate(
-  props?: Record<string, any>,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    description: 'Schema of creating an entry in the webapp',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          entry_ct_entry_reference_fields_count: {
-            type: 'integer',
-          },
-          entry_id: {
-            type: 'string',
-          },
-          environment_key: {
-            type: ['string'],
-          },
-          event_origin: {
-            type: 'string',
-          },
-          organization_key: {
-            type: 'string',
-          },
-          space_key: {
-            type: 'string',
-          },
-        },
-        required: ['organization_key', 'space_key'],
-      },
-      traits: {},
-    },
-    title: 'entry_create',
-  };
-  const message = {
-    event: 'entry_create',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('entry_create', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
  * Fires a 'entry_created' track call.
  *
  * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
@@ -3963,7 +1707,7 @@ export function entryCreated(
  * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
  * 		call is fired.
  */
-export function entryPublish1(
+export function entryPublish(
   props?: Record<string, any>,
   options?: Segment.Options,
   callback?: Segment.Callback
@@ -4019,285 +1763,6 @@ export function entryPublish1(
   const a = analytics();
   if (a) {
     a.track('entry_publish', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Schema of entry references
- *
- * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function entryReferences(
-  props?: Record<string, any>,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    description: 'Schema of entry references',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          circular_references_count: {
-            type: 'number',
-          },
-          entry_id: {
-            type: 'string',
-          },
-          environment_key: {
-            type: ['string'],
-          },
-          organization_key: {
-            type: 'string',
-          },
-          references_depth: {
-            type: 'number',
-          },
-          references_per_level: {
-            type: ['number'],
-          },
-          space_key: {
-            type: 'string',
-          },
-        },
-        required: ['organization_key', 'space_key', 'entry_id'],
-      },
-      traits: {},
-    },
-    title: 'entry_references',
-  };
-  const message = {
-    event: 'entry_references',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('entry_references', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'entry_references:dialog_open' track call.
- *
- * @param {EntryReferencesDialogOpen} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function entryReferencesDialogOpen(
-  props?: EntryReferencesDialogOpen,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              environment_key: {
-                type: ['string'],
-              },
-              organization_key: {
-                type: ['string'],
-              },
-              payload: {
-                properties: {
-                  circular_references_count: {
-                    type: ['integer'],
-                  },
-                  entity_id: {
-                    type: ['string'],
-                  },
-                  references_depth: {
-                    type: ['integer'],
-                  },
-                  references_per_level: {
-                    items: {
-                      type: 'integer',
-                    },
-                    type: 'array',
-                  },
-                },
-                type: 'object',
-              },
-              scope: {
-                type: ['string'],
-              },
-              space_key: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'entry_references:dialog_open',
-    type: 'object',
-  };
-  const message = {
-    event: 'entry_references:dialog_open',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('entry_references:dialog_open', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'entry_references:publish' track call.
- *
- * @param {EntryReferencesPublish} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function entryReferencesPublish(
-  props?: EntryReferencesPublish,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              environment_key: {
-                type: ['string'],
-              },
-              organization_key: {
-                type: ['string'],
-              },
-              payload: {
-                properties: {
-                  entity_id: {
-                    type: ['string'],
-                  },
-                  references_count: {
-                    type: ['integer'],
-                  },
-                },
-                type: 'object',
-              },
-              scope: {
-                type: ['string'],
-              },
-              space_key: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'entry_references:publish',
-    type: 'object',
-  };
-  const message = {
-    event: 'entry_references:publish',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('entry_references:publish', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'entry_references:validate' track call.
- *
- * @param {EntryReferencesValidate} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function entryReferencesValidate(
-  props?: EntryReferencesValidate,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              environment_key: {
-                type: ['string'],
-              },
-              organization_key: {
-                type: ['string'],
-              },
-              payload: {
-                properties: {
-                  entity_id: {
-                    type: ['string'],
-                  },
-                  references_count: {
-                    type: ['integer'],
-                  },
-                },
-                type: 'object',
-              },
-              scope: {
-                type: ['string'],
-              },
-              space_key: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'entry_references:validate',
-    type: 'object',
-  };
-  const message = {
-    event: 'entry_references:validate',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('entry_references:validate', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
@@ -4475,88 +1940,71 @@ export function environmentAliases(
   }
 }
 /**
- * Environment branching tracking
+ * Event is used for tracking goals achieved in a new feature that is being tested.
  *
- * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {ExperimentGoalAchieved} props - The analytics properties that will be sent to Segment.
  * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
  * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
  * 		call is fired.
  */
-export function environmentBranching(
-  props?: Record<string, any>,
+export function experimentGoalAchieved(
+  props: ExperimentGoalAchieved,
   options?: Segment.Options,
   callback?: Segment.Callback
 ): void {
   const schema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
-    description: 'Environment branching tracking',
+    description: 'Event is used for tracking goals achieved in a new feature that is being tested.',
     properties: {
       context: {},
       properties: {
         properties: {
           action: {
-            type: ['string', 'null'],
+            description: '',
+            type: 'string',
           },
-          count_assets: {
-            description: 'refers to number of assets in the source environment',
-            type: ['integer', 'null'],
-          },
-          count_content_types: {
-            description: 'refers to number of content types in the source environment',
-            type: ['integer', 'null'],
-          },
-          count_entries: {
-            description: 'refers to number of entries in the source environment',
-            type: ['integer', 'null'],
-          },
-          count_locales: {
-            description: 'refers to number of locales in the source environment',
-            type: ['integer', 'null'],
+          context: {
+            description: '',
+            type: 'string',
           },
           environment_key: {
-            type: ['string'],
+            description: '',
+            type: 'string',
           },
-          environment_uuid: {
-            type: ['string', 'null'],
+          experiment_id: {
+            description: '',
+            type: 'string',
           },
-          inferred_intent: {
-            description:
-              'This field will contain the X-Contentful-Header send by sdks and the webapp, allowing us to track the intent of the creation.',
-            type: ['string', 'null'],
+          experiment_variation: {
+            description: '',
+            type: 'string',
           },
           organization_key: {
-            description: 'refers to organization key',
-            type: ['string', 'null'],
-          },
-          platform: {
-            description:
-              'this will be `web-app` if the webapp sent the request, or anything else the x-contentful-header contains in the platform field, if existing. Null otherwise.',
-            type: ['string', 'null'],
-          },
-          source_environment_id: {
-            description: 'refers to environment key',
-            type: ['string', 'null'],
-          },
-          source_environment_uuid: {
-            type: ['string', 'null'],
+            description: '',
+            type: 'string',
           },
           space_key: {
-            description: 'refers to space key',
-            type: ['string'],
+            description: '',
+            type: 'string',
           },
-          user_agent: {
-            description: 'refers to the http user agent header sent',
-            type: ['string', 'null'],
+          value: {
+            description: '',
+            type: 'number',
           },
         },
-        required: ['organization_key', 'space_key', 'action'],
+        required: ['action', 'experiment_id', 'experiment_variation'],
+        type: 'object',
       },
-      traits: {},
+      traits: {
+        type: 'object',
+      },
     },
-    title: 'environment_branching',
+    required: ['properties'],
+    title: 'experiment_goal_achieved',
+    type: 'object',
   };
   const message = {
-    event: 'environment_branching',
+    event: 'experiment_goal_achieved',
     properties: props || {},
     options,
   };
@@ -4564,59 +2012,80 @@ export function environmentBranching(
 
   const a = analytics();
   if (a) {
-    a.track('environment_branching', props || {}, withTypewriterContext(options), callback);
+    a.track('experiment_goal_achieved', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
- * Schema for A/B tests, inside of the user_interface
+ * Event is used for tracking user interactions during new features that are being tested.
  *
- * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+ * @param {ExperimentInteracted} props - The analytics properties that will be sent to Segment.
  * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
  * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
  * 		call is fired.
  */
-export function experiment(
-  props?: Record<string, any>,
+export function experimentInteracted(
+  props: ExperimentInteracted,
   options?: Segment.Options,
   callback?: Segment.Callback
 ): void {
   const schema = {
     $schema: 'http://json-schema.org/draft-07/schema#',
-    description: 'Schema for A/B tests, inside of the user_interface',
+    description:
+      'Event is used for tracking user interactions during new features that are being tested.',
     properties: {
       context: {},
       properties: {
         properties: {
           action: {
-            type: ['string'],
+            description: '',
+            type: 'string',
+          },
+          context: {
+            description: '',
+            type: 'string',
           },
           environment_key: {
-            type: ['string'],
+            description: '',
+            type: 'string',
           },
           experiment_id: {
-            type: ['string'],
+            description: '',
+            type: 'string',
           },
-          interaction_context: {
-            type: ['string', 'null'],
+          experiment_variation: {
+            description: '',
+            type: 'string',
           },
           organization_key: {
-            type: ['string'],
+            description: '',
+            type: 'string',
           },
           space_key: {
-            type: ['string'],
+            description: '',
+            type: 'string',
           },
-          variation: {
-            type: ['boolean', 'null'],
+          step: {
+            description: '',
+            type: 'number',
+          },
+          value: {
+            description: '',
+            type: 'number',
           },
         },
-        required: ['experiment_id', 'variation', 'action'],
+        required: ['action', 'experiment_id', 'experiment_variation'],
+        type: 'object',
       },
-      traits: {},
+      traits: {
+        type: 'object',
+      },
     },
-    title: 'experiment',
+    required: ['properties'],
+    title: 'experiment_interacted',
+    type: 'object',
   };
   const message = {
-    event: 'experiment',
+    event: 'experiment_interacted',
     properties: props || {},
     options,
   };
@@ -4624,7 +2093,7 @@ export function experiment(
 
   const a = analytics();
   if (a) {
-    a.track('experiment', props || {}, withTypewriterContext(options), callback);
+    a.track('experiment_interacted', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
@@ -4752,81 +2221,6 @@ export function extensionActivate(
   const a = analytics();
   if (a) {
     a.track('extension_activate', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Extension rendered
- *
- * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function extensionRender(
-  props?: Record<string, any>,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    description: 'Extension rendered',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          contexts: {
-            type: ['string'],
-          },
-          environment_key: {
-            description: 'Refers to environment_key',
-            type: 'string',
-          },
-          extension_definition_id: {
-            type: ['string', 'null'],
-          },
-          extension_id: {
-            type: 'string',
-          },
-          extension_name: {
-            type: 'string',
-          },
-          installation_params: {
-            type: 'array',
-          },
-          instance_params: {
-            type: 'array',
-          },
-          location: {
-            type: 'string',
-          },
-          src: {
-            type: ['string', 'null'],
-          },
-        },
-        required: [
-          'contexts',
-          'location',
-          'extension_id',
-          'extension_name',
-          'src',
-          'installation_params',
-          'instance_params',
-        ],
-      },
-      traits: {},
-    },
-    title: 'extension_render',
-  };
-  const message = {
-    event: 'extension_render',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('extension_render', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
@@ -4980,186 +2374,6 @@ export function featureBulkEditor(
   const a = analytics();
   if (a) {
     a.track('feature_bulk_editor', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Events for the comments endpoint, emitted on CUD actions. Note: The Tasks feature is using the comments endpoint behind the scenes.
- *
- * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function featureCommentsAndTasks(
-  props?: Record<string, any>,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    description:
-      'Events for the comments endpoint, emitted on CUD actions. Note: The Tasks feature is using the comments endpoint behind the scenes.',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          action: {
-            description: 'The action that is performed on the comment or task',
-            type: ['string'],
-          },
-          comment_id: {
-            description: "The comment's (or tasks) ID",
-            type: ['string'],
-          },
-          comment_type: {
-            description:
-              'The kind of comment that this event is about (can be a Task or normal Comment)',
-            type: ['string'],
-          },
-          entity_id: {
-            description: 'The ID of the entity containing the comment',
-            type: ['string'],
-          },
-          entity_type: {
-            description: 'The type of the entity containing the comment',
-            type: ['string'],
-          },
-          environment_key: {
-            type: ['string'],
-          },
-          environment_uuid: {
-            description: 'Environment internally used ID',
-            type: ['string'],
-          },
-          has_body_changed: {
-            description:
-              "Whether the comment's message or task's title was touched by the performed action. Only relevant for `update` action (omitted otherwise)",
-            type: ['boolean', 'null'],
-          },
-          new_assignee_id: {
-            description:
-              'ID of the assigned user after the action. Skip in case of `delete` action action and for non-task comments.',
-            type: ['string', 'null'],
-          },
-          new_body_length: {
-            description:
-              "Total length of the comment's message or task's title after the action. Skip in case of a `delete` action.",
-            type: ['integer', 'null'],
-          },
-          new_status: {
-            description:
-              'Status ("resolved" or "open") of a task after the action. Skip in case of a `delete` action and for non-task comments.',
-            type: ['string', 'null'],
-          },
-          old_assignee_id: {
-            description:
-              'ID of the assigned user before the action. Skip in case of a `create` action and for non-task comments.',
-            type: ['string', 'null'],
-          },
-          old_body_length: {
-            description:
-              "Total length of the comment's message or task's title before the action. Skip in case of a `create` action.",
-            type: ['integer', 'null'],
-          },
-          old_status: {
-            description:
-              'Status ("resolved" or "open") of a task before the action. Skip in case of a `create` action and for non-task comments.',
-            type: ['string', 'null'],
-          },
-          organization_key: {
-            description: 'Gatekeeper organization key',
-            type: ['string'],
-          },
-          parent_comment_id: {
-            description:
-              'ID of the parent comment (discussion thread), `null` if the comment has no parent (and therefore is a parent itself)',
-            type: ['string', 'null'],
-          },
-          space_key: {
-            description: 'Gatekeeper space key',
-            type: ['string'],
-          },
-        },
-        required: [
-          'organization_key',
-          'space_key',
-          'environment_key',
-          'environment_uuid',
-          'entity_id',
-          'entity_type',
-          'action',
-          'comment_type',
-          'comment_id',
-        ],
-      },
-      traits: {},
-    },
-    title: 'feature_comments_and_tasks',
-  };
-  const message = {
-    event: 'feature_comments_and_tasks',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('feature_comments_and_tasks', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Generated empty schema for feature_playground
- *
- * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function featurePlayground(
-  props?: Record<string, any>,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    description: 'Generated empty schema for feature_playground',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          action: {
-            type: ['string'],
-          },
-          environment_key: {
-            type: ['string'],
-          },
-          integration_environment: {
-            type: ['string', 'null'],
-          },
-          mocked_device: {
-            type: ['string', 'null'],
-          },
-          organization_key: {
-            type: ['string', 'null'],
-          },
-        },
-        required: ['action'],
-      },
-      traits: {},
-    },
-    title: 'feature_playground',
-  };
-  const message = {
-    event: 'feature_playground',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('feature_playground', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
@@ -5600,527 +2814,6 @@ export function globalDialog(
   }
 }
 /**
- * Fires a 'global:space_changed' track call.
- *
- * @param {GlobalSpaceChanged} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function globalSpaceChanged(
-  props?: GlobalSpaceChanged,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          action: {
-            type: ['string'],
-          },
-          environment_key: {
-            type: ['string'],
-          },
-          organization_key: {
-            type: ['string'],
-          },
-          payload: {
-            type: ['object'],
-          },
-          scope: {
-            type: ['string'],
-          },
-          space_key: {
-            type: ['string'],
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'global:space_changed',
-    type: 'object',
-  };
-  const message = {
-    event: 'global:space_changed',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('global:space_changed', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'global:space_left' track call.
- *
- * @param {GlobalSpaceLeft} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function globalSpaceLeft(
-  props?: GlobalSpaceLeft,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          action: {
-            type: ['string'],
-          },
-          environment_key: {
-            type: ['string'],
-          },
-          organization_key: {
-            type: ['string'],
-          },
-          payload: {
-            type: ['object'],
-          },
-          scope: {
-            type: ['string'],
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'global:space_left',
-    type: 'object',
-  };
-  const message = {
-    event: 'global:space_left',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('global:space_left', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'global:state_changed' track call.
- *
- * @param {GlobalStateChanged} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function globalStateChanged(
-  props?: GlobalStateChanged,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              from_state: {
-                type: ['string'],
-              },
-              from_state_params: {
-                properties: {
-                  accepted_permissions: {},
-                  add_to_context: {
-                    type: ['boolean'],
-                  },
-                  api_key_id: {
-                    type: ['string'],
-                  },
-                  app_id: {},
-                  asset_id: {
-                    type: ['string'],
-                  },
-                  content_type_id: {
-                    type: ['string'],
-                  },
-                  definition_id: {
-                    type: ['string'],
-                  },
-                  entry_id: {
-                    type: ['string'],
-                  },
-                  environment_key: {
-                    type: ['string'],
-                  },
-                  ignore_leave_confirmation: {
-                    type: ['boolean'],
-                  },
-                  invitation_id: {
-                    type: ['string'],
-                  },
-                  jump_to_role: {
-                    type: ['string'],
-                  },
-                  locale_id: {
-                    type: ['string'],
-                  },
-                  org_id: {},
-                  org_owner_or_admin: {},
-                  path_suffix: {
-                    type: ['string'],
-                  },
-                  referrer: {},
-                  space_key: {
-                    type: ['string'],
-                  },
-                  tab: {
-                    type: ['string'],
-                  },
-                  template_id: {},
-                  user_id: {
-                    type: ['string'],
-                  },
-                  webhook_id: {
-                    type: ['string'],
-                  },
-                },
-                type: 'object',
-              },
-              organization_key: {
-                type: ['string'],
-              },
-              space_key: {
-                type: ['string'],
-              },
-              to_state: {
-                type: ['string'],
-              },
-              to_state_params: {
-                properties: {
-                  accepted_permissions: {},
-                  add_to_context: {
-                    type: ['boolean'],
-                  },
-                  api_key_id: {
-                    type: ['string'],
-                  },
-                  app_id: {},
-                  asset_id: {
-                    type: ['string'],
-                  },
-                  content_type_id: {
-                    type: ['string'],
-                  },
-                  definition_id: {
-                    type: ['string'],
-                  },
-                  entry_id: {
-                    type: ['string'],
-                  },
-                  environment_key: {
-                    type: ['string'],
-                  },
-                  ignore_leave_confirmation: {
-                    type: ['boolean'],
-                  },
-                  jump_to_role: {
-                    type: ['string'],
-                  },
-                  locale_id: {
-                    type: ['string'],
-                  },
-                  org_id: {
-                    type: ['string'],
-                  },
-                  org_owner_or_admin: {},
-                  path_suffix: {
-                    type: ['string'],
-                  },
-                  referrer: {},
-                  space_key: {
-                    type: ['string'],
-                  },
-                  tab: {
-                    type: ['string'],
-                  },
-                  template_id: {},
-                  user_id: {
-                    type: ['string'],
-                  },
-                  webhook_id: {
-                    type: ['string'],
-                  },
-                },
-                type: 'object',
-              },
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'global:state_changed',
-    type: 'object',
-  };
-  const message = {
-    event: 'global:state_changed',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('global:state_changed', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'incoming_links:dialog_confirm' track call.
- *
- * @param {IncomingLinksDialogConfirm} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function incomingLinksDialogConfirm(
-  props?: IncomingLinksDialogConfirm,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              environment_key: {
-                type: ['string'],
-              },
-              organization_key: {
-                type: ['string'],
-              },
-              payload: {
-                properties: {
-                  dialog_action: {
-                    type: ['string'],
-                  },
-                  dialog_session_id: {
-                    type: ['string'],
-                  },
-                  entity_id: {
-                    type: ['string'],
-                  },
-                  entity_type: {
-                    type: ['string'],
-                  },
-                  incoming_links_count: {
-                    type: ['integer'],
-                  },
-                },
-                type: 'object',
-              },
-              scope: {
-                type: ['string'],
-              },
-              space_key: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'incoming_links:dialog_confirm',
-    type: 'object',
-  };
-  const message = {
-    event: 'incoming_links:dialog_confirm',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('incoming_links:dialog_confirm', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'incoming_links:dialog_open' track call.
- *
- * @param {IncomingLinksDialogOpen} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function incomingLinksDialogOpen(
-  props?: IncomingLinksDialogOpen,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              environment_key: {
-                type: ['string'],
-              },
-              organization_key: {
-                type: ['string'],
-              },
-              payload: {
-                properties: {
-                  dialog_action: {
-                    type: ['string'],
-                  },
-                  dialog_session_id: {
-                    type: ['string'],
-                  },
-                  entity_id: {
-                    type: ['string'],
-                  },
-                  entity_type: {
-                    type: ['string'],
-                  },
-                  incoming_links_count: {
-                    type: ['integer'],
-                  },
-                },
-                type: 'object',
-              },
-              scope: {
-                type: ['string'],
-              },
-              space_key: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'incoming_links:dialog_open',
-    type: 'object',
-  };
-  const message = {
-    event: 'incoming_links:dialog_open',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('incoming_links:dialog_open', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'incoming_links:query' track call.
- *
- * @param {IncomingLinksQuery} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function incomingLinksQuery(
-  props?: IncomingLinksQuery,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              environment_key: {
-                type: ['string'],
-              },
-              organization_key: {
-                type: ['string'],
-              },
-              payload: {
-                properties: {
-                  entity_id: {
-                    type: ['string'],
-                  },
-                  entity_type: {
-                    type: ['string'],
-                  },
-                  incoming_link_ids: {
-                    items: {
-                      type: 'string',
-                    },
-                    type: 'array',
-                  },
-                  incoming_links_count: {
-                    type: ['integer'],
-                  },
-                },
-                type: 'object',
-              },
-              scope: {
-                type: ['string'],
-              },
-              space_key: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'incoming_links:query',
-    type: 'object',
-  };
-  const message = {
-    event: 'incoming_links:query',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('incoming_links:query', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
  * Emitted when the user cancels the job
  *
  * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
@@ -6242,55 +2935,6 @@ export function jobsCreate(
   }
 }
 /**
- * Emitted when a job is triggered
- *
- * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function jobsProcessing(
-  props?: Record<string, any>,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    description: 'Emitted when a job is triggered',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          action: {
-            type: ['string'],
-          },
-          job_id: {
-            type: ['string'],
-          },
-          status_code: {
-            description: 'code of the status of the current job process. Example: 200 for success',
-            type: ['integer'],
-          },
-        },
-        required: ['job_id', 'action', 'status_code'],
-      },
-      traits: {},
-    },
-    title: 'jobs_processing',
-  };
-  const message = {
-    event: 'jobs_processing',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('jobs_processing', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
  * Schema for tracking every state transition in the user interface
  *
  * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
@@ -6351,216 +2995,6 @@ export function pageView(
   }
 }
 /**
- * Fires a 'perf:dom_content_loaded' track call.
- *
- * @param {PerfDomContentLoaded} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function perfDomContentLoaded(
-  props?: PerfDomContentLoaded,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              environment_key: {
-                type: ['string'],
-              },
-              organization_key: {
-                type: ['string'],
-              },
-              payload: {
-                properties: {
-                  state_name: {
-                    type: ['string'],
-                  },
-                  value: {
-                    type: ['number'],
-                  },
-                },
-                type: 'object',
-              },
-              scope: {
-                type: ['string'],
-              },
-              space_key: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'perf:dom_content_loaded',
-    type: 'object',
-  };
-  const message = {
-    event: 'perf:dom_content_loaded',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('perf:dom_content_loaded', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'perf:first_contentful_paint' track call.
- *
- * @param {PerfFirstContentfulPaint} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function perfFirstContentfulPaint(
-  props?: PerfFirstContentfulPaint,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              environment_key: {
-                type: ['string'],
-              },
-              organization_key: {
-                type: ['string'],
-              },
-              payload: {
-                properties: {
-                  state_name: {
-                    type: ['string'],
-                  },
-                  value: {
-                    type: ['number'],
-                  },
-                },
-                type: 'object',
-              },
-              scope: {
-                type: ['string'],
-              },
-              space_key: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'perf:first_contentful_paint',
-    type: 'object',
-  };
-  const message = {
-    event: 'perf:first_contentful_paint',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('perf:first_contentful_paint', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'perf:time_to_interactive' track call.
- *
- * @param {PerfTimeToInteractive} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function perfTimeToInteractive(
-  props?: PerfTimeToInteractive,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              environment_key: {
-                type: ['string'],
-              },
-              organization_key: {
-                type: ['string'],
-              },
-              payload: {
-                properties: {
-                  state_name: {
-                    type: ['string'],
-                  },
-                  value: {
-                    type: ['number'],
-                  },
-                },
-                type: 'object',
-              },
-              scope: {
-                type: ['string'],
-              },
-              space_key: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'perf:time_to_interactive',
-    type: 'object',
-  };
-  const message = {
-    event: 'perf:time_to_interactive',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('perf:time_to_interactive', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
  * Fires a 'personal_access_token:action' track call.
  *
  * @param {PersonalAccessTokenAction} [props] - The analytics properties that will be sent to Segment.
@@ -6608,60 +3042,6 @@ export function personalAccessTokenAction(
   const a = analytics();
   if (a) {
     a.track('personal_access_token:action', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * PrevieApiKey schema
- *
- * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function previewApiKey(
-  props?: Record<string, any>,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    description: 'PrevieApiKey schema',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          action: {
-            type: ['string'],
-          },
-          environment_key: {
-            type: ['string'],
-          },
-          organization_key: {
-            type: ['string', 'null'],
-          },
-          space_key: {
-            type: ['string'],
-          },
-          version: {
-            type: ['integer', 'null'],
-          },
-        },
-        required: ['space_key', 'action'],
-      },
-      traits: {},
-    },
-    title: 'preview_api_key',
-  };
-  const message = {
-    event: 'preview_api_key',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('preview_api_key', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
@@ -6939,296 +3319,6 @@ export function releaseEntityRemoved(
   const a = analytics();
   if (a) {
     a.track('release_entity_removed', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'release_published' track call.
- *
- * @param {ReleasePublished} props - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function releasePublished(
-  props: ReleasePublished,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    labels: {},
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          asset_count: {
-            description: '',
-            type: 'integer',
-          },
-          entry_count: {
-            description: '',
-            type: 'integer',
-          },
-          environment_key: {
-            description: '',
-            type: 'string',
-          },
-          organization_key: {
-            description: '',
-            type: 'string',
-          },
-          release_id: {
-            description: '',
-            type: 'string',
-          },
-          space_key: {
-            description: '',
-            type: 'string',
-          },
-        },
-        required: [
-          'asset_count',
-          'entry_count',
-          'environment_key',
-          'organization_key',
-          'release_id',
-          'space_key',
-        ],
-        type: 'object',
-      },
-      traits: {
-        type: 'object',
-      },
-    },
-    required: ['properties'],
-    title: 'release_published',
-    type: 'object',
-  };
-  const message = {
-    event: 'release_published',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('release_published', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'release_schedule_canceled' track call.
- *
- * @param {ReleaseScheduleCanceled} props - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function releaseScheduleCanceled(
-  props: ReleaseScheduleCanceled,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    labels: {},
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          environment_key: {
-            description: '',
-            type: 'string',
-          },
-          job_id: {
-            description: '',
-            type: 'string',
-          },
-          organization_key: {
-            description: '',
-            type: 'string',
-          },
-          release_id: {
-            description: '',
-            type: 'string',
-          },
-          space_key: {
-            description: '',
-            type: 'string',
-          },
-        },
-        required: ['environment_key', 'job_id', 'organization_key', 'release_id', 'space_key'],
-        type: 'object',
-      },
-      traits: {
-        type: 'object',
-      },
-    },
-    required: ['properties'],
-    title: 'release_schedule_canceled',
-    type: 'object',
-  };
-  const message = {
-    event: 'release_schedule_canceled',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('release_schedule_canceled', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'release_schedule_created' track call.
- *
- * @param {ReleaseScheduleCreated} props - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function releaseScheduleCreated(
-  props: ReleaseScheduleCreated,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    labels: {},
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          action: {
-            description: '',
-            pattern: 'publish|unpublish',
-            type: 'string',
-          },
-          asset_count: {
-            description: '',
-            type: 'integer',
-          },
-          entry_count: {
-            description: '',
-            type: 'integer',
-          },
-          environment_key: {
-            description: '',
-            type: 'string',
-          },
-          job_id: {
-            description: '',
-            type: 'string',
-          },
-          organization_key: {
-            description: '',
-            type: 'string',
-          },
-          release_id: {
-            description: '',
-            type: 'string',
-          },
-          scheduled_for: {
-            description: '',
-            type: 'integer',
-          },
-          space_key: {
-            description: '',
-            type: 'string',
-          },
-        },
-        required: [
-          'action',
-          'asset_count',
-          'entry_count',
-          'environment_key',
-          'job_id',
-          'organization_key',
-          'release_id',
-          'scheduled_for',
-          'space_key',
-        ],
-        type: 'object',
-      },
-      traits: {
-        type: 'object',
-      },
-    },
-    required: ['properties'],
-    title: 'release_schedule_created',
-    type: 'object',
-  };
-  const message = {
-    event: 'release_schedule_created',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('release_schedule_created', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'release_trashed' track call.
- *
- * @param {ReleaseTrashed} props - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function releaseTrashed(
-  props: ReleaseTrashed,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    labels: {},
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          environment_key: {
-            description: '',
-            type: 'string',
-          },
-          organization_key: {
-            description: '',
-            type: 'string',
-          },
-          release_id: {
-            description: '',
-            type: 'string',
-          },
-          space_key: {
-            description: '',
-            type: 'string',
-          },
-        },
-        required: ['environment_key', 'organization_key', 'release_id', 'space_key'],
-        type: 'object',
-      },
-      traits: {
-        type: 'object',
-      },
-    },
-    required: ['properties'],
-    title: 'release_trashed',
-    type: 'object',
-  };
-  const message = {
-    event: 'release_trashed',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('release_trashed', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
@@ -7848,85 +3938,6 @@ export function searchPerform(
   }
 }
 /**
- * Fires a 'sharejs:cma_entity_version_mismatch' track call.
- *
- * @param {SharejsCmaEntityVersionMismatch} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function sharejsCmaEntityVersionMismatch(
-  props?: SharejsCmaEntityVersionMismatch,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          action: {
-            type: ['string'],
-          },
-          environment_key: {
-            type: ['string'],
-          },
-          organization_key: {
-            type: ['string'],
-          },
-          payload: {
-            properties: {
-              cma_entity_version: {
-                type: ['integer'],
-              },
-              entity_id: {
-                type: ['string'],
-              },
-              entity_type: {
-                type: ['string'],
-              },
-              share_js_doc_compressed_version: {
-                type: ['integer'],
-              },
-              share_js_doc_version: {
-                type: ['integer'],
-              },
-            },
-            type: 'object',
-          },
-          scope: {
-            type: ['string'],
-          },
-          space_key: {
-            type: ['string'],
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'sharejs:cma_entity_version_mismatch',
-    type: 'object',
-  };
-  const message = {
-    event: 'sharejs:cma_entity_version_mismatch',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track(
-      'sharejs:cma_entity_version_mismatch',
-      props || {},
-      withTypewriterContext(options),
-      callback
-    );
-  }
-}
-/**
  * Schema to track slide in editor usage
  *
  * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
@@ -8031,251 +4042,6 @@ export function spaceCreate(
   }
 }
 /**
- * Fires a 'teams_in_space:users_added' track call.
- *
- * @param {TeamsInSpaceUsersAdded} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function teamsInSpaceUsersAdded(
-  props?: TeamsInSpaceUsersAdded,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              environment_key: {
-                type: ['string'],
-              },
-              organization_key: {
-                type: ['string'],
-              },
-              payload: {
-                properties: {
-                  num_err: {
-                    type: ['integer'],
-                  },
-                  num_success: {
-                    type: ['integer'],
-                  },
-                },
-                type: 'object',
-              },
-              scope: {
-                type: ['string'],
-              },
-              space_key: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'teams_in_space:users_added',
-    type: 'object',
-  };
-  const message = {
-    event: 'teams_in_space:users_added',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('teams_in_space:users_added', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'text_editor:action' track call.
- *
- * @param {TextEditorAction} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function textEditorAction(
-  props?: TextEditorAction,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              action_origin: {
-                type: ['string'],
-              },
-              additional_data: {
-                properties: {
-                  character_count_after: {
-                    type: ['integer'],
-                  },
-                  character_count_before: {
-                    type: ['integer'],
-                  },
-                  character_count_selection: {
-                    type: ['integer'],
-                  },
-                  link_type: {
-                    type: ['string'],
-                  },
-                  mark_type: {
-                    type: ['string'],
-                  },
-                  node_type: {
-                    type: ['string'],
-                  },
-                },
-                type: 'object',
-              },
-              character_count_after: {
-                type: ['integer'],
-              },
-              character_count_before: {},
-              character_count_selection: {},
-              content_type_id: {
-                type: ['string'],
-              },
-              editor_name: {
-                type: ['string'],
-              },
-              entry_id: {
-                type: ['string'],
-              },
-              environment_key: {
-                type: ['string'],
-              },
-              field_id: {
-                type: ['string'],
-              },
-              field_locale: {
-                type: ['string'],
-              },
-              is_fullscreen: {
-                type: ['boolean'],
-              },
-              organization_key: {
-                type: ['string'],
-              },
-              space_key: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
-          },
-          schema: {
-            type: ['string'],
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'text_editor:action',
-    type: 'object',
-  };
-  const message = {
-    event: 'text_editor:action',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('text_editor:action', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Fires a 'tracking:invalid_event' track call.
- *
- * @param {TrackingInvalidEvent} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function trackingInvalidEvent(
-  props?: TrackingInvalidEvent,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            properties: {
-              action: {
-                type: ['string'],
-              },
-              environment_key: {
-                type: ['string'],
-              },
-              organization_key: {
-                type: ['string'],
-              },
-              payload: {
-                properties: {
-                  event: {
-                    type: ['string'],
-                  },
-                },
-                type: 'object',
-              },
-              scope: {
-                type: ['string'],
-              },
-              space_key: {
-                type: ['string'],
-              },
-            },
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {},
-    },
-    title: 'tracking:invalid_event',
-    type: 'object',
-  };
-  const message = {
-    event: 'tracking:invalid_event',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('tracking:invalid_event', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
  * Schema to track the translation sidebar widgets
  *
  * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
@@ -8348,69 +4114,6 @@ export function translationSidebar(
   const a = analytics();
   if (a) {
     a.track('translation_sidebar', props || {}, withTypewriterContext(options), callback);
-  }
-}
-/**
- * Track the view migration in `ui_config` endpoint per space
- *
- * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function uiConfigMigrate(
-  props?: Record<string, any>,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    description: 'Track the view migration in `ui_config` endpoint per space',
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          endpoint: {
-            type: ['string'],
-          },
-          environment_key: {
-            type: ['string'],
-          },
-          organization_key: {
-            type: ['string'],
-          },
-          space_key: {
-            type: ['string'],
-          },
-          view_count_migrated: {
-            type: ['integer'],
-          },
-          view_count_migration_failed: {
-            type: ['integer'],
-          },
-        },
-        required: [
-          'organization_key',
-          'space_key',
-          'view_count_migrated',
-          'view_count_migration_failed',
-          'endpoint',
-        ],
-      },
-      traits: {},
-    },
-    title: 'ui_config_migrate',
-  };
-  const message = {
-    event: 'ui_config_migrate',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track('ui_config_migrate', props || {}, withTypewriterContext(options), callback);
   }
 }
 /**
@@ -8919,160 +4622,6 @@ export function viewLoad(
     a.track('view_load', props || {}, withTypewriterContext(options), callback);
   }
 }
-/**
- * Fires a 'widget_renderer:fallback_rendered' track call.
- *
- * @param {WidgetRendererFallbackRendered} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function widgetRendererFallbackRendered(
-  props?: WidgetRendererFallbackRendered,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    labels: {},
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            description: '',
-            properties: {
-              app_definition_id: {
-                description: '',
-                type: 'string',
-              },
-              environment: {
-                description: '',
-                type: 'string',
-              },
-              environment_key: {
-                type: ['string'],
-              },
-              organization_key: {
-                description: '',
-                type: 'string',
-              },
-              space_key: {
-                description: '',
-                type: 'string',
-              },
-              user_id: {
-                description: '',
-                type: 'string',
-              },
-            },
-            required: [],
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {
-        type: 'object',
-      },
-    },
-    title: 'widget_renderer:fallback_rendered',
-    type: 'object',
-  };
-  const message = {
-    event: 'widget_renderer:fallback_rendered',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track(
-      'widget_renderer:fallback_rendered',
-      props || {},
-      withTypewriterContext(options),
-      callback
-    );
-  }
-}
-/**
- * Fires a 'widget_renderer:fallback_warning_shown' track call.
- *
- * @param {WidgetRendererFallbackWarningShown} [props] - The analytics properties that will be sent to Segment.
- * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
- * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
- * 		call is fired.
- */
-export function widgetRendererFallbackWarningShown(
-  props?: WidgetRendererFallbackWarningShown,
-  options?: Segment.Options,
-  callback?: Segment.Callback
-): void {
-  const schema = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    labels: {},
-    properties: {
-      context: {},
-      properties: {
-        properties: {
-          data: {
-            description: '',
-            properties: {
-              app_definition_id: {
-                description: '',
-                type: 'string',
-              },
-              environment: {
-                description: '',
-                type: 'string',
-              },
-              environment_key: {
-                type: ['string'],
-              },
-              organization_key: {
-                description: '',
-                type: 'string',
-              },
-              space_key: {
-                description: '',
-                type: 'string',
-              },
-              user_id: {
-                description: '',
-                type: 'string',
-              },
-            },
-            required: [],
-            type: 'object',
-          },
-        },
-        type: 'object',
-      },
-      traits: {
-        type: 'object',
-      },
-    },
-    title: 'widget_renderer:fallback_warning_shown',
-    type: 'object',
-  };
-  const message = {
-    event: 'widget_renderer:fallback_warning_shown',
-    properties: props || {},
-    options,
-  };
-  validateAgainstSchema(message, schema);
-
-  const a = analytics();
-  if (a) {
-    a.track(
-      'widget_renderer:fallback_warning_shown',
-      props || {},
-      withTypewriterContext(options),
-      callback
-    );
-  }
-}
 
 const clientAPI = {
   /**
@@ -9090,15 +4639,6 @@ const clientAPI = {
    */
   setTypewriterOptions,
   /**
-   * Fires a 'account_dropdown:pending_tasks_fetched' track call.
-   *
-   * @param {AccountDropdownPendingTasksFetched} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  accountDropdownPendingTasksFetched,
-  /**
    * ApiKey schema
    *
    * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
@@ -9107,24 +4647,6 @@ const clientAPI = {
    * 		call is fired.
    */
   apiKey,
-  /**
-   * Records an app definition lifecycle event
-   *
-   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  appDefinition,
-  /**
-   * Records an app installation lifecycle event
-   *
-   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  appInstallation,
   /**
    * Records an event in App lifecycle
    *
@@ -9135,24 +4657,6 @@ const clientAPI = {
    */
   appLifecycleEvent,
   /**
-   * Fires a 'app_management:created' track call.
-   *
-   * @param {AppManagementCreated} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  appManagementCreated,
-  /**
-   * Fires a 'app_management:updated' track call.
-   *
-   * @param {AppManagementUpdated} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  appManagementUpdated,
-  /**
    * Web app opened by visiting app.contentful.com
    *
    * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
@@ -9161,15 +4665,6 @@ const clientAPI = {
    * 		call is fired.
    */
   appOpen,
-  /**
-   * Event fired when the example app opens
-   *
-   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  appTheExampleAppOpen,
   /**
    * Records a reason for App uninstallation
    *
@@ -9189,42 +4684,6 @@ const clientAPI = {
    */
   appsLifecycleEvent,
   /**
-   * Fires a 'asset_created' track call.
-   *
-   * @param {AssetCreated} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  assetCreated,
-  /**
-   * Fires a 'asset_list:add_asset_multiple' track call.
-   *
-   * @param {AssetListAddAssetMultiple} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  assetListAddAssetMultiple,
-  /**
-   * Fires a 'asset_list:add_asset_single' track call.
-   *
-   * @param {AssetListAddAssetSingle} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  assetListAddAssetSingle,
-  /**
-   * Fires a 'asset_published' track call.
-   *
-   * @param {AssetPublished} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  assetPublished,
-  /**
    * Tracks usage of boilerplate projects
    *
    * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
@@ -9234,42 +4693,6 @@ const clientAPI = {
    */
   boilerplate,
   /**
-   * Fires a 'bulk_editor:close' track call.
-   *
-   * @param {BulkEditorClose} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  bulkEditorClose,
-  /**
-   * Fires a 'bulk_editor:edit_in_entry_editor' track call.
-   *
-   * @param {BulkEditorEditInEntryEditor} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  bulkEditorEditInEntryEditor,
-  /**
-   * Fires a 'bulk_editor:open' track call.
-   *
-   * @param {BulkEditorOpen} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  bulkEditorOpen,
-  /**
-   * Fires a 'bulk_editor:open_slide_in' track call.
-   *
-   * @param {BulkEditorOpenSlideIn} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  bulkEditorOpenSlideIn,
-  /**
    * Schema for any event that has to do with content preview in our webapp
    *
    * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
@@ -9278,15 +4701,6 @@ const clientAPI = {
    * 		call is fired.
    */
   contentPreview,
-  /**
-   * ContentTyppe schema
-   *
-   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  contentType,
   /**
    * Emitted when a job is triggered
    *
@@ -9315,15 +4729,6 @@ const clientAPI = {
    */
   editorLoaded,
   /**
-   * Fires a 'editor_workbench:tab_open' track call.
-   *
-   * @param {EditorWorkbenchTabOpen} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  editorWorkbenchTabOpen,
-  /**
    * Fires a 'element:click' track call.
    *
    * @param {ElementClick} [props] - The analytics properties that will be sent to Segment.
@@ -9351,33 +4756,6 @@ const clientAPI = {
    */
   entityEditorEditConflict2,
   /**
-   * Entry schema
-   *
-   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  entry,
-  /**
-   * Fires a 'entry:publish' track call.
-   *
-   * @param {EntryPublish} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  entryPublish,
-  /**
-   * Schema of creating an entry in the webapp
-   *
-   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  entryCreate,
-  /**
    * Fires a 'entry_created' track call.
    *
    * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
@@ -9394,43 +4772,7 @@ const clientAPI = {
    * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
    * 		call is fired.
    */
-  entryPublish1,
-  /**
-   * Schema of entry references
-   *
-   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  entryReferences,
-  /**
-   * Fires a 'entry_references:dialog_open' track call.
-   *
-   * @param {EntryReferencesDialogOpen} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  entryReferencesDialogOpen,
-  /**
-   * Fires a 'entry_references:publish' track call.
-   *
-   * @param {EntryReferencesPublish} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  entryReferencesPublish,
-  /**
-   * Fires a 'entry_references:validate' track call.
-   *
-   * @param {EntryReferencesValidate} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  entryReferencesValidate,
+  entryPublish,
   /**
    * Schema for tracking entry page views
    *
@@ -9450,23 +4792,23 @@ const clientAPI = {
    */
   environmentAliases,
   /**
-   * Environment branching tracking
+   * Event is used for tracking goals achieved in a new feature that is being tested.
    *
-   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {ExperimentGoalAchieved} props - The analytics properties that will be sent to Segment.
    * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
    * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
    * 		call is fired.
    */
-  environmentBranching,
+  experimentGoalAchieved,
   /**
-   * Schema for A/B tests, inside of the user_interface
+   * Event is used for tracking user interactions during new features that are being tested.
    *
-   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
+   * @param {ExperimentInteracted} props - The analytics properties that will be sent to Segment.
    * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
    * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
    * 		call is fired.
    */
-  experiment,
+  experimentInteracted,
   /**
    * Allows to track which user is part of a UI experiment or a particular A/B test variation, e.g. controlled through `LaunchDarkly` or another kind of feature flag.
    *
@@ -9486,15 +4828,6 @@ const clientAPI = {
    */
   extensionActivate,
   /**
-   * Extension rendered
-   *
-   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  extensionRender,
-  /**
    * Extension set a value of a field
    *
    * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
@@ -9512,24 +4845,6 @@ const clientAPI = {
    * 		call is fired.
    */
   featureBulkEditor,
-  /**
-   * Events for the comments endpoint, emitted on CUD actions. Note: The Tasks feature is using the comments endpoint behind the scenes.
-   *
-   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  featureCommentsAndTasks,
-  /**
-   * Generated empty schema for feature_playground
-   *
-   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  featurePlayground,
   /**
    * Schema of interacting with a reference entry
    *
@@ -9585,60 +4900,6 @@ const clientAPI = {
    */
   globalDialog,
   /**
-   * Fires a 'global:space_changed' track call.
-   *
-   * @param {GlobalSpaceChanged} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  globalSpaceChanged,
-  /**
-   * Fires a 'global:space_left' track call.
-   *
-   * @param {GlobalSpaceLeft} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  globalSpaceLeft,
-  /**
-   * Fires a 'global:state_changed' track call.
-   *
-   * @param {GlobalStateChanged} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  globalStateChanged,
-  /**
-   * Fires a 'incoming_links:dialog_confirm' track call.
-   *
-   * @param {IncomingLinksDialogConfirm} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  incomingLinksDialogConfirm,
-  /**
-   * Fires a 'incoming_links:dialog_open' track call.
-   *
-   * @param {IncomingLinksDialogOpen} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  incomingLinksDialogOpen,
-  /**
-   * Fires a 'incoming_links:query' track call.
-   *
-   * @param {IncomingLinksQuery} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  incomingLinksQuery,
-  /**
    * Emitted when the user cancels the job
    *
    * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
@@ -9657,15 +4918,6 @@ const clientAPI = {
    */
   jobsCreate,
   /**
-   * Emitted when a job is triggered
-   *
-   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  jobsProcessing,
-  /**
    * Schema for tracking every state transition in the user interface
    *
    * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
@@ -9675,33 +4927,6 @@ const clientAPI = {
    */
   pageView,
   /**
-   * Fires a 'perf:dom_content_loaded' track call.
-   *
-   * @param {PerfDomContentLoaded} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  perfDomContentLoaded,
-  /**
-   * Fires a 'perf:first_contentful_paint' track call.
-   *
-   * @param {PerfFirstContentfulPaint} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  perfFirstContentfulPaint,
-  /**
-   * Fires a 'perf:time_to_interactive' track call.
-   *
-   * @param {PerfTimeToInteractive} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  perfTimeToInteractive,
-  /**
    * Fires a 'personal_access_token:action' track call.
    *
    * @param {PersonalAccessTokenAction} [props] - The analytics properties that will be sent to Segment.
@@ -9710,15 +4935,6 @@ const clientAPI = {
    * 		call is fired.
    */
   personalAccessTokenAction,
-  /**
-   * PrevieApiKey schema
-   *
-   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  previewApiKey,
   /**
    * Fires a 'release_created' track call.
    *
@@ -9755,42 +4971,6 @@ const clientAPI = {
    * 		call is fired.
    */
   releaseEntityRemoved,
-  /**
-   * Fires a 'release_published' track call.
-   *
-   * @param {ReleasePublished} props - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  releasePublished,
-  /**
-   * Fires a 'release_schedule_canceled' track call.
-   *
-   * @param {ReleaseScheduleCanceled} props - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  releaseScheduleCanceled,
-  /**
-   * Fires a 'release_schedule_created' track call.
-   *
-   * @param {ReleaseScheduleCreated} props - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  releaseScheduleCreated,
-  /**
-   * Fires a 'release_trashed' track call.
-   *
-   * @param {ReleaseTrashed} props - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  releaseTrashed,
   /**
    * Fires a 'search:entry_clicked' track call.
    *
@@ -9873,15 +5053,6 @@ const clientAPI = {
    */
   searchPerform,
   /**
-   * Fires a 'sharejs:cma_entity_version_mismatch' track call.
-   *
-   * @param {SharejsCmaEntityVersionMismatch} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  sharejsCmaEntityVersionMismatch,
-  /**
    * Schema to track slide in editor usage
    *
    * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
@@ -9900,33 +5071,6 @@ const clientAPI = {
    */
   spaceCreate,
   /**
-   * Fires a 'teams_in_space:users_added' track call.
-   *
-   * @param {TeamsInSpaceUsersAdded} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  teamsInSpaceUsersAdded,
-  /**
-   * Fires a 'text_editor:action' track call.
-   *
-   * @param {TextEditorAction} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  textEditorAction,
-  /**
-   * Fires a 'tracking:invalid_event' track call.
-   *
-   * @param {TrackingInvalidEvent} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  trackingInvalidEvent,
-  /**
    * Schema to track the translation sidebar widgets
    *
    * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
@@ -9935,15 +5079,6 @@ const clientAPI = {
    * 		call is fired.
    */
   translationSidebar,
-  /**
-   * Track the view migration in `ui_config` endpoint per space
-   *
-   * @param {Record<string, any>} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  uiConfigMigrate,
   /**
    * UI Extension Install Schema
    *
@@ -10007,24 +5142,6 @@ const clientAPI = {
    * 		call is fired.
    */
   viewLoad,
-  /**
-   * Fires a 'widget_renderer:fallback_rendered' track call.
-   *
-   * @param {WidgetRendererFallbackRendered} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  widgetRendererFallbackRendered,
-  /**
-   * Fires a 'widget_renderer:fallback_warning_shown' track call.
-   *
-   * @param {WidgetRendererFallbackWarningShown} [props] - The analytics properties that will be sent to Segment.
-   * @param {Object} [options] - A dictionary of options. For example, enable or disable specific destinations for the call.
-   * @param {Function} [callback] - An optional callback called after a short timeout after the analytics
-   * 		call is fired.
-   */
-  widgetRendererFallbackWarningShown,
 };
 
 export default new Proxy<typeof clientAPI>(clientAPI, {

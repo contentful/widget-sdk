@@ -5,56 +5,6 @@
   "rules": {
     "events": [
       {
-        "name": "account_dropdown:pending_tasks_fetched",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "environment_key": {
-                      "type": ["string"]
-                    },
-                    "organization_key": {
-                      "type": ["string"]
-                    },
-                    "payload": {
-                      "properties": {
-                        "has_inaccessible_tasks": {
-                          "type": ["boolean"]
-                        },
-                        "num_pending_tasks": {
-                          "type": ["integer"]
-                        },
-                        "num_visible_pending_tasks": {
-                          "type": ["integer"]
-                        }
-                      },
-                      "type": "object"
-                    },
-                    "scope": {
-                      "type": ["string"]
-                    },
-                    "space_key": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
         "description": "ApiKey schema",
         "name": "api_key",
         "rules": {
@@ -82,127 +32,6 @@
                 }
               },
               "required": ["space_key", "action", "api_key_id"]
-            },
-            "traits": {}
-          }
-        },
-        "version": 1
-      },
-      {
-        "description": "Records an app definition lifecycle event",
-        "name": "app_definition",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "action": {
-                  "description": "Type of action event",
-                  "type": "string"
-                },
-                "app_definition_id": {
-                  "description": "Refers to app definition id",
-                  "type": "string"
-                },
-                "created_at": {
-                  "description": "App definition creation timestamp",
-                  "type": "string"
-                },
-                "deleted_at": {
-                  "description": "App definition delete timestamp",
-                  "type": "string"
-                },
-                "has_config": {
-                  "description": "Whether the app has configuration screen",
-                  "type": "boolean"
-                },
-                "is_public": {
-                  "description": "Public or private app",
-                  "type": "boolean"
-                },
-                "locations": {
-                  "description": "Locations enabled for the app",
-                  "type": "array"
-                },
-                "name": {
-                  "description": "Name of the app",
-                  "type": "string"
-                },
-                "organization_key": {
-                  "description": "Refers to organization key",
-                  "type": "string"
-                },
-                "src": {
-                  "description": "Host domain for the app",
-                  "type": "string"
-                },
-                "updated_at": {
-                  "description": "App definition update timestamp",
-                  "type": "string"
-                },
-                "user_agent": {
-                  "description": "Refers to the original request user-agent",
-                  "type": "string"
-                }
-              },
-              "required": [
-                "action",
-                "organization_key",
-                "app_definition_id",
-                "name",
-                "src",
-                "locations",
-                "is_public",
-                "has_config"
-              ]
-            },
-            "traits": {}
-          }
-        },
-        "version": 1
-      },
-      {
-        "description": "Records an app installation lifecycle event",
-        "name": "app_installation",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "action": {
-                  "description": "Type of action event",
-                  "type": "string"
-                },
-                "app_definition_id": {
-                  "description": "Refers to app_id",
-                  "type": "string"
-                },
-                "created_at": {
-                  "description": "App creation timestamp",
-                  "type": ["string", "null"]
-                },
-                "deleted_at": {
-                  "description": "App delete timestamp",
-                  "type": ["string", "null"]
-                },
-                "environment_key": {
-                  "description": "Refers to environment_key",
-                  "type": "string"
-                },
-                "space_key": {
-                  "description": "Refers to space_key",
-                  "type": "string"
-                },
-                "updated_at": {
-                  "description": "App update timestamp",
-                  "type": ["string", "null"]
-                },
-                "user_agent": {
-                  "description": "Refers to the original request user-agent",
-                  "type": "string"
-                }
-              },
-              "required": ["space_key", "environment_key", "app_definition_id"]
             },
             "traits": {}
           }
@@ -254,88 +83,6 @@
         "version": 1
       },
       {
-        "name": "app_management:created",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "environment_key": {
-                      "type": ["string"]
-                    },
-                    "organization_key": {
-                      "type": ["string"]
-                    },
-                    "payload": {
-                      "properties": {
-                        "definition_id": {
-                          "type": ["string"]
-                        }
-                      },
-                      "type": "object"
-                    },
-                    "scope": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "app_management:updated",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "environment_key": {
-                      "type": ["string"]
-                    },
-                    "organization_key": {
-                      "type": ["string"]
-                    },
-                    "payload": {
-                      "properties": {
-                        "definition_id": {
-                          "type": ["string"]
-                        }
-                      },
-                      "type": "object"
-                    },
-                    "scope": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
         "description": "Web app opened by visiting app.contentful.com",
         "name": "app_open",
         "rules": {
@@ -353,34 +100,6 @@
                   "type": "string"
                 }
               }
-            },
-            "traits": {}
-          }
-        },
-        "version": 1
-      },
-      {
-        "description": "Event fired when the example app opens",
-        "name": "app_the_example_app_open",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "app_framework": {
-                  "type": ["string"]
-                },
-                "environment_key": {
-                  "type": ["string"]
-                },
-                "sdk_language_used": {
-                  "type": ["string"]
-                },
-                "space_key": {
-                  "type": ["string"]
-                }
-              },
-              "required": ["space_key", "sdk_language_used", "app_framework"]
             },
             "traits": {}
           }
@@ -476,140 +195,6 @@
         "version": 1
       },
       {
-        "name": "asset_created",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "asset_id": {
-                  "type": ["string"]
-                },
-                "environment": {
-                  "type": ["string"]
-                },
-                "space_key": {
-                  "type": ["string"]
-                },
-                "version": {
-                  "type": ["string"]
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "asset_list:add_asset_multiple",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "environment_key": {
-                      "type": ["string"]
-                    },
-                    "organization_key": {
-                      "type": ["string"]
-                    },
-                    "payload": {
-                      "type": ["object"]
-                    },
-                    "scope": {
-                      "type": ["string"]
-                    },
-                    "space_key": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "asset_list:add_asset_single",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "environment_key": {
-                      "type": ["string"]
-                    },
-                    "organization_key": {
-                      "type": ["string"]
-                    },
-                    "payload": {
-                      "type": ["object"]
-                    },
-                    "scope": {
-                      "type": ["string"]
-                    },
-                    "space_key": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "asset_published",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "asset_id": {
-                  "type": ["string"]
-                },
-                "environment": {
-                  "type": ["string"]
-                },
-                "space_key": {
-                  "type": ["string"]
-                },
-                "version": {
-                  "type": ["string"]
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
         "description": "Tracks usage of boilerplate projects",
         "name": "boilerplate",
         "rules": {
@@ -637,171 +222,6 @@
             },
             "traits": {}
           }
-        },
-        "version": 1
-      },
-      {
-        "name": "bulk_editor:close",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "environment_key": {
-                      "type": ["string"]
-                    },
-                    "num_edited_entries": {
-                      "type": ["integer"]
-                    },
-                    "num_published_entries": {
-                      "type": ["integer"]
-                    },
-                    "organization_key": {
-                      "type": ["string"]
-                    },
-                    "parent_entry_id": {
-                      "type": ["string"]
-                    },
-                    "ref_count": {
-                      "type": ["integer"]
-                    },
-                    "space_key": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "bulk_editor:edit_in_entry_editor",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "entry_id": {
-                      "type": ["string"]
-                    },
-                    "environment_key": {
-                      "type": ["string"]
-                    },
-                    "organization_key": {
-                      "type": ["string"]
-                    },
-                    "parent_entry_id": {
-                      "type": ["string"]
-                    },
-                    "ref_count": {
-                      "type": ["integer"]
-                    },
-                    "space_key": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "bulk_editor:open",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "environment_key": {
-                      "type": ["string"]
-                    },
-                    "organization_key": {
-                      "type": ["string"]
-                    },
-                    "parent_entry_id": {
-                      "type": ["string"]
-                    },
-                    "ref_count": {
-                      "type": ["integer"]
-                    },
-                    "space_key": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "bulk_editor:open_slide_in",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "environment_key": {
-                      "type": ["string"]
-                    },
-                    "organization_key": {
-                      "type": ["string"]
-                    },
-                    "parent_entry_id": {
-                      "type": ["string"]
-                    },
-                    "ref_count": {
-                      "type": ["integer"]
-                    },
-                    "space_key": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
         },
         "version": 1
       },
@@ -836,43 +256,6 @@
                 }
               },
               "required": ["organization_key", "space_key", "preview_name", "preview_id"]
-            },
-            "traits": {}
-          }
-        },
-        "version": 1
-      },
-      {
-        "description": "ContentTyppe schema",
-        "name": "content_type",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "action": {
-                  "type": ["string"]
-                },
-                "content_type_id": {
-                  "type": ["string"]
-                },
-                "environment_key": {
-                  "type": ["string"]
-                },
-                "organization_key": {
-                  "type": ["string", "null"]
-                },
-                "revision": {
-                  "type": ["integer", "null"]
-                },
-                "space_key": {
-                  "type": ["string"]
-                },
-                "version": {
-                  "type": ["integer", "null"]
-                }
-              },
-              "required": ["space_key", "content_type_id", "action"]
             },
             "traits": {}
           }
@@ -1031,50 +414,6 @@
                 "total_slide_count": {
                   "description": "The total number of slides open when the entry is initially loaded, default = 0 if there are no slides",
                   "type": ["integer"]
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "editor_workbench:tab_open",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "environment_key": {
-                      "type": ["string"]
-                    },
-                    "organization_key": {
-                      "type": ["string"]
-                    },
-                    "payload": {
-                      "properties": {
-                        "tab_name": {
-                          "type": ["string"]
-                        }
-                      },
-                      "type": "object"
-                    },
-                    "scope": {
-                      "type": ["string"]
-                    },
-                    "space_key": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
                 }
               },
               "type": "object"
@@ -1362,129 +701,6 @@
         "version": 1
       },
       {
-        "description": "Entry schema",
-        "name": "entry",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "action": {
-                  "type": ["string"]
-                },
-                "content_type_id": {
-                  "type": ["string"]
-                },
-                "entry_id": {
-                  "type": ["string"]
-                },
-                "environment_key": {
-                  "type": ["string"]
-                },
-                "organization_key": {
-                  "type": ["string", "null"]
-                },
-                "revision": {
-                  "type": ["integer", "null"]
-                },
-                "space_key": {
-                  "type": ["string"]
-                },
-                "version": {
-                  "type": ["integer", "null"]
-                }
-              },
-              "required": ["space_key", "content_type_id", "entry_id", "action"]
-            },
-            "traits": {}
-          }
-        },
-        "version": 1
-      },
-      {
-        "name": "entry:publish",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "action": {
-                  "type": ["string"]
-                },
-                "content_type_id": {
-                  "type": ["string"]
-                },
-                "contexts": {
-                  "type": ["string"]
-                },
-                "entry_ct_entry_reference_fields_count": {
-                  "type": ["integer"]
-                },
-                "entry_id": {
-                  "type": ["string"]
-                },
-                "event_origin": {
-                  "type": ["string"]
-                },
-                "has_legacy_extensions": {
-                  "type": ["boolean"]
-                },
-                "is_default": {
-                  "type": ["boolean"]
-                },
-                "organization_key": {
-                  "type": ["string"]
-                },
-                "space_key": {
-                  "type": ["string"]
-                },
-                "version": {
-                  "type": ["integer"]
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "description": "Schema of creating an entry in the webapp",
-        "name": "entry_create",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "entry_ct_entry_reference_fields_count": {
-                  "type": "integer"
-                },
-                "entry_id": {
-                  "type": "string"
-                },
-                "environment_key": {
-                  "type": ["string"]
-                },
-                "event_origin": {
-                  "type": "string"
-                },
-                "organization_key": {
-                  "type": "string"
-                },
-                "space_key": {
-                  "type": "string"
-                }
-              },
-              "required": ["organization_key", "space_key"]
-            },
-            "traits": {}
-          }
-        },
-        "version": 1
-      },
-      {
         "name": "entry_created",
         "rules": {
           "properties": {
@@ -1566,193 +782,6 @@
             },
             "traits": {}
           }
-        },
-        "version": 1
-      },
-      {
-        "description": "Schema of entry references",
-        "name": "entry_references",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "circular_references_count": {
-                  "type": "number"
-                },
-                "entry_id": {
-                  "type": "string"
-                },
-                "environment_key": {
-                  "type": ["string"]
-                },
-                "organization_key": {
-                  "type": "string"
-                },
-                "references_depth": {
-                  "type": "number"
-                },
-                "references_per_level": {
-                  "type": ["number"]
-                },
-                "space_key": {
-                  "type": "string"
-                }
-              },
-              "required": ["organization_key", "space_key", "entry_id"]
-            },
-            "traits": {}
-          }
-        },
-        "version": 1
-      },
-      {
-        "name": "entry_references:dialog_open",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "environment_key": {
-                      "type": ["string"]
-                    },
-                    "organization_key": {
-                      "type": ["string"]
-                    },
-                    "payload": {
-                      "properties": {
-                        "circular_references_count": {
-                          "type": ["integer"]
-                        },
-                        "entity_id": {
-                          "type": ["string"]
-                        },
-                        "references_depth": {
-                          "type": ["integer"]
-                        },
-                        "references_per_level": {
-                          "items": {
-                            "type": "integer"
-                          },
-                          "type": "array"
-                        }
-                      },
-                      "type": "object"
-                    },
-                    "scope": {
-                      "type": ["string"]
-                    },
-                    "space_key": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "entry_references:publish",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "environment_key": {
-                      "type": ["string"]
-                    },
-                    "organization_key": {
-                      "type": ["string"]
-                    },
-                    "payload": {
-                      "properties": {
-                        "entity_id": {
-                          "type": ["string"]
-                        },
-                        "references_count": {
-                          "type": ["integer"]
-                        }
-                      },
-                      "type": "object"
-                    },
-                    "scope": {
-                      "type": ["string"]
-                    },
-                    "space_key": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "entry_references:validate",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "environment_key": {
-                      "type": ["string"]
-                    },
-                    "organization_key": {
-                      "type": ["string"]
-                    },
-                    "payload": {
-                      "properties": {
-                        "entity_id": {
-                          "type": ["string"]
-                        },
-                        "references_count": {
-                          "type": ["integer"]
-                        }
-                      },
-                      "type": "object"
-                    },
-                    "scope": {
-                      "type": ["string"]
-                    },
-                    "space_key": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
         },
         "version": 1
       },
@@ -1883,107 +912,112 @@
         "version": 1
       },
       {
-        "description": "Environment branching tracking",
-        "name": "environment_branching",
+        "description": "Event is used for tracking goals achieved in a new feature that is being tested.",
+        "name": "experiment_goal_achieved",
         "rules": {
           "properties": {
             "context": {},
             "properties": {
               "properties": {
                 "action": {
-                  "type": ["string", "null"]
+                  "description": "",
+                  "type": "string"
                 },
-                "count_assets": {
-                  "description": "refers to number of assets in the source environment",
-                  "type": ["integer", "null"]
-                },
-                "count_content_types": {
-                  "description": "refers to number of content types in the source environment",
-                  "type": ["integer", "null"]
-                },
-                "count_entries": {
-                  "description": "refers to number of entries in the source environment",
-                  "type": ["integer", "null"]
-                },
-                "count_locales": {
-                  "description": "refers to number of locales in the source environment",
-                  "type": ["integer", "null"]
+                "context": {
+                  "description": "",
+                  "type": "string"
                 },
                 "environment_key": {
-                  "type": ["string"]
+                  "description": "",
+                  "type": "string"
                 },
-                "environment_uuid": {
-                  "type": ["string", "null"]
+                "experiment_id": {
+                  "description": "",
+                  "type": "string"
                 },
-                "inferred_intent": {
-                  "description": "This field will contain the X-Contentful-Header send by sdks and the webapp, allowing us to track the intent of the creation.",
-                  "type": ["string", "null"]
+                "experiment_variation": {
+                  "description": "",
+                  "type": "string"
                 },
                 "organization_key": {
-                  "description": "refers to organization key",
-                  "type": ["string", "null"]
-                },
-                "platform": {
-                  "description": "this will be `web-app` if the webapp sent the request, or anything else the x-contentful-header contains in the platform field, if existing. Null otherwise.",
-                  "type": ["string", "null"]
-                },
-                "source_environment_id": {
-                  "description": "refers to environment key",
-                  "type": ["string", "null"]
-                },
-                "source_environment_uuid": {
-                  "type": ["string", "null"]
+                  "description": "",
+                  "type": "string"
                 },
                 "space_key": {
-                  "description": "refers to space key",
-                  "type": ["string"]
+                  "description": "",
+                  "type": "string"
                 },
-                "user_agent": {
-                  "description": "refers to the http user agent header sent",
-                  "type": ["string", "null"]
+                "value": {
+                  "description": "",
+                  "type": "number"
                 }
               },
-              "required": ["organization_key", "space_key", "action"]
+              "required": ["action", "experiment_id", "experiment_variation"],
+              "type": "object"
             },
-            "traits": {}
-          }
+            "traits": {
+              "type": "object"
+            }
+          },
+          "required": ["properties"],
+          "type": "object"
         },
         "version": 1
       },
       {
-        "description": "Schema for A/B tests, inside of the user_interface",
-        "name": "experiment",
+        "description": "Event is used for tracking user interactions during new features that are being tested.",
+        "name": "experiment_interacted",
         "rules": {
           "properties": {
             "context": {},
             "properties": {
               "properties": {
                 "action": {
-                  "type": ["string"]
+                  "description": "",
+                  "type": "string"
+                },
+                "context": {
+                  "description": "",
+                  "type": "string"
                 },
                 "environment_key": {
-                  "type": ["string"]
+                  "description": "",
+                  "type": "string"
                 },
                 "experiment_id": {
-                  "type": ["string"]
+                  "description": "",
+                  "type": "string"
                 },
-                "interaction_context": {
-                  "type": ["string", "null"]
+                "experiment_variation": {
+                  "description": "",
+                  "type": "string"
                 },
                 "organization_key": {
-                  "type": ["string"]
+                  "description": "",
+                  "type": "string"
                 },
                 "space_key": {
-                  "type": ["string"]
+                  "description": "",
+                  "type": "string"
                 },
-                "variation": {
-                  "type": ["boolean", "null"]
+                "step": {
+                  "description": "",
+                  "type": "number"
+                },
+                "value": {
+                  "description": "",
+                  "type": "number"
                 }
               },
-              "required": ["experiment_id", "variation", "action"]
+              "required": ["action", "experiment_id", "experiment_variation"],
+              "type": "object"
             },
-            "traits": {}
-          }
+            "traits": {
+              "type": "object"
+            }
+          },
+          "required": ["properties"],
+          "type": "object"
         },
         "version": 1
       },
@@ -2061,58 +1095,6 @@
                 }
               },
               "required": ["space_key", "extension_id", "location"]
-            },
-            "traits": {}
-          }
-        },
-        "version": 1
-      },
-      {
-        "description": "Extension rendered",
-        "name": "extension_render",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "contexts": {
-                  "type": ["string"]
-                },
-                "environment_key": {
-                  "description": "Refers to environment_key",
-                  "type": "string"
-                },
-                "extension_definition_id": {
-                  "type": ["string", "null"]
-                },
-                "extension_id": {
-                  "type": "string"
-                },
-                "extension_name": {
-                  "type": "string"
-                },
-                "installation_params": {
-                  "type": "array"
-                },
-                "instance_params": {
-                  "type": "array"
-                },
-                "location": {
-                  "type": "string"
-                },
-                "src": {
-                  "type": ["string", "null"]
-                }
-              },
-              "required": [
-                "contexts",
-                "location",
-                "extension_id",
-                "extension_name",
-                "src",
-                "installation_params",
-                "instance_params"
-              ]
             },
             "traits": {}
           }
@@ -2220,130 +1202,6 @@
                 }
               },
               "required": ["space_key", "action"]
-            },
-            "traits": {}
-          }
-        },
-        "version": 1
-      },
-      {
-        "description": "Events for the comments endpoint, emitted on CUD actions. Note: The Tasks feature is using the comments endpoint behind the scenes.",
-        "name": "feature_comments_and_tasks",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "action": {
-                  "description": "The action that is performed on the comment or task",
-                  "type": ["string"]
-                },
-                "comment_id": {
-                  "description": "The comment's (or tasks) ID",
-                  "type": ["string"]
-                },
-                "comment_type": {
-                  "description": "The kind of comment that this event is about (can be a Task or normal Comment)",
-                  "type": ["string"]
-                },
-                "entity_id": {
-                  "description": "The ID of the entity containing the comment",
-                  "type": ["string"]
-                },
-                "entity_type": {
-                  "description": "The type of the entity containing the comment",
-                  "type": ["string"]
-                },
-                "environment_key": {
-                  "type": ["string"]
-                },
-                "environment_uuid": {
-                  "description": "Environment internally used ID",
-                  "type": ["string"]
-                },
-                "has_body_changed": {
-                  "description": "Whether the comment's message or task's title was touched by the performed action. Only relevant for `update` action (omitted otherwise)",
-                  "type": ["boolean", "null"]
-                },
-                "new_assignee_id": {
-                  "description": "ID of the assigned user after the action. Skip in case of `delete` action action and for non-task comments.",
-                  "type": ["string", "null"]
-                },
-                "new_body_length": {
-                  "description": "Total length of the comment's message or task's title after the action. Skip in case of a `delete` action.",
-                  "type": ["integer", "null"]
-                },
-                "new_status": {
-                  "description": "Status (\"resolved\" or \"open\") of a task after the action. Skip in case of a `delete` action and for non-task comments.",
-                  "type": ["string", "null"]
-                },
-                "old_assignee_id": {
-                  "description": "ID of the assigned user before the action. Skip in case of a `create` action and for non-task comments.",
-                  "type": ["string", "null"]
-                },
-                "old_body_length": {
-                  "description": "Total length of the comment's message or task's title before the action. Skip in case of a `create` action.",
-                  "type": ["integer", "null"]
-                },
-                "old_status": {
-                  "description": "Status (\"resolved\" or \"open\") of a task before the action. Skip in case of a `create` action and for non-task comments.",
-                  "type": ["string", "null"]
-                },
-                "organization_key": {
-                  "description": "Gatekeeper organization key",
-                  "type": ["string"]
-                },
-                "parent_comment_id": {
-                  "description": "ID of the parent comment (discussion thread), `null` if the comment has no parent (and therefore is a parent itself)",
-                  "type": ["string", "null"]
-                },
-                "space_key": {
-                  "description": "Gatekeeper space key",
-                  "type": ["string"]
-                }
-              },
-              "required": [
-                "organization_key",
-                "space_key",
-                "environment_key",
-                "environment_uuid",
-                "entity_id",
-                "entity_type",
-                "action",
-                "comment_type",
-                "comment_id"
-              ]
-            },
-            "traits": {}
-          }
-        },
-        "version": 1
-      },
-      {
-        "description": "Generated empty schema for feature_playground",
-        "name": "feature_playground",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "action": {
-                  "type": ["string"]
-                },
-                "environment_key": {
-                  "type": ["string"]
-                },
-                "integration_environment": {
-                  "type": ["string", "null"]
-                },
-                "mocked_device": {
-                  "type": ["string", "null"]
-                },
-                "organization_key": {
-                  "type": ["string", "null"]
-                }
-              },
-              "required": ["action"]
             },
             "traits": {}
           }
@@ -2639,389 +1497,6 @@
         "version": 1
       },
       {
-        "name": "global:space_changed",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "action": {
-                  "type": ["string"]
-                },
-                "environment_key": {
-                  "type": ["string"]
-                },
-                "organization_key": {
-                  "type": ["string"]
-                },
-                "payload": {
-                  "type": ["object"]
-                },
-                "scope": {
-                  "type": ["string"]
-                },
-                "space_key": {
-                  "type": ["string"]
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "global:space_left",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "action": {
-                  "type": ["string"]
-                },
-                "environment_key": {
-                  "type": ["string"]
-                },
-                "organization_key": {
-                  "type": ["string"]
-                },
-                "payload": {
-                  "type": ["object"]
-                },
-                "scope": {
-                  "type": ["string"]
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "global:state_changed",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "from_state": {
-                      "type": ["string"]
-                    },
-                    "from_state_params": {
-                      "properties": {
-                        "accepted_permissions": {},
-                        "add_to_context": {
-                          "type": ["boolean"]
-                        },
-                        "api_key_id": {
-                          "type": ["string"]
-                        },
-                        "app_id": {},
-                        "asset_id": {
-                          "type": ["string"]
-                        },
-                        "content_type_id": {
-                          "type": ["string"]
-                        },
-                        "definition_id": {
-                          "type": ["string"]
-                        },
-                        "entry_id": {
-                          "type": ["string"]
-                        },
-                        "environment_key": {
-                          "type": ["string"]
-                        },
-                        "ignore_leave_confirmation": {
-                          "type": ["boolean"]
-                        },
-                        "invitation_id": {
-                          "type": ["string"]
-                        },
-                        "jump_to_role": {
-                          "type": ["string"]
-                        },
-                        "locale_id": {
-                          "type": ["string"]
-                        },
-                        "org_id": {},
-                        "org_owner_or_admin": {},
-                        "path_suffix": {
-                          "type": ["string"]
-                        },
-                        "referrer": {},
-                        "space_key": {
-                          "type": ["string"]
-                        },
-                        "tab": {
-                          "type": ["string"]
-                        },
-                        "template_id": {},
-                        "user_id": {
-                          "type": ["string"]
-                        },
-                        "webhook_id": {
-                          "type": ["string"]
-                        }
-                      },
-                      "type": "object"
-                    },
-                    "organization_key": {
-                      "type": ["string"]
-                    },
-                    "space_key": {
-                      "type": ["string"]
-                    },
-                    "to_state": {
-                      "type": ["string"]
-                    },
-                    "to_state_params": {
-                      "properties": {
-                        "accepted_permissions": {},
-                        "add_to_context": {
-                          "type": ["boolean"]
-                        },
-                        "api_key_id": {
-                          "type": ["string"]
-                        },
-                        "app_id": {},
-                        "asset_id": {
-                          "type": ["string"]
-                        },
-                        "content_type_id": {
-                          "type": ["string"]
-                        },
-                        "definition_id": {
-                          "type": ["string"]
-                        },
-                        "entry_id": {
-                          "type": ["string"]
-                        },
-                        "environment_key": {
-                          "type": ["string"]
-                        },
-                        "ignore_leave_confirmation": {
-                          "type": ["boolean"]
-                        },
-                        "jump_to_role": {
-                          "type": ["string"]
-                        },
-                        "locale_id": {
-                          "type": ["string"]
-                        },
-                        "org_id": {
-                          "type": ["string"]
-                        },
-                        "org_owner_or_admin": {},
-                        "path_suffix": {
-                          "type": ["string"]
-                        },
-                        "referrer": {},
-                        "space_key": {
-                          "type": ["string"]
-                        },
-                        "tab": {
-                          "type": ["string"]
-                        },
-                        "template_id": {},
-                        "user_id": {
-                          "type": ["string"]
-                        },
-                        "webhook_id": {
-                          "type": ["string"]
-                        }
-                      },
-                      "type": "object"
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "incoming_links:dialog_confirm",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "environment_key": {
-                      "type": ["string"]
-                    },
-                    "organization_key": {
-                      "type": ["string"]
-                    },
-                    "payload": {
-                      "properties": {
-                        "dialog_action": {
-                          "type": ["string"]
-                        },
-                        "dialog_session_id": {
-                          "type": ["string"]
-                        },
-                        "entity_id": {
-                          "type": ["string"]
-                        },
-                        "entity_type": {
-                          "type": ["string"]
-                        },
-                        "incoming_links_count": {
-                          "type": ["integer"]
-                        }
-                      },
-                      "type": "object"
-                    },
-                    "scope": {
-                      "type": ["string"]
-                    },
-                    "space_key": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "incoming_links:dialog_open",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "environment_key": {
-                      "type": ["string"]
-                    },
-                    "organization_key": {
-                      "type": ["string"]
-                    },
-                    "payload": {
-                      "properties": {
-                        "dialog_action": {
-                          "type": ["string"]
-                        },
-                        "dialog_session_id": {
-                          "type": ["string"]
-                        },
-                        "entity_id": {
-                          "type": ["string"]
-                        },
-                        "entity_type": {
-                          "type": ["string"]
-                        },
-                        "incoming_links_count": {
-                          "type": ["integer"]
-                        }
-                      },
-                      "type": "object"
-                    },
-                    "scope": {
-                      "type": ["string"]
-                    },
-                    "space_key": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "incoming_links:query",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "environment_key": {
-                      "type": ["string"]
-                    },
-                    "organization_key": {
-                      "type": ["string"]
-                    },
-                    "payload": {
-                      "properties": {
-                        "entity_id": {
-                          "type": ["string"]
-                        },
-                        "entity_type": {
-                          "type": ["string"]
-                        },
-                        "incoming_link_ids": {
-                          "items": {
-                            "type": "string"
-                          },
-                          "type": "array"
-                        },
-                        "incoming_links_count": {
-                          "type": ["integer"]
-                        }
-                      },
-                      "type": "object"
-                    },
-                    "scope": {
-                      "type": ["string"]
-                    },
-                    "space_key": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
         "description": "Emitted when the user cancels the job",
         "name": "jobs_cancel",
         "rules": {
@@ -3097,32 +1572,6 @@
         "version": 1
       },
       {
-        "description": "Emitted when a job is triggered",
-        "name": "jobs_processing",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "action": {
-                  "type": ["string"]
-                },
-                "job_id": {
-                  "type": ["string"]
-                },
-                "status_code": {
-                  "description": "code of the status of the current job process. Example: 200 for success",
-                  "type": ["integer"]
-                }
-              },
-              "required": ["job_id", "action", "status_code"]
-            },
-            "traits": {}
-          }
-        },
-        "version": 1
-      },
-      {
         "description": "Schema for tracking every state transition in the user interface",
         "name": "page_view",
         "rules": {
@@ -3160,147 +1609,6 @@
         "version": 1
       },
       {
-        "name": "perf:dom_content_loaded",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "environment_key": {
-                      "type": ["string"]
-                    },
-                    "organization_key": {
-                      "type": ["string"]
-                    },
-                    "payload": {
-                      "properties": {
-                        "state_name": {
-                          "type": ["string"]
-                        },
-                        "value": {
-                          "type": ["number"]
-                        }
-                      },
-                      "type": "object"
-                    },
-                    "scope": {
-                      "type": ["string"]
-                    },
-                    "space_key": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "perf:first_contentful_paint",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "environment_key": {
-                      "type": ["string"]
-                    },
-                    "organization_key": {
-                      "type": ["string"]
-                    },
-                    "payload": {
-                      "properties": {
-                        "state_name": {
-                          "type": ["string"]
-                        },
-                        "value": {
-                          "type": ["number"]
-                        }
-                      },
-                      "type": "object"
-                    },
-                    "scope": {
-                      "type": ["string"]
-                    },
-                    "space_key": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "perf:time_to_interactive",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "environment_key": {
-                      "type": ["string"]
-                    },
-                    "organization_key": {
-                      "type": ["string"]
-                    },
-                    "payload": {
-                      "properties": {
-                        "state_name": {
-                          "type": ["string"]
-                        },
-                        "value": {
-                          "type": ["number"]
-                        }
-                      },
-                      "type": "object"
-                    },
-                    "scope": {
-                      "type": ["string"]
-                    },
-                    "space_key": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
         "name": "personal_access_token:action",
         "rules": {
           "properties": {
@@ -3324,37 +1632,6 @@
             "traits": {}
           },
           "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "description": "PrevieApiKey schema",
-        "name": "preview_api_key",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "action": {
-                  "type": ["string"]
-                },
-                "environment_key": {
-                  "type": ["string"]
-                },
-                "organization_key": {
-                  "type": ["string", "null"]
-                },
-                "space_key": {
-                  "type": ["string"]
-                },
-                "version": {
-                  "type": ["integer", "null"]
-                }
-              },
-              "required": ["space_key", "action"]
-            },
-            "traits": {}
-          }
         },
         "version": 1
       },
@@ -3532,210 +1809,6 @@
                 "release_id",
                 "space_key"
               ],
-              "type": "object"
-            },
-            "traits": {
-              "type": "object"
-            }
-          },
-          "required": ["properties"],
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "release_published",
-        "rules": {
-          "labels": {},
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "asset_count": {
-                  "description": "",
-                  "type": "integer"
-                },
-                "entry_count": {
-                  "description": "",
-                  "type": "integer"
-                },
-                "environment_key": {
-                  "description": "",
-                  "type": "string"
-                },
-                "organization_key": {
-                  "description": "",
-                  "type": "string"
-                },
-                "release_id": {
-                  "description": "",
-                  "type": "string"
-                },
-                "space_key": {
-                  "description": "",
-                  "type": "string"
-                }
-              },
-              "required": [
-                "asset_count",
-                "entry_count",
-                "environment_key",
-                "organization_key",
-                "release_id",
-                "space_key"
-              ],
-              "type": "object"
-            },
-            "traits": {
-              "type": "object"
-            }
-          },
-          "required": ["properties"],
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "release_schedule_canceled",
-        "rules": {
-          "labels": {},
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "environment_key": {
-                  "description": "",
-                  "type": "string"
-                },
-                "job_id": {
-                  "description": "",
-                  "type": "string"
-                },
-                "organization_key": {
-                  "description": "",
-                  "type": "string"
-                },
-                "release_id": {
-                  "description": "",
-                  "type": "string"
-                },
-                "space_key": {
-                  "description": "",
-                  "type": "string"
-                }
-              },
-              "required": [
-                "environment_key",
-                "job_id",
-                "organization_key",
-                "release_id",
-                "space_key"
-              ],
-              "type": "object"
-            },
-            "traits": {
-              "type": "object"
-            }
-          },
-          "required": ["properties"],
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "release_schedule_created",
-        "rules": {
-          "labels": {},
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "action": {
-                  "description": "",
-                  "pattern": "publish|unpublish",
-                  "type": "string"
-                },
-                "asset_count": {
-                  "description": "",
-                  "type": "integer"
-                },
-                "entry_count": {
-                  "description": "",
-                  "type": "integer"
-                },
-                "environment_key": {
-                  "description": "",
-                  "type": "string"
-                },
-                "job_id": {
-                  "description": "",
-                  "type": "string"
-                },
-                "organization_key": {
-                  "description": "",
-                  "type": "string"
-                },
-                "release_id": {
-                  "description": "",
-                  "type": "string"
-                },
-                "scheduled_for": {
-                  "description": "",
-                  "type": "integer"
-                },
-                "space_key": {
-                  "description": "",
-                  "type": "string"
-                }
-              },
-              "required": [
-                "action",
-                "asset_count",
-                "entry_count",
-                "environment_key",
-                "job_id",
-                "organization_key",
-                "release_id",
-                "scheduled_for",
-                "space_key"
-              ],
-              "type": "object"
-            },
-            "traits": {
-              "type": "object"
-            }
-          },
-          "required": ["properties"],
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "release_trashed",
-        "rules": {
-          "labels": {},
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "environment_key": {
-                  "description": "",
-                  "type": "string"
-                },
-                "organization_key": {
-                  "description": "",
-                  "type": "string"
-                },
-                "release_id": {
-                  "description": "",
-                  "type": "string"
-                },
-                "space_key": {
-                  "description": "",
-                  "type": "string"
-                }
-              },
-              "required": ["environment_key", "organization_key", "release_id", "space_key"],
               "type": "object"
             },
             "traits": {
@@ -4163,57 +2236,6 @@
         "version": 1
       },
       {
-        "name": "sharejs:cma_entity_version_mismatch",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "action": {
-                  "type": ["string"]
-                },
-                "environment_key": {
-                  "type": ["string"]
-                },
-                "organization_key": {
-                  "type": ["string"]
-                },
-                "payload": {
-                  "properties": {
-                    "cma_entity_version": {
-                      "type": ["integer"]
-                    },
-                    "entity_id": {
-                      "type": ["string"]
-                    },
-                    "entity_type": {
-                      "type": ["string"]
-                    },
-                    "share_js_doc_compressed_version": {
-                      "type": ["integer"]
-                    },
-                    "share_js_doc_version": {
-                      "type": ["integer"]
-                    }
-                  },
-                  "type": "object"
-                },
-                "scope": {
-                  "type": ["string"]
-                },
-                "space_key": {
-                  "type": ["string"]
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
         "description": "Schema to track slide in editor usage",
         "name": "slide_in_editor",
         "rules": {
@@ -4271,182 +2293,6 @@
         "version": 1
       },
       {
-        "name": "teams_in_space:users_added",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "environment_key": {
-                      "type": ["string"]
-                    },
-                    "organization_key": {
-                      "type": ["string"]
-                    },
-                    "payload": {
-                      "properties": {
-                        "num_err": {
-                          "type": ["integer"]
-                        },
-                        "num_success": {
-                          "type": ["integer"]
-                        }
-                      },
-                      "type": "object"
-                    },
-                    "scope": {
-                      "type": ["string"]
-                    },
-                    "space_key": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "text_editor:action",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "action_origin": {
-                      "type": ["string"]
-                    },
-                    "additional_data": {
-                      "properties": {
-                        "character_count_after": {
-                          "type": ["integer"]
-                        },
-                        "character_count_before": {
-                          "type": ["integer"]
-                        },
-                        "character_count_selection": {
-                          "type": ["integer"]
-                        },
-                        "link_type": {
-                          "type": ["string"]
-                        },
-                        "mark_type": {
-                          "type": ["string"]
-                        },
-                        "node_type": {
-                          "type": ["string"]
-                        }
-                      },
-                      "type": "object"
-                    },
-                    "character_count_after": {
-                      "type": ["integer"]
-                    },
-                    "character_count_before": {},
-                    "character_count_selection": {},
-                    "content_type_id": {
-                      "type": ["string"]
-                    },
-                    "editor_name": {
-                      "type": ["string"]
-                    },
-                    "entry_id": {
-                      "type": ["string"]
-                    },
-                    "environment_key": {
-                      "type": ["string"]
-                    },
-                    "field_id": {
-                      "type": ["string"]
-                    },
-                    "field_locale": {
-                      "type": ["string"]
-                    },
-                    "is_fullscreen": {
-                      "type": ["boolean"]
-                    },
-                    "organization_key": {
-                      "type": ["string"]
-                    },
-                    "space_key": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
-                },
-                "schema": {
-                  "type": ["string"]
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "tracking:invalid_event",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "properties": {
-                    "action": {
-                      "type": ["string"]
-                    },
-                    "environment_key": {
-                      "type": ["string"]
-                    },
-                    "organization_key": {
-                      "type": ["string"]
-                    },
-                    "payload": {
-                      "properties": {
-                        "event": {
-                          "type": ["string"]
-                        }
-                      },
-                      "type": "object"
-                    },
-                    "scope": {
-                      "type": ["string"]
-                    },
-                    "space_key": {
-                      "type": ["string"]
-                    }
-                  },
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {}
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
         "description": "Schema to track the translation sidebar widgets",
         "name": "translation_sidebar",
         "rules": {
@@ -4488,46 +2334,6 @@
                 }
               },
               "required": ["organization_key", "space_key", "action", "current_mode"]
-            },
-            "traits": {}
-          }
-        },
-        "version": 1
-      },
-      {
-        "description": "Track the view migration in `ui_config` endpoint per space",
-        "name": "ui_config_migrate",
-        "rules": {
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "endpoint": {
-                  "type": ["string"]
-                },
-                "environment_key": {
-                  "type": ["string"]
-                },
-                "organization_key": {
-                  "type": ["string"]
-                },
-                "space_key": {
-                  "type": ["string"]
-                },
-                "view_count_migrated": {
-                  "type": ["integer"]
-                },
-                "view_count_migration_failed": {
-                  "type": ["integer"]
-                }
-              },
-              "required": [
-                "organization_key",
-                "space_key",
-                "view_count_migrated",
-                "view_count_migration_failed",
-                "endpoint"
-              ]
             },
             "traits": {}
           }
@@ -4878,104 +2684,6 @@
           }
         },
         "version": 1
-      },
-      {
-        "name": "widget_renderer:fallback_rendered",
-        "rules": {
-          "labels": {},
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "description": "",
-                  "properties": {
-                    "app_definition_id": {
-                      "description": "",
-                      "type": "string"
-                    },
-                    "environment": {
-                      "description": "",
-                      "type": "string"
-                    },
-                    "environment_key": {
-                      "type": ["string"]
-                    },
-                    "organization_key": {
-                      "description": "",
-                      "type": "string"
-                    },
-                    "space_key": {
-                      "description": "",
-                      "type": "string"
-                    },
-                    "user_id": {
-                      "description": "",
-                      "type": "string"
-                    }
-                  },
-                  "required": [],
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {
-              "type": "object"
-            }
-          },
-          "type": "object"
-        },
-        "version": 1
-      },
-      {
-        "name": "widget_renderer:fallback_warning_shown",
-        "rules": {
-          "labels": {},
-          "properties": {
-            "context": {},
-            "properties": {
-              "properties": {
-                "data": {
-                  "description": "",
-                  "properties": {
-                    "app_definition_id": {
-                      "description": "",
-                      "type": "string"
-                    },
-                    "environment": {
-                      "description": "",
-                      "type": "string"
-                    },
-                    "environment_key": {
-                      "type": ["string"]
-                    },
-                    "organization_key": {
-                      "description": "",
-                      "type": "string"
-                    },
-                    "space_key": {
-                      "description": "",
-                      "type": "string"
-                    },
-                    "user_id": {
-                      "description": "",
-                      "type": "string"
-                    }
-                  },
-                  "required": [],
-                  "type": "object"
-                }
-              },
-              "type": "object"
-            },
-            "traits": {
-              "type": "object"
-            }
-          },
-          "type": "object"
-        },
-        "version": 1
       }
     ],
     "global": {
@@ -4996,5 +2704,5 @@
     "group_traits": [],
     "identify_traits": []
   },
-  "update_time": "2021-06-14T14:58:46.000Z"
+  "update_time": "2021-06-16T11:57:48.000Z"
 }
