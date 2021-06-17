@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getModule } from 'core/NgRegistry';
 import { isObject } from 'lodash';
+import qs from 'qs';
 import { Modal, Button } from '@contentful/forma-36-react-components';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import * as auth from 'Authentication';
@@ -50,18 +50,17 @@ const ApiErrorMessage = () => (
 );
 
 function reloadWithCacheBuster() {
-  const $location = getModule('$location');
-  const search = $location.search();
+  const search = qs.parse(window.location.search.replace(/^\?/, ''));
+  let path = window.location.pathname;
   const reloaded = search.reloaded;
   search.cfv = Math.ceil(Math.random() * 10000000);
   if (reloaded) {
     delete search.reloaded;
-    $location.path('/');
+    path = '/';
   } else {
     search.reloaded = true;
   }
-  $location.search(search);
-  window.location = $location.url();
+  window.location = `${path}?${qs.stringify(search)}`;
 }
 
 function reloadWithLogout() {
