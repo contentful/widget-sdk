@@ -1,5 +1,5 @@
 import * as Intercom from 'services/intercom';
-import { trackCommentCreated, trackIsCommentsAlphaEligible } from './analytics';
+import { trackCommentCreated } from './analytics';
 
 describe('CommentsPanel/analytics', () => {
   beforeEach(() => {
@@ -12,21 +12,5 @@ describe('CommentsPanel/analytics', () => {
     expect(Intercom.trackEvent).toHaveBeenCalledWith('feature-comments-comment-created');
     trackCommentCreated();
     expect(Intercom.trackEvent).toHaveBeenCalledTimes(2);
-  });
-
-  describe('trackIsCommentsAlphaEligible()', () => {
-    it('calls intercom only once after Intercom is enabled', () => {
-      Intercom.isEnabled = () => false;
-      trackIsCommentsAlphaEligible();
-
-      expect(Intercom.trackEvent).toHaveBeenCalledTimes(0);
-
-      Intercom.isEnabled = () => true;
-      trackIsCommentsAlphaEligible();
-      trackIsCommentsAlphaEligible();
-
-      expect(Intercom.trackEvent).toHaveBeenCalledTimes(1);
-      expect(Intercom.trackEvent).toHaveBeenCalledWith('feature-comments-is-alpha-eligible');
-    });
   });
 });

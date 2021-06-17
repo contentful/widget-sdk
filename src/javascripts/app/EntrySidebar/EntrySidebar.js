@@ -25,9 +25,7 @@ import {
   WidgetRenderer,
 } from '@contentful/widget-renderer';
 import { toRendererWidget } from 'widgets/WidgetCompat';
-import { FLAGS, getVariation } from 'core/feature-flags';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
-import { trackIsCommentsAlphaEligible } from './CommentsPanel/analytics';
 
 const styles = {
   activity: css({
@@ -116,7 +114,6 @@ export default class EntrySidebar extends Component {
   };
 
   static defaultProps = {
-    commentsEnabled: true,
     disableComments: false,
   };
 
@@ -125,7 +122,7 @@ export default class EntrySidebar extends Component {
   onCommentsCountUpdate = (commentsCount) => this.setState({ commentsCount });
 
   createTabs = () => {
-    const { commentsEnabled, commentsCount, selectedTab } = this.state;
+    const { commentsCount, selectedTab } = this.state;
     const { entrySidebarProps } = this.props;
 
     const sidebarItems = this.getSidebarConfiguration();
@@ -148,7 +145,7 @@ export default class EntrySidebar extends Component {
         ),
       },
       comments: {
-        isEnabled: commentsEnabled,
+        isEnabled: !this.props.disableComments,
         title: (
           <div>
             <span>
@@ -179,25 +176,8 @@ export default class EntrySidebar extends Component {
 
   state = {
     selectedTab: 'activity',
-    commentsEnabled: undefined,
     commentsCount: undefined,
   };
-
-  componentDidMount() {
-    const { disableComments } = this.props;
-    if (!disableComments) {
-      const { currentSpaceId, currentOrganizationId } = this.context;
-      getVariation(FLAGS.ENTRY_COMMENTS, {
-        organizationId: currentOrganizationId,
-        spaceId: currentSpaceId,
-      }).then((commentsEnabled) => {
-        if (commentsEnabled) {
-          this.setState({ commentsEnabled });
-          trackIsCommentsAlphaEligible();
-        }
-      });
-    }
-  }
 
   componentDidUpdate(_, prevState) {
     if (prevState.selectedTab !== this.state.selectedTab) {
