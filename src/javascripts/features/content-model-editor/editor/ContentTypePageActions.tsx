@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { css } from 'emotion';
-import PropTypes from 'prop-types';
 import {
   Button,
   Dropdown,
@@ -9,6 +8,7 @@ import {
   TextLink,
   Flex,
 } from '@contentful/forma-36-react-components';
+import type { useCreateActions } from 'features/content-model-editor';
 
 const styles = {
   dropdownContainer: css({
@@ -21,8 +21,21 @@ const styles = {
   }),
 };
 
-export function ContentTypePageActions(props) {
+type Actions = ReturnType<typeof useCreateActions>['actions'];
+
+export interface ContentTypePageActionsProps {
+  isNew?: boolean;
+  canEdit: boolean;
+  showMetadataDialog: Actions['showMetadataDialog'];
+  save: Actions['save'];
+  delete: Actions['delete'];
+  cancel: Actions['cancel'];
+  duplicate: Actions['duplicate'];
+}
+
+export function ContentTypePageActions(props: ContentTypePageActionsProps) {
   const [openActions, setOpenActions] = useState(false);
+  const [inProgress, setInProgress] = useState(false);
 
   return (
     <>
@@ -86,12 +99,16 @@ export function ContentTypePageActions(props) {
           <Button
             testId="save-content-type"
             buttonType="positive"
-            onClick={() => {
-              props.save.execute();
+            onClick={async () => {
+              try {
+                setInProgress(true);
+                await props.save.execute();
+              } finally {
+                setInProgress(false);
+              }
             }}
-            // TODO: fix "inProgress" state in "utils/command/command.js"
-            // loading={props.save.inProgress()}
-            disabled={props.save.isDisabled()}>
+            loading={inProgress}
+            disabled={inProgress || props.save.isDisabled()}>
             Save
           </Button>
         </Flex>
@@ -99,13 +116,3 @@ export function ContentTypePageActions(props) {
     </>
   );
 }
-
-ContentTypePageActions.propTypes = {
-  isNew: PropTypes.bool,
-  canEdit: PropTypes.bool.isRequired,
-  showMetadataDialog: PropTypes.object.isRequired,
-  save: PropTypes.object.isRequired,
-  delete: PropTypes.object.isRequired,
-  cancel: PropTypes.object.isRequired,
-  duplicate: PropTypes.object.isRequired,
-};
