@@ -4,7 +4,6 @@ describe('utils/SubscriptionUtils', () => {
   let basePlan;
   let microPlan;
   let macroPlan;
-  let allPlans;
 
   beforeEach(function () {
     function createPlan(name, price, ratePlanCharges, isBase) {
@@ -103,8 +102,6 @@ describe('utils/SubscriptionUtils', () => {
     basePlan = createPlan('Basic Platform', 0, baseRPCs, true);
     microPlan = createPlan('Micro Plan', 14, microTiers);
     macroPlan = createPlan('Macro Plan', 99, macroTiers);
-
-    allPlans = [basePlan, microPlan, macroPlan];
   });
 
   describe('#calculateUsersCost', () => {
@@ -250,26 +247,6 @@ describe('utils/SubscriptionUtils', () => {
     it('should return the feature RPCs if present', function () {
       expect(SubscriptionUtils.getEnabledFeatures(macroPlan)).toHaveLength(1);
       expect(SubscriptionUtils.getEnabledFeatures(basePlan)).toHaveLength(1);
-    });
-  });
-
-  describe('#calculatePlansCost', () => {
-    it('should return 0 if given no plans', () => {
-      const plans = [];
-
-      expect(SubscriptionUtils.calculatePlansCost({ plans })).toBe(0);
-    });
-
-    it('should return 0 if all the plan prices are 0', function () {
-      const plans = [basePlan];
-
-      expect(SubscriptionUtils.calculatePlansCost({ plans })).toBe(0);
-    });
-
-    it('should return the correct price for all plans given', function () {
-      const plans = allPlans;
-
-      expect(SubscriptionUtils.calculatePlansCost({ plans })).toBe(113);
     });
   });
 });

@@ -55,7 +55,6 @@ const mockSpaceUsage = {
 };
 
 jest.mock('utils/SubscriptionUtils', () => ({
-  calculatePlansCost: jest.fn().mockReturnValue(123),
   getEnabledFeatures: jest.fn().mockImplementation(() => {
     return [];
   }),
@@ -73,22 +72,12 @@ jest.mock('../hooks/useChangedSpace', () => ({
 
 describe('Space Plan', () => {
   describe('SpaceSectionHeader', () => {
-    it('renders the rebranded space section header if flag is ON', async () => {
+    it('renders the space section header', async () => {
       getVariation.mockResolvedValueOnce(true);
       build();
 
       await waitFor(() => expect(screen.getByTestId('space-section-header')).toBeVisible());
       expect(screen.queryByTestId('space-section-header-previous-version')).toBeNull();
-    });
-
-    it('renders the old space section header if flag is OFF', async () => {
-      getVariation.mockResolvedValueOnce(false);
-      build();
-
-      await waitFor(() =>
-        expect(screen.getByTestId('space-section-header-previous-version')).toBeVisible()
-      );
-      expect(screen.queryByTestId('space-section-header')).toBeNull();
     });
   });
 
@@ -142,7 +131,11 @@ describe('Space Plan', () => {
       expect(tabs).toHaveLength(2);
 
       fireEvent.click(screen.getByTestId('tab-unusedSpaces'));
-      expect(screen.getByTestId('subscription-page.unassigned-plans-table')).toBeVisible();
+
+      await waitFor(() =>
+        expect(screen.getByTestId('subscription-page.unassigned-plans-table')).toBeVisible()
+      );
+
       expect(
         screen.queryAllByTestId('subscription-page.spaces-list.unassigned-plans-table-row')
       ).toHaveLength(1);

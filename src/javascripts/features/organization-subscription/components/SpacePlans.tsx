@@ -3,8 +3,6 @@ import React, { useCallback, useContext } from 'react';
 import { getVariation, FLAGS } from 'core/feature-flags';
 import { useAsync } from 'core/hooks';
 import { openDeleteSpaceDialog } from 'features/space-settings';
-import { calculatePlansCost } from 'utils/SubscriptionUtils';
-
 import { SpacePlansTable } from '../space-usage-summary/SpacePlansTable';
 import { SpaceSectionHeader } from './SpaceSectionHeader';
 import { UsedAndUnusedSpacePlans } from './UsedAndUnusedSpacePlans';
@@ -15,22 +13,16 @@ import { changeSpace } from '../utils/spaceUtils';
 import { useChangedSpace } from '../hooks/useChangedSpace';
 import { Paragraph } from '@contentful/forma-36-react-components';
 
-async function fetchFeatureFlags(isEnterprisePlan: boolean, organizationId: string) {
-  const isSpaceSectionRebrandingEnabled = await getVariation(FLAGS.SPACE_SECTION_REBRANDING, {
-    organizationId,
-  });
-  let enterpriseFeatureFlags;
+async function fetchFeatureFlag(isEnterprisePlan: boolean) {
+  let isCreateSpaceForSpacePlanEnabled = false;
 
   // we only need these flags for organizations with Enterprise basePlan
   if (isEnterprisePlan) {
-    enterpriseFeatureFlags = await Promise.all([getVariation(FLAGS.CREATE_SPACE_FOR_SPACE_PLAN)]);
+    isCreateSpaceForSpacePlanEnabled = await getVariation(FLAGS.CREATE_SPACE_FOR_SPACE_PLAN);
   }
 
   return {
-    isSpaceSectionRebrandingEnabled,
-    ...(enterpriseFeatureFlags && {
-      isCreateSpaceForSpacePlanEnabled: enterpriseFeatureFlags[0],
-    }),
+    isCreateSpaceForSpacePlanEnabled,
   };
 }
 
@@ -59,10 +51,7 @@ export function SpacePlans({
 
   // fetch feature flags
   const { isLoading, data } = useAsync(
-    useCallback(
-      () => fetchFeatureFlags(enterprisePlan, organizationId),
-      [enterprisePlan, organizationId]
-    )
+    useCallback(() => fetchFeatureFlag(enterprisePlan), [enterprisePlan])
   );
 
   // Enterprise admin or owners can manage used and unused spaces
@@ -85,25 +74,18 @@ export function SpacePlans({
 
   const numberOfSpaces = spacePlans.length;
   const hasAnySpacesInaccessible = spacePlans.some((plan) => !plan.space?.isAccessible);
-  // TODO: this will become unnecessary once "isSpaceSectionRebrandingEnabled" flag is removed
-  const selfServiceTotalCost = calculatePlansCost({ plans: spacePlans });
 
   return (
     <>
       <SpaceSectionHeader
-        isLoading={isLoading}
         enterprisePlan={enterprisePlan}
-        selServiceTotalCost={selfServiceTotalCost}
         hasAnySpacesInaccessible={hasAnySpacesInaccessible}
         isCreateSpaceForSpacePlanEnabled={data?.isCreateSpaceForSpacePlanEnabled}
-        isSpaceSectionRebrandingEnabled={data?.isSpaceSectionRebrandingEnabled}
         numberOfSpaces={numberOfSpaces}
         organizationId={organizationId}
       />
 
-      {data?.isSpaceSectionRebrandingEnabled && numberOfSpaces === 0 && (
-        <Paragraph>Add a space to start using Contentful.</Paragraph>
-      )}
+      {numberOfSpaces === 0 && <Paragraph>Add a space to start using Contentful.</Paragraph>}
 
       {numberOfSpaces > 0 && (
         <>

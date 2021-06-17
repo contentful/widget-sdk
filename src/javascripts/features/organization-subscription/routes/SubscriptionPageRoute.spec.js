@@ -2,7 +2,6 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import * as Fake from 'test/helpers/fakeFactory';
 
-import { getOrganization } from 'services/TokenStore';
 import {
   getPlansWithSpaces,
   isEnterprisePlan,
@@ -12,12 +11,11 @@ import {
   ENTERPRISE_HIGH_DEMAND,
   PARTNER_PLATFORM_BASE_PLAN_NAME,
 } from 'account/pricing/PricingDataProvider';
-import { getAllProductRatePlans } from 'features/pricing-entities';
-import { getVariation } from 'core/feature-flags';
-import { getSpaces } from 'services/TokenStore';
-import { mockWebappContent } from '../components/__mocks__/webappContent';
-import { OrgSubscriptionContextProvider } from '../context';
 import { MemoryRouter } from 'core/react-routing';
+import { getSpaces, getOrganization } from 'services/TokenStore';
+
+import { OrgSubscriptionContextProvider } from '../context';
+import { mockWebappContent } from '../components/__mocks__/webappContent';
 import { SubscriptionPageRoute } from './SubscriptionPageRoute';
 
 const mockOrganization = Fake.Organization();
@@ -45,9 +43,6 @@ jest.mock('account/pricing/PricingDataProvider', () => ({
   isPartnerPlan: jest.fn().mockReturnValue(false),
   isEnterprisePlan: jest.fn().mockReturnValue(false),
 }));
-jest.mock('features/pricing-entities', () => ({
-  getAllProductRatePlans: jest.fn().mockReturnValue([]),
-}));
 jest.mock('services/ResourceService', () => {
   const resourceService = {
     get: jest.fn().mockResolvedValue({ usage: 2, limits: { maximum: 10 } }),
@@ -63,8 +58,6 @@ jest.mock('utils/SubscriptionUtils', () => ({
     hardLimit: 5,
   }),
   calculateSubscriptionTotal: jest.fn().mockReturnValue(1000),
-  // import mock for SpacePlans
-  calculatePlansCost: jest.fn().mockReturnValue(1000),
   // import mock for BasePlan
   getEnabledFeatures: jest.fn().mockReturnValue([]),
   calculateSubscriptionCosts: jest
@@ -89,47 +82,22 @@ jest.mock('../hooks/useChangedSpace', () => ({
     .fn()
     .mockReturnValue({ changedSpaceId: 'random_id', setChangedSpaceId: jest.fn() }),
 }));
-// SubscriptionPage mocks
-jest.mock('analytics/trackCTA', () => ({
-  trackCTAClick: jest.fn(),
-}));
-jest.mock('services/CreateSpace', () => ({
-  beginSpaceCreation: jest.fn(),
-  getNotificationMessage: jest.fn(),
-}));
-jest.mock('services/ChangeSpaceService', () => ({
-  beginSpaceChange: jest.fn(),
-}));
-jest.mock('features/space-settings', () => ({
-  openDeleteSpaceDialog: jest.fn(),
-}));
 jest.mock('../utils/generateBasePlanName', () => ({
   generateBasePlanName: jest.fn(),
 }));
+
 describe('SubscriptionPageRouter', () => {
   beforeEach(() => {
     getOrganization.mockResolvedValue(mockOrganization);
     getPlansWithSpaces.mockResolvedValue({ items: [mockFreeBasePlan] });
-    getAllProductRatePlans.mockResolvedValue([mockProductRatePlan]);
     getSpaces.mockResolvedValue([mockSpace]);
-    getVariation.mockResolvedValue(true);
   });
 
-  describe('SubscriptionPage (before rebranding)', () => {
-    it('renders the SubscriptionPage when the feature flag is OFF ', async () => {
-      getVariation.mockResolvedValue(false);
-      await build();
+  it('shows the ForbiddenPage if fetch fails', async () => {
+    getSpaces.mockRejectedValueOnce(new Error());
+    await build();
 
-      expect(screen.getByTestId('subscription-page')).toBeVisible();
-    });
-
-    it('renders the SubscriptionPage when the basePlan is not included in the "basePlansWithContent" list', async () => {
-      const basePlanWithoutContent = { ...mockFreeBasePlan, customerType: 'Not in the list' };
-      getPlansWithSpaces.mockResolvedValue({ items: [basePlanWithoutContent] });
-      await build();
-
-      expect(screen.getByTestId('subscription-page')).toBeVisible();
-    });
+    expect(screen.getByTestId('forbidden-page')).toBeVisible();
   });
 
   describe('NonEnterpriseSubscriptionPage', () => {
@@ -157,10 +125,13 @@ describe('SubscriptionPageRouter', () => {
   });
 
   describe('EnterpriseSubscriptionPage', () => {
+    beforeEach(() => {
+      isEnterprisePlan.mockReturnValue(true);
+    });
+
     it('renders the EnterpriseSubscriptionPage for orgs with a "Enterprise" basePlan ', async () => {
       const enterpriseBasePlan = { ...mockFreeBasePlan, customerType: ENTERPRISE };
       getPlansWithSpaces.mockResolvedValue({ items: [enterpriseBasePlan] });
-      isEnterprisePlan.mockReturnValue(true);
       await build();
 
       expect(screen.getByTestId('enterprise-subs-page')).toBeVisible();
@@ -169,7 +140,6 @@ describe('SubscriptionPageRouter', () => {
     it('renders the EnterpriseSubscriptionPage for orgs with a "Enterprise High Demand" basePlan ', async () => {
       const enterpriseBasePlan = { ...mockFreeBasePlan, customerType: ENTERPRISE_HIGH_DEMAND };
       getPlansWithSpaces.mockResolvedValue({ items: [enterpriseBasePlan] });
-      isEnterprisePlan.mockReturnValue(true);
       await build();
 
       expect(screen.getByTestId('enterprise-subs-page')).toBeVisible();

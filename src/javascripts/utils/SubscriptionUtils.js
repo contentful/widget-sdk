@@ -108,17 +108,6 @@ export function getEnabledFeatures({ ratePlanCharges = [] }) {
   return ratePlanCharges.filter(({ unitType }) => unitType === 'feature');
 }
 
-/**
- * Calculates the cost of the given plans
- * @param  {object} options.plans is an array of spacePlans
- * @return {Number}               Total cost
- */
-export function calculatePlansCost({ plans }) {
-  return plans.reduce((total, plan) => {
-    return total + (parseInt(plan.price, 10) || 0);
-  }, 0);
-}
-
 function getUsersTiers(basePlan) {
   // shortform of Base rate plan charges
   const baseRPCs = basePlan.ratePlanCharges;

@@ -83,7 +83,6 @@ const mockSpaceUsageForPlanTwo = {
 const mockSpaceUsage = [mockSpaceUsageForPlanOne, mockSpaceUsageForPlanTwo];
 
 jest.mock('utils/SubscriptionUtils', () => ({
-  calculatePlansCost: jest.fn().mockReturnValue(123),
   getEnabledFeatures: jest.fn().mockImplementation(() => {
     return [];
   }),

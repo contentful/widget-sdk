@@ -1,15 +1,6 @@
 import type { BasePlan, AddOnPlan } from 'features/pricing-entities';
 import type { SpacePlan } from '../types';
 
-import {
-  FREE,
-  SELF_SERVICE,
-  ENTERPRISE,
-  ENTERPRISE_HIGH_DEMAND,
-  PARTNER_PLATFORM_BASE_PLAN_NAME,
-  PRO_BONO,
-} from 'account/pricing/PricingDataProvider';
-
 type AnyPlan = BasePlan | AddOnPlan | SpacePlan;
 
 interface AllPlans {
@@ -69,28 +60,4 @@ export function findAllPlans(
   });
 
   return reducedPlans;
-}
-
-// List of tiers that already have content entries in Contentful
-// and can already use the rebranded version of our SubscriptionPage
-const basePlansWithContent = [
-  FREE,
-  SELF_SERVICE,
-  ENTERPRISE,
-  ENTERPRISE_HIGH_DEMAND,
-  PARTNER_PLATFORM_BASE_PLAN_NAME,
-  PRO_BONO,
-];
-
-/**
- * This function checks if a given basePlan already have content in Contentful for its BasePlanCard
- * the content lives in Contentful ProdDev organization and in 'Webapp content' space
- *
- * @param basePlan - a plan that has `planType: 'base'`
- */
-export function hasContentForBasePlan(basePlan: BasePlan): boolean {
-  return (
-    basePlansWithContent.includes(basePlan.customerType) ||
-    basePlansWithContent.includes(basePlan.name)
-  );
 }

@@ -27,133 +27,61 @@ jest.mock('analytics/Analytics', () => ({
 }));
 
 describe('SpaceSectionHeader', () => {
-  // TODO: remove this whole test suite once isSpaceSectionRebrandingEnabled is removed from code
-  describe('isSpaceSectionRebrandingEnabled is OFF', () => {
-    it('renders the old space section header', () => {
-      build();
+  const customProps = { isSpaceSectionRebrandingEnabled: true };
 
-      expect(screen.getByTestId('space-section-header-previous-version')).toBeVisible();
-      expect(screen.queryByTestId('space-section-header')).toBeNull();
-    });
+  it('renders the rebranded space section header', () => {
+    build(customProps);
 
-    it('should say if an organization has 0 spaces', () => {
-      build({ numberOfSpaces: 0 });
+    expect(screen.queryByTestId('space-section-header-previous-version')).toBeNull();
+    expect(screen.getByTestId('space-section-header')).toBeVisible();
+  });
 
-      const orgInformation = screen.getByTestId('subscription-page.organization-information');
-      expect(orgInformation).toHaveTextContent('Your organization doesn’t have any spaces.');
-    });
+  it('renders how many space plans the organization has', () => {
+    build({ ...customProps, numberOfSpaces: 7 });
 
-    it('should display the total cost of the spaces in non-enterprise organizations.', () => {
-      build({ selServiceTotalCost: 123 });
+    const heading = screen.getByTestId('space-section-heading');
+    expect(heading).toHaveTextContent('Spaces (7)');
+  });
 
-      const priceInformation = screen.getByTestId(
-        'subscription-page.non-enterprise-price-information'
-      );
-      expect(priceInformation).toHaveTextContent('The total for your spaces is $123 per month');
-    });
+  it('renders "inaccessible tooltip" if user has any inaccessible space', async () => {
+    build({ ...customProps, hasAnySpacesInaccessible: true });
 
-    it('should not display the total cost of the spaces in an enterprise organization.', () => {
-      build({ enterprisePlan: true });
+    const infoIcon = screen.getByTestId('inaccessible-help-icon');
 
-      const priceInformation = screen.queryByTestId(
-        'subscription-page.non-enterprise-price-information'
-      );
-      expect(priceInformation).toBeNull();
-    });
+    expect(infoIcon).toBeVisible();
+    fireEvent.mouseOver(infoIcon);
 
-    it('should call onCreateSpace when the create-space button is clicked', () => {
-      build();
+    await waitFor(() => expect(screen.getByTestId('inaccessible-help-tooltip')).toBeVisible());
+  });
 
-      const createSpaceLink = screen.getByTestId('subscription-page.create-space');
-      fireEvent.click(createSpaceLink);
-      expect(beginSpaceCreation).toHaveBeenCalledWith(mockOrganization.sys.id);
-    });
+  it('renders the export button if numberOfSpaces > 0', () => {
+    build({ ...customProps, numberOfSpaces: 7 });
 
-    it('should render a help icon and tooltip when at least one spacePlan does not have space or space.isAccessible is false', async () => {
-      build({
-        hasAnySpacesInaccessible: true,
-      });
+    const exportButton = screen.getByTestId('subscription-page.export-csv');
+    expect(exportButton).toBeVisible();
+  });
 
-      const infoIcon = screen.getByTestId('inaccessible-help-icon');
+  it('renders the Add Space button and it calls beginSpaceCreation if org is NOT Enterprise', () => {
+    build(customProps);
 
-      expect(infoIcon).toBeVisible();
-      fireEvent.mouseOver(infoIcon);
+    const addSpaceButton = screen.getByTestId('subscription-page.create-space');
 
-      await waitFor(() => expect(screen.getByTestId('inaccessible-help-tooltip')).toBeVisible());
-    });
-
-    it('should display the export btn', () => {
-      build({ numberOfSpaces: 7 });
-
-      const exportButton = screen.getByTestId('subscription-page.export-csv');
-      expect(exportButton).toBeVisible();
-    });
-
-    it('should not display the export btn if there are no assigned spaces', () => {
-      build({ numberOfSpaces: 0 });
-
-      const exportButton = screen.queryByTestId('subscription-page.export-csv');
-      expect(exportButton).toBeNull();
+    expect(addSpaceButton).toBeVisible();
+    fireEvent.click(addSpaceButton);
+    expect(beginSpaceCreation).toHaveBeenCalledWith(mockOrganization.sys.id);
+    expect(trackCTAClick).toHaveBeenCalledWith(CTA_EVENTS.CREATE_SPACE, {
+      organizationId: mockOrganization.sys.id,
     });
   });
 
-  describe('isSpaceSectionRebrandingEnabled is ON', () => {
-    const customProps = { isSpaceSectionRebrandingEnabled: true };
+  it('renders the Add Space button and it sends user to space_create route if org is Enterprise', () => {
+    build({ ...customProps, enterprisePlan: true, isCreateSpaceForSpacePlanEnabled: true });
 
-    it('renders the rebranded space section header', () => {
-      build(customProps);
+    const addSpaceButton = screen.getByTestId('subscription-page.create-space');
 
-      expect(screen.queryByTestId('space-section-header-previous-version')).toBeNull();
-      expect(screen.getByTestId('space-section-header')).toBeVisible();
-    });
-
-    it('renders how many space plans the organization has', () => {
-      build({ ...customProps, numberOfSpaces: 7 });
-
-      const heading = screen.getByTestId('space-section-heading');
-      expect(heading).toHaveTextContent('Spaces (7)');
-    });
-
-    it('renders "inaccessible tooltip" if user has any inaccessible space', async () => {
-      build({ ...customProps, hasAnySpacesInaccessible: true });
-
-      const infoIcon = screen.getByTestId('inaccessible-help-icon');
-
-      expect(infoIcon).toBeVisible();
-      fireEvent.mouseOver(infoIcon);
-
-      await waitFor(() => expect(screen.getByTestId('inaccessible-help-tooltip')).toBeVisible());
-    });
-
-    it('renders the export button if numberOfSpaces > 0', () => {
-      build({ ...customProps, numberOfSpaces: 7 });
-
-      const exportButton = screen.getByTestId('subscription-page.export-csv');
-      expect(exportButton).toBeVisible();
-    });
-
-    it('renders the Add Space button and it calls beginSpaceCreation if org is NOT Enterprise', () => {
-      build(customProps);
-
-      const addSpaceButton = screen.getByTestId('subscription-page.create-space');
-
-      expect(addSpaceButton).toBeVisible();
-      fireEvent.click(addSpaceButton);
-      expect(beginSpaceCreation).toHaveBeenCalledWith(mockOrganization.sys.id);
-      expect(trackCTAClick).toHaveBeenCalledWith(CTA_EVENTS.CREATE_SPACE, {
-        organizationId: mockOrganization.sys.id,
-      });
-    });
-
-    it('renders the Add Space button and it sends user to space_create route if org is Enterprise', () => {
-      build({ ...customProps, enterprisePlan: true, isCreateSpaceForSpacePlanEnabled: true });
-
-      const addSpaceButton = screen.getByTestId('subscription-page.create-space');
-
-      expect(addSpaceButton).toBeVisible();
-      fireEvent.click(addSpaceButton);
-      expect(track).toHaveBeenCalledWith('space_creation:begin', { flow: 'space_creation' });
-    });
+    expect(addSpaceButton).toBeVisible();
+    fireEvent.click(addSpaceButton);
+    expect(track).toHaveBeenCalledWith('space_creation:begin', { flow: 'space_creation' });
   });
 });
 

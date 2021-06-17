@@ -1,20 +1,12 @@
 import React, { useCallback, useContext } from 'react';
-import PropTypes from 'prop-types';
 import { css } from 'emotion';
 import { Workbench } from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
-import { getVariation, FLAGS } from 'core/feature-flags';
-import {
-  getPlansWithSpaces,
-  isComposeAndLaunchPlan,
-  isEnterprisePlan,
-} from 'account/pricing/PricingDataProvider';
+import { getPlansWithSpaces, isEnterprisePlan } from 'account/pricing/PricingDataProvider';
 import { getAllSpaces } from 'access_control/OrganizationMembershipRepository';
 import type { Organization } from 'classes/spaceContextTypes';
 import DocumentTitle from 'components/shared/DocumentTitle';
-import type { ProductRatePlan } from 'features/pricing-entities';
-import { getAllProductRatePlans } from 'features/pricing-entities';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { LoadingState } from 'features/loading-state';
 import createResourceService from 'services/ResourceService';
@@ -26,8 +18,7 @@ import { useAsync } from 'core/hooks';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
 import ContactUsButton from 'ui/Components/ContactUsButton';
 
-import { findAllPlans, hasContentForBasePlan } from '../utils';
-import { SubscriptionPage } from '../components/SubscriptionPage';
+import { findAllPlans } from '../utils';
 import { NonEnterpriseSubscriptionPage } from '../components/NonEnterpriseSubscriptionPage';
 import { EnterpriseSubscriptionPage } from '../components/EnterpriseSubscriptionPage';
 import { actions, OrgSubscriptionContext } from '../context';
@@ -41,11 +32,8 @@ async function fetchNumMemberships(orgEndpoint) {
 }
 
 interface SubscriptionPageFetch {
-  isSubscriptionPageRebrandingEnabled?: boolean;
   usersMeta?: UsersMeta;
-  numMemberships?: number;
   organization: Organization;
-  productRatePlans?: ProductRatePlan[];
   orgIsEnterprise?: boolean;
   memberAccessibleSpaces?: unknown[];
 }
@@ -56,10 +44,6 @@ async function fetch(
 ): Promise<SubscriptionPageFetch> {
   const organization = await getOrganization(organizationId);
   const endpoint = createOrganizationEndpoint(organizationId);
-
-  const isSubscriptionPageRebrandingEnabled = await getVariation(
-    FLAGS.SUBSCRIPTION_PAGE_REBRANDING
-  );
 
   if (!isOwnerOrAdmin(organization)) {
     // if user is a member of a org on Enterprise Trial
@@ -78,13 +62,12 @@ async function fetch(
     throw new Error();
   }
 
-  const [plansWithSpaces, productRatePlans, numMemberships] = await Promise.all([
+  const [plansWithSpaces, numMemberships] = await Promise.all([
     getPlansWithSpaces(endpoint),
-    getAllProductRatePlans(endpoint),
     fetchNumMemberships(endpoint),
   ]);
 
-  if (!plansWithSpaces || !productRatePlans) {
+  if (!plansWithSpaces) {
     throw new Error();
   }
 
@@ -108,31 +91,32 @@ async function fetch(
 
   return {
     usersMeta,
-    numMemberships,
     organization,
-    productRatePlans,
-    isSubscriptionPageRebrandingEnabled,
     orgIsEnterprise,
   };
 }
 
-export function SubscriptionPageRoute({ orgId: organizationId }) {
+interface SubscriptionPageRouteProps {
+  orgId: string;
+}
+
+export function SubscriptionPageRoute({ orgId }: SubscriptionPageRouteProps) {
   const {
-    state: { basePlan, addOnPlans },
+    state: { basePlan },
     dispatch,
   } = useContext(OrgSubscriptionContext);
 
   const { isLoading, error, data } = useAsync<SubscriptionPageFetch>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    useCallback(() => fetch(organizationId, dispatch), [])
+    useCallback(() => fetch(orgId, dispatch), [])
   );
 
   if (isLoading) {
     return <LoadingState testId="subs-page-loading" />;
   }
 
-  if (error) {
-    return <ForbiddenPage />;
+  if (error || !data || !basePlan) {
+    return <ForbiddenPage data-test-id="forbidden-page" />;
   }
 
   return (
@@ -153,37 +137,19 @@ export function SubscriptionPageRoute({ orgId: organizationId }) {
          * when its children have 'flex-direction: column'
          * */}
         <Workbench.Content className={css({ position: 'relative' })}>
-          {/**
-           * if the feature flag is on and the base plan content is already created in Contentful, show one of the rebranded Subscription Pages
-           * Otherwise, show the generic Subscription Page
-           * */}
-          {data?.isSubscriptionPageRebrandingEnabled &&
-          basePlan &&
-          hasContentForBasePlan(basePlan) ? (
-            <>
-              {data.orgIsEnterprise && (
-                <EnterpriseSubscriptionPage
-                  usersMeta={data.usersMeta}
-                  organization={data.organization}
-                  memberAccessibleSpaces={data.memberAccessibleSpaces ?? []}
-                  // Currently this is the only way to know if a basePlan is plan used internally at Contentful
-                  isInternalBasePlan={/internal/i.test(basePlan.productName)}
-                />
-              )}
-              {!data.orgIsEnterprise && (
-                <NonEnterpriseSubscriptionPage
-                  usersMeta={data.usersMeta}
-                  organization={data.organization}
-                />
-              )}
-            </>
-          ) : (
-            <SubscriptionPage
-              basePlan={basePlan}
-              addOnPlan={addOnPlans.find((plan) => isComposeAndLaunchPlan(plan))}
-              usersMeta={data?.usersMeta}
-              organization={data?.organization}
-              memberAccessibleSpaces={data?.memberAccessibleSpaces}
+          {data.orgIsEnterprise && (
+            <EnterpriseSubscriptionPage
+              usersMeta={data.usersMeta}
+              organization={data.organization}
+              memberAccessibleSpaces={data.memberAccessibleSpaces ?? []}
+              // Currently this is the only way to know if a basePlan is used internally at Contentful
+              isInternalBasePlan={/internal/i.test(basePlan.productName)}
+            />
+          )}
+          {!data.orgIsEnterprise && (
+            <NonEnterpriseSubscriptionPage
+              usersMeta={data.usersMeta}
+              organization={data.organization}
             />
           )}
         </Workbench.Content>
@@ -191,7 +157,3 @@ export function SubscriptionPageRoute({ orgId: organizationId }) {
     </>
   );
 }
-
-SubscriptionPageRoute.propTypes = {
-  orgId: PropTypes.string.isRequired,
-};

@@ -1,4 +1,5 @@
 import React from 'react';
+import { css } from 'emotion';
 import PropTypes from 'prop-types';
 import {
   Button,
@@ -6,6 +7,7 @@ import {
   Card,
   Paragraph,
   ModalLauncher,
+  Grid,
   Flex,
 } from '@contentful/forma-36-react-components';
 import { appsMarketingUrl } from 'Config';
@@ -14,6 +16,10 @@ import { PRESELECT_VALUES } from 'features/space-purchase';
 import ExternalTextLink from 'app/common/ExternalTextLink';
 import { CancelAppsSubscriptionModal } from './CancelAppsSubscriptionModal';
 import { useRouteNavigate } from 'core/react-routing';
+
+const styles = {
+  card: css({ height: '100%', display: 'flex' }),
+};
 
 const openCancelAppsSubscriptionModal = (organizationId, addOnPlan) => {
   return ModalLauncher.open(({ isShown, onClose }) => (
@@ -74,45 +80,47 @@ export function ContentfulApps({ organizationId, startAppTrial, addOnPlan }) {
   };
 
   return (
-    <Card testId="contentful-apps-card">
-      <Flex marginBottom="spacingM">
-        {!isAppsTrialActive && <Heading testId="apps-header">Compose + Launch</Heading>}
-        {isAppsTrialActive && <Heading testId="apps-trial-header">Contentful Apps trial</Heading>}
-      </Flex>
-      <Flex flexDirection="column" marginBottom="spacingXs">
-        <Paragraph>{getDescriptionText(addOnPlan, isAppsTrialActive)}</Paragraph>
-      </Flex>
-      <Flex justifyContent="space-between" alignItems="center">
-        {(!!addOnPlan || !isAppsTrialActive) && (
-          <ExternalTextLink href={appsMarketingUrl}>Learn more</ExternalTextLink>
-        )}
-        {!!addOnPlan && (
-          <Button
-            testId="subscription-page.delete-apps"
-            buttonType="muted"
-            onClick={() => openCancelAppsSubscriptionModal(organizationId, addOnPlan)}>
-            Cancel subscription
-          </Button>
-        )}
-        {!addOnPlan && showStartTrialButton && (
-          <Button
-            size="small"
-            buttonType="muted"
-            onClick={showModal}
-            data-test-id="start-trial-button">
-            Start free trial
-          </Button>
-        )}
-        {!addOnPlan && showBuyButton && (
-          <Button
-            size="small"
-            buttonType="muted"
-            onClick={showPurchase}
-            data-test-id="buy-now-button">
-            Buy now
-          </Button>
-        )}
-      </Flex>
+    <Card className={styles.card} testId="contentful-apps-card">
+      <Grid rows="auto 1fr 40px">
+        <Flex marginBottom="spacingM">
+          {!isAppsTrialActive && <Heading testId="apps-header">Compose + Launch</Heading>}
+          {isAppsTrialActive && <Heading testId="apps-trial-header">Contentful Apps trial</Heading>}
+        </Flex>
+        <Flex flexDirection="column" marginBottom="spacingXs">
+          <Paragraph>{getDescriptionText(addOnPlan, isAppsTrialActive)}</Paragraph>
+        </Flex>
+        <Flex justifyContent="space-between" alignItems="center">
+          {(!!addOnPlan || !isAppsTrialActive) && (
+            <ExternalTextLink href={appsMarketingUrl}>Learn more</ExternalTextLink>
+          )}
+          {!!addOnPlan && (
+            <Button
+              testId="subscription-page.delete-apps"
+              buttonType="muted"
+              onClick={() => openCancelAppsSubscriptionModal(organizationId, addOnPlan)}>
+              Cancel subscription
+            </Button>
+          )}
+          {!addOnPlan && showStartTrialButton && (
+            <Button
+              size="small"
+              buttonType="muted"
+              onClick={showModal}
+              data-test-id="start-trial-button">
+              Start free trial
+            </Button>
+          )}
+          {!addOnPlan && showBuyButton && (
+            <Button
+              size="small"
+              buttonType="muted"
+              onClick={showPurchase}
+              data-test-id="buy-now-button">
+              Buy now
+            </Button>
+          )}
+        </Flex>
+      </Grid>
     </Card>
   );
 }

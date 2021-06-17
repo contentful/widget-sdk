@@ -1,4 +1,4 @@
 import * as utils from './utils';
 
 export { utils };
-export { findAllPlans, hasContentForBasePlan } from './plans';
+export { findAllPlans } from './plans';
