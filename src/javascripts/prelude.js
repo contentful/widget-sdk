@@ -26,15 +26,11 @@ import { initDialogsController } from 'components/client/dialogsInitController';
 import { setupStateChangeHandlers } from 'navigation/stateChangeHandlers';
 import * as Telemetry from 'i13n/Telemetry';
 import { loadAll as loadAllStates } from 'states/states';
-import { go } from 'states/Navigator';
 import { init as initDegradedAppPerformance } from 'core/services/DegradedAppPerformance';
 import { FLAGS, getVariation, ensureFlagsHaveFallback } from 'core/feature-flags';
 
 import moment from 'moment';
 import _ from 'lodash';
-import qs from 'qs';
-
-import { awaitInitReady } from 'core/NgRegistry';
 
 import { initMonitoring } from 'core/monitoring';
 initMonitoring();
@@ -105,10 +101,7 @@ angular
   ])
 
   .run([
-    '$state',
-    async ($state) => {
-      await awaitInitReady();
-
+    () => {
       if (Config.env === 'development') {
         Error.stackTraceLimit = 100;
       } else {
@@ -121,7 +114,7 @@ angular
       initTokenStore();
       initExtentionActivationTracking();
       initDegradedAppPerformance();
-      const willRedirect = initAuthentication();
+      initAuthentication();
 
       initDialogsController();
       setupStateChangeHandlers();
@@ -156,41 +149,6 @@ angular
       };
       window.addEventListener('message', cb);
 
-      if (willRedirect) {
-        angular.module('contentful/app').loaded = true;
-        return;
-      }
-
-      // Due to the async loading, we need to take the route above and attempt
-      // to route to it
-      let matchFound = false;
-
-      for (const state of $state.get()) {
-        if (!state.$$state || state.abstract) {
-          continue;
-        }
-
-        // Stop looping after the first match
-        if (matchFound) {
-          break;
-        }
-
-        const { url } = state.$$state();
-        const queryParams = qs.parse(window.location.search.substr(1));
-        const matchedParams = url.exec(window.location.pathname, queryParams);
-
-        if (matchedParams) {
-          matchFound = true;
-          try {
-            go({
-              path: state.name.split('.'),
-              params: matchedParams,
-              options: { location: false },
-            });
-          } finally {
-            angular.module('contentful/app').loaded = true;
-          }
-        }
-      }
+      angular.module('contentful/app').loaded = true;
     },
   ]);
