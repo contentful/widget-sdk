@@ -349,7 +349,10 @@ jobs:
       # Jest tests
       - run:
           name: Run Jest tests
-          command: NODE_ENV=test npm run jest:coverage # cant set NODE_ENV in environment above since jest is a dev dep
+          command: |
+            export NODE_ENV=test
+            export NODE_OPTIONS=--max_old_space_size=3072
+            npm run jest:coverage
 
   publish-pact-contracts:
     docker:
