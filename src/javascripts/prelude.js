@@ -14,7 +14,21 @@ import 'codemirror/addon/edit/closebrackets';
 import 'codemirror/mode/javascript/javascript';
 // CodeMirror: mixed HTML mode for UI Extension editor
 import 'codemirror/mode/htmlmixed/htmlmixed';
-import { FLAGS, getVariation } from 'core/feature-flags';
+
+import * as Config from 'Config';
+import handleGatekeeperMessage from 'account/handleGatekeeperMessage';
+import { init as initDebug } from './Debug';
+import { init as initAuthentication } from './Authentication';
+import { init as initTokenStore } from 'services/TokenStore';
+import { init as initBackendTracing } from 'i13n/BackendTracing';
+import { init as initExtentionActivationTracking } from 'widgets/ExtensionActivationTracking';
+import { initDialogsController } from 'components/client/dialogsInitController';
+import { setupStateChangeHandlers } from 'navigation/stateChangeHandlers';
+import * as Telemetry from 'i13n/Telemetry';
+import { loadAll as loadAllStates } from 'states/states';
+import { go } from 'states/Navigator';
+import { init as initDegradedAppPerformance } from 'core/services/DegradedAppPerformance';
+import { FLAGS, getVariation, ensureFlagsHaveFallback } from 'core/feature-flags';
 
 import moment from 'moment';
 import _ from 'lodash';
@@ -95,44 +109,6 @@ angular
     async ($state) => {
       await awaitInitReady();
 
-      const Config = await import(/* webpackMode: "eager" */ 'Config');
-      const { default: handleGKMessage } = await import(
-        /* webpackMode: "eager" */ 'account/handleGatekeeperMessage'
-      );
-      const { init: initDebug } = await import(/* webpackMode: "eager" */ './Debug');
-      const { init: initAuthentication } = await import(
-        /* webpackMode: "eager" */ 'Authentication'
-      );
-      const { init: initTokenStore } = await import(
-        /* webpackMode: "eager" */ 'services/TokenStore'
-      );
-
-      const { init: initBackendTracing } = await import(
-        /* webpackMode: "eager" */ 'i13n/BackendTracing'
-      );
-      const Telemetry = await import(/* webpackMode: "eager" */ 'i13n/Telemetry');
-      const { loadAll: loadAllStates } = await import(/* webpackMode: "eager" */ 'states/states');
-      const { go } = await import(/* webpackMode: "eager" */ 'states/Navigator');
-      const { init: initExtentionActivationTracking } = await import(
-        /* webpackMode: "eager" */
-        'widgets/ExtensionActivationTracking'
-      );
-
-      const { initDialogsController } = await import(
-        /* webpackMode: "eager" */ 'components/client/dialogsInitController'
-      );
-
-      const { setupStateChangeHandlers } = await import(
-        /* webpackMode: "eager" */ 'navigation/stateChangeHandlers'
-      );
-
-      const { ensureFlagsHaveFallback } = await import(
-        /* webpackMode: "eager" */ 'core/feature-flags'
-      );
-      const { init: initDegradedAppPerformance } = await import(
-        /* webpackMode: "eager" */ 'core/services/DegradedAppPerformance'
-      );
-
       if (Config.env === 'development') {
         Error.stackTraceLimit = 100;
       } else {
@@ -152,9 +128,6 @@ angular
 
       ensureFlagsHaveFallback();
 
-      // Start telemetry and expose it as a global.
-      // It can be used by E2E or Puppeteer scripts.
-      window.cfTelemetry = Telemetry;
       Telemetry.init();
 
       // We want to request this flag as early as possible,
@@ -178,7 +151,7 @@ angular
 
       const cb = (evt) => {
         if (evt.origin === authUrl) {
-          handleGKMessage(evt.data);
+          handleGatekeeperMessage(evt.data);
         }
       };
       window.addEventListener('message', cb);

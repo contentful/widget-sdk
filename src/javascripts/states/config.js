@@ -1,5 +1,8 @@
 import { registerProvider } from 'core/NgRegistry';
 import { difference } from 'lodash';
+import * as K from 'core/utils/kefir';
+import { tokenUpdate$ } from 'services/TokenStore';
+import * as accessChecker from 'access_control/AccessChecker';
 
 // This is a wrapper for Angular UI Router.
 // It takes our internal state definitions and processes
@@ -118,24 +121,12 @@ export default function register() {
           '$stateParams',
           '$rootScope',
           function ($scope, $stateParams, $rootScope) {
-            let accessChecker;
-            let offToken;
-
             $scope.component = component;
 
-            import(/* webpackMode: "eager" */ 'access_control/AccessChecker').then(
-              (i) => (accessChecker = i)
-            );
+            const offToken = K.onValue(tokenUpdate$, () => {
+              $scope.props.navVersion = $scope.props.navVersion + 1;
 
-            Promise.all([
-              import(/* webpackMode: "eager" */ 'core/utils/kefir'),
-              import(/* webpackMode: "eager" */ 'services/TokenStore'),
-            ]).then(([K, TokenStore]) => {
-              offToken = K.onValue(TokenStore.tokenUpdate$, () => {
-                $scope.props.navVersion = $scope.props.navVersion + 1;
-
-                $scope.$applyAsync();
-              });
+              $scope.$applyAsync();
             });
 
             // force nav component rerender on every navigation change

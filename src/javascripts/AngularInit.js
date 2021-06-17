@@ -5,10 +5,12 @@ import angular from 'angular';
 import componentsClientClientControllerEs6 from 'components/client/ClientController';
 import statesConfigEs6 from 'states/config';
 import componentsAppContainerCfAppContainerDirectiveEs6 from 'components/app_container/cfAppContainerDirective';
+import registerExceptionHandler from 'services/exceptionHandler';
+import registerReactDirective from 'ui/Framework/ReactDirective';
 
 export const angularInitRun = [
   '$injector',
-  async ($injector) => {
+  ($injector) => {
     angular.module('contentful/init').getModule = $injector.get;
     angular.module('contentful/init').loaded = false;
 
@@ -18,12 +20,8 @@ export const angularInitRun = [
     componentsClientClientControllerEs6();
     statesConfigEs6();
     componentsAppContainerCfAppContainerDirectiveEs6();
-
-    const modules = await Promise.all([
-      import(/* webpackMode: "eager" */ 'services/exceptionHandler'),
-      import(/* webpackMode: "eager" */ 'ui/Framework/ReactDirective'),
-    ]);
-    modules.forEach((module) => module.default());
+    registerExceptionHandler();
+    registerReactDirective();
 
     angular.module('contentful/init').loaded = true;
   },
