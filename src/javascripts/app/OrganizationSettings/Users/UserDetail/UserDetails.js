@@ -185,7 +185,15 @@ export default function UserDetails({
   };
 
   const handleBackButtonClicked = () => {
-    routeNavigate({ path: 'organizations.users.list', orgId });
+    const referrer = document.referrer;
+
+    if (referrer.includes(window.location.host)) {
+      // navigate back in history if last page was in the webapp
+      window.history.back();
+    } else {
+      // navigate to the user list if there's no referrer or it is not the webapp
+      routeNavigate({ path: 'organizations.users.list', orgId });
+    }
   };
 
   return (
