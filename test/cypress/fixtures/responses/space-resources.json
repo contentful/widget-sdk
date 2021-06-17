@@ -144,17 +144,35 @@
     },
     {
       "name": "Locale",
-      "usage": 0,
+      "usage": 1,
       "limits": {
-        "included": 6,
-        "maximum": 6
+        "included": 30,
+        "maximum": 30
       },
       "parent": null,
       "kind": "permanent",
+      "period": null,
       "sys": {
         "type": "SpaceResource",
         "id": "locale"
-      }
+      },
+      "unitOfMeasure": null
+    },
+    {
+      "name": "Environment",
+      "usage": 1,
+      "limits": {
+        "included": 30,
+        "maximum": 30
+      },
+      "parent": null,
+      "kind": "permanent",
+      "period": null,
+      "sys": {
+        "type": "SpaceResource",
+        "id": "environment"
+      },
+      "unitOfMeasure": null
     }
   ]
 }

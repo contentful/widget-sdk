@@ -17,22 +17,27 @@ jest.mock('utils/ResourceUtils', () => ({
 describe('ResourceService', () => {
   const service = createResourceService(mockEndpoint);
 
-  describe('get', () => {
-    beforeEach(() => {
-      mockEndpoint.mockResolvedValue({});
-      service.getAll.cache.clear();
+  beforeEach(() => {
+    mockEndpoint.mockResolvedValue({
+      items: [
+        {
+          usage: 100,
+          sys: { id: 'special_resource' },
+        },
+        {
+          usage: 0,
+          sys: { id: 'super_special_resource' },
+        },
+      ],
     });
+    service.getAll.cache.clear();
+  });
 
+  describe('get', () => {
     it('should reject if not supplied with any arguments', async () => {
-      let err;
-
-      try {
-        await service.get();
-      } catch (e) {
-        err = e;
-      }
-
-      expect(err).toBeDefined();
+      await expect(() => service.get()).rejects.toThrow(
+        'resourceType not supplied to ResourceService.get'
+      );
     });
 
     it('should make a GET request with a path and the alpha header', async () => {
@@ -42,7 +47,7 @@ describe('ResourceService', () => {
         1,
         {
           method: 'GET',
-          path: ['resources', 'special_resource'],
+          path: ['resources'],
         },
         {
           'x-contentful-enable-alpha-feature': 'subscriptions-api',
@@ -50,24 +55,14 @@ describe('ResourceService', () => {
       );
     });
 
-    it('should reuse the cached response if possible', async () => {
-      mockEndpoint.mockResolvedValueOnce({
-        items: [
-          {
-            usage: 100,
-            sys: { id: 'special_resource' },
-          },
-          {
-            usage: 0,
-            sys: { id: 'normal_resource' },
-          },
-        ],
-      });
-
-      // setting the cache
-      await service.getAll();
-
+    it('returns a correct resource', async () => {
       const resource = await service.get('specialResource');
+      expect(resource.usage).toBe(100);
+    });
+
+    it('should cached the response', async () => {
+      await service.get('superSpecialResource');
+      await service.get('specialResource');
 
       expect(mockEndpoint).toHaveBeenNthCalledWith(
         1,
@@ -76,23 +71,18 @@ describe('ResourceService', () => {
         }),
         expect.anything()
       );
-
-      expect(resource.usage).toBe(100);
     });
 
-    it('should throw an error if the resource is not found in the cached response', async () => {
-      await service.get('specialResource');
+    it('should throw an error if the resource is not found in the response', async () => {
+      mockEndpoint.mockResolvedValue({ items: [] });
 
-      expect(await service.get('specialResource')).toBeDefined();
+      await expect(() => service.get('specialResource')).rejects.toThrow(
+        'The resource specialResource could not be found.'
+      );
     });
   });
 
   describe('getAll', () => {
-    beforeEach(() => {
-      mockEndpoint.mockResolvedValue({ items: [] });
-      service.getAll.cache.clear();
-    });
-
     it('should make a GET request with a path and alpha header by default', async () => {
       await service.getAll();
 
@@ -125,7 +115,7 @@ describe('ResourceService', () => {
           1,
           {
             method: 'GET',
-            path: ['resources', 'super_special_resource'],
+            path: ['resources'],
           },
           expect.anything()
         );
@@ -143,11 +133,9 @@ describe('ResourceService', () => {
       });
 
       it('should get all resources and then return the result of the canCreateResources utility', async () => {
-        mockEndpoint.mockResolvedValue({ items: [] });
-
         canCreateResources.mockReturnValue('something');
 
-        const result = await service.canCreateEnvironmentResources('env_1234');
+        const result = await service.canCreateEnvironmentResources();
 
         expect(mockEndpoint).toHaveBeenNthCalledWith(
           1,
@@ -167,13 +155,13 @@ describe('ResourceService', () => {
       it('should get the resource and return the result of the generateMessage utility', async () => {
         generateMessage.mockReturnValue('a message');
 
-        const result = await service.messagesFor('aResource');
+        const result = await service.messagesFor('specialResource');
 
         expect(mockEndpoint).toHaveBeenNthCalledWith(
           1,
           {
             method: 'GET',
-            path: ['resources', 'a_resource'],
+            path: ['resources'],
           },
           expect.anything()
         );

@@ -1,6 +1,6 @@
 import { defaultSpaceId } from '../../../util/requests';
 import { defaultRequestsMock } from '../../../util/factories';
-import { getLocaleResource, getResources } from '../../../interactions/resources';
+import { getSpaceResources, getEnvResources } from '../../../interactions/resources';
 import { getFeaturesWithCustomRoles } from '../../../interactions/features';
 import {
   deleteLocaleForSpace,
@@ -37,10 +37,10 @@ describe('Locales Management', () => {
     beforeEach(() => {
       interactions = [
         ...defaultRequestsMock(),
-        getLocaleResource.willReturnDefault(),
+        getEnvResources.willReturnSeveral(),
         getFeaturesWithCustomRoles.willReturnSeveral(),
         getProductRatePlansWithSpace.willReturnDefault(),
-        getResources.willReturnSeveral(),
+        getSpaceResources.willReturnSeveral(),
         getSpacePlan.willReturnDefault(),
       ];
       cy.visit(`/spaces/${defaultSpaceId}/settings/locales`);
@@ -90,10 +90,10 @@ describe('Locales Management', () => {
         ...defaultRequestsMock({
           localeResponse: queryFirst100LocalesOfDefaultSpace.willFindSeveral,
         }),
-        getLocaleResource.willReturnDefault(),
+        getEnvResources.willReturnSeveral(),
         getFeaturesWithCustomRoles.willReturnSeveral(),
         getProductRatePlansWithSpace.willReturnDefault(),
-        getResources.willReturnSeveral(),
+        getSpaceResources.willReturnSeveral(),
         getSpacePlan.willReturnDefault(),
       ];
       cy.visit(`/spaces/${defaultSpaceId}/settings/locales`);

@@ -29,8 +29,8 @@ when(mockEndpoint)
   .mockResolvedValue({ items: [] })
   .calledWith(expect.objectContaining({ path: [] }))
   .mockResolvedValue()
-  .calledWith(expect.objectContaining({ path: ['resources', 'free_space'] }))
-  .mockResolvedValue(mockFreeSpaceResource);
+  .calledWith(expect.objectContaining({ path: ['resources'] }))
+  .mockResolvedValue({ items: [mockFreeSpaceResource] });
 
 jest.mock('analytics/Analytics', () => ({
   track: jest.fn(),
@@ -107,8 +107,8 @@ describe('Enterprise Wizard', () => {
 
   it('should hide the create button and show the contact us and close buttons if the user is at their free space limit', async () => {
     when(mockEndpoint)
-      .calledWith(expect.objectContaining({ path: ['resources', 'free_space'] }))
-      .mockResolvedValueOnce(Fake.SpaceResource(1, 1, 'free_space'));
+      .calledWith(expect.objectContaining({ path: ['resources'] }))
+      .mockResolvedValueOnce({ items: [Fake.SpaceResource(1, 1, 'free_space')] });
 
     await build();
 
@@ -119,8 +119,8 @@ describe('Enterprise Wizard', () => {
 
   it('should call onClose when the contact us button is clicked', async () => {
     when(mockEndpoint)
-      .calledWith(expect.objectContaining({ path: ['resources', 'free_space'] }))
-      .mockResolvedValueOnce(Fake.SpaceResource(1, 1, 'free_space'));
+      .calledWith(expect.objectContaining({ path: ['resources'] }))
+      .mockResolvedValueOnce({ items: [Fake.SpaceResource(1, 1, 'free_space')] });
 
     const onClose = jest.fn();
 
@@ -154,8 +154,8 @@ describe('Enterprise Wizard', () => {
 
   it('should show the reached limit note if the limit is reached', async () => {
     when(mockEndpoint)
-      .calledWith(expect.objectContaining({ path: ['resources', 'free_space'] }))
-      .mockResolvedValueOnce(Fake.SpaceResource(1, 1, 'free_space'));
+      .calledWith(expect.objectContaining({ path: ['resources'] }))
+      .mockResolvedValueOnce({ items: [Fake.SpaceResource(1, 1, 'free_space')] });
     await build();
 
     expect(screen.queryByTestId('reached-limit-note')).toBeVisible();
@@ -163,8 +163,8 @@ describe('Enterprise Wizard', () => {
 
   it('should show the not enabled note if the limit is zero', async () => {
     when(mockEndpoint)
-      .calledWith(expect.objectContaining({ path: ['resources', 'free_space'] }))
-      .mockResolvedValueOnce(Fake.SpaceResource(1, 0, 'free_space'));
+      .calledWith(expect.objectContaining({ path: ['resources'] }))
+      .mockResolvedValueOnce({ items: [Fake.SpaceResource(1, 0, 'free_space')] });
     await build();
 
     expect(screen.queryByTestId('poc-not-enabled-note')).toBeVisible();

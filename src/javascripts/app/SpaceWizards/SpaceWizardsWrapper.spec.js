@@ -36,8 +36,8 @@ when(mockOrganizationEndpoint)
   .mockResolvedValue({ items: [freeSpace] })
   .calledWith(expect.objectContaining({ path: ['plans'] }))
   .mockResolvedValue({ items: [mockBasePlan] })
-  .calledWith(expect.objectContaining({ path: ['resources', 'free_space'] }))
-  .mockResolvedValue(mockFreeSpaceResource);
+  .calledWith(expect.objectContaining({ path: ['resources'] }))
+  .mockResolvedValue({ items: [mockFreeSpaceResource] });
 mockSpaceEndpoint.mockRejectedValue();
 when(mockSpaceEndpoint)
   .calledWith(expect.objectContaining({ path: ['resources'] }))

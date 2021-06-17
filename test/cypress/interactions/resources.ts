@@ -1,16 +1,26 @@
-import { defaultSpaceId, defaultEnvironmentId } from '../util/requests';
+import {
+  defaultSpaceId,
+  defaultEnvironmentId,
+  defaultOrgId,
+  defaultHeader,
+} from '../util/requests';
+import {
+  orgResources,
+  orgResourcesWithUnlimitedAPIRequest,
+} from '../fixtures/responses/organization-resources';
+import { envResources } from '../fixtures/responses/environment-resources';
 
-const resourcesWithLimitsReached = require('../fixtures/responses/resources-with-limits-reached.json');
-const resources = require('../fixtures/responses/resources.json');
-const resourceContentType = require('../fixtures/responses/resource-content-type.json');
+const resourcesWithLimitsReached = require('../fixtures/responses/environment-resources-with-limits-reached.json');
+const resources = require('../fixtures/responses/space-resources.json');
 
 enum States {
   SEVERAL_WITH_LIMITS_REACHED = 'resources/several-with-limits-reached',
+  SEVRAL_WITH_NO_LIMITS = 'resources/several-with-no-limits',
   SEVERAL = 'resources/several',
   SINGLE = 'resources/single',
 }
 
-export const getResources = {
+export const getSpaceResources = {
   willReturnSeveral() {
     cy.addInteraction({
       provider: 'resources',
@@ -36,8 +46,76 @@ export const getResources = {
   },
 };
 
-export const getResourcesWithLimitsReached = {
+export const getOrgResources = {
   willReturnSeveral() {
+    cy.addInteraction({
+      provider: 'resources',
+      state: States.SEVERAL,
+      uponReceiving: `a request to get resources of organization "${defaultOrgId}"`,
+      withRequest: {
+        method: 'GET',
+        path: `/organizations/${defaultOrgId}/resources`,
+        headers: defaultHeader,
+      },
+      willRespondWith: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
+        body: orgResources,
+      },
+    }).as('getOrgResources');
+
+    return '@getOrgResources';
+  },
+  willReturnWithUnlimitedAPIRequest() {
+    cy.addInteraction({
+      provider: 'resources',
+      state: States.SEVRAL_WITH_NO_LIMITS,
+      uponReceiving: `a request to get resources of organization "${defaultOrgId}"`,
+      withRequest: {
+        method: 'GET',
+        path: `/organizations/${defaultOrgId}/resources`,
+        headers: defaultHeader,
+      },
+      willRespondWith: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
+        body: orgResourcesWithUnlimitedAPIRequest,
+      },
+    }).as('getOrgResources');
+
+    return '@getOrgResources';
+  },
+};
+
+export const getEnvResources = {
+  willReturnSeveral() {
+    cy.addInteraction({
+      provider: 'resources',
+      state: States.SEVERAL,
+      uponReceiving: `a request to get environment resources of space "${defaultSpaceId}"`,
+      withRequest: {
+        method: 'GET',
+        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/resources`,
+        headers: {
+          Accept: 'application/json, text/plain, */*',
+        },
+      },
+      willRespondWith: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/vnd.contentful.management.v1+json',
+        },
+        body: envResources,
+      },
+    }).as('getEnvResources');
+
+    return '@getEnvResources';
+  },
+  willReturnWithLimitsReached() {
     cy.addInteraction({
       provider: 'resources',
       state: States.SEVERAL_WITH_LIMITS_REACHED,
@@ -56,95 +134,8 @@ export const getResourcesWithLimitsReached = {
         },
         body: resourcesWithLimitsReached,
       },
-    }).as('getResourcesWithLimitsReached');
+    }).as('getEnvResourcesWithLimitsReached');
 
-    return '@getResourcesWithLimitsReached';
-  },
-};
-
-export const getResourcesWithEnvironment = {
-  willReturnSeveral() {
-    cy.addInteraction({
-      provider: 'resources',
-      state: States.SEVERAL,
-      uponReceiving: `a request to get resources with environments of space "${defaultSpaceId}"`,
-      withRequest: {
-        method: 'GET',
-        path: `/spaces/${defaultSpaceId}/resources/environment`,
-        headers: {
-          Accept: 'application/json, text/plain, */*',
-        },
-      },
-      willRespondWith: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/vnd.contentful.management.v1+json',
-        },
-        body: resources,
-      },
-    }).as('getResourcesWithEnvironment');
-
-    return '@getResourcesWithEnvironment';
-  },
-};
-
-export const getLocaleResource = {
-  willReturnDefault() {
-    cy.addInteraction({
-      provider: 'resources',
-      state: States.SINGLE,
-      uponReceiving: `a request to get locale resource of space "${defaultSpaceId}"`,
-      withRequest: {
-        method: 'GET',
-        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/resources/locale`,
-        headers: {
-          Accept: 'application/json, text/plain, */*',
-        },
-      },
-      willRespondWith: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/vnd.contentful.management.v1+json',
-        },
-        body: {
-          name: 'Locale',
-          usage: 1,
-          limits: { included: 30, maximum: 30 },
-          parent: null,
-          kind: 'permanent',
-          period: null,
-          sys: { type: 'EnvironmentResource', id: 'locale' },
-          unitOfMeasure: null,
-        },
-      },
-    }).as('getLocaleResource');
-
-    return '@getLocaleResource';
-  },
-};
-
-export const getContentTypeResource = {
-  willReturnDefault() {
-    cy.addInteraction({
-      provider: 'resources',
-      state: States.SINGLE,
-      uponReceiving: `a request to get content types resource of space "${defaultSpaceId}"`,
-      withRequest: {
-        method: 'GET',
-        path: `/spaces/${defaultSpaceId}/environments/${defaultEnvironmentId}/resources/content_type`,
-        headers: {
-          Accept: 'application/json, text/plain, */*',
-        },
-      },
-      willRespondWith: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/vnd.contentful.management.v1+json',
-        },
-        body: resourceContentType,
-      },
-    }).as('getContentTypeResource');
-
-    return '@getContentTypeResource';
+    return '@getEnvResourcesWithLimitsReached';
   },
 };

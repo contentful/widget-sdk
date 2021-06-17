@@ -26,7 +26,6 @@ type Resource = {
 /**
  * @description
  * The `getAll` response is cached for 30 seconds to avoid repeated promise calls to `/resources`.
- * The `get` method will try to find the resource from a cached response if there is any.
  *
  * Use the instance exposed via `useSpaceEnvContext` to benefit from this optimisation.
  *
@@ -75,25 +74,14 @@ export default function createResourceService(endpoint: SpaceEndpoint | Organiza
       throw new Error('resourceType not supplied to ResourceService.get');
     }
 
-    const apiResourceType = snakeCase(resourceType);
+    const resource = await getAll().then((resources) =>
+      resources.find((resource) => resource.sys.id === snakeCase(resourceType))
+    );
 
-    // if we have cached `getAll` response, use that
-    if (getAll.cache.has(undefined)) {
-      return getAll().then((resources) => {
-        const resource = resources.find((resource) => resource.sys.id === apiResourceType);
-        if (!resource) {
-          throw new Error(`The resource ${resourceType} could not be found.`);
-        }
-        return resource;
-      });
+    if (!resource) {
+      throw new Error(`The resource ${resourceType} could not be found.`);
     }
 
-    return endpoint<Resource>(
-      {
-        method: 'GET',
-        path: ['resources', apiResourceType],
-      },
-      alphaHeader
-    );
+    return resource;
   }
 }

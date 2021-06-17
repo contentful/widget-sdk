@@ -1,6 +1,6 @@
 import { defaultSpaceId } from '../../../util/requests';
 import { defaultRequestsMock } from '../../../util/factories';
-import { getResourcesWithEnvironment } from '../../../interactions/resources';
+import { getSpaceResources } from '../../../interactions/resources';
 import {
   deleteEnvironmentInDefaultSpace,
   putEnvironmentInDefaultSpace,
@@ -103,5 +103,5 @@ function basicServerSetUp(customHandlers: {}): string[] {
 
   cy.server();
 
-  return [...defaultRequestsMock(customHandlers), getResourcesWithEnvironment.willReturnSeveral()];
+  return [...defaultRequestsMock(customHandlers), getSpaceResources.willReturnSeveral()];
 }

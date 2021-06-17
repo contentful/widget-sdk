@@ -2,14 +2,13 @@ import { defaultOrgId } from '../../../util/requests';
 import { getPlans, getProductRatePlans, getBasePlan } from '../../../interactions/plans';
 import {
   getUsagePeriods,
-  getResourcesForApiRequest,
-  getResourcesForAssetBandwidth,
   getOrganizationPeriodicUsages,
   getSpacePeriodicUsages,
   getAllSpaces,
 } from '../../../interactions/organization_usage';
 import { getTokenForUser } from '../../../interactions/token';
 import { getUsers } from '../../../interactions/users';
+import { getOrgResources } from '../../../interactions/resources';
 
 const loadPageWithServerState = (interactions: string[]) => {
   const basicInteractions = [
@@ -31,7 +30,7 @@ describe('Organization Usage page', () => {
   before(() => {
     cy.startFakeServers({
       consumer: 'user_interface',
-      providers: ['organization_usage', 'plans'],
+      providers: ['organization_usage', 'plans', 'resources'],
       cors: true,
       pactfileWriteMode: 'merge',
       dir: Cypress.env('pactDir'),
@@ -49,8 +48,7 @@ describe('Organization Usage page', () => {
         getBasePlan.willReturnFree(),
         getPlans.willContainFree(),
         getAllSpaces.willReturnEmpty(),
-        getResourcesForApiRequest.willReturnDefault(),
-        getResourcesForAssetBandwidth.willReturnDefault(),
+        getOrgResources.willReturnSeveral(),
         getProductRatePlans.willReturnEmpty(),
       ];
       loadPageWithServerState(interactions);
@@ -67,8 +65,7 @@ describe('Organization Usage page', () => {
         getPlans.willContainFree(),
         getUsers.willReturnSingle(),
         getAllSpaces.willReturnDefault(),
-        getResourcesForApiRequest.willReturnDefault(),
-        getResourcesForAssetBandwidth.willReturnWithLimits(),
+        getOrgResources.willReturnSeveral(),
         getProductRatePlans.willReturnDefault(),
       ];
       loadPageWithServerState(interactions);
@@ -103,8 +100,7 @@ describe('Organization Usage page', () => {
         getPlans.willContainEnterprise(),
         getUsers.willReturnSingle(),
         getAllSpaces.willReturnDefault(),
-        getResourcesForApiRequest.willReturnDefault(),
-        getResourcesForAssetBandwidth.willReturnDefault(),
+        getOrgResources.willReturnWithUnlimitedAPIRequest(),
         getProductRatePlans.willReturnDefault(),
       ];
       loadPageWithServerState(interactions);
