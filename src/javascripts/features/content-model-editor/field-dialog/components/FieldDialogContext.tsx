@@ -21,6 +21,6 @@ const useFieldDialog = (props: FieldDialogProps) => {
   };
 };
 
-const [FieldDialogProvider, useFieldDialogContext] = constate(useFieldDialog);
+const [FieldDialogContextProvider, useFieldDialogContext] = constate(useFieldDialog);
 
-export { FieldDialogProvider, useFieldDialogContext };
+export { FieldDialogContextProvider, useFieldDialogContext };

@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as Fake from 'test/helpers/fakeFactory';
-import { getVariation } from 'LaunchDarkly';
+import { getVariation } from 'core/feature-flags';
 import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { SubscriptionPage } from './SubscriptionPage';
 import { OrgSubscriptionContextProvider } from '../context/OrgSubscriptionContext';

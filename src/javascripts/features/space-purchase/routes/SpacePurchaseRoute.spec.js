@@ -14,7 +14,7 @@ import * as TokenStore from 'services/TokenStore';
 import * as FakeFactory from 'test/helpers/fakeFactory';
 import { getSpace } from 'access_control/OrganizationMembershipRepository';
 import { renderWithProvider } from '../__tests__/helpers';
-import { getVariation } from 'LaunchDarkly';
+import { getVariation } from 'core/feature-flags';
 import { mockOrganizationEndpoint } from '__mocks__/data/EndpointFactory';
 import {
   getAddOnProductRatePlans,

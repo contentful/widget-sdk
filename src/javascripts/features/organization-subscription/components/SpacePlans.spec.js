@@ -6,7 +6,7 @@ import * as fake from 'test/helpers/fakeFactory';
 import { OrgSubscriptionContextProvider } from '../context';
 import { getSpacesUsage } from '../services/SpacesUsageService';
 import { SpacePlans } from './SpacePlans';
-import { getVariation } from 'LaunchDarkly';
+import { getVariation } from 'core/feature-flags';
 import { MemoryRouter } from 'core/react-routing';
 
 const mockOrgId = 'random_org_id';

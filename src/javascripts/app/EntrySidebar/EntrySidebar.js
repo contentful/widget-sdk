@@ -25,7 +25,7 @@ import {
   WidgetRenderer,
 } from '@contentful/widget-renderer';
 import { toRendererWidget } from 'widgets/WidgetCompat';
-import { FLAGS, getVariation } from 'LaunchDarkly';
+import { FLAGS, getVariation } from 'core/feature-flags';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { trackIsCommentsAlphaEligible } from './CommentsPanel/analytics';
 

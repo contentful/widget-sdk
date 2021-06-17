@@ -36,7 +36,7 @@ import { headerActions } from '../styles';
 import { UnsavedChangesDialog } from './UnsavedChangesDialog';
 import { AppDefinitionWithBundle } from '../AppEditor/AppHosting';
 import { evictCustomAppDefinition } from 'widgets/CustomWidgetLoaderInstance';
-import { FLAGS, getVariation } from 'LaunchDarkly';
+import { FLAGS, getVariation } from 'core/feature-flags';
 import {
   AppDetailsStateContext,
   ERROR_PATH_DEFINITION,

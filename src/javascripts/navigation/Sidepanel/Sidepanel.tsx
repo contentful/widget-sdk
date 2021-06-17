@@ -1,7 +1,7 @@
 import React, { MouseEvent } from 'react';
 import { get } from 'lodash';
 import { css, cx } from 'emotion';
-import { getVariation, FLAGS } from 'LaunchDarkly';
+import { getVariation, FLAGS } from 'core/feature-flags';
 import { Icon, Flex } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 

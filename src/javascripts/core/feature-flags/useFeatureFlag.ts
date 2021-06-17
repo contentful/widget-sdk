@@ -1,7 +1,8 @@
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import { FLAGS, getVariation } from 'LaunchDarkly';
+import { getVariation } from './LaunchDarkly';
+import { FLAGS } from './flags';
 import { useCallback } from 'react';
-import { useAsync } from './useAsync';
+import { useAsync } from 'core/hooks/useAsync';
 
 /**
  * Evaluates a flag and returns its variation
@@ -10,7 +11,7 @@ import { useAsync } from './useAsync';
  * @param fallback Value to return while the flag hasn't been evaluated yet
  * @returns [variation, loading]: The evaluated variation and `true` or the `fallback` value and `false`
  */
-export function useVariation<Value>(flag: FLAGS, fallback?: Value): [Value | undefined, boolean] {
+export function useFeatureFlag<Value>(flag: FLAGS, fallback?: Value): [Value | undefined, boolean] {
   const { currentEnvironmentId, currentSpaceId, currentOrganizationId } = useSpaceEnvContext();
 
   const getVariationWithOptions = useCallback(

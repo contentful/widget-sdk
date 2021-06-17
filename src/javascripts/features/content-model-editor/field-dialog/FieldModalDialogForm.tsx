@@ -1,7 +1,4 @@
-import React, { Fragment, useEffect, useState, useMemo } from 'react';
-import { css } from 'emotion';
-import tokens from '@contentful/forma-36-tokens';
-import PropTypes from 'prop-types';
+import React, { Fragment, useState, useMemo } from 'react';
 import {
   Modal,
   Button,
@@ -23,55 +20,17 @@ import { getIconId } from 'services/fieldFactory';
 import { toInternalFieldType } from 'widgets/FieldTypes';
 import { create as createBuiltinWidgetList } from 'widgets/BuiltinWidgets';
 import { useSpaceEnvContentTypes } from 'core/services/SpaceEnvContext';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import { FLAGS, getVariation } from 'LaunchDarkly';
+import { FLAGS } from 'core/feature-flags';
 import { useContentTypeField } from './hooks/useContentTypeField';
 import { FeedbackButton } from 'core/feature-feedback';
-
-const styles = {
-  modalControls: css({
-    backgroundColor: tokens.colorWhite,
-    borderTop: `1px solid ${tokens.colorElementMid}`,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingTop: tokens.spacingL,
-    position: 'relative',
-    width: '100%',
-  }),
-  modalHeader: css({
-    display: 'flex',
-    flexShrink: 0,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: tokens.colorElementLightest,
-    borderRadius: `${tokens.borderRadiusMedium} ${tokens.borderRadiusMedium} 0 0 `,
-    borderBottom: `1px solid ${tokens.colorElementMid}`,
-    padding: `${tokens.spacingXs} ${tokens.spacingM} 0 ${tokens.spacingL}`,
-  }),
-  leftPanel: css({
-    display: 'flex',
-  }),
-  modalTitle: css({
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-  }),
-  ctFieldTitle: css({
-    fontSize: tokens.fontSizeL,
-    paddingRight: tokens.spacingXs,
-    paddingLeft: tokens.spacingXs,
-  }),
-  ctFieldType: css({
-    fontSize: tokens.fontSizeL,
-    fontWeight: tokens.fontWeightNormal,
-    color: tokens.colorTextLightest,
-  }),
-  promotionTag: css({
-    marginLeft: tokens.spacingXs,
-  }),
-};
+import { styles } from './FieldModalDialogForm.styles';
+import {
+  ContentType,
+  ContentTypeField,
+  EditorInterface,
+  EditorInterfaceControl,
+} from 'core/typings';
+import { useFeatureFlag } from 'core/feature-flags';
 
 const formTabs = {
   SETTINGS: 'settings-tab',
@@ -87,33 +46,31 @@ const getAvailableWidgets = (customWidgets, contentType, editorInterface, ctFiel
   );
 };
 
-const FieldModalDialogForm = ({
-  onClose,
-  ctField,
-  widget,
-  contentType,
-  updateFieldOnScope,
-  editorInterface,
-  customWidgets,
-}) => {
+type FieldModalDialogFormProps = {
+  ctField: ContentTypeField;
+  contentType: ContentType;
+  editorInterface: EditorInterface;
+  widget: EditorInterfaceControl;
+
+  customWidgets: any[];
+  onClose: Function;
+  updateFieldOnScope: Function;
+};
+
+export function FieldModalDialogForm(props: FieldModalDialogFormProps) {
+  const {
+    onClose,
+    ctField,
+    widget,
+    contentType,
+    updateFieldOnScope,
+    editorInterface,
+    customWidgets,
+  } = props;
   const { currentSpaceContentTypes } = useSpaceEnvContentTypes();
-  const { currentOrganizationId, currentSpaceId } = useSpaceEnvContext();
   const [selectedTab, setSelectedTab] = useState(formTabs.SETTINGS);
   const [richTextOptions, setRichTextOptions] = useState(() => getRichTextOptions(ctField));
-  const [isInitialFieldValuesEnabled, setIsInitialFieldValuesEnabled] = useState(false);
-
-  useEffect(() => {
-    const getInitialFieldValuesFeatureFlagVariation = async () => {
-      const featureFlagVariation = await getVariation(FLAGS.INITIAL_FIELD_VALUES, {
-        organizationId: currentOrganizationId,
-        spaceId: currentSpaceId,
-      });
-
-      setIsInitialFieldValuesEnabled(featureFlagVariation);
-    };
-
-    getInitialFieldValuesFeatureFlagVariation();
-  }, [currentOrganizationId, currentSpaceId]);
+  const [useInitialValues] = useFeatureFlag(FLAGS.INITIAL_FIELD_VALUES);
 
   const availableWidgets = useMemo(
     () => getAvailableWidgets(customWidgets, contentType, editorInterface, ctField),
@@ -135,7 +92,7 @@ const FieldModalDialogForm = ({
     contentType,
     widget,
   });
-  const { onBlur, onChange, onSubmit, fields, form } = contentTypeForm;
+  const { onBlur, onChange, onSubmit, fields } = contentTypeForm;
   const iconId = getIconId(ctField) + '-small';
 
   return (
@@ -162,7 +119,7 @@ const FieldModalDialogForm = ({
               onSelect={setSelectedTab}>
               Validation
             </Tab>
-            {isInitialFieldValuesEnabled && (
+            {useInitialValues && (
               <Tab
                 testId={formTabs.INITIAL_VALUE}
                 id={formTabs.INITIAL_VALUE}
@@ -184,7 +141,7 @@ const FieldModalDialogForm = ({
           </Tabs>
           <IconButton
             buttonType="muted"
-            onClick={onClose}
+            onClick={() => onClose()}
             iconProps={{
               icon: 'Close',
             }}
@@ -200,7 +157,6 @@ const FieldModalDialogForm = ({
               onBlur={onBlur}
               onChange={onChange}
               fields={fields}
-              form={form}
               ctField={ctField}
               contentTypes={currentSpaceContentTypes}
               contentType={contentType}
@@ -215,7 +171,6 @@ const FieldModalDialogForm = ({
               onBlur={onBlur}
               onChange={onChange}
               fields={fields}
-              form={form}
               ctField={ctField}
               contentTypes={currentSpaceContentTypes}
               widgetSettings={widgetSettings.data}
@@ -223,18 +178,13 @@ const FieldModalDialogForm = ({
             />
           </TabPanel>
         )}
-        {isInitialFieldValuesEnabled && selectedTab === formTabs.INITIAL_VALUE && (
+        {useInitialValues && selectedTab === formTabs.INITIAL_VALUE && (
           <TabPanel id="initial-value-tab-panel">
             <InitialValueTabComponent
-              onBlur={onBlur}
               onChange={onChange}
               fields={fields}
               ctField={ctField}
               contentType={contentType}
-              contentTypes={currentSpaceContentTypes}
-              editorInterface={editorInterface}
-              widgetSettings={widgetSettings.data}
-              availableWidgets={availableWidgets}
             />
           </TabPanel>
         )}
@@ -242,13 +192,11 @@ const FieldModalDialogForm = ({
           <TabPanel id="appearance-tab-panel">
             <AppearanceTabComponent
               editorInterface={editorInterface}
-              customWidgets={customWidgets}
               availableWidgets={availableWidgets}
               widgetSettings={widgetSettings.data}
               setWidgetSettings={widgetSettings.setData}
               contentType={contentType}
               ctField={ctField}
-              widget={widget}
             />
           </TabPanel>
         )}
@@ -262,27 +210,15 @@ const FieldModalDialogForm = ({
             buttonType="positive">
             Confirm
           </Button>
-          <Button onClick={onClose} buttonType="muted">
+          <Button onClick={() => onClose()} buttonType="muted">
             Cancel
           </Button>
         </div>
 
-        {isInitialFieldValuesEnabled && selectedTab === formTabs.INITIAL_VALUE && (
+        {useInitialValues && selectedTab === formTabs.INITIAL_VALUE && (
           <FeedbackButton about="Initial values" target="dante" />
         )}
       </Modal.Controls>
     </Fragment>
   );
-};
-
-FieldModalDialogForm.propTypes = {
-  editorInterface: PropTypes.object.isRequired,
-  customWidgets: PropTypes.array.isRequired,
-  onClose: PropTypes.func.isRequired,
-  ctField: PropTypes.object,
-  widget: PropTypes.object,
-  contentType: PropTypes.object.isRequired,
-  updateFieldOnScope: PropTypes.func.isRequired,
-};
-
-export { FieldModalDialogForm };
+}

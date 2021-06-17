@@ -5,7 +5,7 @@ import Button from 'components/shared/stack-onboarding/components/Button';
 import Skip from 'components/shared/stack-onboarding/components/Skip';
 import Icon from 'ui/Components/Icon';
 import { useAsync } from 'core/hooks';
-import { getVariation, FLAGS } from 'LaunchDarkly';
+import { getVariation, FLAGS } from 'core/feature-flags';
 import { track } from 'analytics/Analytics';
 import { Flex, ModalLauncher } from '@contentful/forma-36-react-components';
 import { unmarkSpace } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';

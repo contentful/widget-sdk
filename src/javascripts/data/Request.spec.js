@@ -1,7 +1,7 @@
 /* global Headers */
 
 import * as Telemetry from 'i13n/Telemetry';
-import { getVariationSync } from 'LaunchDarkly';
+import { getVariationSync } from 'core/feature-flags';
 import { makeRequest } from './Request';
 import wrapWithAuth from 'data/Request/Auth';
 import { tracingHeaders } from 'i13n/BackendTracing';

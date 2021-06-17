@@ -17,7 +17,7 @@ import {
   hasSeenExploreOnboarding,
 } from 'features/onboarding';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import { FLAGS, getVariation } from 'LaunchDarkly';
+import { FLAGS, getVariation } from 'core/feature-flags';
 import { defaultEventProps, tracking } from 'analytics/Analytics';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getOrganization } from 'services/TokenStore';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FLAGS, getVariation } from 'LaunchDarkly';
+import { FLAGS, getVariation } from 'core/feature-flags';
 import {
   TextInput,
   FormLabel,

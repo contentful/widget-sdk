@@ -1,5 +1,5 @@
 import { createOrganizationEndpoint, createSpaceEndpoint } from 'data/EndpointFactory';
-import { FLAGS, getVariation } from 'LaunchDarkly';
+import { FLAGS, getVariation } from 'core/feature-flags';
 import {
   getAddOnProductRatePlans,
   getBasePlan,

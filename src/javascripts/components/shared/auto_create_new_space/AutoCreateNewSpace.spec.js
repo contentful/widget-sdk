@@ -6,7 +6,7 @@ import * as BrowserStorage from 'core/services/BrowserStorage';
 
 import { init, resetCreatingSampleSpace } from './index';
 import { waitFor } from '@testing-library/dom';
-import { getVariation } from 'LaunchDarkly';
+import { getVariation } from 'core/feature-flags';
 
 jest.mock('services/TokenStore');
 jest.mock('components/shared/auto_create_new_space/CreateModernOnboarding');

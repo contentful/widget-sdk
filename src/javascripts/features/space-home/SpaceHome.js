@@ -28,7 +28,7 @@ import {
 } from 'core/services/SpaceEnvContext/utils';
 import { getModule } from 'core/NgRegistry';
 import { ExpiredTrialSpaceHome } from './ExpiredTrialSpaceHome';
-import { getVariation, FLAGS } from 'LaunchDarkly';
+import { getVariation, FLAGS } from 'core/feature-flags';
 import { tracking, defaultEventProps } from 'analytics/Analytics';
 import { useTrialSpace } from 'features/trials';
 

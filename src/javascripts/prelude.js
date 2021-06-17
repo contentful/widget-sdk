@@ -14,7 +14,7 @@ import 'codemirror/addon/edit/closebrackets';
 import 'codemirror/mode/javascript/javascript';
 // CodeMirror: mixed HTML mode for UI Extension editor
 import 'codemirror/mode/htmlmixed/htmlmixed';
-import { FLAGS, getVariation } from 'LaunchDarkly';
+import { FLAGS, getVariation } from 'core/feature-flags';
 
 import moment from 'moment';
 import _ from 'lodash';
@@ -126,7 +126,9 @@ angular
         /* webpackMode: "eager" */ 'navigation/stateChangeHandlers'
       );
 
-      const { ensureFlagsHaveFallback } = await import(/* webpackMode: "eager" */ 'LaunchDarkly');
+      const { ensureFlagsHaveFallback } = await import(
+        /* webpackMode: "eager" */ 'core/feature-flags'
+      );
       const { init: initDegradedAppPerformance } = await import(
         /* webpackMode: "eager" */ 'core/services/DegradedAppPerformance'
       );

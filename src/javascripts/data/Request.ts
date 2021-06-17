@@ -3,7 +3,7 @@ import wrapWithRetryWithQueue from 'data/Request/RetryWithQueue';
 import wrapWithAuth from 'data/Request/Auth';
 import { getEndpoint, getCurrentState } from 'data/Request/Utils';
 import * as Telemetry from 'i13n/Telemetry';
-import { FLAGS, getVariationSync, hasCachedVariation } from 'LaunchDarkly';
+import { FLAGS, getVariationSync, hasCachedVariation } from 'core/feature-flags';
 import queryString from 'query-string';
 import { getDefaultHeaders } from 'core/services/usePlainCMAClient/getDefaultClientHeaders';
 import { defaultTransformResponse, ResponseTransform } from 'data/responseTransform';

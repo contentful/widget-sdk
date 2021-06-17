@@ -14,7 +14,7 @@ import {
 import { create } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
 import { isDeveloper as checkIfDeveloper, goToDeveloperOnboarding } from 'features/onboarding';
 import { router } from 'core/react-routing';
-import { FLAGS, getVariation } from 'LaunchDarkly';
+import { FLAGS, getVariation } from 'core/feature-flags';
 import { getSpaceContext } from 'classes/spaceContext';
 
 let creatingSampleSpace = false;

@@ -24,10 +24,9 @@ import {
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 import LocaleStore from 'services/localeStore';
 import { getCustomWidgetLoader } from 'widgets/CustomWidgetLoaderInstance';
-import { FLAGS } from 'LaunchDarkly';
+import { FLAGS, useFeatureFlag } from 'core/feature-flags';
 import * as PublicContentType from 'widgets/PublicContentType';
 import { createCmaDocumentWithApiNames } from '../widgets/ExtensionSDKs/createCmaDocumentWithApiNames';
-import { useVariation } from 'core/hooks/useVariation';
 import { createEditorCallbacks } from '../widgets/ExtensionSDKs/callbacks/editor';
 import { getUserWithMinifiedSys } from 'app/widgets/ExtensionSDKs/utils';
 
@@ -83,7 +82,7 @@ const CustomEditorExtensionRenderer = (props: Props) => {
     getCustomWidgetLoader().then(setWidgetLoader);
   }, []);
 
-  const [useExperienceSDK] = useVariation<boolean>(
+  const [useExperienceSDK] = useFeatureFlag<boolean>(
     FLAGS.EXPERIENCE_SDK_ENTRY_EDITOR_LOCATION,
     false
   );

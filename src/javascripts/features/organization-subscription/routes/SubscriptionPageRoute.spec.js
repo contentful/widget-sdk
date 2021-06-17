@@ -13,7 +13,7 @@ import {
   PARTNER_PLATFORM_BASE_PLAN_NAME,
 } from 'account/pricing/PricingDataProvider';
 import { getAllProductRatePlans } from 'features/pricing-entities';
-import { getVariation } from 'LaunchDarkly';
+import { getVariation } from 'core/feature-flags';
 import { getSpaces } from 'services/TokenStore';
 import { mockWebappContent } from '../components/__mocks__/webappContent';
 import { OrgSubscriptionContextProvider } from '../context';

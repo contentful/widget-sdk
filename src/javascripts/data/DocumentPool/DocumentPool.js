@@ -1,6 +1,6 @@
 import { createCmaDoc, createEntityRepo } from '@contentful/editorial-primitives';
 import { find, get as getAtPath, includes, isString, noop } from 'lodash';
-import { FLAGS, getVariation } from 'LaunchDarkly';
+import { FLAGS, getVariation } from 'core/feature-flags';
 
 import { create as createPermissions } from 'access_control/EntityPermissions';
 import { createSpaceEndpoint } from 'data/Endpoint';

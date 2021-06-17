@@ -3,7 +3,7 @@ import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { beginSpaceCreation } from './CreateSpace';
 import { canCreateSpaceInOrganization } from 'access_control/AccessChecker';
 import { isEnterprisePlan, isSelfServicePlan } from 'account/pricing/PricingDataProvider';
-import { getVariation, FLAGS } from 'LaunchDarkly';
+import { getVariation, FLAGS } from 'core/feature-flags';
 import { getSpaceProductRatePlans, getBasePlan } from 'features/pricing-entities';
 import { router } from 'core/react-routing';
 

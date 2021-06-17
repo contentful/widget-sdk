@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getOrgFeature, OrganizationFeatures } from 'data/CMA/ProductCatalog';
-import { getVariation, FLAGS } from 'LaunchDarkly';
+import { getVariation, FLAGS } from 'core/feature-flags';
 import { getAppsRepo } from 'features/apps-core';
 
 /**

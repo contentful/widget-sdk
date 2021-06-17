@@ -10,7 +10,7 @@ import ResourceUsageList from './ResourceUsageList';
 import SpaceUsageSidebar from './SpaceUsageSidebar';
 import DocumentTitle from 'components/shared/DocumentTitle';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
-import { FLAGS, getVariation } from 'LaunchDarkly';
+import { FLAGS, useFeatureFlag } from 'core/feature-flags';
 import { getSpaceEntitlementSet } from './services/EntitlementService';
 import { can } from 'access_control/AccessChecker';
 import { go } from 'states/Navigator';
@@ -34,24 +34,18 @@ export default function SpaceUsage() {
   const environmentMeta = getEnvironmentMeta(currentSpace);
   const [spaceResources, setSpaceResources] = React.useState();
   const [environmentResources, setEnvironmentResources] = React.useState();
-  const [entitlementsAPIEnabled, setEntitlementsAPIEnabled] = React.useState();
+  const [entitlementsAPIEnabled] = useFeatureFlag(FLAGS.ENTITLEMENTS_API);
   const [entitlementsSet, setEntitlementsSet] = React.useState();
 
   React.useEffect(() => {
-    if (!currentSpaceId) {
+    if (!currentSpaceId || !entitlementsAPIEnabled) {
       return;
     }
 
-    getVariation(FLAGS.ENTITLEMENTS_API).then((isEnabled) => {
-      setEntitlementsAPIEnabled(isEnabled);
-
-      if (isEnabled) {
-        getSpaceEntitlementSet(currentSpaceId)
-          .then(setEntitlementsSet)
-          .catch(() => {});
-      }
-    });
-  }, [currentSpaceId]);
+    getSpaceEntitlementSet(currentSpaceId)
+      .then(setEntitlementsSet)
+      .catch(() => {});
+  }, [currentSpaceId, entitlementsAPIEnabled]);
 
   React.useEffect(() => {
     if (!currentOrganizationId) {

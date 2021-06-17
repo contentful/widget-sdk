@@ -2,7 +2,7 @@ import React, { useCallback, useContext } from 'react';
 import PropTypes from 'prop-types';
 import queryString from 'query-string';
 import { SpaceCreation } from '../components/SpaceCreation';
-import { FLAGS, getVariation } from 'LaunchDarkly';
+import { FLAGS, getVariation } from 'core/feature-flags';
 import { useAsync } from 'core/hooks';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import { Spinner } from '@contentful/forma-36-react-components';

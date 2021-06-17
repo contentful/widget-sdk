@@ -2,7 +2,7 @@ import * as React from 'react';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
 import createResourceService from 'services/ResourceService';
 import * as accessChecker from 'access_control/AccessChecker';
-import { getVariation, FLAGS } from 'LaunchDarkly';
+import { getVariation, FLAGS } from 'core/feature-flags';
 import { getOrgFeature, getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { canCreate } from 'utils/ResourceUtils';
 import { beginSpaceChange } from 'services/ChangeSpaceService';

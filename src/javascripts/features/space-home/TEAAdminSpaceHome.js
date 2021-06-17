@@ -12,7 +12,7 @@ import { ExampleProjectOverview } from './components/ExampleProjectOverview';
 import { SpaceTrialWidget } from 'features/trials';
 import { ComposeAndLaunchCTA } from './components/ComposeAndLaunchCTA';
 import { ContentfulAppsCTA } from './components/ContentfulAppsCTA';
-import { FLAGS, getVariation } from 'LaunchDarkly';
+import { FLAGS, getVariation } from 'core/feature-flags';
 import { DiscoverOnboardingCTA } from 'features/onboarding';
 
 export const TEAAdminSpaceHome = ({

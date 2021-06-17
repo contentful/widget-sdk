@@ -3,7 +3,7 @@ import * as Navigator from 'states/Navigator';
 import { captureError } from 'core/monitoring';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { OrganizationFeatures, getOrgFeature } from 'data/CMA/ProductCatalog';
-import { getVariation, FLAGS } from 'LaunchDarkly';
+import { getVariation, FLAGS } from 'core/feature-flags';
 import { isMasterEnvironment } from 'core/services/SpaceEnvContext/utils';
 import { AppsListProps } from '@contentful/experience-components';
 import { useContentfulApps, useInstalledApps } from 'features/apps-core';

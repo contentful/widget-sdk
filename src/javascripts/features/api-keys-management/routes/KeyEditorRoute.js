@@ -6,7 +6,7 @@ import createFetcherComponent from 'app/common/createFetcherComponent';
 import * as accessChecker from 'access_control/AccessChecker';
 import { KeyEditorWorkbench } from '../api-key-editor/KeyEditorWorkbench';
 import { KeyEditor } from '../api-key-editor/KeyEditor';
-import { getVariation, FLAGS } from 'LaunchDarkly';
+import { getVariation, FLAGS } from 'core/feature-flags';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isAdmin } from 'core/services/SpaceEnvContext/utils';
 

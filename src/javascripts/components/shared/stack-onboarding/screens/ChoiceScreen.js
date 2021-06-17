@@ -5,7 +5,7 @@ import Button from '../components/Button';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import { updateUserInSegment, tracking, defaultEventProps } from 'analytics/Analytics';
-import { FLAGS, getVariation } from 'LaunchDarkly';
+import { FLAGS, getVariation } from 'core/feature-flags';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { FlexibleOnboardingDialog } from 'features/onboarding';
 import { getOrganizations } from 'services/TokenStore';

@@ -9,7 +9,7 @@ import {
 import { QuickNavigation } from 'features/quick-navigation';
 import OnboardingRelaunch from 'navigation/modernStackOnboardingRelaunch';
 import NavBar from './NavBar/NavBar';
-import { FLAGS, getVariation } from 'LaunchDarkly';
+import { FLAGS, getVariation } from 'core/feature-flags';
 import { getSpaceNavigationItems } from './SpaceNavigationBarItems';
 import { SidepanelContainer } from './Sidepanel/SidepanelContainer';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';

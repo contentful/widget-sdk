@@ -1,6 +1,6 @@
 import { getAllSpaces, getUsersByIds } from 'access_control/OrganizationMembershipRepository';
 import * as PricingDataProvider from './PricingDataProvider';
-import { getVariation } from 'LaunchDarkly';
+import { getVariation } from 'core/feature-flags';
 
 const mockEnterpriseBasePlan = {
   items: [

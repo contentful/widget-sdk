@@ -1,6 +1,6 @@
 import React, { useCallback, useContext } from 'react';
 
-import { getVariation, FLAGS } from 'LaunchDarkly';
+import { getVariation, FLAGS } from 'core/feature-flags';
 import { useAsync } from 'core/hooks';
 import { openDeleteSpaceDialog } from 'features/space-settings';
 import { calculatePlansCost } from 'utils/SubscriptionUtils';

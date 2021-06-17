@@ -10,7 +10,7 @@ import DocumentTitle from 'components/shared/DocumentTitle';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { getSpaceEntitlementSet } from 'features/space-usage';
-import { FLAGS, getVariation } from 'LaunchDarkly';
+import { FLAGS, getVariation } from 'core/feature-flags';
 import { isOrganizationOnTrial } from 'features/trials';
 
 const RolesFetcher = createFetcherComponent(async ({ spaceId, environmentId, resources }) => {

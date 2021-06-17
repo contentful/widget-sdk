@@ -8,7 +8,7 @@ import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import { FLAGS, getVariation } from 'LaunchDarkly';
+import { FLAGS, getVariation } from 'core/feature-flags';
 import { BuiltinWidget } from 'widgets/BuiltinWidgets';
 
 const styles = {

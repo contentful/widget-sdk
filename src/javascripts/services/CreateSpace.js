@@ -12,7 +12,7 @@ import {
   isSelfServicePlan,
   isFreePlan,
 } from 'account/pricing/PricingDataProvider';
-import { getVariation, FLAGS } from 'LaunchDarkly';
+import { getVariation, FLAGS } from 'core/feature-flags';
 import { getBasePlan } from 'features/pricing-entities';
 
 import SpaceWizardsWrapper from 'app/SpaceWizards/SpaceWizardsWrapper';

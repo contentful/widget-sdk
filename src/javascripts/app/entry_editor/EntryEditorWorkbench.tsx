@@ -26,7 +26,7 @@ import {
 import { referenceText } from 'app/entry_editor/EntryReferences/utils';
 import { goToPreviousSlideOrExit } from 'navigation/SlideInNavigator';
 import { track } from 'analytics/Analytics';
-import { getVariation, FLAGS } from 'LaunchDarkly';
+import { getVariation, FLAGS } from 'core/feature-flags';
 import { useTagsFeatureEnabled } from 'features/content-tags';
 import { DefaultEntryEditorTab, DefaultReferenceTab, DefaultTagsTab } from './DefaultEntryEditor';
 import EntryEditorWidgetTypes from 'app/entry_editor/EntryEditorWidgetTypes';

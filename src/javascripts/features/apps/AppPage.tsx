@@ -51,8 +51,8 @@ import { usePubSubClient } from 'core/hooks';
 import LocaleStore from 'services/localeStore';
 import { getSpaceContext } from 'classes/spaceContext';
 import { useRouteNavigate } from 'core/react-routing';
-import { FLAGS } from 'LaunchDarkly';
-import { useVariation } from 'core/hooks/useVariation';
+import { FLAGS } from 'core/feature-flags';
+import { useFeatureFlag } from 'core/feature-flags';
 import {
   createAppConfigWidgetSDK,
   AppInstallationEvents,
@@ -150,7 +150,10 @@ export function AppRoute(props: Props) {
     );
   }, [app]);
 
-  const [useExperienceSDK] = useVariation<boolean>(FLAGS.EXPERIENCE_SDK_APP_CONFIG_LOCATION, false);
+  const [useExperienceSDK] = useFeatureFlag<boolean>(
+    FLAGS.EXPERIENCE_SDK_APP_CONFIG_LOCATION,
+    false
+  );
   const onAppMarkedAsReady = React.useCallback(async () => {
     if (!loadingError) {
       setAppLoaded(true);

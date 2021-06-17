@@ -29,14 +29,13 @@ import { MarketplaceApp } from 'features/apps-core';
 import { createPageWidgetSDK } from '@contentful/experience-sdk';
 import { useCurrentSpaceAPIClient } from '../../core/services/APIClient/useCurrentSpaceAPIClient';
 import LocaleStore from 'services/localeStore';
-import { FLAGS } from '../../LaunchDarkly';
+import { FLAGS, useFeatureFlag } from 'core/feature-flags';
 import { PageExtensionSDK } from '@contentful/app-sdk';
 import {
   createDialogCallbacks,
   createNavigatorCallbacks,
   createSpaceCallbacks,
 } from 'app/widgets/ExtensionSDKs/callbacks';
-import { useVariation } from 'core/hooks/useVariation';
 import * as PublicContentType from 'widgets/PublicContentType';
 import { getUserWithMinifiedSys } from 'app/widgets/ExtensionSDKs/utils';
 
@@ -86,7 +85,7 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
   const { customWidgetPlainClient } = useCurrentSpaceAPIClient();
   const pubSubClient = usePubSubClient();
 
-  const [useExperienceSDK] = useVariation<boolean>(FLAGS.EXPERIENCE_SDK_PAGE_LOCATION, false);
+  const [useExperienceSDK] = useFeatureFlag<boolean>(FLAGS.EXPERIENCE_SDK_PAGE_LOCATION, false);
 
   const [widgetLoader, setWidgetLoader] = React.useState<WidgetLoader>();
   React.useEffect(() => {

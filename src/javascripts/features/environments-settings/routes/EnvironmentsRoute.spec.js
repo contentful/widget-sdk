@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 
 import { EnvironmentsRoute } from './EnvironmentsRoute';
 import * as accessChecker from 'access_control/AccessChecker';
-import { getVariation } from 'LaunchDarkly';
+import { getVariation } from 'core/feature-flags';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { openDeleteEnvironmentDialog } from '../components/DeleteDialog';
 import createResourceService from 'services/ResourceService';

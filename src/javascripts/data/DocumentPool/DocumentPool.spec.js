@@ -1,4 +1,4 @@
-import { FLAGS } from 'LaunchDarkly';
+import { FLAGS } from 'core/feature-flags';
 import * as K from '__mocks__/kefirMock';
 import { createCmaDoc } from '@contentful/editorial-primitives';
 

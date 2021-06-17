@@ -1,6 +1,6 @@
 import React from 'react';
 import { AppsFrameworkIntroBanner } from '../AppsFrameworkIntroBanner';
-import { FLAGS, getVariation } from 'LaunchDarkly';
+import { FLAGS, getVariation } from 'core/feature-flags';
 import { get, partition } from 'lodash';
 import {
   Icon,

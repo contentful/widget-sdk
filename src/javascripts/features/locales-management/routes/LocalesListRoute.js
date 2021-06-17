@@ -15,7 +15,7 @@ import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvCon
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
 import { createLocaleRepo } from 'data/CMA/LocaleRepo';
 import * as ChangeSpaceService from 'services/ChangeSpaceService';
-import { FLAGS, getVariation } from 'LaunchDarkly';
+import { FLAGS, getVariation } from 'core/feature-flags';
 import { getSpaceEntitlementSet } from 'features/space-usage';
 import { getCMAClient } from 'core/services/usePlainCMAClient';
 

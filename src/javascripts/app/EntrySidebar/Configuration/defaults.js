@@ -2,7 +2,7 @@ import SidebarWidgetTypes from '../SidebarWidgetTypes';
 import { getSpaceFeature, SpaceFeatures } from 'data/CMA/ProductCatalog';
 import { WidgetNamespace } from '@contentful/widget-renderer';
 import { fetchContentfulAppsConfig } from 'features/contentful-apps';
-import { FLAGS, getVariation } from 'LaunchDarkly';
+import { FLAGS, getVariation } from 'core/feature-flags';
 import { getSpaceEntitlementSet } from 'app/SpaceSettings/Usage/services/EntitlementService';
 
 export const Publication = {

@@ -1,7 +1,7 @@
 import React from 'react';
 import SpaceUsage from './SpaceUsage';
 import { render, screen } from '@testing-library/react';
-import { getVariation } from 'LaunchDarkly';
+import { useFeatureFlag } from 'core/feature-flags';
 import { cloneDeep, keyBy } from 'lodash';
 import { getSpaceEntitlementSet } from './services/EntitlementService';
 
@@ -203,7 +203,7 @@ describe('SpaceUsage', () => {
 
   describe('when Entitlements API is disabled', () => {
     beforeEach(async () => {
-      getVariation.mockResolvedValue(false);
+      useFeatureFlag.mockReturnValue([false]);
       await build();
     });
 
@@ -220,7 +220,7 @@ describe('SpaceUsage', () => {
 
   describe('when Entitlements API is enabled', () => {
     beforeEach(async () => {
-      getVariation.mockResolvedValueOnce(true);
+      useFeatureFlag.mockReturnValue([true]);
       await build();
     });
 
@@ -238,7 +238,7 @@ describe('SpaceUsage', () => {
     const mockData = cloneDeep(mockedResponse);
     delete mockData.quotas.roles;
     getSpaceEntitlementSet.mockResolvedValueOnce(mockData);
-    getVariation.mockResolvedValueOnce(true);
+    useFeatureFlag.mockReturnValue([true]);
     await build();
     const resources = getAllRenderedResources();
     expect(resources['Role']).not.toHaveTextContent();

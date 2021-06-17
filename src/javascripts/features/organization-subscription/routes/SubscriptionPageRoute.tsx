@@ -4,7 +4,7 @@ import { css } from 'emotion';
 import { Workbench } from '@contentful/forma-36-react-components';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 
-import { getVariation, FLAGS } from 'LaunchDarkly';
+import { getVariation, FLAGS } from 'core/feature-flags';
 import {
   getPlansWithSpaces,
   isComposeAndLaunchPlan,

@@ -1,7 +1,7 @@
 import React from 'react';
 import { createOrganizationEndpoint } from 'data/EndpointFactory';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-import { getVariation, FLAGS } from 'LaunchDarkly';
+import { getVariation, FLAGS } from 'core/feature-flags';
 import { GenericCustomerSlides } from '../components';
 import { ModalLauncher } from '@contentful/forma-36-react-components/dist/alpha';
 import { createClientStorage } from 'core/services/BrowserStorage/ClientStorage';

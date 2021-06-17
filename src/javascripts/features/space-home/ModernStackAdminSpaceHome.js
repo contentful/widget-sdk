@@ -12,7 +12,7 @@ import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { getStoragePrefix } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
 import { ComposeAndLaunchCTA } from './components/ComposeAndLaunchCTA';
 import { ContentfulAppsCTA } from './components/ContentfulAppsCTA';
-import { FLAGS, getVariation } from 'LaunchDarkly';
+import { FLAGS, getVariation } from 'core/feature-flags';
 import { DiscoverOnboardingCTA } from 'features/onboarding';
 
 const store = getBrowserStorage();

@@ -5,7 +5,7 @@ import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { FieldModalDialogForm } from './FieldModalDialogForm';
 import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { CurrentSpaceAPIClientProvider } from 'core/services/APIClient/CurrentSpaceAPIClientContext';
-import { FieldDialogProvider } from './components/FieldDialogContext';
+import { FieldDialogContextProvider } from './components/FieldDialogContext';
 
 const FieldModalDialog = ({
   isShown,
@@ -20,7 +20,7 @@ const FieldModalDialog = ({
   return (
     <SpaceEnvContextProvider>
       <CurrentSpaceAPIClientProvider>
-        <FieldDialogProvider
+        <FieldDialogContextProvider
           field={ctField}
           contentType={contentType}
           editorInterface={editorInterface}>
@@ -37,7 +37,7 @@ const FieldModalDialog = ({
               />
             )}
           </Modal>
-        </FieldDialogProvider>
+        </FieldDialogContextProvider>
       </CurrentSpaceAPIClientProvider>
     </SpaceEnvContextProvider>
   );

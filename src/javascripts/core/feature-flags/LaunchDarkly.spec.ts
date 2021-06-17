@@ -1,6 +1,7 @@
 import { noop } from 'lodash';
 import ldClient from 'ldclient-js';
-import { getVariation, reset, FLAGS, getVariationSync, hasCachedVariation } from './LaunchDarkly';
+import { getVariation, reset, getVariationSync, hasCachedVariation } from './LaunchDarkly';
+import { FLAGS } from './flags';
 import { getOrganization, getSpace, getUser } from 'services/TokenStore';
 import { launchDarkly } from 'Config';
 import { captureError } from 'core/monitoring';

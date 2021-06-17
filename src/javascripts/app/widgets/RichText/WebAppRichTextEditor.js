@@ -6,7 +6,7 @@ import { rtSdkDecorator } from './rtSdkDecorator';
 import withTracking from './withTracking';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isCurrentEnvironmentMaster } from 'core/services/SpaceEnvContext/utils';
-import { getVariation, getVariationSync, FLAGS } from 'LaunchDarkly';
+import { getVariation, getVariationSync, FLAGS } from 'core/feature-flags';
 
 /**
  * Renders the RichTextEditor in the context of the web-app set-up with all dependencies.

@@ -4,7 +4,7 @@ import { isOwner, isOwnerOrAdmin } from 'services/OrganizationRoles';
 import * as TokenStore from 'services/TokenStore';
 import { getOrgFeature, OrganizationFeatures } from '../data/CMA/ProductCatalog';
 import { SidepanelContainer } from './Sidepanel/SidepanelContainer';
-import { FLAGS, getVariation } from 'LaunchDarkly';
+import { FLAGS, getVariation } from 'core/feature-flags';
 import { AdvancedExtensibilityFeature } from 'features/extensions-management';
 import { isOrganizationOnTrial } from 'features/trials';
 import { getOrganization } from 'services/TokenStore';

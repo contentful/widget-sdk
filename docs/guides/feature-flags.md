@@ -35,13 +35,13 @@ After setting the flag up in LaunchDarkly, you must then add it to the `FLAGS` m
 
 ### FLAGS map
 
-Add the flag to the `LaunchDarkly.js` `FLAGS` object. Give the key a useful name, and the value is the LaunchDarkly flag key.
+Add the flag to the `FLAGS` object in [core/feature-flags](src/javascripts/core/feature-flags/flags.ts). Give the key a useful name, and the value is the LaunchDarkly flag key.
 
 ### Fallback values
 
 **You must define a fallback value for your flag, without exception**. This is so that in the event that LaunchDarkly is unavailable or can't be reached for some reason, the user can still access the app, in a degraded state. You can think of the fallback value as if the variation were turned off.
 
-Choose whatever fallback value you prefer and add it to the `LaunchDarkly.js` `FALLBACK_VALUES` object. Not doing so will cause the app to err when loading.
+Choose whatever fallback value you prefer and add it to [core/feature-flags](src/javascripts/core/feature-flags/flags.ts). Not doing so will cause the app to err when loading.
 
 ## Targeting rules
 
