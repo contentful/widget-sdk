@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import moment from 'moment';
 import { createEndpoint } from 'data/EndpointFactory';
 import { go } from 'states/Navigator';
@@ -10,9 +9,11 @@ import { get } from 'lodash';
 import _ from 'lodash';
 import { UserInvitation } from 'features/user-invitations';
 import { LoadingState } from 'features/loading-state';
+import { CustomRouter, RouteErrorBoundary, Route, Routes, useParams } from 'core/react-routing';
+import StateRedirect from 'app/common/StateRedirect';
 
-function UserInvitationState(props) {
-  const { invitationId } = props;
+function UserInvitationState() {
+  const { invitationId } = useParams();
   const [invitation, setInvitation] = useState();
   const [user, setUser] = useState();
   const [errored, setErrored] = useState(false);
@@ -71,14 +72,25 @@ function UserInvitationState(props) {
   return <UserInvitation invitation={invitation} user={user} expired={expired} errored={errored} />;
 }
 
-UserInvitationState.propTypes = {
-  invitationId: PropTypes.string.isRequired,
+const UserInvitationRouter = () => {
+  const [basename] = window.location.pathname.split('invitations');
+
+  return (
+    <CustomRouter splitter="invitations">
+      <RouteErrorBoundary>
+        <Routes basename={basename + 'invitations'}>
+          <Route name="invitations" path="/:invitationId" element={<UserInvitationState />} />
+          <Route name={null} path="*" element={<StateRedirect path="home" />} />
+        </Routes>
+      </RouteErrorBoundary>
+    </CustomRouter>
+  );
 };
 
 const userInvitationState = {
   name: 'invitations',
-  url: '/invitations/:invitationId',
-  component: UserInvitationState,
+  url: '/invitations{pathname:any}',
+  component: UserInvitationRouter,
 };
 
 export default userInvitationState;
