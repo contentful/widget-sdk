@@ -6,7 +6,6 @@ import { EnvironmentsRoute } from './EnvironmentsRoute';
 import * as accessChecker from 'access_control/AccessChecker';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { openDeleteEnvironmentDialog } from '../components/DeleteDialog';
-import createResourceService from 'services/ResourceService';
 import { beginSpaceChange } from 'services/ChangeSpaceService';
 import { canCreate } from 'utils/ResourceUtils';
 import { createPaginationEndpoint } from '__mocks__/data/EndpointFactory';
@@ -17,13 +16,6 @@ import { go } from 'states/Navigator';
 import { getEnvironmentAliasesIds } from 'core/services/SpaceEnvContext/utils';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { useSpaceEnvEndpoint } from 'core/hooks/useSpaceEnvEndpoint';
-
-jest.mock('services/ResourceService', () => ({
-  __esModule: true, // this property makes it work
-  default: jest.fn().mockReturnValue({
-    get: jest.fn().mockResolvedValue({ usage: 0, limits: { maximum: 3 } }),
-  }),
-}));
 
 jest.mock('access_control/AccessChecker', () => ({
   can: jest.fn().mockReturnValue(true),
@@ -69,6 +61,9 @@ jest.mock('core/services/SpaceEnvContext/useSpaceEnvContext', () => ({
     currentOrganizationId: defaultOrganizationId,
     currentOrganization: {},
     currentSpaceData: {},
+    spaceResources: {
+      get: jest.fn().mockResolvedValue({ usage: 1, limits: { maximum: 1 } }),
+    },
   }),
 }));
 jest.mock('core/hooks/useSpaceEnvEndpoint');
@@ -226,12 +221,6 @@ describe('EnvironmentsRoute', () => {
 
   describe('shows usage info in the sidebar', () => {
     describe('on v2 pricing', () => {
-      beforeEach(() => {
-        createResourceService.mockImplementation(() => ({
-          get: jest.fn().mockResolvedValue({ usage: 1, limits: { maximum: 1 } }),
-        }));
-      });
-
       it('shows usage and limits', async () => {
         const { getByTestId } = await renderEnvironmentsComponent(
           { id: 'e1', status: 'ready', aliases: ['master'], spaceId: defaultSpaceId },
@@ -273,9 +262,6 @@ describe('EnvironmentsRoute', () => {
   describe('when limit is reached on v2 pricing', () => {
     beforeEach(() => {
       canCreate.mockReturnValueOnce(false);
-      createResourceService.mockImplementation(() => ({
-        get: jest.fn().mockResolvedValue({ usage: 1, limits: { maximum: 1 } }),
-      }));
     });
 
     it('does not render create button', async () => {

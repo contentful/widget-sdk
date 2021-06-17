@@ -86,7 +86,7 @@ export const LocalesListRoute = () => {
     currentEnvironmentAliasId,
     currentSpace,
     currentSpaceData,
-    resources,
+    environmentResources,
   } = useSpaceEnvContext();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
   const [entitlementsAPIEnabled, setEntitlementsAPIEnabled] = useState();
@@ -105,7 +105,7 @@ export const LocalesListRoute = () => {
           spaceId: currentSpaceId,
           environmentId: currentEnvironmentAliasId || currentEnvironmentId,
           isMasterEnvironment,
-          resources,
+          resources: environmentResources,
         }),
       [
         currentOrganization,
@@ -114,7 +114,7 @@ export const LocalesListRoute = () => {
         currentEnvironmentId,
         currentEnvironmentAliasId,
         isMasterEnvironment,
-        resources,
+        environmentResources,
       ]
     )
   );

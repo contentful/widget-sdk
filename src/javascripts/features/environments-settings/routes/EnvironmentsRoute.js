@@ -47,6 +47,7 @@ export function EnvironmentsRoute() {
     currentOrganizationId,
     currentOrganization,
     currentSpaceData,
+    spaceResources,
   } = useSpaceEnvContext();
   const spacePubSubClient = usePubSubClient();
   const [
@@ -61,6 +62,7 @@ export function EnvironmentsRoute() {
     organizationId: currentOrganizationId,
     pubsubClient: spacePubSubClient,
     spaceId: currentSpaceId,
+    resources: spaceResources,
   });
   const { aliasesEnabled, canManageAliases, hasOptedInEnv, pubsubClient } = state;
 

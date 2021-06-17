@@ -95,7 +95,9 @@ export default function register() {
           );
 
           if (allowNewUsageCheck) {
-            newEnforcement = await EnforcementsService.newUsageChecker(spaceContext.resources);
+            newEnforcement = await EnforcementsService.newUsageChecker(
+              spaceContext.environmentResources
+            );
           }
         }
 

@@ -30,10 +30,7 @@ type Resource = {
  *
  * Use the instance exposed via `useSpaceEnvContext` to benefit from this optimisation.
  *
- * const { resources } = useSpaceEnvContext;
- *
- * Note that `resources` fetches EnvironmentResources when the current env is non-master and SpaceResources when it is master.
- * If you need SpaceResources in non-master environment, do not use the `resources` instance. Instead, create a new instance using a space-scoped endpoint.
+ * const { spaceResources, environmentResources } = useSpaceEnvContext;
  */
 
 export default function createResourceService(endpoint: SpaceEndpoint | OrganizationEndpoint) {

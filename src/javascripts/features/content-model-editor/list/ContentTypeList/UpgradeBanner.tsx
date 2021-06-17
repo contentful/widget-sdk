@@ -21,7 +21,7 @@ const styles = {
 };
 
 export const UpgradeBanner = () => {
-  const { currentSpaceId, currentOrganization, currentOrganizationId, resources } =
+  const { currentSpaceId, currentOrganization, currentOrganizationId, environmentResources } =
     useSpaceEnvContext();
 
   const updateResource = useCallback(async () => {
@@ -31,7 +31,7 @@ export const UpgradeBanner = () => {
       return { showContentTypeLimitBanner: false };
     }
 
-    const resource = await resources.get('contentType');
+    const resource = await environmentResources.get('contentType');
     const usage = resource.usage;
     const limit = getResourceLimits(resource).maximum;
 
@@ -54,7 +54,7 @@ export const UpgradeBanner = () => {
       usage,
       limit,
     };
-  }, [currentOrganization, currentOrganizationId, currentSpaceId, resources]);
+  }, [currentOrganization, currentOrganizationId, currentSpaceId, environmentResources]);
 
   const { isLoading, data } = useAsync(updateResource);
 

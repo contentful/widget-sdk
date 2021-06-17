@@ -43,7 +43,7 @@ describe('ApiKeyListRoute', () => {
         return 'currentSpaceName';
       }
     });
-    spaceContextMocked.resources.get.mockResolvedValue({
+    spaceContextMocked.spaceResources.get.mockResolvedValue({
       usage: 0,
       limits: {
         included: 0,
@@ -78,7 +78,7 @@ describe('ApiKeyListRoute', () => {
 
   describe('when limit is reached', () => {
     beforeEach(() => {
-      spaceContextMocked.resources.get.mockResolvedValue({
+      spaceContextMocked.spaceResources.get.mockResolvedValue({
         usage: 2,
         limits: {
           included: 0,

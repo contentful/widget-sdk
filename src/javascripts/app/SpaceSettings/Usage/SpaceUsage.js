@@ -2,8 +2,6 @@ import * as React from 'react';
 import { css } from 'emotion';
 import { Notification } from '@contentful/forma-36-react-components';
 import ReloadNotification from 'app/common/ReloadNotification';
-import createResourceService from 'services/ResourceService';
-import { createSpaceEndpoint } from 'data/EndpointFactory';
 import { update, add, keyBy, flow, filter } from 'lodash/fp';
 import { Workbench } from '@contentful/forma-36-react-components';
 import ResourceUsageList from './ResourceUsageList';
@@ -30,7 +28,13 @@ const styles = {
 };
 
 export default function SpaceUsage() {
-  const { currentSpaceId, currentSpace, currentOrganizationId, resources } = useSpaceEnvContext();
+  const {
+    currentSpaceId,
+    currentSpace,
+    currentOrganizationId,
+    environmentResources: environmentResourceService,
+    spaceResources: spaceResourceService,
+  } = useSpaceEnvContext();
   const environmentMeta = getEnvironmentMeta(currentSpace);
   const [spaceResources, setSpaceResources] = React.useState();
   const [environmentResources, setEnvironmentResources] = React.useState();
@@ -73,12 +77,10 @@ export default function SpaceUsage() {
 
   React.useEffect(() => {
     async function fetchPlan() {
-      const spaceEndpoint = createSpaceEndpoint(currentSpaceId);
-      const spaceResourceService = createResourceService(spaceEndpoint);
       try {
         const [spaceServiceResult, envServiceResult] = await Promise.all([
           spaceResourceService.getAll(),
-          resources.getAll(),
+          environmentResourceService.getAll(),
         ]);
 
         const isPermanent = (resource) => resource.kind === 'permanent';
@@ -97,7 +99,7 @@ export default function SpaceUsage() {
     }
 
     fetchPlan();
-  }, [currentSpaceId, resources]);
+  }, [environmentResourceService, spaceResourceService]);
 
   return (
     <React.Fragment>

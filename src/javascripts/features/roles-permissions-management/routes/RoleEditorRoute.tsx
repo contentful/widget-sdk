@@ -102,7 +102,7 @@ export function RoleEditorRoute(props: { isNew: boolean }) {
   const { registerSaveAction, setDirty } = useUnsavedChangesModal();
 
   const entitySelectorSdk = useEntitySelectorSdk();
-  const { currentEnvironmentId, currentSpaceId, resources } = useSpaceEnvContext();
+  const { currentEnvironmentId, currentSpaceId, spaceResources } = useSpaceEnvContext();
 
   const { currentSpaceContentTypes } = useSpaceEnvContentTypes();
   const { spaceEnvCMAClient: cmaClient } = useSpaceEnvCMAClient();
@@ -204,7 +204,7 @@ export function RoleEditorRoute(props: { isNew: boolean }) {
                         getContentTypes={() => currentSpaceContentTypes}
                         getEntities={fetchEntities}
                         isNew={props.isNew}
-                        resources={resources}>
+                        resources={spaceResources}>
                         {({ isLoading, isError, data }) => {
                           if (isLoading || tagsContext?.isLoading) {
                             return <RolesWorkbenchSkeleton onBack={noop} />;

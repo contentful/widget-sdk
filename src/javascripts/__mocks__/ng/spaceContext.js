@@ -84,7 +84,12 @@ export const memberships = {
   invite: jest.fn().mockResolvedValue({}),
 };
 
-export const resources = {
+export const spaceResources = {
+  getAll: jest.fn().mockResolvedValue({ items: [] }),
+  get: jest.fn().mockResolvedValue({}),
+};
+
+export const environmentResources = {
   getAll: jest.fn().mockResolvedValue({ items: [] }),
   get: jest.fn().mockResolvedValue({}),
 };

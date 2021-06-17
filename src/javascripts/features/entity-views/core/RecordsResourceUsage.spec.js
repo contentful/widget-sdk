@@ -23,13 +23,15 @@ const makeResource = (usage) => ({
 
 describe('RecordsResourceUsage', () => {
   beforeEach(() => {
-    spaceContextMocked.resources.get.mockResolvedValue(makeResource());
+    spaceContextMocked.environmentResources.get.mockResolvedValue(makeResource());
   });
 
   it('should attempt to get the resource when mounted', async () => {
     build();
 
-    await waitFor(() => expect(spaceContextMocked.resources.get).toHaveBeenCalledTimes(1));
+    await waitFor(() =>
+      expect(spaceContextMocked.environmentResources.get).toHaveBeenCalledTimes(1)
+    );
   });
 
   it('should have the basic resource-usage class', async () => {
@@ -39,7 +41,7 @@ describe('RecordsResourceUsage', () => {
   });
 
   it('should add the resource-usage--warn class if near the limit', async () => {
-    spaceContextMocked.resources.get.mockResolvedValue(makeResource(9));
+    spaceContextMocked.environmentResources.get.mockResolvedValue(makeResource(9));
 
     const { queryByTestId } = build();
 
@@ -47,7 +49,7 @@ describe('RecordsResourceUsage', () => {
   });
 
   it('should add the resource-usage--danger class if at the limit', async () => {
-    spaceContextMocked.resources.get.mockResolvedValue(makeResource(10));
+    spaceContextMocked.environmentResources.get.mockResolvedValue(makeResource(10));
 
     const { queryByTestId } = build();
 

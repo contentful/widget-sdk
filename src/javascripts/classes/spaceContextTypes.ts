@@ -102,7 +102,8 @@ export type SpaceContextType = {
   environments: Environment[];
   memberships: ReturnType<typeof MembershipRepo.create>;
   members: ReturnType<typeof createSpaceMembersRepo>;
-  resources: Resources | null;
+  spaceResources: Resources | null;
+  environmentResources: Resources | null;
   pubsubClient: PubSubClient;
   publishedCTs: {
     items$: any;

@@ -66,7 +66,10 @@ describe('UpgradeBanner', () => {
   const mockLimits = { maximum: mockMaximum };
 
   beforeEach(() => {
-    spaceContextMocked.resources.get.mockReturnValue({ usage: mockUsage, limits: mockLimits });
+    spaceContextMocked.environmentResources.get.mockReturnValue({
+      usage: mockUsage,
+      limits: mockLimits,
+    });
     getResourceLimits.mockReturnValue(mockLimits);
 
     isOwnerOrAdmin.mockReturnValue(true);
@@ -180,7 +183,10 @@ describe('UpgradeBanner', () => {
 
     it('when not past the 90% threshold', async () => {
       const nonThresholdLimits = { maximum: 48 };
-      spaceContextMocked.resources.get.mockResolvedValue({ usage: 43, limits: nonThresholdLimits });
+      spaceContextMocked.environmentResources.get.mockResolvedValue({
+        usage: 43,
+        limits: nonThresholdLimits,
+      });
       getResourceLimits.mockReturnValue(nonThresholdLimits);
 
       await build();

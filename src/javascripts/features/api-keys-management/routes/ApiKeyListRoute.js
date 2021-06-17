@@ -125,11 +125,11 @@ AddApiKeys.propTypes = {
 };
 
 export function ApiKeyListRoute() {
-  const { currentOrganization, currentSpaceName, resources } = useSpaceEnvContext();
+  const { currentOrganization, currentSpaceName, spaceResources } = useSpaceEnvContext();
   const state = useApiKeysState({
     spaceName: currentSpaceName,
     organization: currentOrganization,
-    resources,
+    resources: spaceResources,
   });
 
   const { loaded, apiKeys, enableCreateApiKeyCreation, reachedLimit, limits, createAPIKey } = state;

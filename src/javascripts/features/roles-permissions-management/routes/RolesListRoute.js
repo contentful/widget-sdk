@@ -41,7 +41,7 @@ export function RolesListRoute() {
     currentOrganization,
     currentSpaceId: spaceId,
     currentEnvironmentId: environmentId,
-    resources,
+    spaceResources,
   } = useSpaceEnvContext();
   const canUpgradeOrganization = isOwnerOrAdmin(currentOrganization);
   const [entitlementsAPIEnabled, setEntitlementsAPIEnabled] = useState();
@@ -77,7 +77,7 @@ export function RolesListRoute() {
   return (
     <>
       <DocumentTitle title="Roles" />
-      <RolesFetcher spaceId={spaceId} environmentId={environmentId} resources={resources}>
+      <RolesFetcher spaceId={spaceId} environmentId={environmentId} resources={spaceResources}>
         {({ isLoading, isError, data, fetch }) => {
           if (isLoading) {
             return <RolesWorkbenchSkeleton title="Roles" />;

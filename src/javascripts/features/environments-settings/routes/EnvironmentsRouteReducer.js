@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
-import createResourceService from 'services/ResourceService';
 import * as accessChecker from 'access_control/AccessChecker';
 import { getOrgFeature, getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { canCreate } from 'utils/ResourceUtils';
@@ -13,7 +12,6 @@ import { openDeleteEnvironmentDialog } from '../components/DeleteDialog';
 import * as PricingService from 'services/PricingService';
 import { getEnvironmentAliasesIds, isMasterEnvironment } from 'core/services/SpaceEnvContext/utils';
 import { useSpaceEnvEndpoint } from 'core/hooks/useSpaceEnvEndpoint';
-import { createSpaceEndpoint } from 'data/EndpointFactory';
 
 /**
  * Actions
@@ -57,8 +55,6 @@ const createEnvReducer = createImmerReducer({
 });
 
 export const useEnvironmentsRouteState = (props) => {
-  const { spaceId } = props;
-
   const initialState = {
     isLoading: true,
     canCreateEnv: false,
@@ -81,12 +77,9 @@ export const useEnvironmentsRouteState = (props) => {
   const [state, dispatch] = React.useReducer(createEnvReducer, initialState);
 
   const endpoint = useSpaceEnvEndpoint();
-  const spaceEndpoint = createSpaceEndpoint(spaceId);
 
   const resourceEndpoint = SpaceEnvironmentsRepo.create(endpoint);
   const aliasEndpoint = SpaceAliasesRepo.create(endpoint);
-  // The 'environment' resource is a SpaceResource. The endpoint should not use the environment-scoped route.
-  const resourceService = createResourceService(spaceEndpoint);
 
   const FetchPermissions = async () => {
     const { spaceId, organizationId, goToSpaceDetail } = props;
@@ -124,13 +117,15 @@ export const useEnvironmentsRouteState = (props) => {
   };
 
   const FetchEnvironments = async () => {
+    const { resources } = props;
+
     dispatch({ type: SET_IS_LOADING, value: true });
 
     const { environments, aliases } = await resourceEndpoint.getAll();
 
     const items = environments.map(makeEnvironmentModel);
 
-    const resource = await resourceService.get('environment');
+    const resource = await resources.get('environment');
 
     dispatch({
       type: SET_ENVIRONMENTS,
@@ -144,11 +139,13 @@ export const useEnvironmentsRouteState = (props) => {
   };
 
   const RefetchEnvironments = async () => {
+    const { resources } = props;
+
     const { environments, aliases } = await resourceEndpoint.getAll();
 
     const items = environments.map(makeEnvironmentModel);
 
-    const resource = await resourceService.get('environment');
+    const resource = await resources.get('environment');
 
     dispatch({
       type: SET_ENVIRONMENTS,

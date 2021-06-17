@@ -34,8 +34,12 @@ export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
     return getSpaceContext()?.docPool;
   }
 
-  function getResources() {
-    return getSpaceContext()?.resources;
+  function getSpaceResources() {
+    return getSpaceContext()?.spaceResources;
+  }
+
+  function getEnvironmentResources() {
+    return getSpaceContext()?.environmentResources;
   }
 
   const space = getSpace();
@@ -68,7 +72,8 @@ export const SpaceEnvContextProvider: React.FC<{}> = (props) => {
     currentSpaceId,
     currentSpaceName: getSpaceName(space),
     documentPool: getDocPool(),
-    resources: getResources(),
+    spaceResources: getSpaceResources(),
+    environmentResources: getEnvironmentResources(),
   };
 
   return <SpaceEnvContext.Provider value={value}>{props.children}</SpaceEnvContext.Provider>;

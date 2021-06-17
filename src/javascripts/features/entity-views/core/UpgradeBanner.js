@@ -54,7 +54,7 @@ export function UpgradeBanner() {
     currentOrganization,
     currentSpace,
     currentOrganizationId,
-    resources,
+    environmentResources,
   } = useSpaceEnvContext();
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
 
@@ -78,7 +78,7 @@ export function UpgradeBanner() {
       };
     }
 
-    const resource = await resources.get('record');
+    const resource = await environmentResources.get('record');
     const usage = get(resource, 'usage');
     const limit = getResourceLimits(resource).maximum;
     const shouldRenderBanner = usage / limit >= PricingService.WARNING_THRESHOLD;
@@ -100,7 +100,13 @@ export function UpgradeBanner() {
       shouldRenderBanner,
       hasNextSpacePlan: !!nextSpacePlan,
     };
-  }, [currentOrganization, isMasterEnvironment, currentOrganizationId, resources, currentSpaceId]);
+  }, [
+    currentOrganization,
+    isMasterEnvironment,
+    currentOrganizationId,
+    environmentResources,
+    currentSpaceId,
+  ]);
 
   const { isLoading, error, data = {} } = useAsync(updateResource);
 

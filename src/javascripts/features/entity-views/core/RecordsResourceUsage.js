@@ -19,16 +19,16 @@ const openUpgradeModal = (space, onSubmit) =>
   });
 
 export function RecordsResourceUsage({ className }) {
-  const { currentSpace, spaceData, resources } = useSpaceEnvContext();
+  const { currentSpace, spaceData, environmentResources } = useSpaceEnvContext();
   const [resource, setResource] = useState();
 
   const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
 
   const updateResource = useCallback(async () => {
-    const recordResource = await resources.get('record');
+    const recordResource = await environmentResources.get('record');
 
     setResource(recordResource);
-  }, [resources]);
+  }, [environmentResources]);
 
   useEffect(() => {
     updateResource();

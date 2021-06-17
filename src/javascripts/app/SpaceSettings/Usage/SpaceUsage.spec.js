@@ -171,21 +171,17 @@ function getAllRenderedResources() {
   }, {});
 }
 
-jest.mock('services/ResourceService', () => ({
-  __esModule: true,
-  default: () => ({
-    getAll: jest.fn(async () => mockResourcesResponse),
-  }),
-}));
-
 jest.mock('core/services/SpaceEnvContext/useSpaceEnvContext', () => ({
   useSpaceEnvContext: jest.fn().mockReturnValue({
     currentSpaceId: spaceId,
     currentSpace: {
       environmentMeta: environmentMetaMock,
     },
-    resources: {
+    environmentResources: {
       getAll: jest.fn(async () => mockEnvResourcesResponse),
+    },
+    spaceResources: {
+      getAll: jest.fn(async () => mockResourcesResponse),
     },
   }),
 }));

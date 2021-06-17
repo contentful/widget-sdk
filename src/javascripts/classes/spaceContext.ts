@@ -17,6 +17,7 @@ import { create as createEnvironmentsRepo } from 'data/CMA/SpaceEnvironmentsRepo
 import { createLocaleRepo } from 'data/CMA/LocaleRepo';
 import createUiConfigStore from 'data/UiConfig/Store';
 import { createSpaceEndpoint } from 'data/Endpoint';
+import { createSpaceEndpoint as createSpaceEnvEndpoint } from 'data/EndpointFactory';
 import * as PublishedCTRepo from 'data/ContentTypeRepo/Published';
 import * as MembershipRepo from 'access_control/SpaceMembershipRepository';
 import * as accessChecker from 'access_control/AccessChecker';
@@ -78,7 +79,8 @@ function initSpaceContext(): SpaceContextType {
     environments: [],
     docPool: null,
     users: null,
-    resources: null as unknown as SpaceContextType['resources'],
+    spaceResources: null,
+    environmentResources: null,
     uiConfig: null,
     space: null as unknown as SpaceContextType['space'],
     resettingSpace: false,
@@ -175,9 +177,12 @@ function initSpaceContext(): SpaceContextType {
           cmaPlainClient,
           spaceContext.endpoint
         );
-        // This should be initialized after `setupEnvironments`, so that
-        // the environment is properly set on spaceContext.space
-        spaceContext.resources = createResourceService(spaceContext.endpoint);
+
+        spaceContext.spaceResources = createResourceService(createSpaceEnvEndpoint(spaceId));
+        // This should be initialized after `setupEnvironments`
+        spaceContext.environmentResources = createResourceService(
+          createSpaceEnvEndpoint(spaceId, spaceContext.getEnvironmentId())
+        );
 
         await TheLocaleStore.init(localeRepo);
 
@@ -312,7 +317,8 @@ function initSpaceContext(): SpaceContextType {
     // @ts-expect-error can be nullable
     spaceContext.space = null;
     spaceContext.users = null;
-    spaceContext.resources = null;
+    spaceContext.spaceResources = null;
+    spaceContext.environmentResources = null;
 
     purgeContentPreviewCache();
     purgeApiKeyRepoCache();

@@ -30,7 +30,10 @@ function renderComponent() {
 
 describe('Upgrade banner', () => {
   beforeEach(() => {
-    spaceContextMocked.resources.get.mockResolvedValue({ usage: 1, limits: { maximum: 1 } });
+    spaceContextMocked.environmentResources.get.mockResolvedValue({
+      usage: 1,
+      limits: { maximum: 1 },
+    });
 
     jest.spyOn(PricingService, 'nextSpacePlanForResource').mockResolvedValue(null);
   });
@@ -47,7 +50,10 @@ describe('Upgrade banner', () => {
     });
 
     it('does not show up if they are not at the 90% threshold', async () => {
-      spaceContextMocked.resources.get.mockResolvedValue({ usage: 43, limits: { maximum: 48 } });
+      spaceContextMocked.environmentResources.get.mockResolvedValue({
+        usage: 43,
+        limits: { maximum: 48 },
+      });
       isOwnerOrAdmin.mockReturnValue(true);
 
       renderComponent();
@@ -59,7 +65,10 @@ describe('Upgrade banner', () => {
 
     it('does not show up even if they are at above the 90% threshold', async () => {
       isOwnerOrAdmin.mockReturnValue(true);
-      spaceContextMocked.resources.get.mockResolvedValue({ usage: 46, limits: { maximum: 48 } });
+      spaceContextMocked.environmentResources.get.mockResolvedValue({
+        usage: 46,
+        limits: { maximum: 48 },
+      });
 
       renderComponent();
 
@@ -72,7 +81,10 @@ describe('Upgrade banner', () => {
   describe('with no next available space plan', () => {
     // The default in the topmost `beforeEach` is no next space plan
     it('does not show up if they are not an owner or admin', async () => {
-      spaceContextMocked.resources.get.mockResolvedValue({ usage: 44, limits: { maximum: 48 } });
+      spaceContextMocked.environmentResources.get.mockResolvedValue({
+        usage: 44,
+        limits: { maximum: 48 },
+      });
       isOwnerOrAdmin.mockReturnValue(false);
 
       renderComponent();
@@ -84,7 +96,10 @@ describe('Upgrade banner', () => {
 
     it('shows up if they are at the 90% threshold', async () => {
       isOwnerOrAdmin.mockReturnValue(true);
-      spaceContextMocked.resources.get.mockResolvedValue({ usage: 44, limits: { maximum: 48 } });
+      spaceContextMocked.environmentResources.get.mockResolvedValue({
+        usage: 44,
+        limits: { maximum: 48 },
+      });
 
       renderComponent();
 
@@ -92,7 +107,10 @@ describe('Upgrade banner', () => {
     });
 
     it('shows up with a link to sales if they are an owner or admin', async () => {
-      spaceContextMocked.resources.get.mockResolvedValue({ usage: 44, limits: { maximum: 48 } });
+      spaceContextMocked.environmentResources.get.mockResolvedValue({
+        usage: 44,
+        limits: { maximum: 48 },
+      });
       isOwnerOrAdmin.mockReturnValue(true);
 
       renderComponent();
@@ -102,7 +120,10 @@ describe('Upgrade banner', () => {
     });
 
     it('tracks click on the link to sales', async () => {
-      spaceContextMocked.resources.get.mockResolvedValue({ usage: 44, limits: { maximum: 48 } });
+      spaceContextMocked.environmentResources.get.mockResolvedValue({
+        usage: 44,
+        limits: { maximum: 48 },
+      });
       isOwnerOrAdmin.mockReturnValue(true);
 
       renderComponent();
