@@ -39,7 +39,7 @@ type EntityFieldControlProps = {
   fieldLocaleListeners: any;
 };
 
-export function EntityFieldControl(props: EntityFieldControlProps) {
+export const EntityFieldControl = React.memo((props: EntityFieldControlProps) => {
   const {
     currentSpace,
     currentSpaceId,
@@ -171,4 +171,4 @@ export function EntityFieldControl(props: EntityFieldControlProps) {
       />
     </>
   );
-}
+});

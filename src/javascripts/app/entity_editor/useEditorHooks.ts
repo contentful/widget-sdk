@@ -6,7 +6,7 @@ import initLocaleData, {
   getStatusNotificationPropsDefault,
 } from 'app/entity_editor/setLocaleData';
 import { useProxyState } from 'core/services/proxy';
-import { useSpaceEnvContext, useSpaceEnvContentTypes } from 'core/services/SpaceEnvContext';
+import { useSpaceEnvContentTypes, useSpaceEnvContext } from 'core/services/SpaceEnvContext';
 import { getEditorState } from './editorState';
 import installTracking from './Tracking';
 import * as K from 'core/utils/kefir';
@@ -65,9 +65,12 @@ export const useLocaleData = ({
 }) => {
   const entityLabel = editorData.entityInfo.type.toLowerCase();
   const [localeData] = useProxyState(assignLocaleData());
+  const [inited, setInited] = useState(false);
   const [statusNotificationProps, setStatusNotificationProps] = useState(
     getStatusNotificationPropsDefault(entityLabel)
   );
+  const statusNotificationPropsDep = JSON.stringify(statusNotificationProps);
+  const localeDateDep = JSON.stringify(localeData);
 
   useEffect(() => {
     const onUpdate = ({ statusNotificationProps }) => {
@@ -86,10 +89,15 @@ export const useLocaleData = ({
       shouldHideLocaleErrors,
       onUpdate,
     });
+    setInited(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return { localeData, statusNotificationProps };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  return useMemo(
+    () => ({ localeData, statusNotificationProps }),
+    [statusNotificationPropsDep, inited, localeDateDep]
+  );
 };
 
 export const useEntrySidebarProps = ({
