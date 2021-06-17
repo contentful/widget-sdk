@@ -70,7 +70,6 @@ interface SpaceListProps {
   goToSpace: (spaceId: string, envId?: string, isMaster?: boolean) => void;
   openedSpaceId?: string;
   setOpenedSpaceId: (spaceId: string) => void;
-  environmentsEnabled: boolean;
 }
 
 function SpaceList({
@@ -81,14 +80,13 @@ function SpaceList({
   goToSpace,
   openedSpaceId,
   setOpenedSpaceId,
-  environmentsEnabled = false,
 }: SpaceListProps) {
   return (
     <List className={styles.spaceList}>
       {spaces.map((space, index) => {
         const isCurrSpace = space.sys.id === currentSpaceId;
 
-        if (environmentsEnabled && canAccessSpaceEnvironments(space)) {
+        if (canAccessSpaceEnvironments(space)) {
           return (
             <SpaceWithEnvironments
               index={index}
@@ -129,7 +127,6 @@ interface SidepanelSpacesProps {
   currentEnvId?: string;
   currentSpaceId?: string;
   currOrg?: Organization;
-  environmentsEnabled: boolean;
   goToSpace: (spaceId: string, envId?: string, isMaster?: boolean) => void;
   openedSpaceId?: string;
   setOpenedSpaceId: (spaceId: string) => void;

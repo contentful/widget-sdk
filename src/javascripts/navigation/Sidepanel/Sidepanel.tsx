@@ -1,7 +1,6 @@
 import React, { MouseEvent } from 'react';
 import { get } from 'lodash';
 import { css, cx } from 'emotion';
-import { getVariation, FLAGS } from 'core/feature-flags';
 import { Icon, Flex } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -66,7 +65,6 @@ interface SidepanelState {
   orgs: Organization[];
   spacesByOrg: SpacesByOrg;
   openedSpaceId?: string;
-  environmentsEnabled: boolean;
 
   currentSpaceId?: string;
   currentEnvId?: string;
@@ -83,7 +81,6 @@ export class Sidepanel extends React.Component<SidepanelProps, SidepanelState> {
       viewingOrgSettings: false,
       orgs: [],
       spacesByOrg: {},
-      environmentsEnabled: false,
     };
   }
 
@@ -103,12 +100,6 @@ export class Sidepanel extends React.Component<SidepanelProps, SidepanelState> {
     const currentEnvId = this.props.currentEnvId;
     const currentAliasId = this.props.currentAliasId;
     const org = orgs.find((org) => org.sys.id === this.props.currentOrgId) || orgs[0];
-    const currentOrgId = get(org, ['sys', 'id']);
-
-    const environmentsEnabled = await getVariation(FLAGS.ENVIRONMENTS_FLAG, {
-      spaceId: currentSpaceId,
-      organizationId: currentOrgId,
-    });
 
     this.setState(
       {
@@ -117,7 +108,6 @@ export class Sidepanel extends React.Component<SidepanelProps, SidepanelState> {
         currentSpaceId,
         currentEnvId,
         currentAliasId,
-        environmentsEnabled,
       },
       () => {
         this.setCurrOrg(org);
@@ -215,7 +205,6 @@ export class Sidepanel extends React.Component<SidepanelProps, SidepanelState> {
               spacesByOrg={this.state.spacesByOrg}
               openedSpaceId={this.state.openedSpaceId}
               canCreateSpaceInCurrOrg={this.state.canCreateSpaceInCurrOrg}
-              environmentsEnabled={this.state.environmentsEnabled}
               currentSpaceId={this.state.currentSpaceId}
               currentEnvId={this.state.currentEnvId}
               currentAliasId={this.state.currentAliasId}

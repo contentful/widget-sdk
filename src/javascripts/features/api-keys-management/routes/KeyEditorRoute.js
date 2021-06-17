@@ -6,35 +6,29 @@ import createFetcherComponent from 'app/common/createFetcherComponent';
 import * as accessChecker from 'access_control/AccessChecker';
 import { KeyEditorWorkbench } from '../api-key-editor/KeyEditorWorkbench';
 import { KeyEditor } from '../api-key-editor/KeyEditor';
-import { getVariation, FLAGS } from 'core/feature-flags';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isAdmin } from 'core/services/SpaceEnvContext/utils';
 
-const ApiKeyFetcher = createFetcherComponent(
-  async ({ spaceId, organizationId, apiKeyId, spaceEnvironmentsRepo }) => {
-    const [
-      apiKey,
-      canEdit,
-      shouldDisableCreate,
-      environmentsEnabled,
-      { environments: spaceEnvironments, aliases: spaceAliases },
-    ] = await Promise.all([
-      getApiKeyRepo().get(apiKeyId),
-      accessChecker.canModifyApiKeys(),
-      accessChecker.shouldDisable('create', 'apiKey'),
-      getVariation(FLAGS.ENVIRONMENTS_FLAG, { spaceId, organizationId }),
-      spaceEnvironmentsRepo.getAll(),
-    ]);
-    return {
-      apiKey,
-      canEdit,
-      canCreate: !shouldDisableCreate,
-      environmentsEnabled,
-      spaceAliases,
-      spaceEnvironments,
-    };
-  }
-);
+const ApiKeyFetcher = createFetcherComponent(async ({ apiKeyId, spaceEnvironmentsRepo }) => {
+  const [
+    apiKey,
+    canEdit,
+    shouldDisableCreate,
+    { environments: spaceEnvironments, aliases: spaceAliases },
+  ] = await Promise.all([
+    getApiKeyRepo().get(apiKeyId),
+    accessChecker.canModifyApiKeys(),
+    accessChecker.shouldDisable('create', 'apiKey'),
+    spaceEnvironmentsRepo.getAll(),
+  ]);
+  return {
+    apiKey,
+    canEdit,
+    canCreate: !shouldDisableCreate,
+    spaceAliases,
+    spaceEnvironments,
+  };
+});
 
 export function KeyEditorRoute(props) {
   const {
@@ -67,7 +61,6 @@ export function KeyEditorRoute(props) {
             canCreate={data.canCreate}
             spaceAliases={data.spaceAliases}
             spaceEnvironments={data.spaceEnvironments}
-            environmentsEnabled={data.environmentsEnabled}
             setDirty={props.setDirty}
             registerSaveAction={props.registerSaveAction}
           />

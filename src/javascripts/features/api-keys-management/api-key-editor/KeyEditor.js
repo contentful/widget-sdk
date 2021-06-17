@@ -103,7 +103,6 @@ export function KeyEditor({
   canEdit,
   canCreate,
   spaceId,
-  environmentsEnabled,
   isAdmin,
   spaceAliases,
   spaceEnvironments,
@@ -265,29 +264,27 @@ export function KeyEditor({
             </React.Fragment>
           }
         />
-        {environmentsEnabled && (
-          <>
-            <Separator />
-            <Section
-              title={spaceAliases.length ? 'Environments & Environment Aliases' : 'Environments'}
-              description={
-                spaceAliases.length
-                  ? 'Select the environments and aliases this API key should have access to. At least one environment or alias has to be selected.'
-                  : 'Select the environments this API key should have access to. At least one environment has to be selected.'
-              }>
-              <EnvironmentSelector
-                {...{
-                  canEdit,
-                  isAdmin,
-                  spaceEnvironments,
-                  spaceAliases,
-                  selectedEnvOrAliasLabel: model.environments,
-                  updateEnvOrAliasLabel: (environments) => update(assign(model, { environments })),
-                }}
-              />
-            </Section>
-          </>
-        )}
+        <>
+          <Separator />
+          <Section
+            title={spaceAliases.length ? 'Environments & Environment Aliases' : 'Environments'}
+            description={
+              spaceAliases.length
+                ? 'Select the environments and aliases this API key should have access to. At least one environment or alias has to be selected.'
+                : 'Select the environments this API key should have access to. At least one environment has to be selected.'
+            }>
+            <EnvironmentSelector
+              {...{
+                canEdit,
+                isAdmin,
+                spaceEnvironments,
+                spaceAliases,
+                selectedEnvOrAliasLabel: model.environments,
+                updateEnvOrAliasLabel: (environments) => update(assign(model, { environments })),
+              }}
+            />
+          </Section>
+        </>
       </Form>
     </KeyEditorWorkbench>
   );
@@ -310,7 +307,6 @@ KeyEditor.propTypes = {
   canEdit: PropTypes.bool.isRequired,
   canCreate: PropTypes.bool.isRequired,
   isAdmin: PropTypes.bool.isRequired,
-  environmentsEnabled: PropTypes.bool.isRequired,
   spaceAliases: PropTypes.array.isRequired,
   spaceEnvironments: PropTypes.array.isRequired,
   registerSaveAction: PropTypes.func.isRequired,

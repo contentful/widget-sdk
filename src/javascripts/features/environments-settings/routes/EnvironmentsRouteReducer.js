@@ -2,7 +2,6 @@ import * as React from 'react';
 import { createImmerReducer } from 'core/utils/createImmerReducer';
 import createResourceService from 'services/ResourceService';
 import * as accessChecker from 'access_control/AccessChecker';
-import { getVariation, FLAGS } from 'core/feature-flags';
 import { getOrgFeature, getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { canCreate } from 'utils/ResourceUtils';
 import { beginSpaceChange } from 'services/ChangeSpaceService';
@@ -97,17 +96,11 @@ export const useEnvironmentsRouteState = (props) => {
       goToSpaceDetail();
     }
 
-    const [environmentsEnabled, canSelectSource, aliasesEnabled, customAliasesEnabled] =
-      await Promise.all([
-        getVariation(FLAGS.ENVIRONMENTS_FLAG, { spaceId, organizationId }),
-        getOrgFeature(organizationId, 'environment_branching'),
-        getSpaceFeature(spaceId, 'environment_aliasing'),
-        getSpaceFeature(spaceId, 'custom_environment_aliases'),
-      ]);
-
-    if (!environmentsEnabled) {
-      goToSpaceDetail();
-    }
+    const [canSelectSource, aliasesEnabled, customAliasesEnabled] = await Promise.all([
+      getOrgFeature(organizationId, 'environment_branching'),
+      getSpaceFeature(spaceId, 'environment_aliasing'),
+      getSpaceFeature(spaceId, 'custom_environment_aliases'),
+    ]);
 
     const canManageAliases = accessChecker.can('manage', 'EnvironmentAliases');
     dispatch({

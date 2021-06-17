@@ -9,7 +9,6 @@ import {
 import { QuickNavigation } from 'features/quick-navigation';
 import OnboardingRelaunch from 'navigation/modernStackOnboardingRelaunch';
 import NavBar from './NavBar/NavBar';
-import { FLAGS, getVariation } from 'core/feature-flags';
 import { getSpaceNavigationItems } from './SpaceNavigationBarItems';
 import { SidepanelContainer } from './Sidepanel/SidepanelContainer';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
@@ -101,16 +100,11 @@ export default class SpaceNavigationBar extends React.Component<Props, State> {
   }
 
   async getConfiguration() {
-    const { currentSpace, currentSpaceId, currentEnvironmentId } = this.context;
+    const { currentSpace, currentSpaceId } = this.context;
     const organization = getOrganization(currentSpace);
     const organizationId = getOrganizationId(currentSpace);
 
-    const [environmentsEnabled, hasOrgTeamFeature, contentTagsEnabled] = await Promise.all([
-      getVariation(FLAGS.ENVIRONMENTS_FLAG, {
-        organizationId,
-        spaceId: currentSpaceId,
-        environmentId: currentEnvironmentId,
-      }),
+    const [hasOrgTeamFeature, contentTagsEnabled] = await Promise.all([
       getOrgFeature(organizationId, OrganizationFeatures.TEAMS, false),
       getSpaceFeature(currentSpaceId, SpaceFeatures.PC_CONTENT_TAGS, false),
       accessChecker.waitToBeInitialized(),
@@ -140,7 +134,7 @@ export default class SpaceNavigationBar extends React.Component<Props, State> {
       canNavigateTo,
       usageEnabled,
       hasOrgTeamFeature,
-      useSpaceEnvironment: canManageEnvironments && environmentsEnabled,
+      useSpaceEnvironment: canManageEnvironments,
       isUnscopedRoute: !hasEnvironmentSectionInUrl(),
       contentTagsEnabled,
       canManageSpace,

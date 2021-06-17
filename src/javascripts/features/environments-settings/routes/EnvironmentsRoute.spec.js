@@ -4,7 +4,6 @@ import userEvent from '@testing-library/user-event';
 
 import { EnvironmentsRoute } from './EnvironmentsRoute';
 import * as accessChecker from 'access_control/AccessChecker';
-import { getVariation } from 'core/feature-flags';
 import { getSpaceFeature } from 'data/CMA/ProductCatalog';
 import { openDeleteEnvironmentDialog } from '../components/DeleteDialog';
 import createResourceService from 'services/ResourceService';
@@ -118,13 +117,6 @@ describe('EnvironmentsRoute', () => {
       accessChecker.can.mockReturnValueOnce(false);
       render(<EnvironmentsRoute />);
       await wait();
-    });
-
-    it('redirects if space has environments disabled', async () => {
-      getVariation.mockResolvedValueOnce(false);
-      render(<EnvironmentsRoute />);
-      await wait();
-      expect(go).toHaveBeenCalled();
     });
   });
 

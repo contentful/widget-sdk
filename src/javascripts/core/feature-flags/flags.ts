@@ -1,5 +1,4 @@
 export enum FLAGS {
-  ENVIRONMENTS_FLAG = 'feature-dv-11-2017-environments',
   ADD_TO_RELEASE = 'feature-pulitzer-05-2020-add-to-release',
   NEW_FIELD_DIALOG = 'react-migration-new-content-type-field-dialog',
   SSO_SETUP_NO_REDUX = 'feature-hejo-08-2020-sso-setup-no-redux',
@@ -39,7 +38,6 @@ export enum FLAGS {
 }
 
 export const fallbackValues = {
-  [FLAGS.ENVIRONMENTS_FLAG]: true,
   [FLAGS.ADD_TO_RELEASE]: false,
   [FLAGS.NEW_FIELD_DIALOG]: false,
   [FLAGS.SSO_SETUP_NO_REDUX]: false,
