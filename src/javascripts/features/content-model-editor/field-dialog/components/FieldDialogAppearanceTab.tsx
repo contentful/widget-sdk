@@ -7,9 +7,6 @@ import * as WidgetParametersUtils from 'widgets/WidgetParametersUtils';
 
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
-import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
-import { FLAGS, getVariation } from 'core/feature-flags';
-import { BuiltinWidget } from 'widgets/BuiltinWidgets';
 
 const styles = {
   container: css({
@@ -25,30 +22,6 @@ const styles = {
     borderTop: `1px solid ${tokens.colorElementMid}`,
   }),
 };
-
-function useSlugTrackingFeatureFlag(widget?: BuiltinWidget) {
-  const isSlugEditor = widget?.id === 'slugEditor' && widget?.namespace === 'builtin';
-  const spaceContext = useSpaceEnvContext();
-  const [isEnabled, setEnabled] = useState(!isSlugEditor);
-  useEffect(() => {
-    async function getSlugVariation() {
-      if (!isSlugEditor) {
-        return;
-      }
-
-      const slugTrackingParamEnabled = await getVariation(FLAGS.CUSTOM_TRACKING_FIELD_FOR_SLUGS, {
-        spaceId: spaceContext.currentSpaceId,
-        organizationId: spaceContext.currentOrganizationId,
-      });
-
-      setEnabled(slugTrackingParamEnabled);
-    }
-
-    void getSlugVariation();
-  }, [isSlugEditor]);
-
-  return isEnabled;
-}
 
 type FieldDialogAppearanceTabProps = {
   isAdmin: boolean;
@@ -81,7 +54,6 @@ export function FieldDialogAppearanceTab(props: FieldDialogAppearanceTabProps) {
   const selectedWidget = availableWidgets.find((widget) => {
     return widget.namespace === widgetSettings.namespace && widget.id === widgetSettings.id;
   });
-  const useSlugTrackingParam = useSlugTrackingFeatureFlag(selectedWidget);
   const getFormProps = useCallback(
     (selectedWidget) => {
       let definitions = selectedWidget.parameters;
@@ -91,10 +63,10 @@ export function FieldDialogAppearanceTab(props: FieldDialogAppearanceTabProps) {
       definitions = WidgetParametersUtils.filterDefinitions(definitions, values, selectedWidget);
       definitions = WidgetParametersUtils.unifyEnumOptions(definitions);
 
-      // remove parameter if feature flag is not set
-      definitions = useSlugTrackingParam
-        ? definitions
-        : definitions.filter((d) => d.id === 'helpText');
+      definitions =
+        selectedWidget?.id === 'slugEditor' && selectedWidget?.namespace === 'builtin'
+          ? definitions
+          : definitions.filter((d) => d.id === 'helpText');
 
       return {
         definitions,
@@ -108,7 +80,7 @@ export function FieldDialogAppearanceTab(props: FieldDialogAppearanceTabProps) {
         },
       };
     },
-    [widgetSettings, onParametersUpdate, useSlugTrackingParam]
+    [widgetSettings, onParametersUpdate]
   );
 
   return (
