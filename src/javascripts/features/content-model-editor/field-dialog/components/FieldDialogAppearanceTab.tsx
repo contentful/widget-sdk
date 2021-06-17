@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback } from 'react';
 import classNames from 'classnames';
 import { Note } from '@contentful/forma-36-react-components';
 import { FieldDialogWidgetsList } from './FieldDialogWidgetsList';
