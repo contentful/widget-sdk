@@ -63,11 +63,6 @@ export function FieldDialogAppearanceTab(props: FieldDialogAppearanceTabProps) {
       definitions = WidgetParametersUtils.filterDefinitions(definitions, values, selectedWidget);
       definitions = WidgetParametersUtils.unifyEnumOptions(definitions);
 
-      definitions =
-        selectedWidget?.id === 'slugEditor' && selectedWidget?.namespace === 'builtin'
-          ? definitions
-          : definitions.filter((d) => d.id === 'helpText');
-
       return {
         definitions,
         values,
