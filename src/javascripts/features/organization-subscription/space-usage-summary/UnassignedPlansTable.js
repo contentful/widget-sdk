@@ -23,7 +23,6 @@ export function UnassignedPlansTable({
   organizationId,
   plans,
   initialLoad,
-  spaceAssignmentExperiment,
   canCreateSpaceWithPlan,
 }) {
   return (
@@ -47,27 +46,6 @@ export function UnassignedPlansTable({
                 key={plan.sys.id || (plan.space && plan.space.sys.id)}>
                 <TableCell>
                   <strong>{plan.name}</strong>&nbsp;
-                  {spaceAssignmentExperiment && (
-                    <>
-                      -{' '}
-                      <RouteLink
-                        as={TextLink}
-                        testId="subscription-page.spaces-list.change-plan-link"
-                        route={{
-                          path: 'organizations.subscription.overview.space-plans',
-                          planId: plan.sys.id,
-                          orgId: organizationId,
-                        }}
-                        onClick={() => {
-                          track('space_assignment:change', {
-                            plan_id: plan.sys.id,
-                            flow: 'assign_space_to_plan',
-                          });
-                        }}>
-                        use space
-                      </RouteLink>
-                    </>
-                  )}
                   {canCreateSpaceWithPlan && (
                     <>
                       -{' '}
@@ -103,6 +81,5 @@ UnassignedPlansTable.propTypes = {
   organizationId: PropTypes.string.isRequired,
   plans: PropTypes.array.isRequired,
   initialLoad: PropTypes.bool,
-  spaceAssignmentExperiment: PropTypes.bool,
   canCreateSpaceWithPlan: PropTypes.bool,
 };

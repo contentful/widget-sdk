@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { SpacePlanAssignment } from '../components/SpacePlanAssignment';
-import { PlanSpaceAssignment } from '../components/PlanSpaceAssignment';
 import { ReactRouterRedirect, useSearchParams } from 'core/react-routing';
 
 export const SpacePlanAssignmentRoute = ({ orgId }) => {
@@ -13,11 +12,6 @@ export const SpacePlanAssignmentRoute = ({ orgId }) => {
   // redirect when spaceId and planId is not in the queryString
   if (!spaceId && !planId) {
     return <ReactRouterRedirect route={{ path: 'organizations.subscription.overview', orgId }} />;
-  }
-
-  // assign space to plan when planId is present in the queryString
-  if (planId) {
-    return <PlanSpaceAssignment orgId={orgId} planId={planId} />;
   }
 
   // assign plan to space when flag is enabled and spaceId is present in the queryString

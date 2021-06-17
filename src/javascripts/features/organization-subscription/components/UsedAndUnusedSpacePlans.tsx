@@ -28,8 +28,6 @@ interface UsedAndUnusedSpacePlansProps {
   changedSpaceId?: string;
   // Feature flag that enables space creation for Enterprise customers
   isCreateSpaceForSpacePlanEnabled?: boolean;
-  // Feature flag that enables space plan assignment experiment
-  isSpacePlanAssignmentExperimentEnabled: boolean;
   // Function to be called when space plan changes (upgrade or downgrade)
   onChangeSpace: () => void;
   // function to generate the the correct onDelete function for each SpacePlanRow
@@ -43,7 +41,6 @@ interface UsedAndUnusedSpacePlansProps {
 export function UsedAndUnusedSpacePlans({
   changedSpaceId,
   isCreateSpaceForSpacePlanEnabled,
-  isSpacePlanAssignmentExperimentEnabled,
   onChangeSpace,
   onDeleteSpace,
   organizationId,
@@ -119,7 +116,6 @@ export function UsedAndUnusedSpacePlans({
         <UnassignedPlansTable
           organizationId={organizationId}
           plans={unusedSpacePlans}
-          spaceAssignmentExperiment={isSpacePlanAssignmentExperimentEnabled}
           canCreateSpaceWithPlan={isCreateSpaceForSpacePlanEnabled}
         />
       </TabPanel>

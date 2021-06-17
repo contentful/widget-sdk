@@ -23,17 +23,13 @@ async function fetchFeatureFlags(isEnterprisePlan: boolean, organizationId: stri
 
   // we only need these flags for organizations with Enterprise basePlan
   if (isEnterprisePlan) {
-    enterpriseFeatureFlags = await Promise.all([
-      getVariation(FLAGS.CREATE_SPACE_FOR_SPACE_PLAN),
-      getVariation(FLAGS.SPACE_PLAN_ASSIGNMENT_EXPERIMENT, { organizationId }),
-    ]);
+    enterpriseFeatureFlags = await Promise.all([getVariation(FLAGS.CREATE_SPACE_FOR_SPACE_PLAN)]);
   }
 
   return {
     isSpaceSectionRebrandingEnabled,
     ...(enterpriseFeatureFlags && {
-      isCreateSpaceForSpacePlanEnabled: enterpriseFeatureFlags[1],
-      isSpacePlanAssignmentExperimentEnabled: enterpriseFeatureFlags[2],
+      isCreateSpaceForSpacePlanEnabled: enterpriseFeatureFlags[0],
     }),
   };
 }
@@ -130,7 +126,6 @@ export function SpacePlans({
               organizationId={organizationId}
               changedSpaceId={changedSpaceId}
               isCreateSpaceForSpacePlanEnabled={data?.isCreateSpaceForSpacePlanEnabled}
-              isSpacePlanAssignmentExperimentEnabled={data?.isSpacePlanAssignmentExperimentEnabled}
               onChangeSpace={onChangeSpace}
               onDeleteSpace={getOnDeleteSpace}
               spacePlans={spacePlans}
