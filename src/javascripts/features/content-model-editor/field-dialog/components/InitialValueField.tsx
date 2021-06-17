@@ -52,9 +52,9 @@ UseFieldApi) => {
       },
       field: {
         ...field,
-        locale: locale.code,
+        locale: locale.internal_code,
         getValue: () => {
-          return fields.initialValue?.value?.[locale.code];
+          return fields.initialValue?.value?.[locale.internal_code];
         },
         onIsDisabledChanged: noop,
         onSchemaErrorsChanged: noop,
@@ -66,7 +66,7 @@ UseFieldApi) => {
         removeValue: async () => {
           const payload = {
             ...fields.initialValue?.value,
-            [locale.code]: undefined,
+            [locale.internal_code]: undefined,
           };
 
           onChange('initialValue', payload);
@@ -76,7 +76,7 @@ UseFieldApi) => {
         setValue: async (value: unknown) => {
           const payload = {
             ...fields.initialValue?.value,
-            [locale.code]: value,
+            [locale.internal_code]: value,
           };
 
           if (typeof fields.initialValue === 'undefined') {
@@ -94,7 +94,17 @@ UseFieldApi) => {
       contentType,
       locales: localesApi,
     } as unknown as FieldExtensionSDK;
-  }, [contentType, eventEmitter, field, fields, instance, locale.code, locales, onChange]);
+  }, [
+    contentType,
+    eventEmitter,
+    field,
+    fields,
+    instance,
+    locale.code,
+    locale.internal_code,
+    locales,
+    onChange,
+  ]);
 
   return sdk;
 };
@@ -141,7 +151,11 @@ const InitialValueField = ({
   });
 
   const customfield = (
-    <Field key={locale.code} sdk={sdk} widgetId={fieldContext.instance?.widgetId || undefined} />
+    <Field
+      key={locale.internal_code}
+      sdk={sdk}
+      widgetId={fieldContext.instance?.widgetId || undefined}
+    />
   );
 
   return isLocalized ? (

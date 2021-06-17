@@ -53,9 +53,11 @@ export const InitialValueTabComponent = ({
   const isFieldTypeSupported = SUPPORTED_FIELD_TYPES.includes(ctField.type);
   const locales: Locale[] = localeStore.getLocales();
   const defaultLocale: Locale = localeStore.getDefaultLocale();
-  const otherLocales = locales.filter((locale) => locale.code !== defaultLocale.code);
+  const otherLocales = locales.filter(
+    (locale) => locale.internal_code !== defaultLocale.internal_code
+  );
   const eventEmitters = useRef<Record<string, mitt.Emitter>>(
-    Object.fromEntries(locales.map((locale) => [locale.code, mitt()]))
+    Object.fromEntries(locales.map((locale) => [locale.internal_code, mitt()]))
   );
 
   if (!isFieldTypeSupported) {
@@ -67,10 +69,10 @@ export const InitialValueTabComponent = ({
       <StyleTagHidingUnsupportedMarkdownEditorButtons />
       <InitialValueField
         contentType={contentType}
-        eventEmitter={eventEmitters.current[defaultLocale.code]}
+        eventEmitter={eventEmitters.current[defaultLocale.internal_code]}
         fields={fields}
         isLocalized={ctField.localized}
-        key={defaultLocale.code}
+        key={defaultLocale.internal_code}
         locale={defaultLocale}
         locales={locales}
         onChange={onChange}
@@ -80,13 +82,14 @@ export const InitialValueTabComponent = ({
 
   const numberOfLocales = locales.length;
   const initialValueForDefaultLocale =
-    fields.initialValue?.value && fields.initialValue.value[defaultLocale.code] !== undefined
-      ? fields.initialValue.value[defaultLocale.code]
+    fields.initialValue?.value &&
+    fields.initialValue.value[defaultLocale.internal_code] !== undefined
+      ? fields.initialValue.value[defaultLocale.internal_code]
       : undefined;
   const otherLocalesHaveValues =
     fields.initialValue?.value &&
     Object.keys(fields.initialValue.value)
-      .filter((localeCode) => localeCode !== defaultLocale.code)
+      .filter((localeCode) => localeCode !== defaultLocale.internal_code)
       .some((localeCode) => fields.initialValue?.value[localeCode] !== undefined);
 
   const applyValueToOtherLocales = (value: unknown) => {
@@ -95,9 +98,9 @@ export const InitialValueTabComponent = ({
     const payload = fields.initialValue?.value ? { ...fields.initialValue.value } : {};
 
     for (const locale of otherLocales) {
-      payload[locale.code] = value;
+      payload[locale.internal_code] = value;
 
-      const emitter = eventEmitters.current[locale.code];
+      const emitter = eventEmitters.current[locale.internal_code];
       emitter.emit('valueChanged', value);
     }
 
@@ -150,10 +153,10 @@ export const InitialValueTabComponent = ({
       {otherLocales.map((locale) => (
         <InitialValueField
           contentType={contentType}
-          eventEmitter={eventEmitters.current[locale.code]}
+          eventEmitter={eventEmitters.current[locale.internal_code]}
           fields={fields}
           isLocalized
-          key={locale.code}
+          key={locale.internal_code}
           locale={locale}
           locales={locales}
           onChange={onChange}
