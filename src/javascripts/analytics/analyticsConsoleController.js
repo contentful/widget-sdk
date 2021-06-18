@@ -83,7 +83,7 @@ export function add(name, { rawData, transformedSegmentData, transformedSnowplow
   };
 
   const snowplowSchema = getSnowplowSchemaForEvent(name);
-  if (snowplowSchema) {
+  if (snowplowSchema && transformedSnowplowData) {
     event.snowplow = {
       name: snowplowSchema.name,
       version: snowplowSchema.version,

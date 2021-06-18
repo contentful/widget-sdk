@@ -1,5 +1,9 @@
 import * as Config from 'Config';
-import segment, { Plan, transformSnowplowToSegmentData } from 'analytics/segment';
+import segment, {
+  Plan,
+  transformSnowplowToSegmentData,
+  transformSegmentToSnowplowData,
+} from 'analytics/segment';
 import * as snowplow from 'analytics/snowplow';
 import stringifySafe from 'json-stringify-safe';
 import { prepareUserData } from 'analytics/UserData';
@@ -155,15 +159,11 @@ export const tracking: Plan = _.mapValues(segment.plan, (planFn, planKey) => (pr
     // Track to Segment by using original plan function:
     planFn(props);
 
-    // Depending on the `data` format we get and the event we're dealing with, we've got to ensure it's
-    // in the right format for Snowplow where we never wrapped { data } while this is done in most
-    // migrated events' Snowplow schemas due to an old tracking bug where data was accidentally wrapped.
-    const likeTransformedData: TransformedEventData = _.isObject(props.data)
-      ? props
-      : { data: props };
+    let likeTransformedData: TransformedEventData | undefined;
     const snowplowSchema = getSnowplowSchemaForEvent(planKey);
 
     if (snowplowSchema) {
+      likeTransformedData = transformSegmentToSnowplowData(props, getBasicPayload().userId);
       snowplow.track(planKey, likeTransformedData);
     }
 

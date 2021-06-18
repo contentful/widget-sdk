@@ -246,3 +246,32 @@ export function transformSnowplowToSegmentData(
   }
   return { payload };
 }
+
+/**
+ * Basic transformer to support transform.ts `migratedLegacyEvent()` events that still get tracked to
+ * snowplow on Segment typewriter calls via `Analytics.tracking.`.
+ *
+ * NOTE: This only takes care of basic default props, no `contexts` and schema specific differences.
+ */
+export function transformSegmentToSnowplowData(
+  props: Record<string, unknown>,
+  userId?: string
+): TransformedEventData {
+  const data = { ...props };
+  if (userId) {
+    data.executing_user_id = userId;
+  }
+  delete data.environment_key; // This wasn't tracked in any Snowplow events.
+
+  const RENAME_PROPS = {
+    space_key: 'space_id',
+    organization_key: 'organization_id',
+  };
+  _.forEach(RENAME_PROPS, (renamed, original) => {
+    if (original in data) {
+      data[renamed] = data[original];
+      delete data[original];
+    }
+  });
+  return { data };
+}

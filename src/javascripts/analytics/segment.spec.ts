@@ -1,7 +1,7 @@
 import { noop } from 'lodash';
 import { getSegmentSchemaForEvent } from './transform';
 import { TransformedEventData, SegmentSchema as Schema } from './types';
-import { transformSnowplowToSegmentData } from './segment';
+import { transformSnowplowToSegmentData, transformSegmentToSnowplowData } from './segment';
 
 let mockAnalytics;
 
@@ -141,6 +141,25 @@ describe('Segment', () => {
         const result = transformSnowplowToSegmentData(genericEvent, complexData, 'env-id-1');
         expect(result).toStrictEqual({ payload: complexData });
       });
+    });
+  });
+});
+
+describe('transformSegmentToSnowplowData()', () => {
+  it('removes environment_key and renames other space/org _key props and adds user ID', () => {
+    const props = {
+      organization_key: 'org-id-1',
+      space_key: 'space-id-1',
+      environment_key: 'env-1',
+      foo: 'bar',
+    };
+    expect(transformSegmentToSnowplowData(props, 'user-id-1')).toStrictEqual({
+      data: {
+        executing_user_id: 'user-id-1',
+        organization_id: 'org-id-1',
+        space_id: 'space-id-1',
+        foo: 'bar',
+      },
     });
   });
 });
