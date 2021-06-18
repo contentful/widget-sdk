@@ -66,7 +66,6 @@ export const InitialValueTabComponent = ({
 
   const defaultLocaleField = (
     <>
-      <StyleTagHidingUnsupportedMarkdownEditorButtons />
       <InitialValueField
         contentType={contentType}
         eventEmitter={eventEmitters.current[defaultLocale.internal_code]}

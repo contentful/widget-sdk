@@ -17,7 +17,7 @@ export function InitialValueUsageNote() {
   const [isShown, setIsShown] = useState(true);
 
   return isShown ? (
-    <Flex marginBottom="spacing2Xs" marginTop="spacing2Xs">
+    <Flex marginBottom="spacingL" marginTop="spacing2Xs">
       <Note hasCloseButton onClose={() => setIsShown(false)} title="Initial value">
         The new feature gives you the possibility to have a specific value for the field so that the
         editors don&apos;t have to think about it. The feature is currently in EAP phase, so please
