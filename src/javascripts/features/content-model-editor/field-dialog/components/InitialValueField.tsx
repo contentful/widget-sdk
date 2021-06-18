@@ -117,6 +117,11 @@ const styles = {
     '& + &': {
       marginTop: 0,
     },
+    // This is hacky component styling. We only want to remove this margin
+    // for the first FieldWrapper and only when the usage note is shown
+    '&:nth-child(3)': {
+      marginTop: 0,
+    },
   }),
 };
 
