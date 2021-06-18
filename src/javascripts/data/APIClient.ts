@@ -12,7 +12,12 @@ import {
   ReleaseAction,
   ValidateBulkActionPayload,
 } from '@contentful/types';
-import { AppInstallationProps, EditorInterfaceProps, Team } from 'contentful-management/types';
+import {
+  AppInstallationProps,
+  EditorInterfaceProps,
+  QueryOptions,
+  Team,
+} from 'contentful-management/types';
 import type { EmbargoedAssetApi } from 'features/embargoed-assets';
 import { CollectionResponse } from '@contentful/app-sdk';
 
@@ -454,11 +459,9 @@ export default class APIClient {
     });
   };
 
-  getSpaceTeams = () => {
-    return this.get<CollectionResponse<Team>>(['spaces', this.spaceId, 'teams'], {
-      // The largest organization includes 29 teams, so the limit is sufficient and no pagination is required
-      limit: 100,
-    });
+  // The largest organization includes 29 teams, so the limit is sufficient and no pagination is required
+  getSpaceTeams = (query: QueryOptions = { limit: 100 }) => {
+    return this.get<CollectionResponse<Team>>(['spaces', this.spaceId, 'teams'], query);
   };
 
   getExtensions = (query) => {
