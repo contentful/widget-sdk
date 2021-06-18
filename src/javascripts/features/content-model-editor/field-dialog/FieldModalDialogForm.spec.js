@@ -6,6 +6,12 @@ import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { CurrentSpaceAPIClientProvider } from 'core/services/APIClient/CurrentSpaceAPIClientContext';
 
 describe('Field Modal Dialog Form', () => {
+  const contentType = {
+    sys: { id: 'id' },
+    displayField: 'title',
+    fields: [],
+  };
+
   it('updated field title successfully', () => {
     const onCloseMock = jest.fn();
     const updateFieldOnScope = jest.fn();
@@ -14,7 +20,7 @@ describe('Field Modal Dialog Form', () => {
         <CurrentSpaceAPIClientProvider>
           <FieldModalDialogForm
             onClose={onCloseMock}
-            ctField={{
+            field={{
               apiName: 'title',
               disabled: false,
               id: 'title',
@@ -26,8 +32,8 @@ describe('Field Modal Dialog Form', () => {
               validations: [],
             }}
             widget={{}}
-            contentType={{ data: { displayField: 'title', sys: { id: 'id' } } }}
-            updateFieldOnScope={updateFieldOnScope}
+            contentType={contentType}
+            updateField={updateFieldOnScope}
             editorInterface={{}}
             customWidgets={[]}
           />
@@ -41,6 +47,7 @@ describe('Field Modal Dialog Form', () => {
     wait(() => expect(onCloseMock).toBeCalled());
     wait(() => expect(updateFieldOnScope).toBeCalled());
   });
+
   it('returns validation error on saving form with an empty field', async () => {
     const onCloseMock = jest.fn();
     const updateFieldOnScopeMock = jest.fn();
@@ -49,7 +56,7 @@ describe('Field Modal Dialog Form', () => {
         <CurrentSpaceAPIClientProvider>
           <FieldModalDialogForm
             onClose={onCloseMock}
-            ctField={{
+            field={{
               apiName: 'title',
               disabled: false,
               id: 'title',
@@ -61,8 +68,8 @@ describe('Field Modal Dialog Form', () => {
               validations: [],
             }}
             widget={{}}
-            contentType={{ data: { displayField: 'title', sys: { id: 'id' } } }}
-            updateFieldOnScope={updateFieldOnScopeMock}
+            contentType={contentType}
+            updateField={updateFieldOnScopeMock}
             editorInterface={{}}
             customWidgets={[]}
           />

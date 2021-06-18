@@ -1,0 +1,1 @@
+export { InitialValueTabComponent } from './InitialValueTabComponent';

@@ -5,12 +5,11 @@ import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { FieldModalDialogForm } from './FieldModalDialogForm';
 import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { CurrentSpaceAPIClientProvider } from 'core/services/APIClient/CurrentSpaceAPIClientContext';
-import { FieldDialogContextProvider } from './components/FieldDialogContext';
 
 const FieldModalDialog = ({
   isShown,
   onClose,
-  field: ctField,
+  field,
   widget,
   contentType,
   updateFieldOnScope,
@@ -20,24 +19,19 @@ const FieldModalDialog = ({
   return (
     <SpaceEnvContextProvider>
       <CurrentSpaceAPIClientProvider>
-        <FieldDialogContextProvider
-          field={ctField}
-          contentType={contentType}
-          editorInterface={editorInterface}>
-          <Modal isShown={isShown} onClose={onClose} size="60em">
-            {({ onClose }) => (
-              <FieldModalDialogForm
-                onClose={onClose}
-                ctField={ctField}
-                widget={widget}
-                contentType={contentType}
-                updateFieldOnScope={updateFieldOnScope}
-                editorInterface={editorInterface}
-                customWidgets={customWidgets}
-              />
-            )}
-          </Modal>
-        </FieldDialogContextProvider>
+        <Modal isShown={isShown} onClose={onClose} size="60em">
+          {({ onClose }) => (
+            <FieldModalDialogForm
+              contentType={contentType}
+              editorInterface={editorInterface}
+              field={field}
+              onClose={onClose}
+              widget={widget}
+              updateField={updateFieldOnScope}
+              customWidgets={customWidgets}
+            />
+          )}
+        </Modal>
       </CurrentSpaceAPIClientProvider>
     </SpaceEnvContextProvider>
   );

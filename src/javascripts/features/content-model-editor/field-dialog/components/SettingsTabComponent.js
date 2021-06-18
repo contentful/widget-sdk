@@ -37,8 +37,7 @@ const SettingsTabComponent = ({
   onChange,
   fields,
   ctField,
-  contentTypes,
-  contentType,
+  isNewContentType,
   setRichTextOptions,
   richTextOptions,
 }) => {
@@ -72,7 +71,7 @@ const SettingsTabComponent = ({
           id="content-type-field-id"
           onChange={(value) => onChange('apiName', value)}
           onBlur={() => onBlur('apiName')}
-          isDisabled={!!contentTypes.find((ct) => ct.sys.id === contentType.sys.id)}
+          isDisabled={!isNewContentType}
           validationMessage={fields.apiName.error ? fields.apiName.error : ''}
           required
         />
@@ -121,8 +120,7 @@ SettingsTabComponent.propTypes = {
   onBlur: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,
   ctField: PropTypes.object.isRequired,
-  contentTypes: PropTypes.array.isRequired,
-  contentType: PropTypes.object.isRequired,
+  isNewContentType: PropTypes.bool.isRequired,
   setRichTextOptions: PropTypes.func,
   richTextOptions: PropTypes.object,
 };

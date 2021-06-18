@@ -24,10 +24,6 @@ export function InitialValueUsageNote() {
         be aware of the following:
         <List element="ul" className={styles.list}>
           <ListItem>
-            You need to confirm and re-open the field settings modal in case you changed
-            localization, validations, or appearance settings.
-          </ListItem>
-          <ListItem>
             Initial values are not validated and will prevent users from publishing entries if not
             applied correctly.
           </ListItem>

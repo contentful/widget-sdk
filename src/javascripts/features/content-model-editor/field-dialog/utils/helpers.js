@@ -62,6 +62,14 @@ export const getEnabledRichTextOptions = (options) => {
   return optionsValidations;
 };
 
+export const fromWidgetSettings = (settings) => {
+  return {
+    widgetId: settings.id,
+    widgetNamespace: settings.namespace,
+    settings: settings.params,
+  };
+};
+
 export const getWidgetSettings = (widget) => {
   return {
     id: get(widget, 'widgetId'),

@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useMemo } from 'react';
+import React, { Fragment, useCallback, useMemo, useState } from 'react';
 import {
   Modal,
   Button,
@@ -13,30 +13,46 @@ import {
 import Icon from 'ui/Components/Icon';
 import { SettingsTabComponent } from './components/SettingsTabComponent';
 import { ValidationTabComponent } from './components/ValidationTabComponent';
-import { InitialValueTabComponent } from './components/InitialValueTabComponent';
+import { InitialValueTabComponent } from './components/initialValue';
 import { AppearanceTabComponent } from './components/AppearanceTabComponent';
 import { getRichTextOptions } from './utils/helpers';
 import { getIconId } from 'services/fieldFactory';
-import { toInternalFieldType } from 'widgets/FieldTypes';
-import { create as createBuiltinWidgetList } from 'widgets/BuiltinWidgets';
-import { useSpaceEnvContentTypes } from 'core/services/SpaceEnvContext';
 import { FLAGS } from 'core/feature-flags';
-import { useContentTypeField } from './hooks/useContentTypeField';
 import { FeedbackButton } from 'core/feature-feedback';
 import { styles } from './FieldModalDialogForm.styles';
+
+import { useFeatureFlag } from 'core/feature-flags';
 import {
   ContentType,
   ContentTypeField,
   EditorInterface,
   EditorInterfaceControl,
 } from 'core/typings';
-import { useFeatureFlag } from 'core/feature-flags';
+import { useContentTypeFieldForm } from './useContentTypeFieldForm';
+import { useSpaceEnvContentTypes } from 'core/services/SpaceEnvContext';
+import { toInternalFieldType } from 'widgets/FieldTypes';
+import { create as createBuiltinWidgetList } from 'widgets/BuiltinWidgets';
+import { LegacyWidget } from 'widgets/WidgetCompat';
 
 const formTabs = {
   SETTINGS: 'settings-tab',
   VALIDATION: 'validation-tab',
   INITIAL_VALUE: 'initial-values-tab',
   APPEARANCE: 'appearance-tab',
+};
+
+const FieldIcon = ({ field }: { field: ContentTypeField }) => (
+  <Icon name={getIconId(field) + '-small'} />
+);
+
+type FieldModalDialogFormProps = {
+  field: ContentTypeField;
+  contentType: ContentType;
+  editorInterface: EditorInterface;
+  widget: EditorInterfaceControl;
+  customWidgets: LegacyWidget[];
+  onClose: Function;
+  updateField: Function;
 };
 
 const getAvailableWidgets = (customWidgets, contentType, editorInterface, ctField) => {
@@ -46,62 +62,63 @@ const getAvailableWidgets = (customWidgets, contentType, editorInterface, ctFiel
   );
 };
 
-type FieldModalDialogFormProps = {
-  ctField: ContentTypeField;
-  contentType: ContentType;
-  editorInterface: EditorInterface;
-  widget: EditorInterfaceControl;
-
-  customWidgets: any[];
-  onClose: Function;
-  updateFieldOnScope: Function;
-};
-
 export function FieldModalDialogForm(props: FieldModalDialogFormProps) {
+  const { onClose, customWidgets } = props;
+  const { currentSpaceContentTypes: contentTypes } = useSpaceEnvContentTypes();
   const {
-    onClose,
-    ctField,
-    widget,
+    fields,
     contentType,
-    updateFieldOnScope,
+    field,
     editorInterface,
-    customWidgets,
-  } = props;
-  const { currentSpaceContentTypes } = useSpaceEnvContentTypes();
-  const [selectedTab, setSelectedTab] = useState(formTabs.SETTINGS);
-  const [richTextOptions, setRichTextOptions] = useState(() => getRichTextOptions(ctField));
-  const [useInitialValues] = useFeatureFlag(FLAGS.INITIAL_FIELD_VALUES);
-
-  const availableWidgets = useMemo(
-    () => getAvailableWidgets(customWidgets, contentType, editorInterface, ctField),
-    [customWidgets, ctField]
+    widget,
+    widgetSettings,
+    setValue,
+    blur,
+    submit,
+    isInvalid,
+    isPristine,
+  } = useContentTypeFieldForm({
+    contentType: props.contentType,
+    field: props.field,
+    editorInterface: props.editorInterface,
+    widget: props.widget,
+    updateField: props.updateField,
+    onClose: props.onClose,
+  });
+  // TODO can be injected
+  const isNewContentType = useMemo(
+    () => contentTypes.some((ct) => ct.sys.id === contentType.sys.id),
+    [contentTypes, contentType]
   );
 
-  const submitFn = (values, richTextOptions, widgetSettings) => {
-    updateFieldOnScope(values, richTextOptions, widgetSettings);
-    onClose();
-  };
-  const {
-    contentType: contentTypeForm,
-    widgetSettings,
-    isPristine,
-    isInvalid,
-  } = useContentTypeField({
-    submitFn,
-    field: ctField,
-    contentType,
-    widget,
-  });
-  const { onBlur, onChange, onSubmit, fields } = contentTypeForm;
-  const iconId = getIconId(ctField) + '-small';
+  const availableWidgets = useMemo(
+    () => getAvailableWidgets(customWidgets, contentType, editorInterface, field),
+    [customWidgets, field]
+  );
+
+  const [selectedTab, setSelectedTab] = useState(formTabs.SETTINGS);
+  const [richTextOptions, setRichTextOptions] = useState(() => getRichTextOptions(field));
+  const [useInitialValues] = useFeatureFlag(FLAGS.INITIAL_FIELD_VALUES);
+  const blurContentTypeField = useCallback(
+    (fieldName: string) => blur('content_type', fieldName),
+    [blur]
+  );
+  const changeContentTypeValue = useCallback(
+    (fieldName: string, value: any) => setValue('content_type', fieldName, value),
+    [setValue]
+  );
+  const changeEditorInterfaceValue = useCallback(
+    (value: any) => setValue('editor_interface', '', value),
+    [setValue]
+  );
 
   return (
     <Fragment>
       <div className={styles.modalHeader}>
         <div className={styles.modalTitle}>
-          <Icon name={iconId} />
-          <Heading className={styles.ctFieldTitle}>{ctField.name}</Heading>
-          <DisplayText className={styles.ctFieldType}>{ctField.type}</DisplayText>
+          <FieldIcon field={field} />
+          <Heading className={styles.ctFieldTitle}>{field.name}</Heading>
+          <DisplayText className={styles.ctFieldType}>{field.type}</DisplayText>
         </div>
         <div className={styles.leftPanel}>
           <Tabs>
@@ -154,12 +171,11 @@ export function FieldModalDialogForm(props: FieldModalDialogFormProps) {
         {selectedTab === formTabs.SETTINGS && (
           <TabPanel id="settings-tab-panel">
             <SettingsTabComponent
-              onBlur={onBlur}
-              onChange={onChange}
+              onBlur={blurContentTypeField}
+              onChange={changeContentTypeValue}
               fields={fields}
-              ctField={ctField}
-              contentTypes={currentSpaceContentTypes}
-              contentType={contentType}
+              ctField={field}
+              isNewContentType={isNewContentType}
               richTextOptions={richTextOptions}
               setRichTextOptions={setRichTextOptions}
             />
@@ -168,12 +184,12 @@ export function FieldModalDialogForm(props: FieldModalDialogFormProps) {
         {selectedTab === formTabs.VALIDATION && (
           <TabPanel id="validation-tab-panel">
             <ValidationTabComponent
-              onBlur={onBlur}
-              onChange={onChange}
+              onBlur={blurContentTypeField}
+              onChange={changeContentTypeValue}
               fields={fields}
-              ctField={ctField}
-              contentTypes={currentSpaceContentTypes}
-              widgetSettings={widgetSettings.data}
+              ctField={field}
+              contentTypes={contentTypes}
+              widgetSettings={widgetSettings}
               availableWidgets={availableWidgets}
             />
           </TabPanel>
@@ -181,10 +197,11 @@ export function FieldModalDialogForm(props: FieldModalDialogFormProps) {
         {useInitialValues && selectedTab === formTabs.INITIAL_VALUE && (
           <TabPanel id="initial-value-tab-panel">
             <InitialValueTabComponent
-              onChange={onChange}
-              fields={fields}
-              ctField={ctField}
+              onChange={changeContentTypeValue}
               contentType={contentType}
+              ctField={field}
+              widget={widget}
+              fields={fields}
             />
           </TabPanel>
         )}
@@ -193,10 +210,10 @@ export function FieldModalDialogForm(props: FieldModalDialogFormProps) {
             <AppearanceTabComponent
               editorInterface={editorInterface}
               availableWidgets={availableWidgets}
-              widgetSettings={widgetSettings.data}
-              setWidgetSettings={widgetSettings.setData}
+              widgetSettings={widgetSettings}
+              setWidgetSettings={changeEditorInterfaceValue}
               contentType={contentType}
-              ctField={ctField}
+              ctField={field}
             />
           </TabPanel>
         )}
@@ -206,7 +223,7 @@ export function FieldModalDialogForm(props: FieldModalDialogFormProps) {
           <Button
             testId="confirm-field-dialog-form"
             disabled={isInvalid || isPristine}
-            onClick={() => onSubmit(richTextOptions, widgetSettings.data)}
+            onClick={() => submit(richTextOptions, widgetSettings)}
             buttonType="positive">
             Confirm
           </Button>

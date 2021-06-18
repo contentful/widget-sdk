@@ -2,14 +2,13 @@ import React, { Fragment, useRef } from 'react';
 import { Button, Flex, Note, Paragraph, TextLink } from '@contentful/forma-36-react-components';
 import localeStore from 'services/localeStore';
 import { InitialValueField } from './InitialValueField';
-import type { ContentType, ContentTypeField } from 'core/typings';
-import type { FieldValueChangedHandler } from '../../types';
+import type { ContentType, ContentTypeField, EditorInterfaceControl } from 'core/typings';
 import mitt from 'mitt';
 import { InitialValueUsageNote } from './InitialValueUsageNote';
 import { Locale } from 'core/typings';
-import { confirmAllLocalesAction } from './initialValue/AllLocalesActionConfirm';
+import { confirmAllLocalesAction } from './AllLocalesActionConfirm';
 
-export const SUPPORTED_FIELD_TYPES = ['Boolean', 'Date', 'Integer', 'Number', 'Symbol', 'Text'];
+const SUPPORTED_FIELD_TYPES = ['Boolean', 'Date', 'Integer', 'Number', 'Symbol', 'Text'];
 const MANAGABLE_NUMBER_OF_LOCALES = 4;
 
 const StyleTagHidingUnsupportedMarkdownEditorButtons = () => {
@@ -28,12 +27,13 @@ const StyleTagHidingUnsupportedMarkdownEditorButtons = () => {
   );
 };
 
-export interface InitialValueTabComponentProps {
+type InitialValueTabComponentProps = {
   contentType: ContentType;
   ctField: ContentTypeField;
+  widget: EditorInterfaceControl;
   fields: { initialValue?: { value: Partial<Record<'string', unknown>> } };
-  onChange: FieldValueChangedHandler;
-}
+  onChange: (fieldName: string, value: unknown) => void;
+};
 
 const UnsupportedFieldTypeNote = () => (
   <Flex marginBottom="spacingXl" marginTop="spacingS">
@@ -47,6 +47,7 @@ const UnsupportedFieldTypeNote = () => (
 export const InitialValueTabComponent = ({
   contentType,
   ctField,
+  widget,
   fields,
   onChange,
 }: InitialValueTabComponentProps) => {
@@ -67,6 +68,8 @@ export const InitialValueTabComponent = ({
   const defaultLocaleField = (
     <>
       <InitialValueField
+        widget={widget}
+        field={ctField}
         contentType={contentType}
         eventEmitter={eventEmitters.current[defaultLocale.internal_code]}
         fields={fields}
@@ -80,16 +83,10 @@ export const InitialValueTabComponent = ({
   );
 
   const numberOfLocales = locales.length;
-  const initialValueForDefaultLocale =
-    fields.initialValue?.value &&
-    fields.initialValue.value[defaultLocale.internal_code] !== undefined
-      ? fields.initialValue.value[defaultLocale.internal_code]
-      : undefined;
-  const otherLocalesHaveValues =
-    fields.initialValue?.value &&
-    Object.keys(fields.initialValue.value)
-      .filter((localeCode) => localeCode !== defaultLocale.internal_code)
-      .some((localeCode) => fields.initialValue?.value[localeCode] !== undefined);
+  const initialValueForDefaultLocale = fields.initialValue?.value?.[defaultLocale.internal_code];
+  const otherLocalesHaveValues = Object.entries(fields.initialValue?.value ?? {})
+    .filter(([localeCode]) => localeCode !== defaultLocale.internal_code)
+    .some(([, value]) => value !== undefined);
 
   const applyValueToOtherLocales = (value: unknown) => {
     // Our form value objects prevent adding new keys so we have to create a
@@ -97,7 +94,11 @@ export const InitialValueTabComponent = ({
     const payload = fields.initialValue?.value ? { ...fields.initialValue.value } : {};
 
     for (const locale of otherLocales) {
-      payload[locale.internal_code] = value;
+      if (value === undefined) {
+        delete payload[locale.internal_code];
+      } else {
+        payload[locale.internal_code] = value;
+      }
 
       const emitter = eventEmitters.current[locale.internal_code];
       emitter.emit('valueChanged', value);
@@ -151,8 +152,10 @@ export const InitialValueTabComponent = ({
 
       {otherLocales.map((locale) => (
         <InitialValueField
-          contentType={contentType}
           eventEmitter={eventEmitters.current[locale.internal_code]}
+          contentType={contentType}
+          field={ctField}
+          widget={widget}
           fields={fields}
           isLocalized
           key={locale.internal_code}

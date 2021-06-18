@@ -34,6 +34,7 @@ import { ASSEMBLY_TYPES, getAlphaHeader } from 'alphaHeaders';
 import { router, useRouteNavigate } from 'core/react-routing';
 import { TABS } from './EditorFieldTabs';
 import { useContentTypeTracking } from '../tracking';
+import { fromWidgetSettings } from '../field-dialog/utils/helpers';
 
 export function useCreateActions(props: { isNew?: boolean; contentTypeId?: string }) {
   const navigate = useRouteNavigate();
@@ -128,9 +129,7 @@ export function useCreateActions(props: { isNew?: boolean; contentTypeId?: strin
       const updatedControl = {
         field,
         fieldId: field.apiName,
-        settings: widget.params,
-        widgetId: widget.id,
-        widgetNamespace: widget.namespace,
+        ...fromWidgetSettings(widget),
       };
       const controls = state.editorInterface.controls?.some(
         (control) => control.fieldId === field.apiName
