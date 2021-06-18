@@ -81,6 +81,7 @@ UsersList.propTypes = {
   hasTeamsFeature: PropTypes.bool,
 };
 
+// TODO: consolidate state in either reducer or multiple useState
 const reducer = createImmerReducer({
   USERS_FETCHED: (state, action) => {
     state.users = action.payload;
@@ -136,21 +137,26 @@ export function UsersList({ orgId, spaceRoles, teams, spaces, hasSsoEnabled, has
 
   const [{ isLoading: isLoadingUsers }, updateUsers] = useAsyncFn(fetchUsers);
 
-  const refresh = async (query) => {
+  const refresh = async (query, newPagination) => {
     const queryValues = query ? query : qs.parse(searchQuery.slice(1));
+    const updatedPagination = newPagination ? newPagination : pagination;
     const updatedFilterValues = getFilterValuesFromQuery(queryValues);
     const updatedSearchTerm = getSearchTermFromQuery(queryValues);
     setFilterValues(updatedFilterValues);
     setSearchTerm(updatedSearchTerm);
     updateSearchQuery(queryValues);
-    dispatch({
-      type: 'PAGINATION_CHANGED',
-      payload: {
-        skip: 0,
-        limit: 10,
-      },
-    });
-    updateUsers(orgId, updatedFilterValues, updatedSearchTerm, pagination, dispatch);
+
+    if (!newPagination) {
+      dispatch({
+        type: 'PAGINATION_CHANGED',
+        payload: {
+          skip: 0,
+          limit: 10,
+        },
+      });
+    }
+
+    updateUsers(orgId, updatedFilterValues, updatedSearchTerm, updatedPagination, dispatch);
   };
 
   useEffect(() => {
@@ -227,6 +233,10 @@ export function UsersList({ orgId, spaceRoles, teams, spaces, hasSsoEnabled, has
         limit,
       },
     });
+
+    // TODO: make pagination part of the search query
+
+    refresh(qs.parse(searchQuery.slice(1)), { skip, limit });
   };
 
   return (
