@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
 import { Modal, IconButton, Flex } from '@contentful/forma-36-react-components';
 import { Choices, DeveloperChoiceDialog } from './DeveloperChoiceDialog';
-import { track } from 'analytics/Analytics';
+import { tracking, defaultEventProps } from 'analytics/Analytics';
 import { SampleSpaceDialog } from './SampleSpaceDialog';
 import {
   markSpace,
   unmarkSpace,
 } from 'components/shared/auto_create_new_space/CreateModernOnboardingUtils';
-import { BLANK_SPACE_NAME, markExploreOnboardingSeen, renameSpace } from '../utils/util';
+import {
+  BLANK_SPACE_NAME,
+  markExploreOnboardingSeen,
+  renameSpace,
+  TREATMENT_EXP_VARIATION,
+} from '../utils/util';
 import { router } from 'core/react-routing';
 import { showReplaceSpaceWarning } from './ReplaceSpaceDialog';
+import { FLAGS } from 'core/feature-flags';
 
 enum Views {
   DEVELOPER_CHOICE_MODAL = 'developerChoice',
@@ -50,7 +56,13 @@ export const FlexibleOnboardingDialog = ({
   };
 
   const handleChoiceSelection = async (choice) => {
-    track('onboarding_explore:continue', { flow: `${choice}` });
+    tracking.experimentInteracted({
+      ...defaultEventProps(),
+      experiment_id: FLAGS.EXPERIMENT_ONBOARDING_MODAL,
+      experiment_variation: TREATMENT_EXP_VARIATION,
+      action: 'onboarding_explore_continue',
+      context: `${choice}`,
+    });
     switch (choice) {
       case Choices.GATSBY_BLOG_OPTION:
         onClose();

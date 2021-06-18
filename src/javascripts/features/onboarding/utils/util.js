@@ -32,6 +32,8 @@ export const hasSeenExploreOnboarding = async () => {
   return store.get(prefix);
 };
 
+export const CONTROL_EXP_VARIATION = 'control';
+export const TREATMENT_EXP_VARIATION = 'flexible-onboarding';
 export const BLANK_SPACE_NAME = 'Blank';
 
 export const renameSpace = async (newName, spaceId) => {

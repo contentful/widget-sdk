@@ -7,7 +7,11 @@ import { getStoragePrefix } from 'components/shared/auto_create_new_space/Create
 import { updateUserInSegment, tracking, defaultEventProps } from 'analytics/Analytics';
 import { FLAGS, getVariation } from 'core/feature-flags';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
-import { FlexibleOnboardingDialog } from 'features/onboarding';
+import {
+  FlexibleOnboardingDialog,
+  TREATMENT_EXP_VARIATION,
+  CONTROL_EXP_VARIATION,
+} from 'features/onboarding';
 import { getOrganizations } from 'services/TokenStore';
 import { router } from 'core/react-routing';
 
@@ -55,8 +59,8 @@ class ChoiceScreen extends React.Component {
         ...defaultEventProps(),
         experiment_id: FLAGS.EXPERIMENT_ONBOARDING_MODAL,
         experiment_variation: this.state.growthExperimentVariant
-          ? 'flexible-onboarding'
-          : 'control',
+          ? TREATMENT_EXP_VARIATION
+          : CONTROL_EXP_VARIATION,
       });
     }
     if (this.state.isGrowthExperimentEnabled) {
