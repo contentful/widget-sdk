@@ -166,8 +166,8 @@ export function useCreateActions(props: { isNew?: boolean; contentTypeId?: strin
         : state.contentType.fields.concat([updatedField]);
 
       updateFields(updatedCTfields);
-
       updateWidgetSettings(widgetSettings, updatedField);
+      setContextDirty(true);
     };
 
     return openFieldModalDialog(
