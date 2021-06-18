@@ -455,8 +455,10 @@ export default class APIClient {
   };
 
   getSpaceTeams = () => {
-    // The largest organization includes 29 teams, so the limit is sufficient and no pagination is required
-    return this.getResources<Team>('teams', { query: { limit: 100 } });
+    return this.get<CollectionResponse<Team>>(['spaces', this.spaceId, 'teams'], {
+      // The largest organization includes 29 teams, so the limit is sufficient and no pagination is required
+      limit: 100,
+    });
   };
 
   getExtensions = (query) => {
