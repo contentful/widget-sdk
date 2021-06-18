@@ -13,7 +13,6 @@ import {
   importAsciiStringAsHS256Key,
 } from 'services/SignEmbargoedAssetUrl';
 import APIClient from 'data/APIClient';
-import { Asset, Entry, AssetFile } from '@contentful/types';
 import { SpaceContextType } from 'classes/spaceContextTypes';
 
 const ASSET_PROCESSING_POLL_MS = 500;
@@ -229,7 +228,7 @@ export function createSpaceApi({
         TODO: a unified document management middleware can be a better approach
         */
         return new Promise((resolve) => setTimeout(resolve, GET_WAIT_ON_ENTITY_UPDATE))
-          .then<Asset<AssetFile> | Entry>(() => getEntity(entityId))
+          .then(() => getEntity(entityId))
           .then(callback);
       }
     };

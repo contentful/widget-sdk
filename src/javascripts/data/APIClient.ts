@@ -12,9 +12,9 @@ import {
   ReleaseAction,
   ValidateBulkActionPayload,
 } from '@contentful/types';
-import { AppInstallationProps, EditorInterfaceProps } from 'contentful-management/types';
+import { AppInstallationProps, EditorInterfaceProps, Team } from 'contentful-management/types';
 import type { EmbargoedAssetApi } from 'features/embargoed-assets';
-import { CollectionResponse, Team } from '@contentful/app-sdk';
+import { CollectionResponse } from '@contentful/app-sdk';
 
 const entryValidationAlphaHeader = getAlphaHeader(ENTRY_VALIDATION);
 
