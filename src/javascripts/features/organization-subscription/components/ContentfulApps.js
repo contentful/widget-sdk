@@ -19,6 +19,7 @@ import { useRouteNavigate } from 'core/react-routing';
 
 const styles = {
   card: css({ height: '100%', display: 'flex' }),
+  grid: css({ width: '100%' }),
 };
 
 const openCancelAppsSubscriptionModal = (organizationId, addOnPlan) => {
@@ -81,7 +82,7 @@ export function ContentfulApps({ organizationId, startAppTrial, addOnPlan }) {
 
   return (
     <Card className={styles.card} testId="contentful-apps-card">
-      <Grid rows="auto 1fr 40px">
+      <Grid className={styles.grid} rows="auto 1fr 40px">
         <Flex marginBottom="spacingM">
           {!isAppsTrialActive && <Heading testId="apps-header">Compose + Launch</Heading>}
           {isAppsTrialActive && <Heading testId="apps-trial-header">Contentful Apps trial</Heading>}
