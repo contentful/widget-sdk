@@ -34,7 +34,12 @@ const NotHosted: React.FC = () => {
         folder below. Only getting started? Use npx create-contentful-app init in your terminal to
         bootstrap an app.
       </Paragraph>
-      <TextLink>Learn more about hosting your app</TextLink>
+      <TextLink
+        href="https://www.contentful.com/developers/docs/extensibility/app-framework/hosting-an-app"
+        target="_blank"
+        rel="noopener noreferrer">
+        Learn more about hosting your app
+      </TextLink>
     </div>
   );
 };
