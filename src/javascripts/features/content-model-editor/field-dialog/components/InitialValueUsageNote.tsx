@@ -1,5 +1,5 @@
 import { Flex, List, ListItem, Note } from '@contentful/forma-36-react-components';
-import React from 'react';
+import React, { useState } from 'react';
 import { css } from 'emotion';
 import tokens from '@contentful/forma-36-tokens';
 
@@ -14,9 +14,11 @@ const styles = {
 };
 
 export function InitialValueUsageNote() {
-  return (
+  const [isShown, setIsShown] = useState(true);
+
+  return isShown ? (
     <Flex marginBottom="spacing2Xs" marginTop="spacing2Xs">
-      <Note title="Initial value">
+      <Note hasCloseButton onClose={() => setIsShown(false)} title="Initial value">
         The new feature gives you the possibility to have a specific value for the field so that the
         editors don&apos;t have to think about it. The feature is currently in EAP phase, so please
         be aware of the following:
@@ -32,5 +34,5 @@ export function InitialValueUsageNote() {
         </List>
       </Note>
     </Flex>
-  );
+  ) : null;
 }
