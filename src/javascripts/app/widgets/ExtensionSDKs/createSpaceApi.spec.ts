@@ -94,7 +94,7 @@ const buildSpaceApi = (
     pubSubClient,
     environmentIds,
     readOnly,
-  });
+  } as any);
 
   // onEntityChanged is built internally, so we need to monkey patch to mock it
   return onEntityChanged ? { ...api, onEntityChanged } : api;

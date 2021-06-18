@@ -4,7 +4,6 @@ import { SpaceEndpoint } from './CMA/types';
 import {
   Asset,
   BulkAction,
-  Collection,
   Entity,
   Entry,
   Link,
@@ -13,8 +12,14 @@ import {
   ReleaseAction,
   ValidateBulkActionPayload,
 } from '@contentful/types';
-import { AppInstallationProps, EditorInterfaceProps } from 'contentful-management/types';
+import {
+  AppInstallationProps,
+  EditorInterfaceProps,
+  QueryOptions,
+  Team,
+} from 'contentful-management/types';
 import type { EmbargoedAssetApi } from 'features/embargoed-assets';
+import { CollectionResponse } from '@contentful/app-sdk';
 
 const entryValidationAlphaHeader = getAlphaHeader(ENTRY_VALIDATION);
 
@@ -53,7 +58,7 @@ export default class APIClient {
     return this.getResources('content_types', query);
   };
 
-  getEditorInterfaces = (): Promise<Collection<EditorInterfaceProps>> => {
+  getEditorInterfaces = (): Promise<CollectionResponse<EditorInterfaceProps>> => {
     return this.getResources<EditorInterfaceProps>('editor_interfaces');
   };
 
@@ -454,6 +459,11 @@ export default class APIClient {
     });
   };
 
+  // The largest organization includes 29 teams, so the limit is sufficient and no pagination is required
+  getSpaceTeams = (query: QueryOptions = { limit: 100 }) => {
+    return this.get<CollectionResponse<Team>>(['spaces', this.spaceId, 'teams'], query);
+  };
+
   getExtensions = (query) => {
     return this.getResources('extensions', query);
   };
@@ -551,7 +561,7 @@ export default class APIClient {
   };
 
   private getResources = <T extends Entity>(name, query?) => {
-    return this.get<Collection<T>>([name], query);
+    return this.get<CollectionResponse<T>>([name], query);
   };
 
   private getResource = <T>(path, id?) => {

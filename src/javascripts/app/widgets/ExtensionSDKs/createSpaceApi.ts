@@ -7,10 +7,13 @@ import { SpaceAPI, User } from '@contentful/app-sdk';
 import { InternalContentType, createContentTypeApi } from './createContentTypeApi';
 import { get, noop } from 'lodash';
 import { makeReadOnlyApiError, ReadOnlyApi } from './createReadOnlyApi';
+
 import {
   generateSignedAssetUrl,
   importAsciiStringAsHS256Key,
 } from 'services/SignEmbargoedAssetUrl';
+import APIClient from 'data/APIClient';
+import { SpaceContextType } from 'classes/spaceContextTypes';
 
 const ASSET_PROCESSING_POLL_MS = 500;
 const GET_WAIT_ON_ENTITY_UPDATE = 500;
@@ -61,13 +64,13 @@ export function createSpaceApi({
   readOnly = false,
   appId,
 }: {
-  cma: any;
+  cma: APIClient;
   initialContentTypes: InternalContentType[];
   pubSubClient?: PubSubClient;
   environmentIds: string[];
   spaceId: string;
   tagsRepo: TagsRepoType;
-  usersRepo: any;
+  usersRepo: SpaceContextType['users'];
   readOnly?: boolean;
   appId?: string;
 }): InternalSpaceAPI {
@@ -86,17 +89,18 @@ export function createSpaceApi({
     deleteAsset: makeReadOnlyGuardedMethod(readOnly, cma.deleteAsset),
     deleteContentType: makeReadOnlyGuardedMethod(readOnly, cma.deleteContentType),
     deleteEntry: makeReadOnlyGuardedMethod(readOnly, cma.deleteEntry),
-    getAsset: cma.getAsset,
-    getAssets: cma.getAssets,
-    getEditorInterface: cma.getEditorInterface,
-    getEditorInterfaces: cma.getEditorInterfaces,
-    getEntry: cma.getEntry,
-    getEntrySnapshots: cma.getEntrySnapshots,
-    getEntries: cma.getEntries,
-    getContentType: cma.getContentType,
-    getContentTypes: cma.getContentTypes,
-    getPublishedEntries: cma.getPublishedEntries,
-    getPublishedAssets: cma.getPublishedAssets,
+    // FIXME: the types used in APIClient and SpaceAPI don't match (e.g. CollectionResponse vs. Collection/ List)
+    getAsset: cma.getAsset as any,
+    getAssets: cma.getAssets as any,
+    getEditorInterface: cma.getEditorInterface as any,
+    getEditorInterfaces: cma.getEditorInterfaces as any,
+    getEntry: cma.getEntry as any,
+    getEntrySnapshots: cma.getEntrySnapshots as any,
+    getEntries: cma.getEntries as any,
+    getContentType: cma.getContentType as any,
+    getContentTypes: cma.getContentTypes as any,
+    getPublishedEntries: cma.getPublishedEntries as any,
+    getPublishedAssets: cma.getPublishedAssets as any,
     processAsset: makeReadOnlyGuardedMethod(readOnly, cma.processAsset),
     publishAsset: makeReadOnlyGuardedMethod(readOnly, cma.publishAsset),
     publishEntry: makeReadOnlyGuardedMethod(readOnly, cma.publishEntry),
@@ -111,6 +115,8 @@ export function createSpaceApi({
     createTag: makeReadOnlyGuardedMethod(readOnly, tagsRepo.createTag),
     deleteTag: makeReadOnlyGuardedMethod(readOnly, tagsRepo.deleteTag),
     updateTag: makeReadOnlyGuardedMethod(readOnly, tagsRepo.updateTag),
+
+    getTeams: cma.getSpaceTeams,
 
     // Implementation in this module:
     getCachedContentTypes,
@@ -172,7 +178,7 @@ export function createSpaceApi({
   }
 
   async function getUsers() {
-    const users = (await usersRepo.getAll()) ?? [];
+    const users: any = (await usersRepo?.getAll()) ?? [];
 
     return {
       sys: { type: 'Array' },
@@ -244,7 +250,12 @@ export function createSpaceApi({
           `Cannot fetch an asset key so far in the future: ${minExpiresAtMs} > ${expiresAtMs}`
         );
       }
-      const promise = cma.createAssetKey({ expiresAt: Math.floor(expiresAtMs / 1000) }).then(
+      const promise = (
+        cma.createAssetKey({ expiresAt: Math.floor(expiresAtMs / 1000) }) as Promise<{
+          policy: string;
+          secret: string;
+        }>
+      ).then(
         async ({ policy, secret }: { policy: string; secret: string }) => {
           const cryptoKey = await importAsciiStringAsHS256Key(secret);
           return {
