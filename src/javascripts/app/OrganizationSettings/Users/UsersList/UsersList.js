@@ -81,6 +81,7 @@ UsersList.propTypes = {
   hasTeamsFeature: PropTypes.bool,
 };
 
+// TODO: consolidate state in either reducer or multiple useState
 const reducer = createImmerReducer({
   USERS_FETCHED: (state, action) => {
     state.users = action.payload;
@@ -92,6 +93,23 @@ const reducer = createImmerReducer({
     state.pagination = action.payload;
   },
 });
+
+const fetchUsers = async (orgId, filterValues, searchTerm, pagination, dispatch) => {
+  const orgEndpoint = createOrganizationEndpoint(orgId);
+  const includePaths = ['sys.user'];
+  const filterQuery = formatFilterValues(filterValues);
+  const query = {
+    ...filterQuery,
+    query: searchTerm,
+    include: includePaths,
+    skip: pagination.skip,
+    limit: pagination.limit,
+  };
+  const { total, items, includes } = await getMemberships(orgEndpoint, query);
+  const resolved = ResolveLinks({ paths: includePaths, items, includes });
+  dispatch({ type: 'USERS_FETCHED', payload: { items: resolved, queryTotal: total } });
+  return { items: resolved, queryTotal: total };
+};
 
 export function UsersList({ orgId, spaceRoles, teams, spaces, hasSsoEnabled, hasTeamsFeature }) {
   const { searchQuery, updateSearchQuery } = useLegacyQueryParams();
@@ -117,52 +135,45 @@ export function UsersList({ orgId, spaceRoles, teams, spaces, hasSsoEnabled, has
 
   const [{ users, pagination }, dispatch] = useReducer(reducer, initialState);
 
-  useEffect(() => {
-    const queryValues = searchQuery ? qs.parse(searchQuery.slice(1)) : {};
-    setFilterValues(getFilterValuesFromQuery(queryValues));
-    setSearchTerm(getSearchTermFromQuery(queryValues));
-    dispatch({
-      type: 'PAGINATION_CHANGED',
-      payload: {
-        skip: 0,
-        limit: 10,
-      },
-    });
-  }, [searchQuery, dispatch]);
-
-  const fetchUsers = useCallback(async () => {
-    const orgEndpoint = createOrganizationEndpoint(orgId);
-    const includePaths = ['sys.user'];
-    const filterQuery = formatFilterValues(filterValues);
-    const query = {
-      ...filterQuery,
-      query: searchTerm,
-      include: includePaths,
-      skip: pagination.skip,
-      limit: pagination.limit,
-    };
-    const { total, items, includes } = await getMemberships(orgEndpoint, query);
-    const resolved = ResolveLinks({ paths: includePaths, items, includes });
-    dispatch({ type: 'USERS_FETCHED', payload: { items: resolved, queryTotal: total } });
-    return { items: resolved, queryTotal: total };
-  }, [orgId, filterValues, searchTerm, pagination, dispatch]);
-
   const [{ isLoading: isLoadingUsers }, updateUsers] = useAsyncFn(fetchUsers);
 
+  const refresh = async (query, newPagination) => {
+    const queryValues = query ? query : qs.parse(searchQuery.slice(1));
+    const updatedPagination = newPagination ? newPagination : pagination;
+    const updatedFilterValues = getFilterValuesFromQuery(queryValues);
+    const updatedSearchTerm = getSearchTermFromQuery(queryValues);
+    setFilterValues(updatedFilterValues);
+    setSearchTerm(updatedSearchTerm);
+    updateSearchQuery(queryValues);
+
+    if (!newPagination) {
+      dispatch({
+        type: 'PAGINATION_CHANGED',
+        payload: {
+          skip: 0,
+          limit: 10,
+        },
+      });
+    }
+
+    updateUsers(orgId, updatedFilterValues, updatedSearchTerm, updatedPagination, dispatch);
+  };
+
   useEffect(() => {
-    updateUsers();
-  }, [updateUsers]);
+    refresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleFiltersChanged = (newFilters) => {
     let newFilterValues = formatQuery(newFilters.map((item) => item.filter));
     if (searchTerm !== '') {
       newFilterValues = { ...newFilterValues, searchTerm: searchTerm };
     }
-    updateSearchQuery(newFilterValues);
+    refresh(newFilterValues);
   };
 
   const handleFiltersReset = () => {
-    updateSearchQuery({});
+    refresh({});
   };
 
   const debouncedSearch = useCallback(
@@ -171,7 +182,7 @@ export function UsersList({ orgId, spaceRoles, teams, spaces, hasSsoEnabled, has
       if (newSearchTerm !== '') {
         newQuery = { ...newQuery, searchTerm: newSearchTerm };
       }
-      updateSearchQuery(newQuery);
+      refresh(newQuery);
     }, 500),
     []
   );
@@ -222,6 +233,10 @@ export function UsersList({ orgId, spaceRoles, teams, spaces, hasSsoEnabled, has
         limit,
       },
     });
+
+    // TODO: make pagination part of the search query
+
+    refresh(qs.parse(searchQuery.slice(1)), { skip, limit });
   };
 
   return (
