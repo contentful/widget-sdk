@@ -25,6 +25,7 @@ import {
   SET_REFERENCE_TREE_KEY,
   SET_IS_TOO_COMPLEX,
 } from './state/actions';
+import { REFERENCES_TREE_MAX_REF_NODES } from './referenceUtils';
 
 const MAX_LEVEL = 10;
 
@@ -103,11 +104,9 @@ const selectStatusCheckboxList = [
 const REFERENCES_LIMIT = 1000;
 
 const SlicedResultSetNote = () => (
-  <Note noteType="warning" className={styles.note}>
-    We are currently unable to display all the references for this entry. This may mean that this
-    entry has either hit the current limit of more than {REFERENCES_LIMIT} references or it is too
-    complex to show. We are currently rolling out this feature and are actively working on improving
-    this.
+  <Note noteType="primary" className={styles.note}>
+    For performance reasons we only display {REFERENCES_TREE_MAX_REF_NODES} references per level. We
+    are currently rolling out this feature and are actively working on improving this.
   </Note>
 );
 
