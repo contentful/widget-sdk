@@ -6,6 +6,10 @@ import { getState } from 'data/CMA/EntityState';
 const FAILSAFE_LEVEL = 15;
 const linkableEntityTypes = ['Asset', 'Entry'];
 
+/** Given an array of nodes, this is used to control the limit of total children of given nodes.
+ * We currently slice the number of references using this value for performance reasons. */
+export const REFERENCES_TREE_MAX_REF_NODES = 100;
+
 interface Entity {
   sys: EntitySys;
 }
@@ -147,7 +151,6 @@ type ReferenceTreeMetadata = {
  * @param metadata - information, related to rendering or a state of rendered tree, like selection, maxLevel of rendering and etc
  */
 const buildTreeOfReferences = (root: Entity, metadata: ReferenceTreeMetadata) => {
-  const MAX_REF_NODES = 100;
   const { maxLevel, areAllReferencesSelected, selectedStates } = metadata;
   const visitedEntities = { '0': [] } as Record<string, string[]>;
 
@@ -182,8 +185,8 @@ const buildTreeOfReferences = (root: Entity, metadata: ReferenceTreeMetadata) =>
       discoveredReferenceNodes.push(...referenceNodes.filter((node) => node && node.entity));
     }
 
-    if (discoveredReferenceNodes.length > MAX_REF_NODES) {
-      return [discoveredReferenceNodes.slice(0, MAX_REF_NODES), true];
+    if (discoveredReferenceNodes.length > REFERENCES_TREE_MAX_REF_NODES) {
+      return [discoveredReferenceNodes.slice(0, REFERENCES_TREE_MAX_REF_NODES), true];
     }
 
     return [discoveredReferenceNodes, false];
