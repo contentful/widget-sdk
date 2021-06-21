@@ -51,7 +51,7 @@ const SpaceTriggerText = React.memo(() => {
     useSpaceEnvContext();
 
   const hasManyEnvs = (currentSpaceEnvironments || []).length > 1;
-  const showEnvironments = hasManyEnvs || currentSpace?.environmentMeta.aliasId;
+  const showEnvironments = hasManyEnvs || Boolean(currentSpace?.environmentMeta?.aliasId) || false;
 
   return (
     <>
