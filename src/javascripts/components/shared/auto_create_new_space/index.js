@@ -12,10 +12,16 @@ import {
   isUserOrgCreator,
 } from 'data/User';
 import { create } from 'components/shared/auto_create_new_space/CreateModernOnboarding';
-import { isDeveloper as checkIfDeveloper, goToDeveloperOnboarding } from 'features/onboarding';
+import {
+  isDeveloper as checkIfDeveloper,
+  goToDeveloperOnboarding,
+  PREASSIGN_ONBOARDING_EXP_VARIATION,
+  CONTROL_EXP_VARIATION,
+} from 'features/onboarding';
 import { router } from 'core/react-routing';
 import { FLAGS, getVariation } from 'core/feature-flags';
 import { getSpaceContext } from 'classes/spaceContext';
+import { tracking, defaultEventProps } from 'analytics/Analytics';
 
 let creatingSampleSpace = false;
 
@@ -59,9 +65,26 @@ export function init() {
       const isPreAssignEnabled = await getVariation(FLAGS.PREASSIGN_ONBOARDING_FLOW, {
         organization: org.sys.id,
       });
+
+      const enabledPreassignExperiment = await getVariation(
+        FLAGS.EXPERIMENT_PREASSIGN_ONBOARDING_FLOW,
+        {
+          organization: org.sys.id,
+        }
+      );
+
+      if (enabledPreassignExperiment !== null) {
+        tracking.experimentStarted({
+          ...defaultEventProps(),
+          experiment_id: FLAGS.EXPERIMENT_PREASSIGN_ONBOARDING_FLOW,
+          experiment_variation: enabledPreassignExperiment
+            ? PREASSIGN_ONBOARDING_EXP_VARIATION
+            : CONTROL_EXP_VARIATION,
+        });
+      }
       const isDeveloper = await checkIfDeveloper();
 
-      if (isPreAssignEnabled && isDeveloper) {
+      if (enabledPreassignExperiment && isPreAssignEnabled && isDeveloper) {
         goToDeveloperOnboarding({
           markOnboarding,
           org,

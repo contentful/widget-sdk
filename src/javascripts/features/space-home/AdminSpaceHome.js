@@ -15,6 +15,8 @@ import {
   NewOnboardingCTA,
   DiscoverOnboardingCTA,
   hasSeenExploreOnboarding,
+  CONTROL_EXP_VARIATION,
+  TREATMENT_EXP_VARIATION,
 } from 'features/onboarding';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { FLAGS, getVariation } from 'core/feature-flags';
@@ -64,8 +66,8 @@ export const AdminSpaceHome = ({
           ...defaultEventProps(),
           experiment_id: FLAGS.EXPERIMENT_ONBOARDING_MODAL,
           experiment_variation: newOnboardingExperimentVariation
-            ? 'flexible-onboarding'
-            : 'control',
+            ? TREATMENT_EXP_VARIATION
+            : CONTROL_EXP_VARIATION,
         });
       }
       const organization = await getOrganization(orgId);

@@ -11,6 +11,8 @@ import { useQueryParams } from 'core/hooks/useQueryParams';
 
 import { EmptyHome } from './EmptyHome';
 import { router } from 'core/react-routing';
+import OnboardingRoute from 'components/shared/stack-onboarding/OnboardingRoute';
+import { isDeveloper as checkIfDeveloper } from 'features/onboarding';
 
 const localStorage = getBrowserStorage();
 
@@ -18,9 +20,11 @@ export function EmptyHomeRouter() {
   const { appsPurchase } = useQueryParams();
 
   const [loading, setLoading] = useState(appsPurchase);
+  const [developer, setDeveloper] = useState(false);
 
   useEffect(() => {
     if (!appsPurchase) {
+      checkIfDeveloper().then((isDeveloper) => setDeveloper(isDeveloper));
       initAutoCreateNewSpace();
       setLoading(false);
       return;
@@ -57,6 +61,10 @@ export function EmptyHomeRouter() {
 
   if (loading) {
     return <LoadingState />;
+  }
+
+  if (developer) {
+    return <OnboardingRoute />;
   }
 
   return <EmptyHome />;

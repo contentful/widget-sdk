@@ -35,6 +35,7 @@ import { router, useRouteNavigate } from 'core/react-routing';
 import { TABS } from './EditorFieldTabs';
 import { useContentTypeTracking } from '../tracking';
 import { fromWidgetSettings } from '../field-dialog/utils/helpers';
+import { trackContentTypeSave } from 'features/onboarding';
 
 export function useCreateActions(props: { isNew?: boolean; contentTypeId?: string }) {
   const navigate = useRouteNavigate();
@@ -459,6 +460,8 @@ export function useCreateActions(props: { isNew?: boolean; contentTypeId?: strin
       spaceContext.uiConfig!.addOrEditCt(state.contentType).catch(_.noop);
 
       fieldsUpdated(published, updatedEditorInterface as any);
+
+      await trackContentTypeSave({ organizationId: currentOrganizationId });
 
       notify.saveSuccess();
     } catch (error) {

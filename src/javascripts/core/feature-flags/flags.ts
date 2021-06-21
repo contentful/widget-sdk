@@ -25,6 +25,7 @@ export enum FLAGS {
   EXPERIENCE_SDK_ENTRY_EDITOR_LOCATION = 'feature-ext-05-2021-experience-sdk-entry-editor-location',
   EXPERIENCE_SDK_APP_CONFIG_LOCATION = 'feature-ext-05-2021-experience-sdk-app-config-location',
   PREASSIGN_ONBOARDING_FLOW = 'feature-growth-06-2021-preassign-onboarding-flow',
+  EXPERIMENT_PREASSIGN_ONBOARDING_FLOW = 'test-growth-06-2021-preassign-onboarding-flow',
   INITIAL_FIELD_VALUES = 'dante-06-2021-initial-field-values',
 
   // So that we can test the fallback mechanism without needing to rely on an actual
@@ -65,6 +66,7 @@ export const fallbackValues = {
   [FLAGS.EXPERIMENT_A_A]: null,
   [FLAGS.EXPERIMENT_ONBOARDING_MODAL]: null,
   [FLAGS.EXPERIMENT_NEW_COWORKER_INVITE_CARD]: null,
+  [FLAGS.EXPERIMENT_PREASSIGN_ONBOARDING_FLOW]: null,
 
   // See above
   [FLAGS.__FLAG_FOR_UNIT_TESTS__]: 'fallback-value',

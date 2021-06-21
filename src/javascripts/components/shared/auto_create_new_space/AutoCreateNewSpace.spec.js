@@ -18,6 +18,13 @@ jest.mock('core/NgRegistry', () => ({
     arg === '$stateParams' ? { orgId: 'org' } : jest.requireActual('core/NgRegistry').getModule,
 }));
 
+jest.mock('analytics/Analytics', () => ({
+  defaultEventProps: jest.fn(),
+  tracking: {
+    experimentStarted: jest.fn(),
+  },
+}));
+
 describe('AutoCreateNewSpace', () => {
   let createModernStackOnboarding, tokenStore, store, user, spacesByOrg, org;
 

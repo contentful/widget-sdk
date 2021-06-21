@@ -44,9 +44,7 @@ export enum Choices {
 export const DeveloperChoiceDialog = ({ onContinue }) => {
   const [choice, setChoice] = useState<Choices>();
 
-  const learningLink = withInAppOnboardingUtmParams(
-    'https://public.learningcenter.contentful.com/index/'
-  );
+  const learningLink = withInAppOnboardingUtmParams('https://training.contentful.com/');
   const docsLink = withInAppOnboardingUtmParams(Config.developerDocsUrl);
 
   return (
