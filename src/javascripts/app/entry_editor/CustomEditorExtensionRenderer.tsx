@@ -123,6 +123,7 @@ const CustomEditorExtensionRenderer = (props: Props) => {
         editorData: scope.editorData,
         widgetNamespace: widget.namespace,
         widgetParameters: widget.parameters,
+        instanceParameters: parameters.instance,
         widgetId: extension.widgetId,
         spaceMembership: {
           sys: {
