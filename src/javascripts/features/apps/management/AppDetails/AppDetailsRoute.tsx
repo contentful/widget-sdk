@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { AppDetails } from './AppDetails';
-import { go } from 'states/Navigator';
+import { router } from 'core/react-routing';
 import { AppDefinition } from 'contentful-management/types';
 import { Workbench } from '@contentful/forma-36-react-components';
 import DocumentTitle from 'components/shared/DocumentTitle';
@@ -58,7 +58,7 @@ export function AppDetailsRoute(props: Props) {
         if (e.status === 404) {
           setEvents({ enabled: false, targetUrl: '', topics: [] });
         } else {
-          go({ path: 'error' });
+          router.navigate({ path: 'error' });
         }
       }
     }
@@ -68,7 +68,7 @@ export function AppDetailsRoute(props: Props) {
 
   React.useEffect(() => {
     if (props.definitions.length > 0 && !definition) {
-      go({ path: 'error' });
+      router.navigate({ path: 'error' });
     }
   }, [props.definitions, definition]);
 

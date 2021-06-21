@@ -6,6 +6,7 @@ import {
   spacesRoutes,
   assetsRoutes,
   invitationRoutes,
+  errorPageRoutes,
 } from './routes/';
 import type {
   SpaceSettingsRouteType,
@@ -17,6 +18,7 @@ import type {
   SpacesRouteType,
   AssetsRouteType,
   InvitationsRouteType,
+  ErrorPageRouteType,
 } from './routes/';
 
 const routes = {
@@ -27,6 +29,7 @@ const routes = {
   ...spacesRoutes,
   ...assetsRoutes,
   ...invitationRoutes,
+  ...errorPageRoutes,
 };
 
 type RouteType =
@@ -36,7 +39,8 @@ type RouteType =
   | ContentTypesRouteType
   | SpacesRouteType
   | AssetsRouteType
-  | InvitationsRouteType;
+  | InvitationsRouteType
+  | ErrorPageRouteType;
 
 export { routes };
 

@@ -110,9 +110,7 @@ export const EmptyHome = ({ orgId }) => {
 
   useEffect(() => {
     if (error) {
-      go({
-        path: ['error'],
-      });
+      router.navigate({ path: 'error' });
     }
   }, [error]);
 

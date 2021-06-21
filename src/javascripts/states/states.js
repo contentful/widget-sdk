@@ -1,12 +1,9 @@
-import React from 'react';
 import accountState from './account';
 import spacesState from 'states/Spaces';
 import { DeeplinkRouteContainer } from 'states/deeplink/DeeplinkRouteContainer';
 import userInvitationState from 'states/UserInvitationState';
-import EmptyNavigationBar from 'navigation/EmptyNavigationBar';
-import { StateTitle } from 'navigation/Sidepanel/SidePanelTrigger/SidePanelTrigger';
-import ErrorPage from './ErrorPage';
 import { homeState } from 'features/home';
+import { errorState } from './errorState';
 
 import { getModule } from 'core/NgRegistry';
 
@@ -42,14 +39,7 @@ export function loadAll() {
     homeState,
     deeplinkState,
     userInvitationState,
-    {
-      name: 'error',
-      url: '/error',
-      navComponent: () => {
-        return <EmptyNavigationBar triggerText={<StateTitle title="Switch space" />} />;
-      },
-      component: ErrorPage,
-    },
+    errorState,
     {
       name: '_other',
       url: '/*path',

@@ -20,7 +20,6 @@ import {
   getEnvironmentAliasesIds,
   getEnvironmentAliasId,
 } from 'core/services/SpaceEnvContext/utils';
-import { go } from 'states/Navigator';
 import { router } from 'core/react-routing';
 import { createPageWidgetSDK as localCreatePageWidgetSDK } from 'app/widgets/ExtensionSDKs';
 import { usePubSubClient } from 'core/hooks';
@@ -235,7 +234,7 @@ export const PageWidgetRenderer = (props: PageWidgetRendererProps) => {
     const pageLocation = widget.locations.find((l) => l.location === WidgetLocation.PAGE);
     if (!pageLocation) {
       Notification.error('This app has not defined a page location!');
-      go({ path: 'error' });
+      router.navigate({ path: 'error' });
       return;
     }
 

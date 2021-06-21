@@ -3,6 +3,7 @@ import _ from 'lodash';
 import { captureError } from 'core/monitoring';
 import * as AppPerformanceMetrics from 'i13n/AppPerformance';
 import { getSpaceContext } from 'classes/spaceContext';
+import { router } from 'core/react-routing';
 
 import * as Analytics from 'analytics/Analytics';
 
@@ -146,7 +147,7 @@ function stateChangeErrorHandler(event, toState, toParams, _fromState, _fromPara
       });
     }
     // Otherwise we redirect the user to the homepage
-    $state.go('error');
+    router.navigate({ path: 'error' });
   }
 }
 

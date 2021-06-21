@@ -5,6 +5,7 @@ import * as Fake from 'test/helpers/fakeFactory';
 import * as TokenStore from 'services/TokenStore';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { go } from 'states/Navigator';
+import { router } from 'core/react-routing';
 import { setUser } from 'services/OrganizationRoles';
 import * as CreateSpace from 'services/CreateSpace';
 
@@ -71,6 +72,13 @@ jest.mock('states/Navigator', () => ({
   go: jest.fn(),
 }));
 
+jest.mock('core/react-routing', () => ({
+  ...jest.requireActual('core/react-routing'),
+  router: {
+    navigate: jest.fn(),
+  },
+}));
+
 jest.mock('services/CreateSpace', () => ({
   beginSpaceCreation: jest.fn(),
 }));
@@ -135,13 +143,14 @@ describe('EmptyHome', () => {
 
       build();
 
-      await waitFor(() => expect(go).toBeCalled());
+      await waitFor(() => expect(router.navigate).toBeCalled());
 
-      expect(go).toBeCalledWith({
-        path: 'account.profile',
-        params: { pathname: '/user' },
-        options: { location: 'replace' },
-      });
+      expect(router.navigate).toBeCalledWith(
+        {
+          path: 'account.profile.user',
+        },
+        { location: 'replace' }
+      );
     });
 
     it('should redirect to the error page if an error happens while loading', async () => {
@@ -149,10 +158,10 @@ describe('EmptyHome', () => {
 
       build();
 
-      await waitFor(() => expect(go).toBeCalled());
+      await waitFor(() => expect(router.navigate).toBeCalled());
 
-      expect(go).toBeCalledWith({
-        path: ['error'],
+      expect(router.navigate).toBeCalledWith({
+        path: 'error',
       });
     });
 
@@ -217,13 +226,14 @@ describe('EmptyHome', () => {
     it('should redirect to the account settings if the orgId does not resolve to an org membership or a space', async () => {
       build({ orgId: mockOtherOrg.sys.id });
 
-      await waitFor(() => expect(go).toBeCalled());
+      await waitFor(() => expect(router.navigate).toBeCalled());
 
-      expect(go).toBeCalledWith({
-        path: 'account.profile',
-        params: { pathname: '/user' },
-        options: { location: 'replace' },
-      });
+      expect(router.navigate).toBeCalledWith(
+        {
+          path: 'account.profile.user',
+        },
+        { location: 'replace' }
+      );
     });
 
     it('should show the admin view if the org membership for the orgId is admin/owner', async () => {

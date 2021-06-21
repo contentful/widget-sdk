@@ -19,4 +19,7 @@ export type { AssetsRouteType } from './assets';
 export { routes as invitationRoutes } from './invitations';
 export type { InvitationsRouteType } from './invitations';
 
+export { routes as errorPageRoutes } from './error';
+export type { ErrorPageRouteType } from './error';
+
 export type { CreateRouteDefinition, RouteDefinition } from './types';
