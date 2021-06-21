@@ -6,8 +6,8 @@ import { getState } from 'data/CMA/EntityState';
 const FAILSAFE_LEVEL = 15;
 const linkableEntityTypes = ['Asset', 'Entry'];
 
-// This controls the limit of total nodes to be displayed in a given child element
-// We currently slice the number of references using this value
+/** Given an array of nodes, this is used to control the limit of total children of given nodes.
+ * We currently slice the number of references using this value for performance reasons. */
 export const REFERENCES_TREE_MAX_REF_NODES = 100;
 
 interface Entity {
