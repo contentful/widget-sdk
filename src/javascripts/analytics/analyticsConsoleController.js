@@ -1,4 +1,3 @@
-import { getModule } from 'core/NgRegistry';
 import _ from 'lodash';
 import * as K from 'core/utils/kefir';
 import moment from 'moment';
@@ -31,15 +30,14 @@ function getScope() {
   if (scope) {
     return scope;
   }
-  const $rootScope = getModule('$rootScope');
 
   const events$ = eventsBus.stream.scan((events, newEvent) => events.concat([newEvent]), []);
   events$.onValue(_.noop);
 
-  scope = _.extend($rootScope.$new(true), {
+  scope = {
     events$: events$,
     sessionData$: sessionDataBus.property,
-  });
+  };
 
   return scope;
 }
