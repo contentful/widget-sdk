@@ -1,7 +1,6 @@
 const yargs = require('yargs');
 
 const configureFileDistribution = require('./configure-file-dist');
-const uploadSourcemapsToBugsnag = require('./upload-sourcemaps-to-bugsnag');
 
 /**
  * This module exports the main function for the entry script of the
@@ -12,8 +11,6 @@ module.exports = async function main(argv) {
   const { command, options } = parseArgs(argv);
   if (command === 'configure-file-dist') {
     await configureFileDistribution(options);
-  } else if (command === 'upload-sourcemaps-to-bugsnag') {
-    await uploadSourcemapsToBugsnag(options);
   } else {
     throw new Error(`Unknown command "${command}"`);
   }

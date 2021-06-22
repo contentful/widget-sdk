@@ -349,10 +349,7 @@ jobs:
       # Jest tests
       - run:
           name: Run Jest tests
-          command: |
-            export NODE_ENV=test
-            export NODE_OPTIONS=--max_old_space_size=3072
-            npm run jest:coverage
+          command: NODE_ENV=test npm run jest:ci
 
   publish-pact-contracts:
     docker:

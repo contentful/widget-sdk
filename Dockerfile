@@ -32,8 +32,6 @@ RUN NODE_ENV=production node --max_old_space_size=4096 ./tools/bin/build-app.js
 ARG CIRCLE_BRANCH
 ARG CIRCLE_SHA1
 
-RUN bin/docker-entry upload-sourcemaps-to-bugsnag --git-sha "${CIRCLE_SHA1}"
-
 ENV SENTRY_ORG=contentful SENTRY_PROJECT=user-interface
 ARG SENTRY_AUTH_TOKEN
 RUN curl -sL https://sentry.io/get-cli/ | bash && \
