@@ -330,6 +330,7 @@ async function generateSegmentLoadOptions(analyticsAllowed, personalizationAllow
     'Google Analytics': analyticsAllowed,
     'Amazon Kinesis Firehose': analyticsAllowed,
     'Amazon S3': analyticsAllowed,
+    'LaunchDarkly Events': analyticsAllowed,
     Intercom: personalizationAllowed,
     Wootric: personalizationAllowed,
   });
