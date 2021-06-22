@@ -13,7 +13,6 @@ import { getSpaceNavigationItems } from './SpaceNavigationBarItems';
 import { SidepanelContainer } from './Sidepanel/SidepanelContainer';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import {
-  getOrganization,
   getOrganizationId,
   getSpaceEnforcements,
   isCurrentEnvironmentMaster,
@@ -101,7 +100,6 @@ export default class SpaceNavigationBar extends React.Component<Props, State> {
 
   async getConfiguration() {
     const { currentSpace, currentSpaceId } = this.context;
-    const organization = getOrganization(currentSpace);
     const organizationId = getOrganizationId(currentSpace);
 
     const [hasOrgTeamFeature, contentTagsEnabled] = await Promise.all([
@@ -112,7 +110,6 @@ export default class SpaceNavigationBar extends React.Component<Props, State> {
 
     const canManageEnvironments = accessChecker.can('manage', 'Environments');
     const isMasterEnvironment = isCurrentEnvironmentMaster(currentSpace);
-    const usageEnabled = organization?.pricingVersion === 'pricing_version_2';
     const canManageSpace = accessChecker.canModifySpaceSettings();
 
     function canNavigateTo(section) {
@@ -132,7 +129,6 @@ export default class SpaceNavigationBar extends React.Component<Props, State> {
 
     const items = getSpaceNavigationItems({
       canNavigateTo,
-      usageEnabled,
       hasOrgTeamFeature,
       useSpaceEnvironment: canManageEnvironments,
       isUnscopedRoute: !hasEnvironmentSectionInUrl(),

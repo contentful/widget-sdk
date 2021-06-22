@@ -16,7 +16,6 @@ const makeReactRouterRef = (route: keyof typeof routes, withEnvironment: boolean
 
 type Props = {
   canNavigateTo: (section: string) => boolean;
-  usageEnabled: boolean;
   hasOrgTeamFeature: boolean;
   useSpaceEnvironment: boolean;
   isUnscopedRoute: boolean;
@@ -26,7 +25,6 @@ type Props = {
 
 export function getSpaceNavigationItems({
   canNavigateTo,
-  usageEnabled,
   hasOrgTeamFeature,
   useSpaceEnvironment,
   isUnscopedRoute,
@@ -114,7 +112,7 @@ export function getSpaceNavigationItems({
       ...makeReactRouterRef('content_preview.list', withEnvironment),
     },
     usage: {
-      if: usageEnabled && canNavigateTo('usage'),
+      if: canNavigateTo('usage'),
       dataViewType: 'spaces-settings-usage',
       title: 'Usage',
       srefOptions: {
