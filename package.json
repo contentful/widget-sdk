@@ -115,7 +115,7 @@
     "proxyquire": "^1.8.0",
     "qrcode": "^1.4.4",
     "qs": "6.9.4",
-    "query-string": "^6.12.1",
+    "query-string": "^7.0.1",
     "randexp": "0.5.3",
     "react": "16.13.1",
     "react-animate-height": "^2.0.15",
