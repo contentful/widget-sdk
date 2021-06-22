@@ -48,13 +48,17 @@ type SerializedJSONValue =
  * - replaces array undefined array values with null
  * - replaces Date objects with ISO strings
  */
-export function serializeJSONValue(value: unknown): SerializedJSONValue | undefined {
+
+export function serializeJSONValue(value: unknown): Promise<SerializedJSONValue | undefined> {
+  return Promise.resolve(getSerializeJSONValue(value));
+}
+export function getSerializeJSONValue(value: unknown): SerializedJSONValue | undefined {
   if (typeof value === 'undefined') {
     return;
   }
 
   if (Array.isArray(value)) {
-    return value.map((v) => serializeJSONValue(v) ?? null);
+    return value.map((v) => getSerializeJSONValue(v) ?? null);
   } else if (value === null) {
     return null;
   } else if (value instanceof Date) {
@@ -62,7 +66,7 @@ export function serializeJSONValue(value: unknown): SerializedJSONValue | undefi
   } else if (typeof value === 'object' && !!value) {
     return Object.fromEntries(
       Object.entries(value)
-        .map(([key, v]) => [key, serializeJSONValue(v)])
+        .map(([key, v]) => [key, getSerializeJSONValue(v)])
         .filter(([, v]) => v !== undefined)
     );
   } else {

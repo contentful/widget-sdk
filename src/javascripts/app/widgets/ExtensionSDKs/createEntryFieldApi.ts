@@ -124,7 +124,7 @@ export function createEntryFieldApi({
       const entrySys = K.getValue(doc.sysProperty);
 
       try {
-        const cleanedValue = serializeJSONValue(value);
+        const cleanedValue = await serializeJSONValue(value);
         await doc.setValueAt(currentPath, cleanedValue);
 
         Analytics.track('extension:set_value', {

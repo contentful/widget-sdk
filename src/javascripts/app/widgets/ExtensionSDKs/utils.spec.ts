@@ -1,38 +1,38 @@
-import { serializeJSONValue } from './utils';
+import { getSerializeJSONValue } from './utils';
 
 describe('serializeJSONValue', () => {
   it('cleans primitives', () => {
-    expect(serializeJSONValue(42)).toBe(42);
-    expect(serializeJSONValue('test string')).toBe('test string');
-    expect(serializeJSONValue(null)).toBeNull();
-    expect(serializeJSONValue(false)).toBe(false);
-    expect(serializeJSONValue(true)).toBe(true);
+    expect(getSerializeJSONValue(42)).toBe(42);
+    expect(getSerializeJSONValue('test string')).toBe('test string');
+    expect(getSerializeJSONValue(null)).toBeNull();
+    expect(getSerializeJSONValue(false)).toBe(false);
+    expect(getSerializeJSONValue(true)).toBe(true);
 
-    expect(serializeJSONValue(undefined)).toBeUndefined();
+    expect(getSerializeJSONValue(undefined)).toBeUndefined();
   });
 
   it('converts undefined in arrays to null', () => {
-    expect(serializeJSONValue([])).toStrictEqual([]);
-    expect(serializeJSONValue([42, undefined, 'test string', false])).toStrictEqual([
+    expect(getSerializeJSONValue([])).toStrictEqual([]);
+    expect(getSerializeJSONValue([42, undefined, 'test string', false])).toStrictEqual([
       42,
       null,
       'test string',
       false,
     ]);
-    expect(serializeJSONValue([undefined, undefined])).toStrictEqual([null, null]);
+    expect(getSerializeJSONValue([undefined, undefined])).toStrictEqual([null, null]);
   });
 
   it('removes undefined values from objects', () => {
-    expect(serializeJSONValue({})).toStrictEqual({});
-    expect(serializeJSONValue({ key: 'value' })).toStrictEqual({ key: 'value' });
-    expect(serializeJSONValue({ key: 'value', otherkey: undefined })).toStrictEqual({
+    expect(getSerializeJSONValue({})).toStrictEqual({});
+    expect(getSerializeJSONValue({ key: 'value' })).toStrictEqual({ key: 'value' });
+    expect(getSerializeJSONValue({ key: 'value', otherkey: undefined })).toStrictEqual({
       key: 'value',
     });
   });
 
   it('cleans nested objects', () => {
     expect(
-      serializeJSONValue({
+      getSerializeJSONValue({
         key: [undefined, 42, 'test string'],
         otherkey: {
           array: [42, undefined],
@@ -48,6 +48,6 @@ describe('serializeJSONValue', () => {
 
   it('returns date as ISO strings', () => {
     const date = new Date();
-    expect(serializeJSONValue(date)).toBe(date.toISOString());
+    expect(getSerializeJSONValue(date)).toBe(date.toISOString());
   });
 });
