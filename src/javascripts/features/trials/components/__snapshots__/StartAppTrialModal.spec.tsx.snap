@@ -55,7 +55,9 @@ exports[`StartAppTrialModal should render 1`] = `
               class="Paragraph__Paragraph___2aO-9 emotion-0"
               data-test-id="cf-ui-paragraph"
             >
-              This trial will give you free access to Compose + Launch for 10 days. You’ll get both apps in a new trial space where you can use our example content or create your own. No payment is required, and the trial wonʼt affect your exisiting spaces or content in any way.
+              This trial will give you free access to Compose + Launch for 
+              60 days
+              . You’ll get both apps in a new trial space where you can use our example content or create your own. No payment is required, and the trial wonʼt affect your exisiting spaces or content in any way.
             </p>
           </div>
           <div

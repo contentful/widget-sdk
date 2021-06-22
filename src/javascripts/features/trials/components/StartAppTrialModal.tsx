@@ -1,6 +1,7 @@
 import React from 'react';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
 import { Button, Paragraph, Modal } from '@contentful/forma-36-react-components';
+import { FLAGS, useFeatureFlag } from 'core/feature-flags';
 import { css } from 'emotion';
 
 const styles = {
@@ -16,6 +17,9 @@ interface StartAppTrialModalProps {
 }
 
 export function StartAppTrialModal({ onConfirm, isShown, onClose }: StartAppTrialModalProps) {
+  const [isExtendedTrial] = useFeatureFlag(FLAGS.APPS_TRIAL_DURATION);
+  const TRIAL_DURATION = isExtendedTrial ? '60 days' : '10 days';
+
   const handleOnConfirm = () => {
     trackEvent(EVENTS.START_APP_TRIAL_MODAL, { elementId: 'confirm_button' });
     onConfirm();
@@ -38,10 +42,10 @@ export function StartAppTrialModal({ onConfirm, isShown, onClose }: StartAppTria
           <Modal.Header title={title} />
           <Modal.Content>
             <Paragraph element="p" className={styles.paragraph}>
-              This trial will give you free access to Compose + Launch for 10 days. You’ll get both
-              apps in a new trial space where you can use our example content or create your own. No
-              payment is required, and the trial wonʼt affect your exisiting spaces or content in
-              any way.
+              This trial will give you free access to Compose + Launch for {TRIAL_DURATION}. You’ll
+              get both apps in a new trial space where you can use our example content or create
+              your own. No payment is required, and the trial wonʼt affect your exisiting spaces or
+              content in any way.
             </Paragraph>
           </Modal.Content>
           <Modal.Controls>
