@@ -63,13 +63,13 @@ export function init() {
       creatingSampleSpace = true;
 
       const isPreAssignEnabled = await getVariation(FLAGS.PREASSIGN_ONBOARDING_FLOW, {
-        organization: org.sys.id,
+        organizationId: org.sys.id,
       });
 
       const enabledPreassignExperiment = await getVariation(
         FLAGS.EXPERIMENT_PREASSIGN_ONBOARDING_FLOW,
         {
-          organization: org.sys.id,
+          organizationId: org.sys.id,
         }
       );
 
