@@ -7,12 +7,17 @@ import { getBrowserStorage } from 'core/services/BrowserStorage';
 import { render, screen, waitFor } from '@testing-library/react';
 import { PRESELECT_VALUES } from 'features/space-purchase';
 import { setQueryParameters } from 'test/helpers/setQueryParameters';
+import { isDeveloper } from 'features/onboarding';
 
 import { EmptyHomeRouter } from './HomeState';
 import { router } from 'core/react-routing';
 
 const mockOrg = Fake.Organization();
 const mockOrg2 = Fake.Organization();
+
+jest.mock('features/onboarding', () => ({
+  isDeveloper: jest.fn(),
+}));
 
 jest.mock('components/shared/auto_create_new_space', () => ({
   init: jest.fn(),
@@ -58,6 +63,7 @@ describe('EmptyHomeRouter', () => {
         },
       ],
     });
+    isDeveloper.mockResolvedValue(false);
   });
 
   afterEach(() => {

@@ -7,8 +7,13 @@ import * as BrowserStorage from 'core/services/BrowserStorage';
 import { init, resetCreatingSampleSpace } from './index';
 import { waitFor } from '@testing-library/dom';
 import { getVariation } from 'core/feature-flags';
+import { isDeveloper } from 'features/onboarding';
 
 jest.mock('services/TokenStore');
+jest.mock('features/onboarding', () => ({
+  isDeveloper: jest.fn(),
+}));
+
 jest.mock('components/shared/auto_create_new_space/CreateModernOnboarding');
 jest.mock('core/services/BrowserStorage');
 jest.unmock('classes/spaceContext');
@@ -78,6 +83,7 @@ describe('AutoCreateNewSpace', () => {
     TokenStore.spacesByOrganization$.set(spacesByOrg);
     TokenStore.organizations$.set([org]);
     TokenStore.user$.set(user);
+    isDeveloper.mockReturnValue(false);
 
     resetCreatingSampleSpace();
   });

@@ -73,7 +73,9 @@ export function init() {
         }
       );
 
-      if (enabledPreassignExperiment !== null) {
+      const isDeveloper = await checkIfDeveloper();
+
+      if (enabledPreassignExperiment !== null && isPreAssignEnabled && isDeveloper) {
         tracking.experimentStarted({
           ...defaultEventProps(),
           experiment_id: FLAGS.EXPERIMENT_PREASSIGN_ONBOARDING_FLOW,
@@ -82,7 +84,6 @@ export function init() {
             : CONTROL_EXP_VARIATION,
         });
       }
-      const isDeveloper = await checkIfDeveloper();
 
       if (enabledPreassignExperiment && isPreAssignEnabled && isDeveloper) {
         goToDeveloperOnboarding({

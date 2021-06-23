@@ -19,6 +19,11 @@ import { getVariation, FLAGS } from 'core/feature-flags';
 
 const store = getBrowserStorage();
 
+const getDevStoragePrefix = async () => {
+  const user = await getUser();
+  return `ctfl:${user.sys.id}:persona`;
+};
+
 const getStoragePrefix = async () => {
   const user = await getUser();
   return `ctfl:${user.sys.id}:exploreOnboardingSeen`;
@@ -38,25 +43,6 @@ export const CONTROL_EXP_VARIATION = 'control';
 export const TREATMENT_EXP_VARIATION = 'flexible-onboarding';
 export const PREASSIGN_ONBOARDING_EXP_VARIATION = 'preassign-onboarding';
 export const BLANK_SPACE_NAME = 'Blank';
-
-export const trackContentTypeSave = async ({ organizationId }) => {
-  const enabledPreassignExperiment = await getVariation(
-    FLAGS.EXPERIMENT_PREASSIGN_ONBOARDING_FLOW,
-    {
-      organizationId,
-    }
-  );
-  if (enabledPreassignExperiment !== null) {
-    tracking.experimentGoalAchieved({
-      ...defaultEventProps(),
-      experiment_id: FLAGS.EXPERIMENT_PREASSIGN_ONBOARDING_FLOW,
-      experiment_variation: enabledPreassignExperiment
-        ? PREASSIGN_ONBOARDING_EXP_VARIATION
-        : CONTROL_EXP_VARIATION,
-      action: 'create_content_type',
-    });
-  }
-};
 
 export const renameSpace = async (newName, spaceId) => {
   const spaceContext = getSpaceContext();
@@ -99,13 +85,26 @@ export const handleGetStarted = (currentSpaceId) => {
 };
 
 export const isDeveloper = async () => {
-  const user = await fetchUserData();
-  const hasGithubIdentityConnected =
-    user?.identities?.filter((i) => i.provider === 'github').length >= 1;
+  const prefix = await getDevStoragePrefix();
+  const storageDevValue = store.get(prefix);
 
-  const { persona } = getQueryString();
+  if (storageDevValue) {
+    return storageDevValue ? true : false;
+  } else {
+    const user = await fetchUserData();
+    const hasGithubIdentityConnected =
+      user?.identities?.filter((i) => i.provider === 'github').length >= 1;
 
-  return persona === 'developer' || hasGithubIdentityConnected;
+    const { persona } = getQueryString();
+
+    const devValue = persona === 'developer' || hasGithubIdentityConnected;
+
+    if (devValue) {
+      store.set(prefix, 'developer');
+    }
+
+    return devValue;
+  }
 };
 
 export const goToDeveloperOnboarding = async ({ org, markOnboarding }) => {
@@ -137,4 +136,34 @@ export const goToDeveloperOnboarding = async ({ org, markOnboarding }) => {
     path: 'spaces.detail.onboarding.getStarted',
     spaceId: newSpace.sys.id,
   });
+};
+
+export const trackContentTypeSave = async ({ organizationId }) => {
+  const enabledPreassignExperiment = await getVariation(
+    FLAGS.EXPERIMENT_PREASSIGN_ONBOARDING_FLOW,
+    {
+      organizationId,
+    }
+  );
+  const isDev = await isDeveloper();
+  if (enabledPreassignExperiment !== null) {
+    if (isDev) {
+      tracking.experimentGoalAchieved({
+        ...defaultEventProps(),
+        experiment_id: FLAGS.EXPERIMENT_PREASSIGN_ONBOARDING_FLOW,
+        experiment_variation: enabledPreassignExperiment
+          ? PREASSIGN_ONBOARDING_EXP_VARIATION
+          : CONTROL_EXP_VARIATION,
+        action: 'create_content_type',
+      });
+    }
+    tracking.experimentInteracted({
+      ...defaultEventProps(),
+      experiment_id: FLAGS.EXPERIMENT_PREASSIGN_ONBOARDING_FLOW,
+      experiment_variation: enabledPreassignExperiment
+        ? PREASSIGN_ONBOARDING_EXP_VARIATION
+        : CONTROL_EXP_VARIATION,
+      action: 'create_content_type',
+    });
+  }
 };

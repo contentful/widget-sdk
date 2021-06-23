@@ -461,9 +461,8 @@ export function useCreateActions(props: { isNew?: boolean; contentTypeId?: strin
 
       fieldsUpdated(published, updatedEditorInterface as any);
 
-      await trackContentTypeSave({ organizationId: currentOrganizationId });
-
       notify.saveSuccess();
+      trackContentTypeSave({ organizationId: currentOrganizationId });
     } catch (error) {
       setContextDirty(true);
       trackEnforcedButtonClick(error);
