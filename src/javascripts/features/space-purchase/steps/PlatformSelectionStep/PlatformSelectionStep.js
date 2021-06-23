@@ -66,8 +66,7 @@ const styles = {
   }),
 };
 
-// TODO: this is a placeholder url, update with link to packages comparison
-export const PACKAGES_COMPARISON_HREF = websiteUrl('pricing/#feature-overview');
+export const PACKAGES_COMPARISON_HREF = websiteUrl('contentful-apps');
 
 export const PlatformSelectionStep = ({ track, showPlatformsAboveSpaces }) => {
   const {
