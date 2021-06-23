@@ -183,32 +183,14 @@ describe('User Details', () => {
 describe('back button', () => {
   let button;
 
-  jest.spyOn(window.history, 'back');
-
   beforeEach(async () => {
-    delete window.location;
-    window.location = { host: 'localhost:3001' };
     await build();
     button = screen.getByTestId('workbench-back-btn');
   });
 
-  it('navigates back in history when the last visited page was in the webapp', () => {
-    Object.defineProperty(document, 'referrer', {
-      value: 'http://localhost:3001/some-page',
-      writable: true,
-    });
-
-    button.click();
-
-    expect(window.history.back).toHaveBeenCalled();
-  });
-
   it('navigates to the user list if the referrer is unknown', () => {
-    Object.defineProperty(document, 'referrer', { value: '', writable: true });
-
     button.click();
 
-    expect(window.history.back).not.toHaveBeenCalled();
     expect(mockNavigate).toHaveBeenLastCalledWith({
       path: 'organizations.users.list',
       orgId: 'org-id',
