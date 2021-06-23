@@ -37,9 +37,9 @@ type InitialValueTabComponentProps = {
 
 const UnsupportedFieldTypeNote = () => (
   <Flex marginBottom="spacingXl" marginTop="spacingS">
-    <Note title="The initial value is not available for this field type.">
-      Currently, you can only add initial value for the text, boolean, date and time, and number
-      fields.
+    <Note title="Not available for this field type">
+      Currently, you can only set an initial value for the text, boolean, date and time, and number
+      field types.
     </Note>
   </Flex>
 );
@@ -144,7 +144,7 @@ export const InitialValueTabComponent = ({
             </Flex>
 
             <Paragraph>
-              All locales will be set to the same initial value as the main locale.
+              All locales will use the same initial value as the default locale.
             </Paragraph>
           </div>
         </Fragment>

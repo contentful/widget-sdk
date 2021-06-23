@@ -44,18 +44,18 @@ const AllLocalesConfirmModal = ({
 const RemoveAllLocalesConfirm = (props: Omit<AllLocalesActionConfirmProps, 'action'>) => (
   <AllLocalesConfirmModal
     {...props}
-    title="You are removing all the locales initial value"
-    description="Clearing all the locales initial value will remove all the values you have already set."
-    confirmLabel="Clear"
+    title="Are you sure you want to clear all initial values?"
+    description="Clearing all the locales’ initial values cannot be undone."
+    confirmLabel="Yes, clear initial values"
   />
 );
 
 const ReplaceAllLocalesConfirm = (props: Omit<AllLocalesActionConfirmProps, 'action'>) => (
   <AllLocalesConfirmModal
     {...props}
-    title="You are replacing initial values"
-    description="Applying the same initial value to all locales will replace the values you have already set."
-    confirmLabel="Replace"
+    title="Are you sure you want to replace existing initial values?"
+    description="Replacing all the locales’ initial values cannot be undone. All entries created with the previous initial values will not be changed."
+    confirmLabel="Yes, replace initial values"
   />
 );
 
