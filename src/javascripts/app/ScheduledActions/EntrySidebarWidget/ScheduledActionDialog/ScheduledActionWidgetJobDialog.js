@@ -20,8 +20,13 @@ function ScheduledActionWidgetJobDialog({
   isMasterEnvironment,
 }) {
   const [validationError, setValidationError] = useState('');
-
   const { client } = useCurrentSpaceAPIClient();
+
+  const clearValidationError = () => {
+    if (validationError) {
+      setValidationError(null);
+    }
+  };
 
   async function handleSubmit({ action, date, time, timezone }) {
     const truncatedTitle =
@@ -77,6 +82,7 @@ function ScheduledActionWidgetJobDialog({
       isMasterEnvironment={isMasterEnvironment}
       linkType={entity.sys.type}
       validationError={validationError}
+      clearValidationError={clearValidationError}
     />
   );
 }

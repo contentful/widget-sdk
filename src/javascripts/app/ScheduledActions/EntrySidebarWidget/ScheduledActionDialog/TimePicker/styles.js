@@ -49,6 +49,7 @@ const styles = {
     textAlign: 'center',
     fontSize: tokens.fontSizeM,
     margin: 0,
+    borderRadius: '6px',
     MozAppearance: 'textfield',
     '&::-webkit-inner-spin-button, &::-webkit-outer-spin-button': {
       WebkitAppearance: 'none',
