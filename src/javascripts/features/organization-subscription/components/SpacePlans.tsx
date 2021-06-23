@@ -1,7 +1,5 @@
-import React, { useCallback, useContext } from 'react';
+import React, { useContext } from 'react';
 
-import { getVariation, FLAGS } from 'core/feature-flags';
-import { useAsync } from 'core/hooks';
 import { openDeleteSpaceDialog } from 'features/space-settings';
 import { SpacePlansTable } from '../space-usage-summary/SpacePlansTable';
 import { SpaceSectionHeader } from './SpaceSectionHeader';
@@ -12,19 +10,6 @@ import { actions } from '../context/orgSubscriptionReducer';
 import { changeSpace } from '../utils/spaceUtils';
 import { useChangedSpace } from '../hooks/useChangedSpace';
 import { Paragraph } from '@contentful/forma-36-react-components';
-
-async function fetchFeatureFlag(isEnterprisePlan: boolean) {
-  let isCreateSpaceForSpacePlanEnabled = false;
-
-  // we only need these flags for organizations with Enterprise basePlan
-  if (isEnterprisePlan) {
-    isCreateSpaceForSpacePlanEnabled = await getVariation(FLAGS.CREATE_SPACE_FOR_SPACE_PLAN);
-  }
-
-  return {
-    isCreateSpaceForSpacePlanEnabled,
-  };
-}
 
 interface SpacePlansProps {
   // It tells the header if the user is in an Enterprise plan or not
@@ -48,11 +33,6 @@ export function SpacePlans({
   } = useContext(OrgSubscriptionContext);
 
   const { changedSpaceId, setChangedSpaceId } = useChangedSpace();
-
-  // fetch feature flags
-  const { isLoading, data } = useAsync(
-    useCallback(() => fetchFeatureFlag(enterprisePlan), [enterprisePlan])
-  );
 
   // Enterprise admin or owners can manage used and unused spaces
   const userCanManageSpaces = enterprisePlan && isOwnerOrAdmin;
@@ -80,7 +60,6 @@ export function SpacePlans({
       <SpaceSectionHeader
         enterprisePlan={enterprisePlan}
         hasAnySpacesInaccessible={hasAnySpacesInaccessible}
-        isCreateSpaceForSpacePlanEnabled={data?.isCreateSpaceForSpacePlanEnabled}
         numberOfSpaces={numberOfSpaces}
         organizationId={organizationId}
       />
@@ -93,7 +72,6 @@ export function SpacePlans({
             <SpacePlansTable
               organizationId={organizationId}
               enterprisePlan={enterprisePlan}
-              featureFlagLoading={isLoading}
               onChangeSpace={onChangeSpace}
               onDeleteSpace={getOnDeleteSpace}
               plans={spacePlans}
@@ -103,11 +81,10 @@ export function SpacePlans({
           )}
 
           {/* This will only be rendered for Enterprise organizations */}
-          {!isLoading && userCanManageSpaces && (
+          {userCanManageSpaces && (
             <UsedAndUnusedSpacePlans
               organizationId={organizationId}
               changedSpaceId={changedSpaceId}
-              isCreateSpaceForSpacePlanEnabled={data?.isCreateSpaceForSpacePlanEnabled}
               onChangeSpace={onChangeSpace}
               onDeleteSpace={getOnDeleteSpace}
               spacePlans={spacePlans}

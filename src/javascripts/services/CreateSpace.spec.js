@@ -3,7 +3,6 @@ import { ModalLauncher } from '@contentful/forma-36-react-components';
 import { beginSpaceCreation } from './CreateSpace';
 import { canCreateSpaceInOrganization } from 'access_control/AccessChecker';
 import { isEnterprisePlan, isSelfServicePlan } from 'account/pricing/PricingDataProvider';
-import { getVariation, FLAGS } from 'core/feature-flags';
 import { getSpaceProductRatePlans, getBasePlan } from 'features/pricing-entities';
 import { router } from 'core/react-routing';
 
@@ -110,24 +109,10 @@ describe('CreateSpace', () => {
       });
     });
 
-    it('opens the enterprise dialog for enterprise orgs when feature flag enabled is disabled', async function () {
-      getVariation.mockReturnValue(false);
-      getSpaceProductRatePlans.mockResolvedValueOnce([mockRatePlans.enterprise]);
-      getBasePlan.mockResolvedValueOnce({ customerType: 'Enterprise' });
-      isEnterprisePlan.mockReturnValueOnce(true);
-      await beginSpaceCreation('v2');
-      expect(ModalLauncher.open).toHaveBeenCalledTimes(1);
-    });
-
     it('sends user to the space_create page for enterprise orgs when feature flag enabled', async function () {
       getSpaceProductRatePlans.mockResolvedValueOnce([mockRatePlans.enterprise]);
       getBasePlan.mockResolvedValueOnce({ customerType: 'Enterprise' });
       isEnterprisePlan.mockReturnValueOnce(true);
-      getVariation.mockImplementation((flag) => {
-        if (flag === FLAGS.CREATE_SPACE_FOR_SPACE_PLAN) {
-          return Promise.resolve(true);
-        }
-      });
 
       await beginSpaceCreation('v2');
 

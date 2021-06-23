@@ -12,7 +12,6 @@ import {
   isSelfServicePlan,
   isFreePlan,
 } from 'account/pricing/PricingDataProvider';
-import { getVariation, FLAGS } from 'core/feature-flags';
 import { getBasePlan } from 'features/pricing-entities';
 
 import SpaceWizardsWrapper from 'app/SpaceWizards/SpaceWizardsWrapper';
@@ -62,11 +61,9 @@ export async function beginSpaceCreation(organizationId, customRouteParams = {})
     return;
   }
 
-  // if newSpaceCreationFlow flag is on and org is Enterprise, they should go to /space_create
-  const isSpaceCreateForSpacePlanEnabled = await getVariation(FLAGS.CREATE_SPACE_FOR_SPACE_PLAN);
   const hasEnterprisePlan = basePlan && isEnterprisePlan(basePlan);
 
-  if (isSpaceCreateForSpacePlanEnabled && hasEnterprisePlan) {
+  if (hasEnterprisePlan) {
     router.navigate({
       path: 'organizations.subscription.overview.create-space',
       orgId: organizationId,

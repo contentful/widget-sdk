@@ -85,8 +85,6 @@ async function fetchPlansWithUsage(
 interface SpacePlansTableProps {
   // It tells if thise table is for an Enterprise customer or not
   enterprisePlan?: boolean;
-  // It tells the component that SpacePlans is fetching some feature flags
-  featureFlagLoading?: boolean;
   // function to be called when user clicks on "upgrade" link, "change" link, or "change plan type" button
   onChangeSpace: () => void;
   // function to generate the the correct onDelete function for each SpacePlanRow
@@ -110,7 +108,6 @@ export function SpacePlansTable({
   onDeleteSpace,
   enterprisePlan = false,
   showSpacePlanChangeBtn = false,
-  featureFlagLoading = false,
   upgradedSpaceId,
   organizationId,
   showV1MigrationCommunication,
@@ -219,7 +216,7 @@ export function SpacePlansTable({
           </TableRow>
         </TableHead>
         <TableBody>
-          {featureFlagLoading || spacesUsageLoading || !!error ? (
+          {spacesUsageLoading || !!error ? (
             <SkeletonRow columnCount={12} rowCount={pagination.limit} />
           ) : (
             data?.plansWithUsage.map((plan, idx) => (

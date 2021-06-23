@@ -26,8 +26,6 @@ enum EnterpriseSpacesTabs {
 interface UsedAndUnusedSpacePlansProps {
   // Id of a space plan that got deleted, upgraded, or downgraded
   changedSpaceId?: string;
-  // Feature flag that enables space creation for Enterprise customers
-  isCreateSpaceForSpacePlanEnabled?: boolean;
   // Function to be called when space plan changes (upgrade or downgrade)
   onChangeSpace: () => void;
   // function to generate the the correct onDelete function for each SpacePlanRow
@@ -40,7 +38,6 @@ interface UsedAndUnusedSpacePlansProps {
 
 export function UsedAndUnusedSpacePlans({
   changedSpaceId,
-  isCreateSpaceForSpacePlanEnabled,
   onChangeSpace,
   onDeleteSpace,
   organizationId,
@@ -113,11 +110,7 @@ export function UsedAndUnusedSpacePlans({
         className={cx(styles.tabPanel, {
           [styles.isVisible]: selectedTab === EnterpriseSpacesTabs.UNUSED_SPACES,
         })}>
-        <UnassignedPlansTable
-          organizationId={organizationId}
-          plans={unusedSpacePlans}
-          canCreateSpaceWithPlan={isCreateSpaceForSpacePlanEnabled}
-        />
+        <UnassignedPlansTable organizationId={organizationId} plans={unusedSpacePlans} />
       </TabPanel>
     </>
   );

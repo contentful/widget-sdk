@@ -31,8 +31,6 @@ interface SpaceSectionHeaderProps {
   enterprisePlan?: boolean;
   // It tells the header to show the tooltip with informaton about inaccessible spaces
   hasAnySpacesInaccessible?: boolean;
-  // Feature flag that enables space creation for Enterprise customers
-  isCreateSpaceForSpacePlanEnabled?: boolean;
   // The number of space plans of the current organization
   numberOfSpaces: number;
   // The id of the current organization
@@ -42,7 +40,6 @@ interface SpaceSectionHeaderProps {
 export function SpaceSectionHeader({
   enterprisePlan = false,
   hasAnySpacesInaccessible = false,
-  isCreateSpaceForSpacePlanEnabled = false,
   numberOfSpaces,
   organizationId,
 }: SpaceSectionHeaderProps) {
@@ -83,7 +80,7 @@ export function SpaceSectionHeader({
             Export
           </Button>
         )}
-        {enterprisePlan && isCreateSpaceForSpacePlanEnabled ? (
+        {enterprisePlan ? (
           <RouteLink
             as={Button}
             testId="subscription-page.create-space"
