@@ -13,7 +13,8 @@ import {
   EditorInterfaceControl,
 } from 'core/typings';
 import cloneDeep from 'lodash/cloneDeep';
-import { fromWidgetSettings, getWidgetSettings } from './utils/helpers';
+import { fromWidgetSettings, getRichTextOptions, getWidgetSettings } from './utils/helpers';
+import { getUpdatedField } from './utils/getUpdatedField';
 
 type ContentTypeFieldFormProps = {
   contentType: ContentType;
@@ -35,74 +36,110 @@ type FormState = {
   widget: EditorInterfaceControl;
   widgetSettings: WidgetSettings;
   widgetIsPristine: boolean;
+  richTextSettings: Object;
+  richTextIsPristine: boolean;
 };
 
-type FormEntity = 'content_type' | 'editor_interface';
-
 type FormAction =
-  | { type: 'blur_field'; form: ContentTypeForm; entity: FormEntity; fieldName: string }
+  | { type: 'blur_field'; form: ContentTypeForm; fieldName: string }
   | {
-      type: 'set_value';
+      type: 'set_content_type_value';
       form: ContentTypeForm;
-      entity: FormEntity;
       fieldName: string;
       fieldValue: unknown;
-    };
+    }
+  | { type: 'set_editor_interface_settings'; form: ContentTypeForm; value: unknown }
+  | { type: 'set_richtext_settings'; form: ContentTypeForm; value: Object };
+
+const getFormFieldsAsObject = (fields: Record<string, { value: unknown }>) => {
+  return Object.entries(fields).reduce(
+    (memo, [fieldName, { value }]) => ({ ...memo, [fieldName]: value }),
+    {}
+  );
+};
+const getUpdatedState = (
+  state: FormState,
+  form: ContentTypeForm,
+  fields: Record<string, unknown> = {}
+): Partial<FormState> => {
+  const combinedFields = {
+    ...getFormFieldsAsObject(form.fields),
+    ...fields,
+  };
+
+  const { updatedField, widgetSettings } = getUpdatedField(
+    [combinedFields, state.richTextSettings, state.widgetSettings],
+    state.field,
+    state.contentType
+  );
+
+  const contentType = {
+    ...state.contentType,
+    fields: state.contentType.fields.map((existingField) =>
+      existingField.id === updatedField.id ? updatedField : existingField
+    ),
+  };
+
+  const editorInterface = {
+    ...state.editorInterface,
+    controls: state.editorInterface.controls?.map((existingControl) =>
+      existingControl.fieldId === state.widget.fieldId ? state.widget : existingControl
+    ),
+  };
+
+  return {
+    field: updatedField,
+    widgetSettings,
+    contentType,
+    editorInterface,
+  };
+};
 
 const formReducer = (state: FormState, action: FormAction): FormState => {
   switch (action.type) {
     case 'blur_field': {
-      if (action.entity === 'content_type') {
-        action.form.onBlur(action.fieldName);
-      }
+      action.form.onBlur(action.fieldName);
 
       return state;
     }
-    case 'set_value': {
-      if (action.entity === 'content_type') {
-        action.form.onChange(action.fieldName, action.fieldValue);
+    case 'set_content_type_value': {
+      action.form.onChange(action.fieldName, action.fieldValue);
+      const updatedState = getUpdatedState(state, action.form, {
+        [action.fieldName]: action.fieldValue,
+      });
 
-        const field = {
-          ...state.field,
-          [action.fieldName]: action.fieldValue,
-        };
-        const contentType = {
-          ...state.contentType,
-          fields: state.contentType.fields.map((existingField) =>
-            existingField.id === field.id ? field : existingField
-          ),
-        };
+      return {
+        ...state,
+        ...updatedState,
+      };
+    }
+    case 'set_editor_interface_settings': {
+      const widgetSettings = action.value as WidgetSettings;
+      const widget = {
+        ...state.widget,
+        ...fromWidgetSettings(widgetSettings),
+      };
+      const updatedState = getUpdatedState({ ...state, widget, widgetSettings }, action.form);
 
-        return {
-          ...state,
-          contentType,
-          field,
-        };
-      }
+      return {
+        ...state,
+        ...updatedState,
+        widget,
+        widgetIsPristine: false,
+      };
+    }
+    case 'set_richtext_settings': {
+      const updatedState = getUpdatedState(
+        { ...state, richTextSettings: action.value },
+        action.form
+      );
 
-      if (action.entity === 'editor_interface') {
-        const widgetSettings = action.fieldValue as WidgetSettings;
-        const widget = {
-          ...state.widget,
-          ...fromWidgetSettings(widgetSettings),
-        };
-        const editorInterface = {
-          ...state.editorInterface,
-          controls: state.editorInterface.controls?.map((existingControl) =>
-            existingControl.fieldId === widget.fieldId ? widget : existingControl
-          ),
-        };
-
-        return {
-          ...state,
-          editorInterface,
-          widgetSettings,
-          widget,
-          widgetIsPristine: false,
-        };
-      }
-
-      return state;
+      return {
+        ...state,
+        ...updatedState,
+        richTextSettings: action.value,
+        richTextIsPristine: false,
+      };
     }
   }
 };
@@ -125,44 +162,30 @@ export function useContentTypeFieldForm(props: ContentTypeFieldFormProps) {
     },
     submitFn,
   });
-  const [state, dispatch] = useReducer(
-    formReducer,
-    {
-      isNewField: false,
-      contentType,
-      field,
-      editorInterface,
-      widget,
-      widgetSettings: {
-        id: undefined,
-        namespace: undefined,
-        params: {},
-      },
+  const [state, dispatch] = useReducer(formReducer, {}, function lazyInitFormState() {
+    // we clone the state to be able to mutate the
+    // objects without interfering with parent components
+
+    const isNewField = !contentType.fields.some((existingField) => existingField.id === field.id);
+    const state: FormState = {
       widgetIsPristine: true,
-    },
-    function lazyInitFormState(initialState: FormState) {
-      // we clone the state to be able to mutate the
-      // objects without interfering with parent components
+      richTextIsPristine: true,
+      isNewField,
+      contentType: cloneDeep(contentType),
+      field: cloneDeep(field),
+      editorInterface: cloneDeep(editorInterface),
+      widget: cloneDeep(widget),
+      widgetSettings: getWidgetSettings(widget),
+      richTextSettings: getRichTextOptions(field),
+    };
 
-      const isNewField = !contentType.fields.some((existingField) => existingField.id === field.id);
-      const state: FormState = {
-        isNewField,
-        contentType: cloneDeep(initialState.contentType),
-        field: cloneDeep(initialState.field),
-        editorInterface: cloneDeep(initialState.editorInterface),
-        widget: cloneDeep(initialState.widget),
-        widgetSettings: getWidgetSettings(widget),
-        widgetIsPristine: initialState.widgetIsPristine,
-      };
-
-      if (isNewField) {
-        state.contentType.fields.push(field);
-        state.editorInterface.controls?.push(widget);
-      }
-
-      return state;
+    if (isNewField) {
+      state.contentType.fields.push(field);
+      state.editorInterface.controls?.push(widget);
     }
-  );
+
+    return state;
+  });
 
   return {
     contentType: state.contentType,
@@ -170,23 +193,40 @@ export function useContentTypeFieldForm(props: ContentTypeFieldFormProps) {
     editorInterface: state.editorInterface,
     widget: state.widget,
     widgetSettings: state.widgetSettings,
+    richTextSettings: state.richTextSettings,
     fields: form.fields,
-    blur: (entity: FormEntity, fieldName: string) =>
-      dispatch({ type: 'blur_field', form, entity, fieldName }),
-    setValue: (entity: FormEntity, fieldName: string, fieldValue: any) =>
+    blur: (fieldName: string) => dispatch({ type: 'blur_field', form, fieldName }),
+    setContentTypeValue: (fieldName: string, fieldValue: unknown) => {
       dispatch({
-        type: 'set_value',
+        type: 'set_content_type_value',
         form,
-        entity,
         fieldName,
         fieldValue,
+      });
+    },
+    setEditorInterfaceSettings: (value: unknown) =>
+      dispatch({
+        type: 'set_editor_interface_settings',
+        form,
+        value,
       }),
-    submit: form.onSubmit,
+    setRichTextSettings: (value: Object) =>
+      dispatch({
+        type: 'set_richtext_settings',
+        form,
+        value,
+      }),
+    submit: () => form.onSubmit(state.richTextSettings, state.widgetSettings),
     get isInvalid() {
       return form.form.invalid;
     },
     get isPristine() {
-      return form.form.pristine && state.widgetIsPristine;
+      return (
+        !state.isNewField &&
+        form.form.pristine &&
+        state.widgetIsPristine &&
+        state.richTextIsPristine
+      );
     },
   };
 }

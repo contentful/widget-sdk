@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useMemo, useState } from 'react';
+import React, { Fragment, useMemo, useState } from 'react';
 import {
   Modal,
   Button,
@@ -15,7 +15,6 @@ import { SettingsTabComponent } from './components/SettingsTabComponent';
 import { ValidationTabComponent } from './components/ValidationTabComponent';
 import { InitialValueTabComponent } from './components/initialValue';
 import { AppearanceTabComponent } from './components/AppearanceTabComponent';
-import { getRichTextOptions } from './utils/helpers';
 import { getIconId } from 'services/fieldFactory';
 import { FLAGS } from 'core/feature-flags';
 import { FeedbackButton } from 'core/feature-feedback';
@@ -72,7 +71,10 @@ export function FieldModalDialogForm(props: FieldModalDialogFormProps) {
     editorInterface,
     widget,
     widgetSettings,
-    setValue,
+    richTextSettings,
+    setContentTypeValue,
+    setEditorInterfaceSettings,
+    setRichTextSettings,
     blur,
     submit,
     isInvalid,
@@ -97,20 +99,7 @@ export function FieldModalDialogForm(props: FieldModalDialogFormProps) {
   );
 
   const [selectedTab, setSelectedTab] = useState(formTabs.SETTINGS);
-  const [richTextOptions, setRichTextOptions] = useState(() => getRichTextOptions(field));
   const [useInitialValues] = useFeatureFlag(FLAGS.INITIAL_FIELD_VALUES);
-  const blurContentTypeField = useCallback(
-    (fieldName: string) => blur('content_type', fieldName),
-    [blur]
-  );
-  const changeContentTypeValue = useCallback(
-    (fieldName: string, value: any) => setValue('content_type', fieldName, value),
-    [setValue]
-  );
-  const changeEditorInterfaceValue = useCallback(
-    (value: any) => setValue('editor_interface', '', value),
-    [setValue]
-  );
 
   return (
     <Fragment>
@@ -171,21 +160,21 @@ export function FieldModalDialogForm(props: FieldModalDialogFormProps) {
         {selectedTab === formTabs.SETTINGS && (
           <TabPanel id="settings-tab-panel">
             <SettingsTabComponent
-              onBlur={blurContentTypeField}
-              onChange={changeContentTypeValue}
+              onBlur={blur}
+              onChange={setContentTypeValue}
               fields={fields}
               ctField={field}
               isNewContentType={isNewContentType}
-              richTextOptions={richTextOptions}
-              setRichTextOptions={setRichTextOptions}
+              richTextOptions={richTextSettings}
+              setRichTextOptions={setRichTextSettings}
             />
           </TabPanel>
         )}
         {selectedTab === formTabs.VALIDATION && (
           <TabPanel id="validation-tab-panel">
             <ValidationTabComponent
-              onBlur={blurContentTypeField}
-              onChange={changeContentTypeValue}
+              onBlur={blur}
+              onChange={setContentTypeValue}
               fields={fields}
               ctField={field}
               contentTypes={contentTypes}
@@ -197,7 +186,7 @@ export function FieldModalDialogForm(props: FieldModalDialogFormProps) {
         {useInitialValues && selectedTab === formTabs.INITIAL_VALUE && (
           <TabPanel id="initial-value-tab-panel">
             <InitialValueTabComponent
-              onChange={changeContentTypeValue}
+              onChange={setContentTypeValue}
               contentType={contentType}
               ctField={field}
               widget={widget}
@@ -211,7 +200,7 @@ export function FieldModalDialogForm(props: FieldModalDialogFormProps) {
               editorInterface={editorInterface}
               availableWidgets={availableWidgets}
               widgetSettings={widgetSettings}
-              setWidgetSettings={changeEditorInterfaceValue}
+              setWidgetSettings={setEditorInterfaceSettings}
               contentType={contentType}
               ctField={field}
             />
@@ -223,7 +212,7 @@ export function FieldModalDialogForm(props: FieldModalDialogFormProps) {
           <Button
             testId="confirm-field-dialog-form"
             disabled={isInvalid || isPristine}
-            onClick={() => submit(richTextOptions, widgetSettings)}
+            onClick={submit}
             buttonType="positive">
             Confirm
           </Button>
