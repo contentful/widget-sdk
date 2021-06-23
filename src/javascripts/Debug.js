@@ -14,9 +14,11 @@ const DEBUG_ENVS = ['development', 'preview', 'staging'];
  */
 export function init(global) {
   if (includes(DEBUG_ENVS, Config.env)) {
-    initDevNotifications();
+    const willRedirect = initDevNotifications();
     global.cfDebug = create();
+    return willRedirect;
   }
+  return false;
 }
 
 // Maps debug tool names to modules that export the tool.
@@ -25,8 +27,13 @@ export function init(global) {
 // The key is the property name to which we export the module on
 // `global.cfDebug`.
 function initDevNotifications() {
-  UIVersionSwitcher.init();
-  EnforceFlags.init();
+  if (UIVersionSwitcher.init()) {
+    return true;
+  }
+  if (EnforceFlags.init()) {
+    return true;
+  }
+  return false;
 }
 
 /**

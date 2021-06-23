@@ -3,9 +3,12 @@ import { createMVar, createExclusiveTask } from 'utils/Concurrent';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
 import * as Config from 'Config';
 import postForm from 'data/Request/PostForm';
-import { getModule } from 'core/NgRegistry';
 import { window } from 'core/services/window';
 import { captureWarning } from 'core/monitoring';
+
+const getUrl = () => {
+  return window.location.pathname + window.location.search || '';
+};
 
 /**
  * @name Authentication
@@ -41,8 +44,6 @@ const tokenMVar = createMVar();
 
 const sessionStore = getBrowserStorage('session');
 const localStore = getBrowserStorage('local');
-
-const afterLoginPathStore = localStore.forKey('redirect_after_login');
 
 const tokenStore =
   Config.env === 'development' ? localStore.forKey('token') : sessionStore.forKey('token');
@@ -116,8 +117,6 @@ export const refreshToken = createExclusiveTask(async () => {
  * otherwise returns false.
  */
 export function init() {
-  const $location = getModule('$location');
-
   localStore.remove(LOGOUT_KEY);
   localStore.externalChanges(LOGOUT_KEY).onValue((value) => {
     if (value !== null) {
@@ -134,15 +133,17 @@ export function init() {
   const previousToken = tokenStore.get();
 
   if (!previousToken) {
-    return refreshAndRedirect();
+    refreshToken();
+    return false;
   }
 
-  if ($location.url() === '/?login=1') {
+  if (getUrl() === '/?login=1') {
     // This path indicates that we are coming from gatekeeper and we have
     // a new gatekeeper session. In that case we throw away our current
     // token since it might belong to a different user
     revokeToken(previousToken);
-    return refreshAndRedirect();
+    refreshToken();
+    return false;
   } else {
     updateToken(previousToken);
 
@@ -160,33 +161,6 @@ export function init() {
 
     return false;
   }
-}
-
-/**
- * Refreshes the token and redirects to any previously stored URL.
- *
- * If this function redirects (using `$location.url`), it returns true.
- * Otherwise, false. This is used to determine route handling in `prelude`.
- * @return {boolean} whether the user will be redirected
- */
-function refreshAndRedirect() {
-  const $location = getModule('$location');
-
-  refreshToken();
-
-  const afterLoginPath = afterLoginPathStore.get();
-
-  if (afterLoginPath) {
-    afterLoginPathStore.remove();
-    // https://stackoverflow.com/questions/24764330/location-changes-the-parameter-delimiter
-    // $location.path escapes '?' symbol
-    // https://stackoverflow.com/questions/31838484/difference-between-location-path-and-location-url
-    // more on the difference between $location.path/$location.url
-    $location.url(afterLoginPath);
-    return true;
-  }
-
-  return false;
 }
 
 /**
@@ -220,7 +194,6 @@ export async function logout() {
  */
 export function cancelUser() {
   tokenStore.remove();
-  afterLoginPathStore.remove();
   setLocation(Config.websiteUrl('goodbye'));
 }
 
@@ -231,10 +204,7 @@ export function cancelUser() {
  * we return from the login page.
  */
 export function redirectToLogin() {
-  const $location = getModule('$location');
-
   tokenStore.remove();
-  afterLoginPathStore.set($location.url());
   setLocation(Config.authUrl('login'));
 }
 
@@ -345,12 +315,12 @@ async function logoutSecureAssets() {
 }
 
 function loadTokenFromHash() {
-  const $location = getModule('$location');
+  const hash = window.location.hash;
 
-  const match = $location.hash().match(/access_token=([\w-]+)/);
+  const match = hash.match(/access_token=([\w-]+)/);
   const token = match && match[1];
   if (token) {
-    $location.hash('');
+    window.location.hash = '';
     tokenStore.set(token);
   }
 }

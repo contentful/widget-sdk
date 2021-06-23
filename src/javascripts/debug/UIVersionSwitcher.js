@@ -27,6 +27,7 @@ export function init() {
     locationUtils.setQueryString(omit(urlParams, 'ui_version'));
   }
   addVersionNotification();
+  return Boolean(uiVersion);
 }
 
 function setVersionCookie(uiVersion) {

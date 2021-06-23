@@ -2,11 +2,6 @@ import * as K from 'core/utils/kefir';
 import * as Auth from './Authentication';
 import { window } from 'core/services/window';
 import { getBrowserStorage } from 'core/services/BrowserStorage';
-import $locationMocked from 'ng/$location';
-
-jest.mock('ng/$location', () => ({
-  url: jest.fn(),
-}));
 
 jest.mock('core/services/window', () => ({
   window: {
@@ -177,44 +172,6 @@ describe('Authentication', function () {
       await waitForLocationChange(window, '');
 
       expect(window.location).toEqual('https://be.contentful.com/logout');
-    });
-
-    describe('on login from gatekeeper', function () {
-      beforeEach(function () {
-        $locationMocked.url.mockReturnValue('/?login=1');
-      });
-      it('revokes and deletes existing token', async function () {
-        store.set('STORED_TOKEN');
-        Auth.init();
-        expect(store.get()).toBeNull();
-        expect(window.fetch.mock.calls[0]).toEqual([
-          'https://be.contentful.com/oauth/revoke',
-          {
-            body: 'token=STORED_TOKEN&client_id=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-            headers: {
-              Authorization: 'Bearer STORED_TOKEN',
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            method: 'POST',
-          },
-        ]);
-      });
-      it('gets a new token', async function () {
-        store.set('STORED_TOKEN');
-        Auth.init();
-
-        expect(window.fetch.mock.calls[1]).toEqual([
-          'https://be.contentful.com/oauth/token',
-          {
-            body: 'grant_type=password&client_id=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&scope=content_management_manage',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            method: 'POST',
-            credentials: 'include',
-          },
-        ]);
-      });
     });
   });
 

@@ -35,6 +35,17 @@ import _ from 'lodash';
 import { initMonitoring } from 'core/monitoring';
 initMonitoring();
 
+moment.updateLocale('en', {
+  calendar: {
+    lastDay: '[Yesterday], LT',
+    sameDay: '[Today], LT',
+    nextDay: '[Tomorrow], LT',
+    lastWeek: 'ddd, LT',
+    nextWeek: '[Next] ddd, LT',
+    sameElse: 'll',
+  },
+});
+
 // define global method for code splitting with static subdomain
 window.WebpackRequireFrom_getChunkURL = () => settings.assetUrl + '/app/';
 
@@ -108,12 +119,17 @@ angular
         Error.stackTraceLimit = 25;
       }
 
+      const willReloadWithDebug = initDebug(window);
+      if (willReloadWithDebug) {
+        return;
+      }
+
       loadAllStates();
-      initDebug(window);
       initBackendTracing();
       initTokenStore();
       initExtentionActivationTracking();
       initDegradedAppPerformance();
+
       initAuthentication();
 
       initDialogsController();
@@ -126,17 +142,6 @@ angular
       // We want to request this flag as early as possible,
       // to later access the cached value in src/javascripts/data/Request
       getVariation(FLAGS.REQUEST_RETRY_EXPERIMENT);
-
-      moment.updateLocale('en', {
-        calendar: {
-          lastDay: '[Yesterday], LT',
-          sameDay: '[Today], LT',
-          nextDay: '[Tomorrow], LT',
-          lastWeek: 'ddd, LT',
-          nextWeek: '[Next] ddd, LT',
-          sameElse: 'll',
-        },
-      });
 
       // Listen to postMessage events and check if they are coming from
       // GK iframes. If so, handle messages accordingly

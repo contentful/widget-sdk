@@ -24,11 +24,14 @@ export function init() {
 
   setFromQuery(enabledFlags, storeForEnable);
   setFromQuery(disabledFlags, storeForDisable);
-  if (enabledFlags || disabledFlags) {
-    // Updates url without reloading
+
+  const needToChangeUrl = Boolean(enabledFlags || disabledFlags);
+
+  if (needToChangeUrl) {
     locationUtils.setQueryString(omit(urlParams, ENABLE_FLAGS_KEY, DISABLE_FLAGS_KEY));
   }
   displayNotification();
+  return needToChangeUrl;
 }
 
 /**
