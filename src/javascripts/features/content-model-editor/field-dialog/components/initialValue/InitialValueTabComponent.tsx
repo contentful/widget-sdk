@@ -9,6 +9,7 @@ import { Locale } from 'core/typings';
 import { confirmAllLocalesAction } from './AllLocalesActionConfirm';
 
 const SUPPORTED_FIELD_TYPES = ['Boolean', 'Date', 'Integer', 'Number', 'Symbol', 'Text'];
+const SUPPORTED_ARRAY_ITEMS_TYPES = ['Symbol'];
 const MANAGABLE_NUMBER_OF_LOCALES = 4;
 
 const StyleTagHidingUnsupportedMarkdownEditorButtons = () => {
@@ -51,7 +52,9 @@ export const InitialValueTabComponent = ({
   fields,
   onChange,
 }: InitialValueTabComponentProps) => {
-  const isFieldTypeSupported = SUPPORTED_FIELD_TYPES.includes(ctField.type);
+  const isFieldTypeSupported =
+    SUPPORTED_FIELD_TYPES.includes(ctField.type) ||
+    (ctField.items && SUPPORTED_ARRAY_ITEMS_TYPES.includes(ctField.items.type));
   const locales: Locale[] = localeStore.getLocales();
   const defaultLocale: Locale = localeStore.getDefaultLocale();
   const otherLocales = locales.filter(
