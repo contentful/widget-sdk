@@ -1,10 +1,9 @@
 import React from 'react';
-import { render, screen, waitFor, fireEvent, cleanup } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { generateFilterDefinitions } from './FilterDefinitions';
 import { UsersList } from './UsersList';
 import { ModalLauncher } from '@contentful/forma-36-react-components';
 import * as fake from 'test/helpers/fakeFactory';
-import cleanupNotifications from 'test/helpers/cleanupNotifications';
 import {
   removeMembership,
   getMemberships,
@@ -15,6 +14,7 @@ import { getBasePlan } from 'features/pricing-entities';
 import { THRESHOLD_NUMBER_TO_DISPLAY_BANNER } from './UserLimitBanner';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'core/react-routing';
+import { getBrowserStorage } from 'core/services/BrowserStorage';
 
 const filters = generateFilterDefinitions({ hasSsoEnabled: true });
 
@@ -57,8 +57,16 @@ jest.mock('access_control/OrganizationMembershipRepository', () => ({
 jest.mock('features/pricing-entities', () => ({
   getBasePlan: jest.fn(),
 }));
+jest.mock('core/services/BrowserStorage', () => {
+  const localStorage = {
+    get: jest.fn(),
+    set: jest.fn(),
+  };
 
-jest.useFakeTimers();
+  return {
+    getBrowserStorage: () => localStorage,
+  };
+});
 
 async function build() {
   render(
@@ -82,11 +90,9 @@ async function build() {
 describe('UsersList', () => {
   beforeEach(() => {
     jest.spyOn(ModalLauncher, 'open').mockImplementation(() => Promise.resolve(true));
-  });
 
-  afterEach(() => {
-    cleanup();
-    cleanupNotifications();
+    // clean up search query from the location so tests don't share the ame state
+    window.history.replaceState({}, '', `${window.location.pathname}`);
   });
 
   it('should render users list and filters', async () => {
@@ -102,6 +108,19 @@ describe('UsersList', () => {
     expect(screen.getAllByTestId('organization-membership-list-row')).toHaveLength(
       mockOrgMemberships.length
     );
+  });
+
+  it('should fetch based on stored filters in localstorage', async () => {
+    getBrowserStorage().get.mockReturnValueOnce({ skip: 100, limit: 50 });
+    await build({});
+    expect(screen.getAllByTestId('search-filter')).toHaveLength(filters.length);
+    expect(getMemberships).toHaveBeenCalledWith(mockOrgEndpoint, {
+      order: '-sys.createdAt',
+      query: '',
+      include: ['sys.user'],
+      skip: 100,
+      limit: 50,
+    });
   });
 
   it('should get users with correct query when pagination changes', async () => {
