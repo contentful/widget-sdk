@@ -134,20 +134,11 @@ orbs:
               TERM: xterm
         resource_class: large
         environment:
-          CYPRESS_baseUrl: https://app.flinkly.com?ui_version=${CIRCLE_SHA1}
+          CYPRESS_baseUrl: https://app.contentful.com
         working_directory: /home/circleci/components/ui-extensions-sdk
         steps:
-          - run:
-              name: Provide NPM Token
-              command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
           - checkout:
               path: /home/circleci/components/user_interface
-          - run:
-              name: Install user_interface dependencies
-              working_directory: /home/circleci/components/user_interface
-              command: npm ci
-              environment:
-                CYPRESS_INSTALL_BINARY: 0
           - run:
               name: Clone master branch of ui-extensions-sdk
               command: git clone git@github.com:contentful/ui-extensions-sdk.git .
