@@ -12,67 +12,189 @@
   xml:space="preserve"
 >
 <style type="text/css">
-	.st0{fill:url(#SVGID_1_);}
-	.st1{fill:none;}
-	.st2{fill:#DBECFE;}
-	.st3{fill:#FFD840;}
-	.st4{fill:#FFE068;}
-	.st5{fill:#FFE080;}
-	.st6{fill:#FFDB51;}
-	.st7{fill:#FFEA98;}
-	.st8{fill:#FFDC53;}
-	.st9{fill:#FFDF64;}
-	.st10{fill:#4E97EE;}
-	.st11{fill:#63A3F0;}
-	.st12{fill:#61A2F0;}
-	.st13{fill:#6CA9F1;}
-	.st14{fill:#5EA0F0;}
-	.st15{fill:#599DEF;}
-	.st16{fill:#75AEF2;}
-	.st17{fill:#81B5F3;}
-	.st18{fill:#C5E0FC;}
-	.st19{fill:#7CB2F2;}
-	.st20{fill:#6FABF1;}
-	.st21{fill:#14D997;}
-	.st22{fill:#29DCA0;}
-	.st23{fill:#22DB9D;}
-	.st24{fill:#48E1AE;}
-	.st25{fill:#58E4B5;}
-	.st26{fill:#30DEA3;}
-	.st27{fill:#51E3B2;}
-	.st28{fill:#40E0AB;}
-	.st29{fill:#2EDDA2;}
-	.st30{fill:#3CDFA9;}
-	.st31{opacity:0.2;}
-	.st32{fill:#0FA371;}
-	.st33{fill:#ECB855;}
-	.st34{fill:#9DBCE1;}
-	.st35{fill:#ADA8A3;}
-	.st36{opacity:0.26;}
-	.st37{fill:#73ADF2;}
-	.st38{fill:#0959AA;}
-	.st39{fill:#276DB4;}
-	.st40{fill:#246BB3;}
-	.st41{fill:#3375B8;}
-	.st42{fill:#1F68B2;}
-	.st43{fill:#1863AF;}
-	.st44{opacity:0.2;fill:#276DB4;enable-background:new    ;}
-	.st45{fill:#FFDA4B;}
-	.st46{fill:#FFE377;}
-	.st47{fill:#FFDC57;}
-	.st48{fill:#FFE272;}
-	.st49{fill:#FFDC55;}
-	.st50{fill:#FFDE60;}
-	.st51{fill:#93C5FA;}
-	.st52{opacity:0.3;}
-	.st53{fill:#306BC4;}
-	.st54{fill:#004699;}
-	.st55{fill:#00459F;}
-	.st56{fill:#BA9857;}
-	.st57{fill:#3ADFA8;}
-	.st58{fill:#B18A40;}
-	.st59{fill:#0ECC87;}
-</style>
+.st0 {
+  fill: url(#SVGID_1_);
+}
+.st1 {
+  fill: none;
+}
+.st2 {
+  fill: #dbecfe;
+}
+.st3 {
+  fill: #ffd840;
+}
+.st4 {
+  fill: #ffe068;
+}
+.st5 {
+  fill: #ffe080;
+}
+.st6 {
+  fill: #ffdb51;
+}
+.st7 {
+  fill: #ffea98;
+}
+.st8 {
+  fill: #ffdc53;
+}
+.st9 {
+  fill: #ffdf64;
+}
+.st10 {
+  fill: #4e97ee;
+}
+.st11 {
+  fill: #63a3f0;
+}
+.st12 {
+  fill: #61a2f0;
+}
+.st13 {
+  fill: #6ca9f1;
+}
+.st14 {
+  fill: #5ea0f0;
+}
+.st15 {
+  fill: #599def;
+}
+.st16 {
+  fill: #75aef2;
+}
+.st17 {
+  fill: #81b5f3;
+}
+.st18 {
+  fill: #c5e0fc;
+}
+.st19 {
+  fill: #7cb2f2;
+}
+.st20 {
+  fill: #6fabf1;
+}
+.st21 {
+  fill: #14d997;
+}
+.st22 {
+  fill: #29dca0;
+}
+.st23 {
+  fill: #22db9d;
+}
+.st24 {
+  fill: #48e1ae;
+}
+.st25 {
+  fill: #58e4b5;
+}
+.st26 {
+  fill: #30dea3;
+}
+.st27 {
+  fill: #51e3b2;
+}
+.st28 {
+  fill: #40e0ab;
+}
+.st29 {
+  fill: #2edda2;
+}
+.st30 {
+  fill: #3cdfa9;
+}
+.st31 {
+  opacity: 0.2;
+}
+.st32 {
+  fill: #0fa371;
+}
+.st33 {
+  fill: #ecb855;
+}
+.st34 {
+  fill: #9dbce1;
+}
+.st35 {
+  fill: #ada8a3;
+}
+.st36 {
+  opacity: 0.26;
+}
+.st37 {
+  fill: #73adf2;
+}
+.st38 {
+  fill: #0959aa;
+}
+.st39 {
+  fill: #276db4;
+}
+.st40 {
+  fill: #246bb3;
+}
+.st41 {
+  fill: #3375b8;
+}
+.st42 {
+  fill: #1f68b2;
+}
+.st43 {
+  fill: #1863af;
+}
+.st44 {
+  opacity: 0.2;
+  fill: #276db4;
+  enable-background: new;
+}
+.st45 {
+  fill: #ffda4b;
+}
+.st46 {
+  fill: #ffe377;
+}
+.st47 {
+  fill: #ffdc57;
+}
+.st48 {
+  fill: #ffe272;
+}
+.st49 {
+  fill: #ffdc55;
+}
+.st50 {
+  fill: #ffde60;
+}
+.st51 {
+  fill: #93c5fa;
+}
+.st52 {
+  opacity: 0.3;
+}
+.st53 {
+  fill: #306bc4;
+}
+.st54 {
+  fill: #004699;
+}
+.st55 {
+  fill: #00459f;
+}
+.st56 {
+  fill: #ba9857;
+}
+.st57 {
+  fill: #3adfa8;
+}
+.st58 {
+  fill: #b18a40;
+}
+.st59 {
+  fill: #0ecc87;
+}
+  </style>
 <g id="Layer_1_1_">
 </g>
 <g id="Layer_2_1_">

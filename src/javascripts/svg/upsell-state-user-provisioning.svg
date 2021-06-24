@@ -11,85 +11,253 @@
   xml:space="preserve"
 >
 <style type="text/css">
-	.st0{fill:url(#SVGID_1_);}
-	.st1{clip-path:url(#SVGID_3_);fill:#E5F0FC;}
-	.st2{clip-path:url(#SVGID_3_);fill:#4E97EE;}
-	.st3{clip-path:url(#SVGID_3_);fill:#D2E2F6;}
-	.st4{clip-path:url(#SVGID_3_);fill:#488EE8;}
-	.st5{clip-path:url(#SVGID_3_);fill:#5A9EEF;}
-	.st6{clip-path:url(#SVGID_3_);fill:#306BC4;}
-	.st7{fill:#14D997;}
-	.st8{fill:#FFE07F;}
-	.st9{fill:#FFFDF9;}
-	.st10{fill:#FFFCF3;}
-	.st11{fill:#FFF6DB;}
-	.st12{fill:#10D38B;}
-	.st13{fill:#D0F5E5;}
-	.st14{fill:#FFDA71;}
-	.st15{fill:#FFF5D8;}
-	.st16{fill:#FFEFC3;}
-	.st17{fill:#41E0AB;}
-	.st18{fill:#4AC68D;}
-	.st19{fill:#51E3B2;}
-	.st20{fill:#B18A40;}
-	.st21{fill:#A27833;}
-	.st22{fill:#BA9857;}
-	.st23{fill:#0959AA;}
-	.st24{fill:#A0823B;}
-	.st25{fill:#08549E;}
-	.st26{fill:url(#SVGID_4_);}
-	.st27{clip-path:url(#SVGID_6_);fill:#E5F0FC;}
-	.st28{clip-path:url(#SVGID_6_);fill:#4E97EE;}
-	.st29{clip-path:url(#SVGID_6_);fill:#D2E2F6;}
-	.st30{clip-path:url(#SVGID_6_);fill:#488EE8;}
-	.st31{clip-path:url(#SVGID_6_);fill:#5A9EEF;}
-	.st32{clip-path:url(#SVGID_6_);fill:#306BC4;}
-	.st33{fill:#C5A872;}
-	.st34{fill:#8C713C;}
-	.st35{fill:#E8C16F;}
-	.st36{fill:#306BC4;}
-	.st37{fill:#E0E9F6;}
-	.st38{fill:#AD996E;}
-	.st39{fill:#2A62BD;}
-	.st40{fill:#0FA371;}
-	.st41{fill:#6490D3;}
-	.st42{fill:#457ACA;}
-	.st43{fill:#C1A166;}
-	.st44{fill:#FFD85F;}
-	.st45{fill:url(#SVGID_7_);}
-	.st46{fill:#3068AB;}
-	.st47{fill:#C19C59;}
-	.st48{fill:#FFD153;}
-	.st49{fill:#245AA4;}
-	.st50{fill:#1E4E98;}
-	.st51{fill:#FFE289;}
-	.st52{fill:#43E1AC;}
-	.st53{fill:#D0F7EA;}
-	.st54{fill:#A6F1D7;}
-	.st55{fill:#38DB9F;}
-	.st56{fill:#AEF0D9;}
-	.st57{fill:#8BEBC7;}
-	.st58{fill:#F2CF8D;}
-	.st59{fill:#F0C87A;}
-	.st60{fill:#366FC6;}
-	.st61{fill:#ECB855;}
-	.st62{fill:#EDBB5C;}
-	.st63{fill:#FFDB6A;}
-	.st64{fill:#0A6D4C;}
-	.st65{fill:#A67D36;}
-	.st66{fill:#B48F48;}
-	.st67{fill:#0EA789;}
-	.st68{fill:#2052B2;}
-	.st69{fill:url(#SVGID_8_);}
-	.st70{fill:#1C4BAC;}
-	.st71{fill:url(#SVGID_9_);}
-	.st72{fill:#B48B3F;}
-	.st73{fill:#204F9C;}
-	.st74{fill:#2A5FA5;}
-	.st75{fill:#BB9959;}
-	.st76{fill:#FFDE77;}
-	.st77{fill:#2C65BF;}
-</style>
+.st0 {
+  fill: url(#SVGID_1_);
+}
+.st1 {
+  clip-path: url(#SVGID_3_);
+  fill: #e5f0fc;
+}
+.st2 {
+  clip-path: url(#SVGID_3_);
+  fill: #4e97ee;
+}
+.st3 {
+  clip-path: url(#SVGID_3_);
+  fill: #d2e2f6;
+}
+.st4 {
+  clip-path: url(#SVGID_3_);
+  fill: #488ee8;
+}
+.st5 {
+  clip-path: url(#SVGID_3_);
+  fill: #5a9eef;
+}
+.st6 {
+  clip-path: url(#SVGID_3_);
+  fill: #306bc4;
+}
+.st7 {
+  fill: #14d997;
+}
+.st8 {
+  fill: #ffe07f;
+}
+.st9 {
+  fill: #fffdf9;
+}
+.st10 {
+  fill: #fffcf3;
+}
+.st11 {
+  fill: #fff6db;
+}
+.st12 {
+  fill: #10d38b;
+}
+.st13 {
+  fill: #d0f5e5;
+}
+.st14 {
+  fill: #ffda71;
+}
+.st15 {
+  fill: #fff5d8;
+}
+.st16 {
+  fill: #ffefc3;
+}
+.st17 {
+  fill: #41e0ab;
+}
+.st18 {
+  fill: #4ac68d;
+}
+.st19 {
+  fill: #51e3b2;
+}
+.st20 {
+  fill: #b18a40;
+}
+.st21 {
+  fill: #a27833;
+}
+.st22 {
+  fill: #ba9857;
+}
+.st23 {
+  fill: #0959aa;
+}
+.st24 {
+  fill: #a0823b;
+}
+.st25 {
+  fill: #08549e;
+}
+.st26 {
+  fill: url(#SVGID_4_);
+}
+.st27 {
+  clip-path: url(#SVGID_6_);
+  fill: #e5f0fc;
+}
+.st28 {
+  clip-path: url(#SVGID_6_);
+  fill: #4e97ee;
+}
+.st29 {
+  clip-path: url(#SVGID_6_);
+  fill: #d2e2f6;
+}
+.st30 {
+  clip-path: url(#SVGID_6_);
+  fill: #488ee8;
+}
+.st31 {
+  clip-path: url(#SVGID_6_);
+  fill: #5a9eef;
+}
+.st32 {
+  clip-path: url(#SVGID_6_);
+  fill: #306bc4;
+}
+.st33 {
+  fill: #c5a872;
+}
+.st34 {
+  fill: #8c713c;
+}
+.st35 {
+  fill: #e8c16f;
+}
+.st36 {
+  fill: #306bc4;
+}
+.st37 {
+  fill: #e0e9f6;
+}
+.st38 {
+  fill: #ad996e;
+}
+.st39 {
+  fill: #2a62bd;
+}
+.st40 {
+  fill: #0fa371;
+}
+.st41 {
+  fill: #6490d3;
+}
+.st42 {
+  fill: #457aca;
+}
+.st43 {
+  fill: #c1a166;
+}
+.st44 {
+  fill: #ffd85f;
+}
+.st45 {
+  fill: url(#SVGID_7_);
+}
+.st46 {
+  fill: #3068ab;
+}
+.st47 {
+  fill: #c19c59;
+}
+.st48 {
+  fill: #ffd153;
+}
+.st49 {
+  fill: #245aa4;
+}
+.st50 {
+  fill: #1e4e98;
+}
+.st51 {
+  fill: #ffe289;
+}
+.st52 {
+  fill: #43e1ac;
+}
+.st53 {
+  fill: #d0f7ea;
+}
+.st54 {
+  fill: #a6f1d7;
+}
+.st55 {
+  fill: #38db9f;
+}
+.st56 {
+  fill: #aef0d9;
+}
+.st57 {
+  fill: #8bebc7;
+}
+.st58 {
+  fill: #f2cf8d;
+}
+.st59 {
+  fill: #f0c87a;
+}
+.st60 {
+  fill: #366fc6;
+}
+.st61 {
+  fill: #ecb855;
+}
+.st62 {
+  fill: #edbb5c;
+}
+.st63 {
+  fill: #ffdb6a;
+}
+.st64 {
+  fill: #0a6d4c;
+}
+.st65 {
+  fill: #a67d36;
+}
+.st66 {
+  fill: #b48f48;
+}
+.st67 {
+  fill: #0ea789;
+}
+.st68 {
+  fill: #2052b2;
+}
+.st69 {
+  fill: url(#SVGID_8_);
+}
+.st70 {
+  fill: #1c4bac;
+}
+.st71 {
+  fill: url(#SVGID_9_);
+}
+.st72 {
+  fill: #b48b3f;
+}
+.st73 {
+  fill: #204f9c;
+}
+.st74 {
+  fill: #2a5fa5;
+}
+.st75 {
+  fill: #bb9959;
+}
+.st76 {
+  fill: #ffde77;
+}
+.st77 {
+  fill: #2c65bf;
+}
+  </style>
 <g id="Layer_1">
 	<g>
 		

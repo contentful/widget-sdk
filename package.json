@@ -153,7 +153,7 @@
     "@pact-foundation/pact-web": "9.10.0",
     "@peculiar/webcrypto": "^1.1.7",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
-    "@prettier/plugin-xml": "^0.7.2",
+    "@prettier/plugin-xml": "^0.13.1",
     "@svgr/webpack": "^5.5.0",
     "@testing-library/cypress": "^6.0.0",
     "@testing-library/dom": "^7.31.0",
