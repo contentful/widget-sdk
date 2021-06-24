@@ -134,9 +134,7 @@ orbs:
               TERM: xterm
         resource_class: large
         environment:
-          CYPRESS_baseUrl: http://localhost:3001
-          TEST_LOCAL_SDK: true
-          UI_CONFIG: dev-on-production
+          CYPRESS_baseUrl: https://app.flinkly.com?ui_version=${CIRCLE_SHA1}
         working_directory: /home/circleci/components/ui-extensions-sdk
         steps:
           - run:
@@ -156,15 +154,6 @@ orbs:
           - run:
               name: Install ui-extensions-sdk dependencies
               command: npm ci
-          - run:
-              name: Start user_interface locally
-              working_directory: /home/circleci/components/user_interface
-              command: npm start
-              background: true
-          - run:
-              name: Wait http://localhost:3001 to be ready
-              command: npm run wait-for-app
-              working_directory: /home/circleci/components/user_interface
           - run:
               name: Run integration tests
               environment:
