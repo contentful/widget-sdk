@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react';
-import type { Trial } from '@contentful/experience-cma-utils';
 import { getTrialsWithCache } from '../services/TrialService';
-import { hasExpired, isActive } from '../utils/utils';
+import { hasExpired, isActive, isTrialSpace } from '../utils/utils';
 import { useAppsTrial } from './useAppsTrial';
-
-const isTrialSpace = (trial: Trial) =>
-  trial.productId === 'space_size_5' || trial.productId === 'space_size_3';
 
 type TrialSpaceSpace = {
   isActiveTrialSpace: boolean;

@@ -27,6 +27,7 @@ export enum FLAGS {
   EXPERIMENT_PREASSIGN_ONBOARDING_FLOW = 'test-growth-06-2021-preassign-onboarding-flow',
   INITIAL_FIELD_VALUES = 'dante-06-2021-initial-field-values',
   APPS_TRIAL_DURATION = 'sparks-06-2021-apps-trial-60-days',
+  DECOUPLED_TRIAL = 'moi-06-2021-decouple-trials-from-zuora',
 
   // So that we can test the fallback mechanism without needing to rely on an actual
   // flag above, we use these special flags.
@@ -58,6 +59,7 @@ export const fallbackValues = {
   [FLAGS.PREASSIGN_ONBOARDING_FLOW]: false,
   [FLAGS.INITIAL_FIELD_VALUES]: false,
   [FLAGS.APPS_TRIAL_DURATION]: false,
+  [FLAGS.DECOUPLED_TRIAL]: false,
 
   [FLAGS.REACT_MIGRATION_CT]: false,
 

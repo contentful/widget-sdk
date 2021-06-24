@@ -1,6 +1,7 @@
 import type { Trial } from '@contentful/experience-cma-utils';
 import moment from 'moment';
 import { getSpaces } from 'services/TokenStore';
+import { OrganizationFeatures } from 'data/CMA/ProductCatalog';
 
 export const calcTrialDaysLeft = (trialEndDate?: string | null) => {
   if (!trialEndDate) {
@@ -38,3 +39,14 @@ export const hasExpired = (trial?: Trial) => {
   const endsAt = new Date(trial.endsAt);
   return today > endsAt;
 };
+
+export const isAppsTrial = (trial: Trial) =>
+  Boolean(
+    !trial.sys.parent &&
+      trial.sys.organization &&
+      trial.sys.features?.includes(OrganizationFeatures.PC_ORG_COMPOSE_APP)
+  );
+
+export const isAppsTrialSpace = (trial: Trial) => Boolean(trial.sys.parent && trial.sys.space);
+
+export const isTrialSpace = (trial: Trial) => Boolean(trial.sys.space);

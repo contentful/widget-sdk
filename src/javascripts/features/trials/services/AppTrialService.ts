@@ -3,6 +3,7 @@ import LocaleStore from 'services/localeStore';
 import importer from '../utils/importer';
 import { ContentImportError, TrialSpaceServerError } from '../utils/AppTrialError';
 import { getCMAClient } from 'core/services/usePlainCMAClient';
+import { FLAGS, getVariation } from 'core/feature-flags';
 
 const FEATURE_TO_APP_NAME = {
   compose_app: 'compose',
@@ -11,12 +12,20 @@ const FEATURE_TO_APP_NAME = {
 
 export const startAppTrial = async (organizationId: string) => {
   try {
+    const isTrialDecoupled = await getVariation(FLAGS.DECOUPLED_TRIAL, { organizationId });
+
     const trialsClient = getCMAClient({ organizationId }).internal.trials;
-    const appsTrial = await trialsClient.create({ productId: 'add_on_compose_launch' });
+    const appsTrial = await trialsClient.create({
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      productId: isTrialDecoupled ? 'add_on.compose_launch' : 'add_on_compose_launch',
+    });
     const {
       sys: { space },
     } = await trialsClient.create({
-      productId: 'space_size_3',
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      productId: isTrialDecoupled ? 'space.medium' : 'space_size_3',
       parentId: appsTrial.sys.id,
       spaceName: 'Contentful Apps',
     });

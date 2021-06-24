@@ -1,13 +1,7 @@
-import type { Trial } from '@contentful/experience-cma-utils';
-
 import { useEffect, useState } from 'react';
 import { getOrgFeature, OrganizationFeatures } from 'data/CMA/ProductCatalog';
 import { getTrialsWithCache } from '../services/TrialService';
-import { hasExpired, isActive } from '../utils/utils';
-
-const isAppsTrial = (trial: Trial) => trial.productId === 'add_on_compose_launch';
-
-const isAppsTrialSpace = (trial: Trial) => trial.sys.parent && trial.productId === 'space_size_3';
+import { hasExpired, isActive, isAppsTrial, isAppsTrialSpace } from '../utils/utils';
 
 type AppsTrialState = {
   canStartTrial: boolean;
