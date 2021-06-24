@@ -1,7 +1,6 @@
 import React from 'react';
 import { get } from 'lodash';
-
-import StateRedirect from 'app/common/StateRedirect';
+import { ReactRouterRedirect } from 'core/react-routing';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import { ExtensionsForbiddenPage } from '../ExtensionsForbiddenPage';
 import { ExtensionsList } from '../ExtensionsList';
@@ -48,7 +47,7 @@ export function ExtensionsListRoute() {
           return <ExtensionListSkeleton />;
         }
         if (isError) {
-          return <StateRedirect path="spaces.detail.entries.list" />;
+          return <ReactRouterRedirect route={{ path: 'entries.list' }} />;
         }
         return (
           <React.Fragment>

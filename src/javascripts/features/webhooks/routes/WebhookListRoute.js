@@ -1,12 +1,12 @@
 import React from 'react';
 import { get } from 'lodash';
+import { ReactRouterRedirect } from 'core/react-routing';
 import { WebhookForbiddenPage } from '../WebhookForbiddenPage';
 import { WebhookList } from '../WebhookList';
 import { WebhookSkeletons } from '../skeletons/WebhookListRouteSkeleton';
 import { createWebhookTemplateDialogOpener } from '../createWebhookTemplateDialogOpener';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import { getSectionVisibility } from 'access_control/AccessChecker';
-import StateRedirect from 'app/common/StateRedirect';
 import * as Config from 'Config';
 import { getOrgFeature } from 'data/CMA/ProductCatalog';
 import DocumentTitle from 'components/shared/DocumentTitle';
@@ -60,7 +60,7 @@ export function WebhookListRoute() {
       return <WebhookForbiddenPage templateId={templateId} />;
     }
 
-    return <StateRedirect path="spaces.detail.entries.list" />;
+    return <ReactRouterRedirect route={{ path: 'entries.list' }} />;
   }
 
   return (
@@ -73,7 +73,7 @@ export function WebhookListRoute() {
           return <WebhookSkeletons.WebhooksListLoading />;
         }
         if (isError) {
-          return <StateRedirect path="spaces.detail.entries.list" />;
+          return <ReactRouterRedirect route={{ path: 'entries.list' }} />;
         }
         const [webhooks, hasAwsProxy] = data;
         return (

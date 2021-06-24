@@ -2,22 +2,19 @@ import React from 'react';
 
 import { render } from '@testing-library/react';
 import { AdminOnly } from './AdminOnly';
-
-import * as $stateMocked from 'ng/$state';
+import { ReactRouterRedirect } from 'core/react-routing';
 import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { space } from '__mocks__/ng/spaceContext';
 
 const flush = () => new Promise((resolve) => setImmediate(resolve));
 
+jest.mock('core/react-routing', () => ({
+  ReactRouterRedirect: jest.fn().mockImplementation(() => {
+    return null;
+  }),
+}));
+
 describe('AdminOnly', () => {
-  beforeEach(() => {
-    $stateMocked.go.mockClear();
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   const setAdmin = (isAdmin) => {
     space.data.spaceMember.admin = isAdmin;
   };
@@ -50,26 +47,7 @@ describe('AdminOnly', () => {
       );
       await flush();
       expect(container).not.toHaveTextContent('This is visible only for admins');
-      expect($stateMocked.go).toHaveBeenCalledWith(
-        'spaces.detail.entries.list',
-        undefined,
-        undefined
-      );
-    });
-
-    it('should render StateRedirect with custom "to" if "redirect" is passed', async () => {
-      expect.assertions(2);
-      setAdmin(false);
-      const { container } = render(
-        <SpaceEnvContextProvider>
-          <AdminOnly redirect="^.home">
-            <div>This is visible only for admins</div>
-          </AdminOnly>
-        </SpaceEnvContextProvider>
-      );
-      await flush();
-      expect(container).not.toHaveTextContent('This is visible only for admins');
-      expect($stateMocked.go).toHaveBeenCalledWith('^.home', undefined, undefined);
+      expect(ReactRouterRedirect).toHaveBeenCalledWith({ route: { path: 'entries.list' } }, {});
     });
 
     it('can use conditional rendering for more complex scenarios', () => {
@@ -84,7 +62,7 @@ describe('AdminOnly', () => {
       );
       expect(container).not.toHaveTextContent('This is visible only for admins');
       expect(container).toHaveTextContent('You have no access to see this page');
-      expect($stateMocked.go).not.toHaveBeenCalled();
+      expect(ReactRouterRedirect).not.toHaveBeenCalled();
     });
   });
 });

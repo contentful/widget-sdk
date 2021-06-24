@@ -24,7 +24,7 @@ import { css } from 'emotion';
 
 import { getFullNameOrEmail } from 'app/OrganizationSettings/Users/UserUtils';
 import moment from 'moment';
-import StateLink from 'app/common/StateLink';
+import { ReactRouterLink } from 'core/react-routing';
 
 const styles = {
   table: css({
@@ -88,11 +88,10 @@ function UserTeamRow({ membership, onRemove }) {
     <TableRow testId="user-team-list.item">
       <TableCell>
         <div className={styles.ellipsis}>
-          <StateLink
-            path="account.organizations.teams.detail"
-            params={{ teamId: membership.sys.team.sys.id }}>
+          <ReactRouterLink
+            route={{ path: 'organizations.teams.detail', teamId: membership.sys.team.sys.id }}>
             {membership.sys.team.name}
-          </StateLink>
+          </ReactRouterLink>
         </div>
       </TableCell>
       <TableCell>

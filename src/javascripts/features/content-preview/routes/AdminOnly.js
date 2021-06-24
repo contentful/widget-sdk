@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import StateRedirect from 'app/common/StateRedirect';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { isAdmin } from 'core/services/SpaceEnvContext/utils';
+import { ReactRouterRedirect } from 'core/react-routing';
 
 export function AdminOnly(props) {
   const { currentSpace } = useSpaceEnvContext();
@@ -15,17 +16,12 @@ export function AdminOnly(props) {
     return props.render(StateRedirect);
   }
 
-  return <StateRedirect path={props.redirect} />;
+  return <ReactRouterRedirect route={{ path: 'entries.list' }} />;
 }
 
 AdminOnly.propTypes = {
   children: PropTypes.any,
   render: PropTypes.func,
-  redirect: PropTypes.string,
 };
 
 AdminOnly.displayName = 'AdminOnly';
-
-AdminOnly.defaultProps = {
-  redirect: 'spaces.detail.entries.list',
-};

@@ -64,7 +64,7 @@ const authorSpace = {
 
 describe('#getFirstAccessibleSref', () => {
   it('handles all-true scenario', () => {
-    expect(getFirstAccessibleSref(customRoleSpace).path).toBe('.entries.list');
+    expect(getFirstAccessibleSref(customRoleSpace).path).toBe('spaces.detail.entries.list');
   });
 
   it('handles some-true scenario', () => {
@@ -92,7 +92,7 @@ describe('#getFirstAccessibleSref', () => {
   });
 
   it('returns first available screen sref when activated and admin', () => {
-    expect(getFirstAccessibleSref(adminActivatedSpace).path).toBe('.entries.list');
+    expect(getFirstAccessibleSref(adminActivatedSpace).path).toBe('spaces.detail.entries.list');
   });
 
   it('returns home screen sref when user is author or editor', () => {

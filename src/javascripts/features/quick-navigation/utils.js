@@ -4,13 +4,10 @@ import { includes, get, orderBy, compact } from 'lodash';
 import TheLocaleStore from 'services/localeStore';
 import * as EntityHelpers from 'app/entity_editor/entityHelpers';
 import { hasEnvironmentSectionInUrl } from 'core/react-routing/hasEnvironmentSectionInUrl';
+import { routes } from 'core/react-routing';
 
 const RESULTS_LIMIT = 20;
 export const MIN_QUERY_LENGTH = 2;
-
-const buildSearchPathParams = (type) => ({
-  path: ['spaces', 'detail', type, 'list'],
-});
 
 const buildPathParams = (id, type) => {
   const params = {};
@@ -22,7 +19,13 @@ const buildPathParams = (id, type) => {
     params.contentTypeId = id;
   }
 
-  const path = hasEnvironmentSectionInUrl()
+  const withEnvironment = hasEnvironmentSectionInUrl();
+
+  if (type === 'content_types') {
+    return routes['content_types.detail']({ withEnvironment }, { contentTypeId: id });
+  }
+
+  const path = withEnvironment
     ? ['spaces', 'environment', type, 'detail']
     : ['spaces', 'detail', type, 'detail'];
 
@@ -131,19 +134,16 @@ const queryContentTypes = (query) => {
 
 const linksToSearch = {
   contentTypes: {
-    link: buildSearchPathParams('content_types'),
     type: 'search_link',
     linkType: 'content_types',
     title: 'Content Types',
   },
   entries: {
-    link: buildSearchPathParams('entries'),
     type: 'search_link',
     linkType: 'entries',
     title: 'Entries',
   },
   assets: {
-    link: buildSearchPathParams('assets'),
     type: 'search_link',
     linkType: 'assets',
     title: 'Assets',

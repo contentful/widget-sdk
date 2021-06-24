@@ -25,6 +25,7 @@ import { CURRENT, SNAPSHOT } from './utils';
 import { useUnsavedChangesModal } from 'core/hooks';
 import { loadEntry as loadEditorData } from 'app/entity_editor/DataLoader';
 import { go } from 'states/Navigator';
+import { router } from 'core/react-routing';
 import { LoadingState } from 'features/loading-state';
 import { getSpaceContext } from 'classes/spaceContext';
 
@@ -161,7 +162,7 @@ const SnapshotComparator = (props) => {
       .then(setEditorData)
       .catch(() => {
         Notification.error('Entry not found.');
-        go({ path: 'spaces.detail.entries.list' });
+        router.navigate({ path: 'entries.list' });
       });
   }, [props.entryId]);
 

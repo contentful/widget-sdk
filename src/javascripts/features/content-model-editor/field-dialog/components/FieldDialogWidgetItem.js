@@ -6,7 +6,6 @@ import classNames from 'classnames';
 import Icon from 'ui/Components/Icon';
 import { ProductIcon } from '@contentful/forma-36-react-components/dist/alpha';
 import tokens from '@contentful/forma-36-tokens';
-import StateLink from 'app/common/StateLink';
 import { css } from 'emotion';
 import { WidgetNamespace, isCustomWidget } from '@contentful/widget-renderer';
 import { ReactRouterLink } from 'core/react-routing';
@@ -84,13 +83,12 @@ class FieldDialogWidgetItem extends Component {
           <div className="field-dialog__widget-item-header">
             <span>App</span>
             {isAdmin && (
-              <StateLink
-                path="^.^.^.apps.detail"
-                params={{ appId: widget.appId }}
+              <ReactRouterLink
+                route={{ path: 'apps.app-configuration', appId: widget.appId }}
                 target="_blank"
                 rel="noopener noreferrer">
                 <Icon name="edit" scale="0.9" />
-              </StateLink>
+              </ReactRouterLink>
             )}
           </div>
         )}

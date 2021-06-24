@@ -19,6 +19,7 @@ import { trackClickCTA } from '../tracking';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
 import { useSpaceEnvContext } from 'core/services/SpaceEnvContext/useSpaceEnvContext';
 import { useSpaceEnvCMAClient } from 'core/services/usePlainCMAClient';
+import { router } from 'core/react-routing';
 
 const styles = {
   flexContainer: css({ display: 'flex', flexWrap: 'nowrap', justifyContent: 'space-between' }),
@@ -83,9 +84,7 @@ export const ExampleProjectOverview = ({ cdaToken, cpaToken }) => {
         },
       });
     } else {
-      go({
-        path: ['spaces', 'detail', 'entries', 'list'],
-      });
+      router.navigate({ path: 'entries.list' });
     }
 
     setLoading(false);

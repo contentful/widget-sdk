@@ -3,7 +3,7 @@ import { values } from 'lodash';
 
 import * as AccessChecker from 'access_control/AccessChecker';
 import createFetcherComponent from 'app/common/createFetcherComponent';
-import StateRedirect from 'app/common/StateRedirect';
+import { ReactRouterRedirect } from 'core/react-routing';
 import DocumentTitle from 'components/shared/DocumentTitle';
 
 import { ContentPreviewListPage } from '../ContentPreviewListPage';
@@ -19,7 +19,7 @@ const ContentPreviewsFetcher = createFetcherComponent(() => {
 export function ContentPreviewListRoute() {
   const isForbidden = !AccessChecker.getSectionVisibility().settings;
   if (isForbidden) {
-    return <StateRedirect path="spaces.detail.entries.list" />;
+    return <ReactRouterRedirect route={{ path: 'entries.list' }} />;
   }
   return (
     <ContentPreviewsFetcher>
@@ -28,7 +28,7 @@ export function ContentPreviewListRoute() {
           return <ContentPreviewListSkeleton />;
         }
         if (isError) {
-          return <StateRedirect path="spaces.detail.entries.list" />;
+          return <ReactRouterRedirect route={{ path: 'entries.list' }} />;
         }
         return (
           <React.Fragment>

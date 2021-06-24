@@ -16,6 +16,9 @@ export type { SpacesRouteType } from './spaces';
 export { routes as assetsRoutes } from './assets';
 export type { AssetsRouteType } from './assets';
 
+export { routes as entriesRoutes } from './entries';
+export type { EntriesRouteType } from './entries';
+
 export { routes as invitationRoutes } from './invitations';
 export type { InvitationsRouteType } from './invitations';
 

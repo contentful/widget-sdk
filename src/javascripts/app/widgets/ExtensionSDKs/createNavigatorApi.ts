@@ -222,23 +222,17 @@ const navigateToSpaceEnvRoute = async ({
   spaceId,
   environmentId,
   route,
-  isMaster,
 }: {
   spaceId: string;
   environmentId: string;
   route: 'entries' | 'assets';
   isMaster: boolean;
 }) => {
-  await Navigator.go({
-    path: ['spaces', isMaster ? 'detail' : 'environment', route, 'list'],
-    params: {
-      spaceId,
-      environmentId,
-    },
-    options: {
-      notify: true,
-    },
-  });
+  if (route === 'entries') {
+    router.navigate({ path: 'entries.list', spaceId, environmentId }, { notify: true });
+  } else {
+    router.navigate({ path: 'assets.list', spaceId, environmentId }, { notify: true });
+  }
 };
 
 export function createReadOnlyNavigatorApi() {

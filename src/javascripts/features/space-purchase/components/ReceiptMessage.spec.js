@@ -2,8 +2,6 @@ import React from 'react';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { go } from 'states/Navigator';
-
 import { trackEvent } from '../utils/analyticsTracking';
 import { AddOnPurchaseError } from '../hooks/usePurchaseAddOn';
 import { SpaceCreationError } from '../hooks/useSpaceCreation';
@@ -11,6 +9,7 @@ import { SpaceChangeError } from '../hooks/useSpaceUpgrade';
 import { TemplateCreationError } from '../hooks/useTemplateCreation';
 import { ReceiptMessage } from './ReceiptMessage';
 import * as Fake from 'test/helpers/fakeFactory';
+import { router } from 'core/react-routing';
 
 const mockSpace = Fake.Space();
 
@@ -30,6 +29,13 @@ jest.mock('states/Navigator', () => ({
   go: jest.fn(),
 }));
 
+jest.mock('core/react-routing', () => ({
+  ...jest.requireActual('core/react-routing'),
+  router: {
+    navigate: jest.fn(),
+  },
+}));
+
 jest.mock('../hooks/useSessionMetadata', () => ({
   useSessionMetadata: jest.fn().mockReturnValue('sessionData'),
 }));
@@ -40,10 +46,7 @@ describe('ReceiptMessage', () => {
 
     userEvent.click(screen.getByTestId('rename-space-button'));
 
-    expect(go).toBeCalledWith({
-      params: { spaceId: '123' },
-      path: ['spaces', 'detail', 'settings', 'space'],
-    });
+    expect(router.navigate).toBeCalledWith({ spaceId: '123', path: 'settings.space' });
     expect(trackEvent).toBeCalledWith('rename_space_clicked', 'sessionData');
   });
 

@@ -16,7 +16,7 @@ import { LoadingCard } from './LoadingCard';
 import { applyTemplateToSpace, SelectedTemplate } from 'features/space-purchase';
 import { showReplaceSpaceWarning } from './ReplaceSpaceDialog';
 import { renameSpace, markExploreOnboardingSeen } from '../utils/util';
-import { go } from 'states/Navigator';
+import { router } from 'core/react-routing';
 
 const styles = {
   container: css({
@@ -59,7 +59,7 @@ export const SampleSpaceDialog = ({ onClose, onBack, spaceId, replaceSpace = fal
         renameSpace(selectedTemplate.name, spaceId);
         await applyTemplateToSpace(space, selectedTemplate);
       } finally {
-        go({ path: 'spaces.detail.entries.list' });
+        router.navigate({ path: 'entries.list', spaceId });
         Notification.success('You have successfully created a pre-built space.');
       }
     }

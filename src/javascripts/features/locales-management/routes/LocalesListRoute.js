@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import _ from 'lodash';
 import { LocalesListSkeleton } from '../skeletons/LocalesListSkeleton';
 import { LocalesListPricingTwo } from '../LocalesListPricingTwo';
-import StateRedirect from 'app/common/StateRedirect';
+import { ReactRouterRedirect } from 'core/react-routing';
 import createLegacyFeatureService from 'services/LegacyFeatureService';
 import { getSectionVisibility } from 'access_control/AccessChecker';
 import ForbiddenPage from 'ui/Pages/Forbidden/ForbiddenPage';
@@ -155,7 +155,7 @@ export const LocalesListRoute = () => {
   }
 
   if (error) {
-    return <StateRedirect path="spaces.detail.entries.list" />;
+    return <ReactRouterRedirect route={{ path: 'entries.list' }} />;
   }
 
   // get entitlementsSet from new API behind feature flag

@@ -86,7 +86,7 @@ const spaceEnvironment = {
       } else if (isHibernated(spaceData)) {
         router.navigate({ path: 'hibernation', spaceId: $stateParams.spaceId }, { reload: true });
       } else {
-        $state.go('.entries.list');
+        router.navigate({ path: 'entries.list', spaceId: $stateParams.spaceId });
       }
     },
   ],

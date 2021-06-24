@@ -2,12 +2,9 @@ import React from 'react';
 import { render } from '@testing-library/react';
 
 import { WebhookListRoute } from './WebhookListRoute';
-import * as $stateMocked from 'ng/$state';
 import * as AccessCheckerMocked from 'access_control/AccessChecker';
 import { SpaceEnvContext } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 import { MemoryRouter } from 'core/react-routing';
-
-const flush = () => new Promise((resolve) => setImmediate(resolve));
 
 const mockWebhookRepo = {
   getAll: jest.fn().mockResolvedValue([]),
@@ -50,7 +47,6 @@ const build = (props = {}) => {
 
 describe('WebhookListRoute', () => {
   beforeEach(() => {
-    $stateMocked.go.mockClear();
     mockWebhookRepo.getAll.mockClear();
     AccessCheckerMocked.getSectionVisibility.mockReset();
   });
@@ -59,36 +55,20 @@ describe('WebhookListRoute', () => {
     AccessCheckerMocked.getSectionVisibility.mockImplementation(() => ({ webhooks: isVisible }));
   };
 
-  it('should be resticted for non-admins and redirect should be called', async () => {
-    expect.assertions(3);
-    setSectionVisibility(false);
-    build();
-    await flush();
-    expect($stateMocked.go).toHaveBeenCalledTimes(1);
-    expect($stateMocked.go).toHaveBeenCalledWith(
-      'spaces.detail.entries.list',
-      undefined,
-      undefined
-    );
-    expect(mockWebhookRepo.getAll).not.toHaveBeenCalled();
-  });
-
   it('should show WebhookForbiddenPage if non-admin reaches page via deeplink templateId', () => {
-    expect.assertions(3);
+    expect.assertions(2);
     setSectionVisibility(false);
 
     const { getByTestId } = build({ templateId: 'algolia-index-entries' });
 
-    expect($stateMocked.go).not.toHaveBeenCalled();
     expect(mockWebhookRepo.getAll).not.toHaveBeenCalled();
     expect(getByTestId('webhooks.forbidden')).toBeInTheDocument();
   });
 
   it('should fetch webhooks if admin reaches that page', () => {
-    expect.assertions(3);
+    expect.assertions(2);
     setSectionVisibility(true);
     const { queryByTestId } = build();
-    expect($stateMocked.go).not.toHaveBeenCalled();
     expect(mockWebhookRepo.getAll).toHaveBeenCalledTimes(1);
     expect(queryByTestId('webhooks.forbidden')).toBeNull();
   });

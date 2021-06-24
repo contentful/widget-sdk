@@ -300,13 +300,15 @@ const teamsRoutes = {
 
 type SpaceRouteType = {
   path: 'settings.space';
+  spaceId?: string;
 };
 
 const spaceRoutes = {
-  'settings.space': (env: EnvironmentParams) => ({
+  'settings.space': (env: EnvironmentParams, params: Omit<SpaceRouteType, 'path'> = {}) => ({
     path: spaceEnvBase(env, 'settings'),
     params: {
       pathname: '/space',
+      ...params,
     },
   }),
 };

@@ -10,7 +10,7 @@ import type { RouteDefinition, CreateRouteDefinition } from 'core/react-routing'
 
 // Migrated to react-router pages must use `routes`, which returns CreateRoute able to build a path based on a current space/env.
 const SECTION_ACCESS_ORDER: [string, RouteDefinition | CreateRouteDefinition][] = [
-  ['entry', { path: '.entries.list' }],
+  ['entry', routes['entries.list']],
   ['contentType', routes['content_types.list']],
   ['asset', routes['assets.list']],
   ['apiKey', routes['api.keys.list']],

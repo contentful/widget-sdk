@@ -8,6 +8,7 @@ import { getState } from 'data/CMA/EntityState';
 import { EntityStatusTag } from 'components/shared/EntityStatusTag';
 import StateLink from 'app/common/StateLink';
 import { ResultItemIcon } from './ResultItemIcon';
+import { ReactRouterLink } from 'core/react-routing';
 
 const styles = {
   item: css({ padding: 0, margin: 0 }),
@@ -91,6 +92,16 @@ const EntityListItem = ({ item, index, highlightedIndex, closeModal, getItemProp
 );
 
 const SearchLinkListItem = ({ item, getItemProps, highlightedIndex, index, closeModal }) => {
+  let route;
+
+  if (item.linkType === 'entries') {
+    route = { path: 'entries.list' };
+  } else if (item.linkType === 'assets') {
+    route = { path: 'assets.list' };
+  } else {
+    route = { path: 'content_types.list' };
+  }
+
   return (
     <li
       key={index}
@@ -101,11 +112,7 @@ const SearchLinkListItem = ({ item, getItemProps, highlightedIndex, index, close
             ? cx(styles.highlightedItem, styles.item, styles.seeMoreItem)
             : cx(styles.item, styles.seeMoreItem),
       })}>
-      <StateLink
-        path={item.link.path}
-        params={item.link.params}
-        onClick={closeModal}
-        className={styles.entityLink}>
+      <ReactRouterLink route={route} onClick={closeModal} className={styles.entityLink}>
         <ResultItemIcon type={item.linkType} />
         <span className={styles.seeMoreLabel}>
           See all {item.total} {item.title}
@@ -113,7 +120,7 @@ const SearchLinkListItem = ({ item, getItemProps, highlightedIndex, index, close
         <div className={styles.entityStatusTag}>
           <Icon icon="ChevronRight" />
         </div>
-      </StateLink>
+      </ReactRouterLink>
     </li>
   );
 };

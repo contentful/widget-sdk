@@ -7,8 +7,8 @@ import {
   Heading,
   Button,
 } from '@contentful/forma-36-react-components';
+import { ReactRouterLink } from 'core/react-routing';
 
-import { go } from 'states/Navigator';
 import EmptyStateContainer from 'components/EmptyStateContainer/EmptyStateContainer';
 import EmptyStateAdminIllustration from 'svg/folder-illustration.svg';
 
@@ -24,9 +24,9 @@ export function OrgMembershipsSection() {
           <Paragraph>
             It seems like you’re not a member of any organization in Contentful.
           </Paragraph>
-          <Button onClick={() => go({ path: ['account', 'new_organization'] })}>
+          <ReactRouterLink component={Button} route={{ path: 'account.new_organization' }}>
             Create a new organization
-          </Button>
+          </ReactRouterLink>
         </EmptyStateContainer>
       </Typography>
     </Card>

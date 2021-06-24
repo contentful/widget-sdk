@@ -190,11 +190,10 @@ export function getSpaceNavigationItems({
     },
     {
       if: canNavigateTo('entry'),
-      sref: makeRef('entries.list', isUnscopedRoute),
-      rootSref: makeRef('entries', isUnscopedRoute),
       dataViewType: 'entry-list',
       navIcon: 'Content',
       title: 'Content',
+      ...makeReactRouterRef('entries.list', withEnvironment),
     },
     {
       if: canNavigateTo('asset'),

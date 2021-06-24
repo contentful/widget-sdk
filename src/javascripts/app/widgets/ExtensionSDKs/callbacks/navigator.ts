@@ -66,16 +66,25 @@ async function navigateToSpaceEnvRoute(
   route: 'entries' | 'assets',
   { spaceContext }: MakeNavigateToPageProps
 ) {
-  await Navigator.go({
-    path: ['spaces', spaceContext.isMaster ? 'detail' : 'environment', route, 'list'],
-    params: {
-      spaceId: spaceContext.spaceId,
-      environmentId: spaceContext.environmentId,
-    },
-    options: {
-      notify: true,
-    },
-  });
+  if (route === 'assets') {
+    await router.navigate(
+      {
+        path: 'assets.list',
+        spaceId: spaceContext.spaceId,
+        environmentId: spaceContext.environmentId,
+      },
+      { notify: true }
+    );
+  } else if (route === 'entries') {
+    await router.navigate(
+      {
+        path: 'entries.list',
+        spaceId: spaceContext.spaceId,
+        environmentId: spaceContext.environmentId,
+      },
+      { notify: true }
+    );
+  }
 }
 
 function onSlideInNavigation(fn) {

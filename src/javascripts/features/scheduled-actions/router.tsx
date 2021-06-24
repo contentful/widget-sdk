@@ -6,7 +6,13 @@ import { useSpaceEnvContext, useSpaceEnvContentTypes } from 'core/services/Space
 import StateRedirect from 'app/common/StateRedirect';
 
 import { ScheduledActionsFeatureFlag } from './ScheduledActionsFeatureFlag';
-import { CustomRouter, RouteErrorBoundary, Routes, Route } from 'core/react-routing';
+import {
+  CustomRouter,
+  RouteErrorBoundary,
+  Routes,
+  Route,
+  ReactRouterRedirect,
+} from 'core/react-routing';
 
 const ScheduledActionsListRoute = () => {
   const defaultLocale = TheLocaleStore.getDefaultLocale();
@@ -26,7 +32,7 @@ const ScheduledActionsListRoute = () => {
             />
           );
         } else if (currentVariation === false) {
-          return <StateRedirect path="spaces.detail.entries.list" />;
+          return <ReactRouterRedirect route={{ path: 'entries.list' }} />;
         }
         return null;
       }}

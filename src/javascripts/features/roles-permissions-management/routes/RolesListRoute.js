@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { sortBy } from 'lodash';
-import StateRedirect from 'app/common/StateRedirect';
+import { ReactRouterRedirect } from 'core/react-routing';
 import { RolesWorkbenchSkeleton } from '../skeletons/RolesWorkbenchSkeleton';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import * as accessChecker from 'access_control/AccessChecker';
@@ -83,7 +83,7 @@ export function RolesListRoute() {
             return <RolesWorkbenchSkeleton title="Roles" />;
           }
           if (isError) {
-            return <StateRedirect path="spaces.detail.entries.list" />;
+            return <ReactRouterRedirect route={{ path: 'entries.list' }} />;
           }
           return (
             <RolesList

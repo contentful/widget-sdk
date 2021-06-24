@@ -8,7 +8,7 @@ import { openDeleteSpaceDialog } from 'features/space-settings';
 import * as TokenStore from 'services/TokenStore';
 import { trackClickCTA } from '../tracking';
 import { isOwnerOrAdmin } from 'services/OrganizationRoles';
-
+import { router } from 'core/react-routing';
 import { CurrentSpaceAPIClientProvider } from 'core/services/APIClient/CurrentSpaceAPIClientContext';
 import { SpaceEnvContextProvider } from 'core/services/SpaceEnvContext/SpaceEnvContext';
 
@@ -46,6 +46,12 @@ jest.mock('features/space-settings', () => ({
 
 jest.mock('services/TokenStore', () => ({
   getSpace: jest.fn(),
+}));
+
+jest.mock('core/react-routing', () => ({
+  router: {
+    navigate: jest.fn(),
+  },
 }));
 
 const build = () => {
@@ -162,9 +168,7 @@ describe('ExampleProjectOverview', () => {
 
     await wait();
 
-    expect(go).toBeCalledWith({
-      path: ['spaces', 'detail', 'entries', 'list'],
-    });
+    expect(router.navigate).toBeCalledWith({ path: 'entries.list' });
   });
 
   it('should track when the user clicks the Edit Entry button', async () => {

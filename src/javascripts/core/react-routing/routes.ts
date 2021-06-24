@@ -5,6 +5,7 @@ import {
   contentTypesRoutes,
   spacesRoutes,
   assetsRoutes,
+  entriesRoutes,
   invitationRoutes,
   errorPageRoutes,
 } from './routes/';
@@ -17,6 +18,7 @@ import type {
   ContentTypesRouteType,
   SpacesRouteType,
   AssetsRouteType,
+  EntriesRouteType,
   InvitationsRouteType,
   ErrorPageRouteType,
 } from './routes/';
@@ -28,6 +30,7 @@ const routes = {
   ...contentTypesRoutes,
   ...spacesRoutes,
   ...assetsRoutes,
+  ...entriesRoutes,
   ...invitationRoutes,
   ...errorPageRoutes,
 };
@@ -39,6 +42,7 @@ type RouteType =
   | ContentTypesRouteType
   | SpacesRouteType
   | AssetsRouteType
+  | EntriesRouteType
   | InvitationsRouteType
   | ErrorPageRouteType;
 

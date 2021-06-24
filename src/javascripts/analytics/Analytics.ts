@@ -16,8 +16,6 @@ import {
 import { TransformedEventData, EventData } from './types';
 import { captureError, captureWarning } from 'core/monitoring';
 import * as analyticsConsole from 'analytics/analyticsConsoleController';
-import * as random from '../utils/Random';
-import { clearSequenceContext, initSequenceContext } from './sequenceContext';
 
 const requestIdleCallback = (window as any).requestIdleCallback || _.noop;
 
@@ -346,13 +344,6 @@ export function trackStateChange(
   }));
 
   sendSessionDataToConsole();
-
-  // TODO: Get rid of this logic and generate a `sequence_key` close to the views where we do the tracking.
-  if (['spaces.detail.entries.list', 'spaces.environment.entries.list'].includes(state.name)) {
-    initSequenceContext({ sequence_key: random.id() });
-  } else {
-    clearSequenceContext();
-  }
 
   track('global:state_changed', data);
   segment.page(state.name, params);

@@ -9,6 +9,7 @@ import { getSpaceContext } from 'classes/spaceContext';
 import { loadEntry as loadEditorData } from 'app/entity_editor/DataLoader';
 import * as trackVersioning from 'analytics/events/versioning';
 import { LoadingState } from 'features/loading-state';
+import { router } from 'core/react-routing';
 
 const styles = {
   loader: css({
@@ -28,7 +29,7 @@ const SnapshotRedirect = (props) => {
       .then(setEditorData)
       .catch(() => {
         Notification.error('Entry not found.');
-        go({ path: 'spaces.detail.entries.list' });
+        router.navigate({ path: 'entries.list' });
       });
   }, [props.entryId]);
 

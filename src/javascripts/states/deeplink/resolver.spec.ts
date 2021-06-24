@@ -217,9 +217,10 @@ describe('states/deeplink/resolver', () => {
 
   describe('#content', () => {
     it('should redirect the user to entries list page', async function () {
-      await testSpaceScopedPathDeeplinks('content', {
-        path: ['spaces', 'detail', 'entries', 'list'],
-      });
+      await testSpaceScopedPathDeeplinks(
+        'content',
+        routes['entries.list']({ withEnvironment: false }, {})
+      );
     });
   });
 
@@ -227,7 +228,7 @@ describe('states/deeplink/resolver', () => {
     it('should redirect the user to the assets list page', async function () {
       await testSpaceScopedPathDeeplinks(
         'media',
-        routes['assets.list']({ withEnvironment: false })
+        routes['assets.list']({ withEnvironment: false }, {})
       );
     });
   });

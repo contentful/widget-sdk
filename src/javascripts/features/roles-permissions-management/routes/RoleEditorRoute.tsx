@@ -3,7 +3,6 @@ import * as PolicyBuilder from 'access_control/PolicyBuilder';
 import { captureWarning } from 'core/monitoring';
 import RoleRepository from 'access_control/RoleRepository';
 import noop from 'lodash/noop';
-import StateRedirect from 'app/common/StateRedirect';
 import { RolesWorkbenchSkeleton } from '../skeletons/RolesWorkbenchSkeleton';
 import createFetcherComponent from 'app/common/createFetcherComponent';
 import { Notification } from '@contentful/forma-36-react-components';
@@ -19,7 +18,7 @@ import { useSpaceEnvContext, useSpaceEnvContentTypes } from 'core/services/Space
 import { getBatchingApiClient } from 'app/widgets/WidgetApi/BatchingApiClient';
 import { createAPIClient } from 'core/services/APIClient/utils';
 import type { Role } from 'core/services/SpaceEnvContext/types';
-import { useNavigationState, useParams } from 'core/react-routing';
+import { useNavigationState, useParams, ReactRouterRedirect } from 'core/react-routing';
 import { useUnsavedChangesModal } from 'core/hooks';
 import { useSpaceEnvCMAClient } from 'core/services/usePlainCMAClient';
 
@@ -210,7 +209,7 @@ export function RoleEditorRoute(props: { isNew: boolean }) {
                             return <RolesWorkbenchSkeleton onBack={noop} />;
                           }
                           if (isError || tagsContext?.error) {
-                            return <StateRedirect path="spaces.detail.entries.list" />;
+                            return <ReactRouterRedirect route={{ path: 'entries.list' }} />;
                           }
 
                           return (

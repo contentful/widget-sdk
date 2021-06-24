@@ -4,7 +4,7 @@ import { css } from 'emotion';
 import { Paragraph, Typography, TextLink } from '@contentful/forma-36-react-components';
 import tokens from '@contentful/forma-36-tokens';
 
-import { go } from 'states/Navigator';
+import { router } from 'core/react-routing';
 import { trackEvent, EVENTS } from '../utils/analyticsTracking';
 import { useSessionMetadata } from '../hooks/useSessionMetadata';
 import { ADD_ON_PURCHASE_ERROR } from '../hooks/usePurchaseAddOn';
@@ -38,7 +38,7 @@ export function ReceiptMessage({
   const onClickRenameSpaceLink = () => {
     trackEvent(EVENTS.RENAME_SPACE_CLICKED, sessionMetadata);
 
-    go({ path: ['spaces', 'detail', 'settings', 'space'], params: { spaceId: newSpaceId } });
+    router.navigate({ path: 'settings.space', spaceId: newSpaceId });
   };
 
   const nonBlockingError = error?.name === TEMPLATE_CREATION_ERROR;

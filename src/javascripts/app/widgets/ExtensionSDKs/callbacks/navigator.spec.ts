@@ -104,8 +104,9 @@ describe('navigator', () => {
     it('navigates to correct path', () => {
       subject.openAssetsList();
 
-      expect(Navigator.go).toBeCalledWith(
-        expect.objectContaining({ path: ['spaces', 'detail', 'assets', 'list'] })
+      expect(router.navigate).toHaveBeenCalledWith(
+        { environmentId: 'environmentId', path: 'assets.list', spaceId: 'spaceId' },
+        { notify: true }
       );
     });
   });
@@ -114,8 +115,9 @@ describe('navigator', () => {
     it('navigates to correct path', () => {
       subject.openEntriesList();
 
-      expect(Navigator.go).toBeCalledWith(
-        expect.objectContaining({ path: ['spaces', 'detail', 'entries', 'list'] })
+      expect(router.navigate).toHaveBeenCalledWith(
+        { environmentId: 'environmentId', path: 'entries.list', spaceId: 'spaceId' },
+        { notify: true }
       );
     });
   });

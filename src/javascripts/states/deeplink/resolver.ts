@@ -98,11 +98,12 @@ const mappings: Record<LinkType, (params: any) => Promise<ResolvedLink>> = {
     params: routes['content_preview.list']({ withEnvironment: false }).params,
   }),
   [LinkType.Content]: makeSpaceScopedPathResolver({
-    spaceScopedPath: ['spaces', 'detail', 'entries', 'list'],
+    spaceScopedPath: routes['entries.list']({ withEnvironment: false }, {}).path,
+    params: routes['entries.list']({ withEnvironment: false }, {}).params,
   }),
   [LinkType.Media]: makeSpaceScopedPathResolver({
-    spaceScopedPath: routes['assets.list']({ withEnvironment: false }).path,
-    params: routes['assets.list']({ withEnvironment: false }).params,
+    spaceScopedPath: routes['assets.list']({ withEnvironment: false }, {}).path,
+    params: routes['assets.list']({ withEnvironment: false }, {}).params,
   }),
   [LinkType.ContentModel]: makeSpaceScopedPathResolver({
     spaceScopedPath: routes['content_types.list']({ withEnvironment: false }).path,
