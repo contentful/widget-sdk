@@ -149,8 +149,8 @@ orbs:
                 CYPRESS_RETRIES: 3
                 TEST_LOCAL_SDK: true
                 CYPRESS_baseUrl: https://app.flinkly.com
-                CONTENTFUL_SPACE_ID: ${STAGING_CONTENTFUL_SPACE_ID}
-                CONTENTFUL_CMA_TOKEN: ${STAGING_CONTENTFUL_CMA_TOKEN}
+                CONTENTFUL_SPACE_ID: '${STAGING_CONTENTFUL_SPACE_ID}'
+                CONTENTFUL_CMA_TOKEN: '${STAGING_CONTENTFUL_CMA_TOKEN}'
               command: |
                 set -e
                 npm run integration
