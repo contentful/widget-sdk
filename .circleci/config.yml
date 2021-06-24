@@ -139,7 +139,10 @@ orbs:
               path: /home/circleci/components/user_interface
           - run:
               name: Clone master branch of ui-extensions-sdk
-              command: git clone git@github.com:contentful/ui-extensions-sdk.git .
+              command: |
+                git clone git@github.com:contentful/ui-extensions-sdk.git .
+                # temporary
+                git checkout chore/EXT-2824-quicker-tests-2
           - run:
               name: Install ui-extensions-sdk dependencies
               command: npm ci
@@ -153,6 +156,7 @@ orbs:
                 set -e
                 export CONTENTFUL_SPACE_ID="${STAGING_CONTENTFUL_SPACE_ID}"
                 export CONTENTFUL_CMA_TOKEN="${STAGING_CONTENTFUL_CMA_TOKEN}"
+                export CONTENTFUL_HOST="api.flinkly.com"
                 npm run integration
           - run: npm run merge-report
           - run: npm run generate-report
