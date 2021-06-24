@@ -83,10 +83,13 @@ const defaultFiltersById = {
   }
  */
 const normalizeFilterValues = (filterValues) => {
+  const operatorRegexp = /\[(\w+)\]/;
   return filterValues.reduce((memo, [key, value]) => {
-    const [id] = Object.entries(idMap).find(([_, filterKeys]) => filterKeys.includes(key)) || [];
+    const [filterKey] = key.split(operatorRegexp); // separate filter key and operator
+    const [id] =
+      Object.entries(idMap).find(([_, filterKeys]) => filterKeys.includes(filterKey)) || [];
     if (id) {
-      set(memo, [id, 'key'], key);
+      set(memo, [id, 'key'], filterKey);
       set(memo, [id, 'value'], isObject(value) ? Object.values(value)[0] : value);
     }
 
@@ -199,11 +202,16 @@ export function generateFilterDefinitions({
 }
 
 export const defaultFilterValues = { order: '-sys.createdAt' };
+export const defaultPagination = {
+  skip: 0,
+  limit: 10,
+};
+
 export function getFilterValuesFromQuery(query = {}) {
   if (isEmpty(query)) {
     return defaultFilterValues;
   }
-  const filterQuery = omit(query, 'searchTerm');
+  const filterQuery = omit(query, 'searchTerm', 'skip', 'limit');
   if (isEmpty(filterQuery)) {
     return defaultFilterValues;
   }
@@ -215,4 +223,15 @@ export function getSearchTermFromQuery(query = {}) {
     return query.searchTerm;
   }
   return '';
+}
+
+export function getPaginationFromQuery({
+  skip = defaultPagination.skip,
+  limit = defaultPagination.limit,
+}) {
+  if (skip !== undefined && limit !== undefined) {
+    return { skip: Number(skip), limit: Number(limit) };
+  } else {
+    return defaultPagination;
+  }
 }
