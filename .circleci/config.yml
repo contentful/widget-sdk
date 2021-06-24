@@ -148,7 +148,7 @@ orbs:
               environment:
                 CYPRESS_RETRIES: 3
                 TEST_LOCAL_SDK: true
-                CYPRESS_baseUrl: https://app.flinkly.com
+                CYPRESS_baseUrl: https://app.flinkly.com?ui_version=$CIRCLE_SHA1
               command: |
                 set -e
                 export CONTENTFUL_SPACE_ID="${STAGING_CONTENTFUL_SPACE_ID}"
