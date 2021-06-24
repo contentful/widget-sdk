@@ -71,6 +71,7 @@ function JobDialog({
   pendingJobs,
   isMasterEnvironment,
   validationError,
+  clearValidationError = () => {},
   linkType,
 }) {
   const now = momentTimezone(Date.now());
@@ -143,6 +144,8 @@ function JobDialog({
                 <DatePicker
                   onChange={(date) => {
                     setDate(momentTimezone(date).format('YYYY-MM-DD'));
+                    // Clear error messages if any
+                    clearValidationError();
                   }}
                   labelText={actionToLabelText(action)}
                   required
@@ -156,6 +159,8 @@ function JobDialog({
                   date={date}
                   onChange={(time) => {
                     setTime(time);
+                    // Clear error messages if any
+                    clearValidationError();
                   }}
                   required
                   id="time"
@@ -164,7 +169,12 @@ function JobDialog({
                 />
               </FieldGroup>
               <FieldGroup row>
-                <TimezonePicker onSelect={(value) => setTimezone(value)} />
+                <TimezonePicker
+                  onSelect={(value) => {
+                    setTimezone(value);
+                    clearValidationError();
+                  }}
+                />
               </FieldGroup>
               {timezone !== currentTimezone && (
                 <FieldGroup>
@@ -211,9 +221,17 @@ JobDialog.propTypes = {
   isMasterEnvironment: PropTypes.bool,
   linkType: PropTypes.string.isRequired,
   validationError: PropTypes.string,
+  clearValidationError: PropTypes.func,
 };
 
 export default JobDialog;
+
+/**
+ * @returns {boolean}
+ */
+const scheduledActionInThePast = ({ date, time, timezone }) => {
+  return moment(formatScheduledAtDate({ date, time, timezone })).isBefore(moment.now());
+};
 
 export const validateScheduleForm = (pendingScheduledActions, { date, time, timezone }) => {
   if (
@@ -228,7 +246,7 @@ export const validateScheduleForm = (pendingScheduledActions, { date, time, time
     return 'There is already an action scheduled for the selected time, please review the current schedule.';
   }
 
-  if (moment(formatScheduledAtDate({ date, time, timezone })).isBefore(moment.now())) {
+  if (scheduledActionInThePast({ date, time, timezone })) {
     return "The selected time can't be in the past";
   }
 
