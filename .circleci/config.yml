@@ -149,12 +149,14 @@ orbs:
           - run:
               name: Run integration tests
               environment:
-                CYPRESS_RETRIES: 3
-                TEST_LOCAL_SDK: true
-                CYPRESS_baseUrl: https://app.flinkly.com?ui_version=$CIRCLE_SHA1
+                CYPRESS_RETRIES: 1
+                TEST_LOCAL_SDK: 'true'
+                CYPRESS_baseUrl: https://app.flinkly.com?ui_version=${CIRCLE_SHA1}
               command: |
                 set -e
                 export CONTENTFUL_SPACE_ID="${STAGING_CONTENTFUL_SPACE_ID}"
+                export CONTENTFUL_CMA_TOKEN_EDITOR="${STAGING_CONTENTFUL_CMA_TOKEN_EDITOR}"
+                export CONTENTFUL_CMA_TOKEN_EDITOR_MASTER_ONLY="${STAGING_CONTENTFUL_CMA_TOKEN_EDITOR_MASTER_ONLY}"
                 export CONTENTFUL_CMA_TOKEN="${STAGING_CONTENTFUL_CMA_TOKEN}"
                 export CONTENTFUL_HOST="api.flinkly.com"
                 npm run integration
