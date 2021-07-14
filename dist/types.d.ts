@@ -1,15 +1,15 @@
-export type EntityType = 'Entry' | 'Asset'
-export type TagVisibility = 'private' | 'public'
-
+export declare type EntityType = 'Entry' | 'Asset'
 export interface SpaceMembership {
   sys: {
     id: string
     type: string
   }
   admin: boolean
-  roles: { name: string; description: string }[]
+  roles: {
+    name: string
+    description: string
+  }[]
 }
-
 export interface User {
   sys: {
     id: string
@@ -21,63 +21,27 @@ export interface User {
   avatarUrl: string
   spaceMembership: SpaceMembership
 }
-
 export interface Items {
   type: string
   linkType?: string
   validations?: Object[]
 }
-
 export interface Link {
   sys: {
     id: string
-    type: 'Link'
+    type: string
     linkType: string
   }
 }
-
-export interface Team {
-  sys: {
-    createdAt?: string
-    createdBy?: Link
-    id: string
-    memberCount: number
-    organization: Link
-    type: string
-    updatedAt?: string
-    updatedBy?: Link
-    version: number
-    deletedBy?: Link
-    deletedAt?: string
-  }
-  name: string
-  description: string
-}
-
-export interface Tag {
-  sys: {
-    type: 'Tag'
-    id: string
-    space: Link
-    environment: Link
-    createdBy: Link
-    updatedBy: Link
-    createdAt: string
-    updatedAt: string
-    version: number
-    visibility: 'private' | 'public'
-  }
-  name: string
-}
-
-export type CollectionResponse<T> = {
+export declare type CollectionResponse<T> = {
   items: T[]
   total: number
   skip: number
   limit: number
-  sys: { type: string }
+  sys: {
+    type: string
+  }
 }
-
 export interface EntrySys {
   space: Link
   id: string
@@ -97,8 +61,6 @@ export interface EntrySys {
   publishedBy: Link
   contentType: Link
 }
-
-/* Field API */
 export interface FieldAPI {
   /** The ID of a field is defined in an entry's content type. */
   id: string
@@ -112,7 +74,6 @@ export interface FieldAPI {
   validations: Object[]
   /** Defines the shape of array items */
   items?: Items
-
   /** Gets the current value of the field and locale. */
   getValue: () => any
   /** Sets the value for the field and locale.  */
@@ -121,7 +82,6 @@ export interface FieldAPI {
   removeValue: () => Promise<void>
   /** Communicates to the web application if the field is in a valid state or not. */
   setInvalid: (value: boolean) => void
-
   /** Calls the callback every time the value of the field is changed by an external event or when setValue() is called.
    *  the returned function can be called to remove the handler function */
   onValueChanged: (callback: (value: any) => void) => () => void
@@ -132,9 +92,6 @@ export interface FieldAPI {
    *  the returned function can be called to remove the handler function */
   onSchemaErrorsChanged: (callback: (errors: Error[]) => void) => () => void
 }
-
-/* Entry API */
-
 export interface EntryFieldAPI {
   /** The ID of a field is defined in an entry's content type. */
   id: string
@@ -148,7 +105,6 @@ export interface EntryFieldAPI {
   validations: Object[]
   /** Defines the shape of array items */
   items?: Items
-
   /** Gets the current value of the field and locale. */
   getValue: (locale?: string) => any
   /** Sets the value for the field and locale.  */
@@ -168,45 +124,36 @@ export interface EntryFieldAPI {
     (locale: string, callback: (isDisabled: boolean) => void): () => void
     (...args: any[]): () => void
   }
-
   /** Get an instance of FieldAPI for this field, specific to the locale that is
    * passed as an argument */
   getForLocale: (locale: string) => FieldAPI
 }
-
-type TaskState = 'active' | 'resolved'
-
+declare type TaskState = 'active' | 'resolved'
 export interface TaskSys {
   id: string
   type: 'Task'
-  parentEntity: { sys: Link }
+  parentEntity: {
+    sys: Link
+  }
   space: Link
   environment: Link
   createdBy: Link
   createdAt: string
   updatedBy: Link
   updatedAt: string
-  resolvedBy?: Link
-  resolvedAt?: string
   version: number
 }
-
 export interface TaskInputData {
   assignedToId: string
-  assignedToType?: 'User' | 'Team'
   body: string
   status: TaskState
-  dueDate?: string
 }
-
 export interface Task {
   assignedTo: Link
   body: string
   status: TaskState
   sys: TaskSys
-  dueDate?: string
 }
-
 /** Allows accessing the Task API for the current entry. */
 export interface TaskAPI {
   getTask(id: string): Promise<Task>
@@ -215,14 +162,15 @@ export interface TaskAPI {
   updateTask(task: Task): Promise<Task>
   deleteTask(task: Task): Promise<void>
 }
-
 export interface EntryAPI extends TaskAPI {
   /** Returns sys for an entry. */
   getSys: () => EntrySys
   /** Calls the callback with sys every time that sys changes. */
   onSysChanged: (callback: (sys: EntrySys) => void) => Function
   /** Allows to control the values of all other fields in the current entry. */
-  fields: { [key: string]: EntryFieldAPI }
+  fields: {
+    [key: string]: EntryFieldAPI
+  }
   /**
    * Optional metadata on an entry
    * @deprecated
@@ -231,19 +179,14 @@ export interface EntryAPI extends TaskAPI {
     tags?: Link[]
   }
 }
-
-/* Scheduled Actions */
-
-export const enum PublicActionStatus {
+export declare const enum PublicActionStatus {
   Scheduled = 'scheduled',
   Succeeded = 'succeeded',
   Failed = 'failed',
   Canceled = 'canceled',
 }
-
-export type ScheduledActionActionType = 'publish' | 'unpublish'
-
-export type ScheduledAction = {
+export declare type ScheduledActionActionType = 'publish' | 'unpublish'
+export declare type ScheduledAction = {
   sys: {
     id: string
     type: 'ScheduledAction'
@@ -282,9 +225,6 @@ export type ScheduledAction = {
   }
   action: ScheduledActionActionType
 }
-
-/* Content Type API */
-
 export interface ContentTypeField {
   disabled: boolean
   id: string
@@ -297,7 +237,6 @@ export interface ContentTypeField {
   linkType?: string
   items?: Items
 }
-
 export interface ContentType {
   sys: {
     type: string
@@ -315,13 +254,11 @@ export interface ContentType {
   displayField: string
   description: string
 }
-
 interface EditorWidget {
   widgetId: string
   widgetNamespace: string
   settings?: Object
 }
-
 export interface EditorInterface {
   sys: Object
   controls?: Array<{
@@ -339,23 +276,18 @@ export interface EditorInterface {
   editor?: EditorWidget
   editors?: EditorWidget[]
 }
-
-/* Space API */
-
 export interface SearchQuery {
   order?: string
   skip?: number
   limit?: number
   [key: string]: any
 }
-
 export interface CanonicalRequest {
   method: 'GET' | 'PUT' | 'POST' | 'PATCH' | 'DELETE' | 'HEAD' | 'OPTIONS'
   path: string
   headers?: Record<string, string>
   body?: string
 }
-
 export interface SpaceAPI {
   getCachedContentTypes: () => ContentType[]
   getContentType: <T = Object>(id: string) => Promise<T>
@@ -363,7 +295,6 @@ export interface SpaceAPI {
   createContentType: <T = Object, InputArgs = any>(data: InputArgs) => Promise<T>
   updateContentType: <T = Object, InputArgs = any>(data: InputArgs) => Promise<T>
   deleteContentType: <T = Object, InputArgs = any>(data: InputArgs) => Promise<T>
-
   getEntry: <T = Object>(id: string) => Promise<T>
   getEntrySnapshots: <T = Object>(id: string) => Promise<CollectionResponse<T>>
   getEntries: <T = Object, InputArgs = SearchQuery>(
@@ -379,7 +310,6 @@ export interface SpaceAPI {
   getPublishedEntries: <T = Object, InputArgs = SearchQuery>(
     query?: InputArgs
   ) => Promise<CollectionResponse<T>>
-
   getAsset: <T = Object>(id: string) => Promise<T>
   getAssets: <T = Object, InputArgs = SearchQuery>(
     query?: InputArgs
@@ -397,51 +327,41 @@ export interface SpaceAPI {
   ) => Promise<CollectionResponse<T>>
   createUpload: (base64data: string) => void
   waitUntilAssetProcessed: (assetId: string, locale: string) => Promise<void>
-
   /** Returns all users who belong to the space. */
   getUsers: <T = Object>() => Promise<CollectionResponse<T>>
-
   /** Returns editor interface for a given content type */
   getEditorInterface: (contentTypeId: string) => Promise<EditorInterface>
   /** Returns editor interfaces for a given environment */
   getEditorInterfaces: () => Promise<CollectionResponse<EditorInterface>>
-
-  /* Returns a list of scheduled actions for a given entity */
   getEntityScheduledActions: (
     entityType: EntityType,
     entityId: string
   ) => Promise<ScheduledAction[]>
-  /* Returns a list of scheduled actions for the currenst space & environment */
   getAllScheduledActions: () => Promise<ScheduledAction[]>
-
   signRequest: (request: CanonicalRequest) => Promise<Record<string, string>>
-
-  createTag: (id: string, name: string, visibility?: TagVisibility) => Promise<Tag>
-  readTags: (skip: number, limit: number) => Promise<CollectionResponse<Tag>>
-  updateTag: (id: string, name: string, version: number) => Promise<Tag>
-  deleteTag: (id: string, version: number) => Promise<boolean>
-
-  getTeams: () => Promise<CollectionResponse<Team>>
 }
-
-/* Locales API */
 export interface LocalesAPI {
   /** The default locale code for the current space. */
   default: string
   /** A list of locale codes of all locales available for editing in the current space. */
   available: string[]
   /** An object with keys of locale codes and values of corresponding human-readable locale names. */
-  names: { [key: string]: string }
+  names: {
+    [key: string]: string
+  }
   /** An object with keys of locale codes and values of corresponding fallback locale codes. If there's no fallback then the value is undefined. */
-  fallbacks: { [key: string]: string | undefined }
+  fallbacks: {
+    [key: string]: string | undefined
+  }
   /** An object with keys of locale codes and values of corresponding boolean value indicating if the locale is optional or not. */
-  optional: { [key: string]: boolean }
+  optional: {
+    [key: string]: boolean
+  }
   /** An object with keys of locale codes and values of corresponding information indicating if the locale is right-to-left or left-to-right language. */
-  direction: { [key: string]: 'ltr' | 'rtl' }
+  direction: {
+    [key: string]: 'ltr' | 'rtl'
+  }
 }
-
-/* Window API */
-
 export interface WindowAPI {
   /** Sets the iframe height to the given value in pixels or using scrollHeight if value is not passed */
   updateHeight: (height?: number) => void
@@ -450,9 +370,6 @@ export interface WindowAPI {
   /** Stops resizing the iframe automatically. */
   stopAutoResizer: () => void
 }
-
-/* Dialogs API */
-
 export interface OpenAlertOptions {
   title: string
   message: string
@@ -460,12 +377,10 @@ export interface OpenAlertOptions {
   shouldCloseOnEscapePress?: boolean
   shouldCloseOnOverlayClick?: boolean
 }
-
-export type OpenConfirmOptions = OpenAlertOptions & {
+export declare type OpenConfirmOptions = OpenAlertOptions & {
   cancelLabel?: string
   intent?: 'primary' | 'positive' | 'negative'
 }
-
 export interface OpenCustomWidgetOptions {
   id?: string
   width?: number | 'small' | 'medium' | 'large' | 'fullWidth'
@@ -477,14 +392,12 @@ export interface OpenCustomWidgetOptions {
   shouldCloseOnEscapePress?: boolean
   parameters?: Object
 }
-
 export interface EntityDialogOptions {
   locale?: string
   contentTypes?: string[]
   min?: number
   max?: number
 }
-
 export interface DialogsAPI {
   /** Opens a simple alert window (which can only be closed). */
   openAlert: (options: OpenAlertOptions) => Promise<boolean>
@@ -497,7 +410,7 @@ export interface DialogsAPI {
     }
   ) => Promise<string | boolean>
   /** Opens an extension in a dialog. */
-  openExtension: (options?: OpenCustomWidgetOptions) => Promise<any>
+  openExtension: (options: OpenCustomWidgetOptions) => Promise<any>
   /** Opens the current app in a dialog */
   openCurrentApp: (options?: Omit<OpenCustomWidgetOptions, 'id'>) => Promise<any>
   /** Opens the current extension or app in a dialog */
@@ -529,26 +442,24 @@ export interface DialogsAPI {
     mimetypeGroups?: string[]
   }) => Promise<T[] | null>
 }
-
-/* Navigator API */
-
 export interface NavigatorAPIOptions {
   /** use `waitForClose` if you want promise to be resolved only after slide in editor is closed */
-  slideIn?: boolean | { waitForClose: boolean }
+  slideIn?:
+    | boolean
+    | {
+        waitForClose: boolean
+      }
 }
-
 export interface PageExtensionOptions {
   /** If included, you can navigate to a different page extension. If omitted, you will navigate within the current extension. */
   id?: string
   /** Navigate to a path within your page extension. */
   path?: string
 }
-
 export interface AppPageLocationOptions {
   /** A path to navigate to within your app's page location. */
   path?: string
 }
-
 /** Information about current value of the navigation status. */
 export interface NavigatorPageResponse {
   /** Will be true if navigation was successfully executed by the web app. */
@@ -556,18 +467,15 @@ export interface NavigatorPageResponse {
   /** The path that was navigated to by the web app. */
   path: string
 }
-
 export interface NavigatorSlideInfo {
   newSlideLevel: number
   oldSlideLevel: number
 }
-
 export interface NavigatorOpenResponse<T> {
   navigated: boolean
   entity?: T
   slide?: NavigatorSlideInfo
 }
-
 export interface NavigatorAPI {
   /** Opens an existing entry in the current Web App session. */
   openEntry: <T = Object>(
@@ -606,37 +514,23 @@ export interface NavigatorAPI {
     slide?: NavigatorSlideInfo
   }>
   openAppConfig: () => Promise<void>
-  openEntriesList: () => Promise<void>
-  openAssetsList: () => Promise<void>
   onSlideInNavigation: (fn: (slide: NavigatorSlideInfo) => void) => Function
 }
-
-/* Notifier API */
-
 export interface NotifierAPI {
   /** Displays a success notification in the notification area of the Web App. */
   success: (message: string) => void
   /** Displays an error notification in the notification area of the Web App. */
   error: (message: string) => void
 }
-
-/* Location API */
-
 export interface LocationAPI {
   /** Checks the location in which your extension is running */
   is: (type: string) => boolean
 }
-
-/* Parameters API */
-
 export interface ParametersAPI {
   installation: Object
   instance: Object
   invocation?: Object
 }
-
-/* IDs */
-
 export interface IdsAPI {
   user: string
   extension?: string
@@ -648,13 +542,11 @@ export interface IdsAPI {
   entry: string
   contentType: string
 }
-
 export interface EditorLocaleSettings {
   mode: 'multi' | 'single'
   focused?: string
   active?: Array<string>
 }
-
 export interface SharedEditorSDK {
   editor: {
     editorInterface: EditorInterface
@@ -666,21 +558,17 @@ export interface SharedEditorSDK {
   /** Information about the content type of the entry. */
   contentType: ContentType
 }
-
-export type CrudAction = 'create' | 'read' | 'update' | 'delete'
-export type PublishableAction = 'publish' | 'unpublish'
-export type ArchiveableAction = 'archive' | 'unarchive'
-
-type Policy = {
+export declare type CrudAction = 'create' | 'read' | 'update' | 'delete'
+export declare type PublishableAction = 'publish' | 'unpublish'
+export declare type ArchiveableAction = 'archive' | 'unarchive'
+declare type Policy = {
   actions: 'all' | any[]
   effect: 'allow' | 'deny'
 }
-
 export interface TokenParams {
   space: object
   policies: Policy[]
 }
-
 export interface ApiKey {
   sys: {
     type: 'ApiKey' | 'PreviewApiKey'
@@ -688,8 +576,7 @@ export interface ApiKey {
   space: object
   policies: Policy[]
 }
-
-export type Action =
+export declare type Action =
   | 'create'
   | 'read'
   | 'update'
@@ -698,8 +585,7 @@ export type Action =
   | 'unpublish'
   | 'archive'
   | 'unarchive'
-
-export type TypeName =
+export declare type TypeName =
   | 'Entry'
   | 'Asset'
   | 'ContentType'
@@ -707,7 +593,6 @@ export type TypeName =
   | 'UIConfig'
   | 'EditorInterface'
   | 'UserUIConfig'
-
 export interface AccessAPI {
   can(action: 'read' | 'update', entity: 'EditorInterface' | EditorInterface): Promise<boolean>
   can<T = Object>(
@@ -724,7 +609,6 @@ export interface AccessAPI {
   forgeApiKey: (params: TokenParams) => Promise<ApiKey>
   canPerform: (action: Action, entity: TypeName, apiKey: ApiKey) => Promise<boolean>
 }
-
 export interface BaseExtensionSDK {
   /** Exposes methods that allow the extension to read and manipulate a wide range of objects in the space. */
   space: SpaceAPI
@@ -747,30 +631,26 @@ export interface BaseExtensionSDK {
   /** Exposes relevant ids, keys may be ommited based on location */
   ids: IdsAPI
 }
-
-export type EditorExtensionSDK = Omit<BaseExtensionSDK, 'ids'> &
+export declare type EditorExtensionSDK = Omit<BaseExtensionSDK, 'ids'> &
   SharedEditorSDK & {
     /** A set of IDs actual for the extension */
     ids: Omit<IdsAPI, 'field'>
   }
-
-export type SidebarExtensionSDK = Omit<BaseExtensionSDK, 'ids'> &
+export declare type SidebarExtensionSDK = Omit<BaseExtensionSDK, 'ids'> &
   SharedEditorSDK & {
     /** A set of IDs actual for the extension */
     ids: Omit<IdsAPI, 'field'>
     /** Methods to update the size of the iframe the extension is contained within.  */
     window: WindowAPI
   }
-
-export type FieldExtensionSDK = BaseExtensionSDK &
+export declare type FieldExtensionSDK = BaseExtensionSDK &
   SharedEditorSDK & {
     /** Gives you access to the value and metadata of the field the extension is attached to. */
     field: FieldAPI
     /** Methods to update the size of the iframe the extension is contained within.  */
     window: WindowAPI
   }
-
-export type DialogExtensionSDK = Omit<BaseExtensionSDK, 'ids'> & {
+export declare type DialogExtensionSDK = Omit<BaseExtensionSDK, 'ids'> & {
   /** A set of IDs actual for the extension */
   ids: Omit<IdsAPI, 'field' | 'entry' | 'contentType'>
   /** Closes the dialog and resolves openExtension promise with data */
@@ -778,22 +658,22 @@ export type DialogExtensionSDK = Omit<BaseExtensionSDK, 'ids'> & {
   /** Methods to update the size of the iframe the extension is contained within.  */
   window: WindowAPI
 }
-
-export type PageExtensionSDK = Omit<BaseExtensionSDK, 'ids'> & {
+export declare type PageExtensionSDK = Omit<BaseExtensionSDK, 'ids'> & {
   /** A set of IDs actual for the extension */
   ids: Omit<IdsAPI, 'field' | 'entry' | 'contentType'>
 }
-
 interface AppStateEditorInterfaceItem {
-  controls?: Array<{ fieldId: string }>
-  sidebar?: { position: number }
+  controls?: Array<{
+    fieldId: string
+  }>
+  sidebar?: {
+    position: number
+  }
   editor?: boolean
 }
-
 export interface AppState {
   EditorInterface: Record<ContentType['sys']['id'], AppStateEditorInterfaceItem>
 }
-
 export interface AppConfigAPI {
   /** Tells the web app that the app is loaded */
   setReady: () => Promise<void>
@@ -808,21 +688,20 @@ export interface AppConfigAPI {
   /** Registers a handler to be called once configuration was finished */
   onConfigurationCompleted: (handler: Function) => void
 }
-
-export type AppExtensionSDK = Omit<BaseExtensionSDK, 'ids'> & {
+export declare type AppExtensionSDK = Omit<BaseExtensionSDK, 'ids'> & {
   /** A set of IDs actual for the app */
-  ids: Omit<IdsAPI, 'extension' | 'field' | 'entry' | 'contentType' | 'app'> & { app: string }
+  ids: Omit<IdsAPI, 'extension' | 'field' | 'entry' | 'contentType' | 'app'> & {
+    app: string
+  }
   app: AppConfigAPI
 }
-
-export type KnownSDK =
+export declare type KnownSDK =
   | FieldExtensionSDK
   | SidebarExtensionSDK
   | DialogExtensionSDK
   | EditorExtensionSDK
   | PageExtensionSDK
   | AppExtensionSDK
-
 export interface Locations {
   LOCATION_ENTRY_FIELD: 'entry-field'
   LOCATION_ENTRY_FIELD_SIDEBAR: 'entry-field-sidebar'
@@ -832,7 +711,6 @@ export interface Locations {
   LOCATION_PAGE: 'page'
   LOCATION_APP_CONFIG: 'app-config'
 }
-
 export interface FieldInfo {
   id: string
   locale: string
@@ -842,7 +720,6 @@ export interface FieldInfo {
   items?: Items
   value: any
 }
-
 export interface EntryFieldInfo {
   id: string
   locales: string[]
@@ -850,9 +727,10 @@ export interface EntryFieldInfo {
   required: boolean
   validations: Object[]
   items?: Items
-  values: { [locale: string]: any }
+  values: {
+    [locale: string]: any
+  }
 }
-
 export interface ConnectMessage {
   id: string
   location: Location[keyof Location]
@@ -870,3 +748,4 @@ export interface ConnectMessage {
   fieldInfo: EntryFieldInfo[]
   field?: FieldInfo
 }
+export {}

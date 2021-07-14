@@ -8,7 +8,17 @@ import createEditor from './editor'
 import createNavigator from './navigator'
 import createApp from './app'
 import locations from './locations'
-import { BaseExtensionSDK, EntryFieldInfo, NavigatorAPI, KnownSDK, ConnectMessage } from './types'
+import {
+  BaseExtensionSDK,
+  EntryFieldInfo,
+  NavigatorAPI,
+  KnownSDK,
+  ConnectMessage,
+  ApiKey,
+  TokenParams,
+  TypeName,
+  Action,
+} from './types'
 import { Channel } from './channel'
 
 const DEFAULT_API_PRODUCERS = [
@@ -73,6 +83,10 @@ function makeSharedAPI(channel: Channel, data: ConnectMessage): BaseExtensionSDK
       can: (action: string, entity: any) =>
         channel.call('checkAccess', action, entity) as Promise<boolean>,
       canEditAppConfig: () => channel.call('checkAppConfigAccess') as Promise<boolean>,
+      forgeApiKey: (params: TokenParams) =>
+        channel.call('getForgedApiKey', params) as Promise<ApiKey>,
+      canPerform: (action: Action, entity: TypeName, apiKey: ApiKey) =>
+        channel.call('previewForgedAccess', action, entity, apiKey) as Promise<boolean>,
     },
   }
 }
