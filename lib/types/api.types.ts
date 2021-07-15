@@ -9,6 +9,7 @@ import { AppConfigAPI } from './app.types'
 import { NavigatorAPI } from './navigator.types'
 import { EntryFieldInfo, FieldInfo } from './field.types'
 import { Adapter } from 'contentful-management/types'
+import { PlainClientAPI } from 'contentful-management'
 
 /* User API */
 
@@ -166,6 +167,8 @@ export interface BaseExtensionSDK {
   ids: IdsAPI
   /** Adapter to be injected in contentful-management client */
   cmaAdapter?: Adapter
+  /** created cma adapter */
+  predefinedClient?: PlainClientAPI
 }
 
 export type EditorExtensionSDK = Omit<BaseExtensionSDK, 'ids'> &

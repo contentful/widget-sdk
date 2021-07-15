@@ -1,5 +1,20 @@
 import { ConnectMessage, KnownSDK } from './types'
 import connect, { Channel } from './channel'
+import { createClient } from 'contentful-management'
+
+function createPlainCmaClientWithDefaults(sdk: KnownSDK) {
+  if (!sdk.cmaAdapter || !createClient) return undefined
+  return createClient(
+    { apiAdapter: sdk.cmaAdapter },
+    {
+      type: 'plain',
+      defaults: {
+        environmentId: sdk.ids.environment,
+        spaceId: sdk.ids.space,
+      },
+    }
+  )
+}
 
 export default function createInitializer(
   currentWindow: Window,
@@ -42,6 +57,8 @@ Learn more about local development with the ui-extension-sdk here:
         if (typeof makeCustomApi === 'function') {
           customApi = makeCustomApi(channel, params)
         }
+
+        api.predefinedClient = createPlainCmaClientWithDefaults(api)
 
         // Handle pending incoming messages.
         // APIs are created before so handlers are already
