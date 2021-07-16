@@ -55,7 +55,7 @@
     "babel-eslint": "10.1.0",
     "chai": "4.3.4",
     "chai-as-promised": "7.1.1",
-    "contentful-management": "7.27.1",
+    "contentful-management": "^7.30.0",
     "cross-spawn": "7.0.3",
     "cypress": "7.7.0",
     "cypress-multi-reporters": "1.5.0",
