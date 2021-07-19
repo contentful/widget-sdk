@@ -44,7 +44,7 @@ export interface SpaceAPI {
   getContentTypes: () => Promise<CollectionResponse<ContentType>>
   createContentType: (data: WithId<ContentType>) => Promise<ContentType>
   updateContentType: (data: ContentType) => Promise<ContentType>
-  deleteContentType: (data: ContentType) => Promise<void>
+  deleteContentType: (contentTypeId: string) => Promise<void>
 
   getEntry: <Fields extends KeyValueMap = KeyValueMap>(id: string) => Promise<Entry<Fields>>
   getEntrySnapshots: <Fields extends KeyValueMap = KeyValueMap>(
